@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<title>THE MACHETAZO</title>
+
+<meta name="author" content="The Machetazo">
+<meta name="description" content="The Machetazo" >
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" >
+
+<link rel="shortcut icon" href="img/ico.png" type="image/png" >
+
+<link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+
+<link rel='stylesheet' type='text/css' href='style.css'>
+
+</head>
+<body>
+
+<i id='top'></i>
+
+<script>
+
+document.onreadystatechange = function(e)
+{
+    if (document.readyState === 'complete'){
+        //dom is ready, window.onload fires later
+    }else{
+	var userLang = navigator.language || navigator.userLanguage; 
+	if (userLang != 'es-ES'){
+		window.location.replace('en.html');
+	}else{
+		window.location.replace('es.html');
+	}
+    }
+};
+
+</script>
+
+<div class="menu">
+<ul id="menu">
+<a href='es.html#top'><li><img src='img/home.png' /></li></a>
+<a href='es.html#acerca'><li>ACERCA</li></a>
+<a href='es.html#video'><li>VIDEOS</li></a>
+<a href='es.html#disco'><li>DISCO</li></a>
+<a href='es.html#shows'><li>TOUR</li></a>
+<a href='es.html#foto'><li>FOTOS</li></a>
+<a href='es.html#bio'><li>&nbsp;BIO&nbsp;</li></a>
+<a href='es.html#media'><li>MEDIA</li></a>
+<a href='es.html#contacto'><li>CONTACTO</li></a>
+</ul>
+</div>
+
+<div class="head-image">
+  <div class="head-text">
+
+<div id='iconos'>
+<table border=0 id="table-iconos">
+<tr>
+<td colspan="6" id="td-logo"><img src='img/logo-machetazo.png'/></td>
+</tr>
+<tr>
+<td><a href='https://www.facebook.com/themachetazo/' target='_blank'><img src='img/icon-facebook.png'/></a></td>
+<td><a href='https://www.instagram.com/the_machetazo' target='_blank'><img src='img/icon-instagram.png'/></a></td>
+<td><a href='https://open.spotify.com/artist/7wN0HCNYeMUTGPT73rOYRE?si=4P9AJh10Q6a3Wef0W4-zIQ'><img src='img/icon-spotify.png'/></a></td>
+<td><a href='https://music.apple.com/es/artist/the-machetazo/1234573249' target='_blank'><img src='img/icon-apple.png'/></a></td>
+<td><a href='https://www.youtube.com/channel/UC_MLhqiYm_vJKrbIh2cwDGA' target='_blank'><img src='img/icon-youtube.png'/></a></td>
+<td><a href='https://themachetazo.bandcamp.com/releases' target='_blank'><img src='img/icon-bandcamp.png'/></a></td>
+</tr>
+</table>
+</div>
+
+  </div>
+</div>
+
+</body>
+</html>
