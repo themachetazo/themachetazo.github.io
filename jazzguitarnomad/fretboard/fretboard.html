@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Fretboard Designer</title>
+
+	<link rel="icon" href="fretboard.ico" type="image/x-icon">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+	<link rel="stylesheet" href="fretboard.css">
+</head>
+<body>
+	<div id="appLayout">
+
+		<!-- CABECERA SUPERIOR -->
+		<header id="topBar">
+
+			<div id="brand">
+				<img id="brandLogo" src="logo.png" alt="Jazz Guitar Nomad">
+
+				<div id="brandName">
+					<span class="brandTitle">JAZZ GUITAR NOMAD</span>
+					<span class="brandSubtitle">Fretboard Designer</span>
+				</div>
+			</div>
+
+			<nav id="mainMenu">
+				<button id="btnProyectos" class="menuButton"><i class="fa-solid fa-folder"></i>PROYECTOS</button>
+				<button id="btnEdicion" class="menuButton active"><i class="fa-solid fa-pen"></i>EDITAR</button>
+				<button id="btnVista" class="menuButton"><i class="fa-solid fa-eye"></i>VISTA</button>
+				<button id="btnPlayer" class="menuButton"><i class="fa-solid fa-music"></i>PLAYER</button>
+			</nav>
+
+			<div id="topBarActions">
+
+				<button id="btnMenuSelector" class="topBarSelector">
+
+					<div class="menuSelectorTop">
+						<i id="menuSelectorIcon" class="fa-solid fa-pen fa-fw"></i>
+						<i class="fa-solid fa-angle-down menuArrow"></i>
+					</div>
+
+					<span id="menuSelectorText">EDICIÓN</span>
+
+				</button>
+
+				<div id="menuPopup">
+					<button data-menu="projects"><i class="fa-solid fa-folder"></i>PROYECTOS</button>
+					<button data-menu="edit"><i class="fa-solid fa-pen"></i>EDITAR</button>
+					<button data-menu="view"><i class="fa-solid fa-eye"></i>VISTA</button>
+					<button data-menu="player"><i class="fa-solid fa-music"></i>PLAYER</button>
+				</div>
+
+				<button id="btnToggleTopControls"
+						type="button"
+						class="topBarSelector"
+						title="Mostrar controles"
+						aria-label="Mostrar controles"
+						aria-expanded="false">
+
+					<div class="menuSelectorTop">
+						<i class="fa-solid fa-gear fa-fw"></i>
+						<i class="fa-solid fa-angle-down menuArrow"></i>
+					</div>
+
+					<span>CONTROLES</span>
+
+				</button>
+
+			</div>
+
+		</header><!-- Fin topBar -->
+
+		<div id="topControlsContainer">
+
+			<div id="topControls">
+				<div id="toolbarTop">
+
+					<!-- PANEL PROYECTOS -->
+
+					<div class="toolbarTop-Controls" id="topLibrary">
+						<span>BIBLIOTECA</span>
+						<div class="toolRow">
+							<button id="btnOpenLibrary" title="Abrir biblioteca de proyectos"><i class="fa-solid fa-folder-open"></i><span>Abrir</span></button>
+							<button id="btnUploadLibrary" title="Subir biblioteca de proyectos"><i class="fa-solid fa-upload"></i><span>Subir</span></button>
+							<button id="btnShowProjectPanel" class="active" title="Mostrar biblioteca de proyectos"><i class="fa-solid fa-folder-tree"></i><span>Mostrar</span></button>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topProject">
+						<span>PROYECTO</span>
+						<div class="toolRow">
+							<button id="btnNew" title="Nuevo proyecto"><i class="fa-solid fa-file"></i><span>Nuevo</span></button>
+							<button id="btnSave" title="Guardar proyecto"><i class="fa-solid fa-floppy-disk"></i><span>Guardar</span></button>
+							<button id="btnDel" title="Eliminar proyecto"><i class="fa-solid fa-trash-can"></i><span>Eliminar</span></button>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topCategory">
+						<span>CATEGORÍAS</span>
+						<div class="toolRow">
+							<select id="projectCategory"></select>
+						</div>
+						<div class="toolRow">
+							<button id="btnNewCategory" class="btnSmall" title="Nueva categoría"><i class="fa-solid fa-folder-plus"></i><span></span></button>
+							<button id="btnDelCategory" class="btnSmall" title="Borrar categoría"><i class="fa-solid fa-folder-minus"></i><span></span></button>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topTitle">
+						<span>TÍTULO</span>
+						<div class="toolRow">
+							<input id="titleText" type="text" maxlength="60" placeholder="Título">
+						</div>
+						<label class="titleVisible" title="Mostrar título">
+							<span class="titleVisibleText">Mostrar</span>
+							<input id="showTitle" type="checkbox">
+							<span class="titleToggle"></span>
+						</label>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topShare">
+						<span>COMPARTIR</span>
+						<div class="toolRow">
+							<button id="btnShare" title="Compartir proyecto"><i class="fa-solid fa-link"></i><span>Compartir</span></button>
+							<button id="btnCopyId" title="Copiar identificador del proyecto"><i class="fa-solid fa-copy"></i><span>Clave ID</span></button>
+							<button id="btnCopy" title="Copiar imagen al portapapeles"><i class="fa-solid fa-image"></i><span>Imagen</span></button>
+						</div>
+					</div>
+
+					<!-- PANEL EDITAR -->
+
+					<div class="toolbarTop-Controls" id="topEdit">
+						<span>ESCRIBIR</span>
+						<div class="toolRow">
+							<button id="btnEdit" class="active" title="Escribir nota"><i class="fa-solid fa-pen"></i><span>Nota</span></button>
+							<button id="btnNutMode" title="Escribir nejilla"><i class="fa-solid fa-grip-lines"></i><span>Cejilla</span></button>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topUndo">
+						<span>BORRAR</span>
+						<div class="toolRow">
+							<button id="btnErase" title="Borrar nota"><i class="fa-solid fa-eraser"></i><span>Borrar</span></button>
+							<button id="btnUndo" title="Deshacer escritura"><i class="fa-solid fa-rotate-left"></i><span>Deshacer</span></button>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topColor">
+						<span>COLOR Y TEXTO</span>
+						<div class="toolRow">
+							<div class="colorPickerWrap">
+								<span id="colorPreview" class="colorPreview"></span>
+								<select id="colorPicker">
+									<option value="#ffffff">Blanco</option>
+									<option value="#000000">Negro</option>
+									<option value="#ff0000">Rojo</option>
+									<option value="#0080ff">Azul</option>
+									<option value="#00aa00">Verde</option>
+									<option value="#ffcc00">Amarillo</option>
+									<option value="#ff8800">Naranja</option>
+									<option value="#8000ff">Morado</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="toolRow">
+							<span>Texto</span>
+							<input id="noteText" type="text" maxlength="3" placeholder="A">
+						</div>
+					</div>
+
+					<!-- PANEL CONFIG -->
+
+					<div class="toolbarTop-Controls" id="topFretboard">
+						<span>DIAPASÓN</span>
+						<div class="toolRow" id="fretboardButtons">
+							<button id="btnMaple" class="active" title="Maple"><i class="fa-solid fa-square mapleIcon"></i><span>Maple</span></button>
+							<button id="btnRosewood" title="Rosewood"><i class="fa-solid fa-square rosewoodIcon"></i><span>Rosewood</span></button>
+							<button id="btnBlank" title="Blank"><i class="fa-solid fa-square blankIcon"></i><span>Blanco</span></button>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topFrets">
+						<span>TRASTES</span>
+						<div class="toolRow">
+							<button id="btnLessFrets" class="btnSmall">−</button>
+							<input id="numFrets" type="number" min="5" max="24" value="10">
+							<button id="btnMoreFrets" class="btnSmall">+</button>
+						</div>
+						<div class="toolRow">
+							<span>Escala</span>
+							<button id="btnDisplay" class="active" title="Cambiar longitud de escala del mástil"><i class="fa-solid fa-guitar"></i><span>648 mm</span></button>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topNumbers">
+						<span>NÚMEROS</span>
+						<div class="toolRow">
+							<button id="btnLessNumberFrets" class="btnSmall">−</button>
+							<input id="numberFrets" type="number" min="1" max="19" value="1">
+							<button id="btnMoreNumberFrets" class="btnSmall">+</button>
+						</div>
+						<label class="numberVisible" title="Mostrar números">
+							<span class="numberVisibleText">Mostrar</span>
+							<input id="showNumber" type="checkbox">
+							<span class="numberToggle"></span>
+						</label>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topOrientation">
+						<span>ORIENTACIÓN</span>
+						<div class="toolRow">
+							<button id="btnVertical" class="active" title="Cambiar orientación"><i class="fa-solid fa-arrows-up-down"></i><span>Vertical</span></button>
+							<button id="btnHorizontal" title="Cambiar orientación"><i class="fa-solid fa-arrows-left-right"></i><span>Horizontal</span></button>
+							<button id="btnRotate" title="Rotar"><i class="fa-solid fa-rotate"></i><span>Rotar</span></button>
+						</div>
+					</div>
+
+					<!-- PANEL PLAYER -->
+
+					<div class="toolbarTop-Controls" id="topPlayStop">
+						<span>REPRODUCIR</span>
+						<div class="toolRow">
+							<button id="btnPlayStop" title="Reproducir"><i class="fa-solid fa-play"></i><span>Play</span></button>
+							<button id="btnLoop" title="Bucle"><i class="fa-solid fa-repeat"></i><span>Loop</span></button>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topMetronome">
+						<span>METRÓNOMO</span>
+						<button id="btnMetronome" title="Activar metrónomo"><i class="fa-solid fa-stopwatch"></i><span>Metrónomo</span></button>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topTimeSignature">
+						<span>COMPÁS</span>
+						<div class="toolRow">
+							<button id="btnTime4" class="active" title="Compás binario"><i class="fa-solid fa-grip-lines-vertical"></i><span>Binario</span></button>
+							<button id="btnTime3" title="Compás ternario"><i class="fa-solid fa-bars"></i><span>Ternario</span></button>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topTempo">
+						<span>TEMPO</span>
+						<div class="toolRow">
+							<button id="btnLessTempo" class="btnSmall">−</button>
+							<input id="numTempo" type="number" min="30" max="300" value="90">
+							<button id="btnMoreTempo" class="btnSmall">+</button>
+						</div>
+						<div class="figurePickerWrap">
+							<span>Figura</span>
+							<select id="figurePicker">
+								<option value="whole">Redonda</option>
+								<option value="half">Blanca</option>
+								<option value="quarter">Negra</option>
+								<option value="eight">Corchea</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topForm">
+						<span>FORMA</span>
+						<div class="toolRow">
+							<button id="btnBothAsc" title="Reproducir ascendente y descendente"><i class="fa-solid fa-angles-down"></i><span>Down & up</span></button>
+							<button id="btnBothDesc" class="active" title="Reproducir descendente y ascendente"><i class="fa-solid fa-angles-up"></i><span>Up & down</span></button>
+							<button id="btnDesc" title="Reproducir descendente"><i class="fa-solid fa-chevron-down"></i><span>Down</span></button>
+							<button id="btnAsc" title="Reproducir ascendente"><i class="fa-solid fa-chevron-up"></i><span>Up</span></button>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topMidi">
+						<span>SONIDO</span>
+						<div class="toolRow">
+							<div class="midiPickerWrap">
+								<select id="midiPicker">
+									<option value="eguitar">Guitarra eléctrica</option>
+									<option value="aguitar">Guitarra acústica</option>
+									<option value="piano">Piano</option>
+								</select>
+							</div>
+						</div>
+					</div>
+
+				</div> <!-- Fin toolbarTop -->
+			</div> <!-- Fin topControls -->
+
+		</div> <!-- Fin topControlsContainer -->
+
+		<!-- PANEL MENU IZQUIERDO -->
+		<aside id="leftPanel">
+
+			<!-- Lista preparada para los proyectos -->
+			<div id="projectPanel">
+				<div class="projectPanelHeader">
+					<span id="projectPanelHeaderTitle">BIBLIOTECA</span>
+					<button id="btnToggleLibrary" class="btnSmall" aria-label=""><i class="fa-solid fa-up-right-from-square"></i></button>
+				</div>
+
+<!--
+				<div class="projectCategory">
+					<button type="button" class="projectCategoryButton" data-project-category="chord" aria-expanded="false">
+						<span>Acordes</span>
+						<i class="fa-solid fa-chevron-down"></i>
+					</button>
+					<ul id="chordProjectList" class="projectCategoryList"></ul>
+				</div>
+
+				<div class="projectCategory">
+					<button type="button" class="projectCategoryButton" data-project-category="scale" aria-expanded="false">
+						<span>Escalas</span>
+						<i class="fa-solid fa-chevron-down"></i>
+					</button>
+					<ul id="scaleProjectList" class="projectCategoryList"></ul>
+				</div>
+
+				<div class="projectCategory">
+					<button type="button" class="projectCategoryButton" data-project-category="other" aria-expanded="false">
+						<span>Otros</span>
+						<i class="fa-solid fa-chevron-down"></i>
+					</button>
+					<ul id="otherProjectList" class="projectCategoryList"></ul>
+				</div>
+
+<div class="projectCategory">
+	<button type="button" class="projectCategoryButton" data-project-category="1" aria-expanded="false">
+		<span>Acordes</span>
+		<i class="fa-solid fa-chevron-down"></i>
+	</button>
+	<ul class="projectCategoryList" id="projectCategoryList">
+		<li class="projectItem">
+			<button type="button" class="projectOpenButton" data-project-id="b568f802474943669bb094652803af3f" title="Abrir: asas">
+				<span class="projectTitle">asas</span>
+			</button>
+			<button type="button" class="projectDeleteButton" title="Eliminar proyecto">
+				<i class="fa-solid fa-trash"></i>
+			</button>
+		</li>
+	</ul>
+</div>
+
+-->
+
+			</div>
+		</aside>
+
+		<!-- ZONA DEL CANVAS -->
+		<main id="workspace">
+
+			<div id="workspaceHeader">
+				<span id="projectTitleText">Sin título</span>
+			</div>
+
+			<div id="workspaceContent">
+				<canvas id="workspaceCanvas"></canvas>
+			</div>
+
+		</main>
+
+		<!-- CANVAS CURSOR -->
+		<div id="cursorTool">
+			<i class="fa-solid fa-pencil"></i>
+		</div>
+
+	</div><!-- Fin appLayout -->
+
+	<!-- JAVASCRIPT -->
+
+	<script>if ("serviceWorker" in navigator) {window.addEventListener("load", () => {navigator.serviceWorker.register("service-worker.js");});}</script>
+
+	<script src="globals.js"></script>
+	<script src="draw.js"></script>
+	<script src="projects.js"></script>
+	<script src="clipboard.js"></script>
+	<script src="events.js"></script>
+
+</body>
+</html>
