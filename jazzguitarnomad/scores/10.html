@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>VexTab Render</title>
+<style>
+html,
+body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+}
+
+body {
+	overflow: hidden;
+}
+
+/* Firefox */
+html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-tools) var(--color-dark-background);
+}
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+}
+
+::-webkit-scrollbar-track {
+    background:  var(--color-dark-background);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-tools);
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-main-text);
+}
+
+.vextab-auto {
+	overflow:auto;
+//	background-color:#EDEDED;
+}
+</style>
+</head>
+<body>
+<div id="vt" class="vextab-auto" editor="false" editor-width="0" editor-height="0">
+
+options width=1200 scale=0.6 space=10 stave-distance=5
+
+tab-stems=true tab-stem-direction=up
+
+tabstave notation=true key=A time=4/4
+
+notes 4-5-6/3 ## =|: 5-4-2/3 2/2 =:|
+notes 4-5-6/3 ## =|: 5-4-2/3 2/2 =:|
+
+notes :8 3-5/5 2-3-5/4 2-4-5/3 |
+
+<!--
+notes :8 C-D-E-F-G-A-B/4 C/5 |
+notes 4-5-6/3 ## |
+notes :q (5/2.5/3.7/4) 15h16/2 15/2 |
+
+notes 4-5-6/3 ## =|: 5-4-2/3 2/2 =:|
+notes 4-5-6/3 ## =|: 5-4-2/3 2/2 =:|
+notes 4-5-6/3 ## =|: 5-4-2/3 2/2 =:|
+
+notes :8 5s7s8/5 ^3^ :q (5/2.6/3)h(7/3) :8d 5/4 :16 5/5
+
+-->
+
+options space=20
+
+</div>
+
+<br>
+
+<button onclick="copySvgToClipboard(vt)">Descargar Imagen</button>
+
+<script src="div.dev.js"></script>
+
+<script>
+
+async function copySvgToClipboard(div) {
+
+console.log(document.fonts.check("30px Bravura"));
+
+    //Recoger dentro del <div class="vextab-auto"> el <svg>
+    const svgElement = div.querySelector("svg");
+
+    const serializer = new XMLSerializer();
+    const source = '<?xml version="1.0" standalone="no"?>\r\n' + serializer.serializeToString(svgElement);
+    
+    // Crear una imagen a partir del SVG
+    const img = new Image();
+
+    const svgBlob = new Blob([source], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
+
+    img.onload = async () => {
+
+//document.body.appendChild(img);
+
+        // Dibujar la imagen en un Canvas
+        const canvas = document.createElement('canvas');
+
+	const bbox = svgElement.getBoundingClientRect();
+
+	canvas.width = svgElement.width.baseVal.value;
+	canvas.height = svgElement.height.baseVal.value;
+
+        const ctx = canvas.getContext('2d');
+
+	ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+//document.body.appendChild(canvas);
+
+//        URL.revokeObjectURL(url);
+
+        // Convertir el canvas a Blob y copiar al portapapeles
+        canvas.toBlob(async (blob) => {
+
+/*
+    // Descargar el PNG
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "prueba.png";
+    a.click();
+*/
+            const item = new ClipboardItem({ 'image/png': blob });
+            try {
+                await navigator.clipboard.write([item]);
+                alert('¡SVG copiado como imagen al portapapeles!');
+            } catch (err) {
+                console.error('Error al copiar: ', err);
+            }
+        }, 'image/png');
+    };
+    img.src = url;
+
+
+}
+
+</script>
+
+</body>
+</html>
