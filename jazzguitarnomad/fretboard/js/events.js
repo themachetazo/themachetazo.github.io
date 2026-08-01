@@ -8,7 +8,8 @@ neckImage.onload = () => {
 
 	neckImageLoaded = true;
 
-	resizeCanvas();
+	drawFretboard();
+	drawNotes();
 
 };
 
@@ -21,25 +22,18 @@ neckImage.onerror = () => {
 	fretboardStyle = "blank";
 	cmbDiapason.value = fretboardStyle;
 
+	setFretboardStyle(fretboardStyle);
+
+	drawFretboard();
+	drawNotes();
+
 };
 
 window.addEventListener("load", async () => {
 
-    //Project----------------------
-
-    setupProjectCategories();
-
-    loadDefaultProjects();
-
-    if (currentProjectId == null) {
-	    currentProjectId = generateProjectId();
-	    projectModified = true;
-    }
-
-    projectType = cmbProjectType.value;
-
-
     //Menu----------------------
+
+    setLoadingProgress(0,"Configurando...");
 
     mainMenuWidth = mainMenu.scrollWidth;
 
@@ -62,12 +56,34 @@ window.addEventListener("load", async () => {
     updateTopBarMenu();
 
 
+
+    //Project----------------------
+
+    setLoadingProgress(10,"Cargando proyectos...");
+
+    setupProjectCategories();
+
+    loadDefaultProjects();
+
+    if (currentProjectId == null) {
+	    currentProjectId = generateProjectId();
+	    projectModified = true;
+    }
+
+    projectType = cmbProjectType.value;
+
+
+
     //ScorePlayer----------------------
+
+    setLoadingProgress(20,"Cargando metrónomo...");
 
     metronome = new Metronome();
 
     metronome.setBpm(parseFloat(sliderBpm.value));
     metronome.setVolume(0);
+
+    setLoadingProgress(30,"Cargando instrumentos...");
 
     instruments = {
         piano: createSampler("piano"),
@@ -75,6 +91,8 @@ window.addEventListener("load", async () => {
     };
 
     instrument = instruments[currentInstrument];
+
+    setLoadingProgress(40,"Cargando reproductor...");
 
     player = new MusicPlayer(instrument,metronome);
 
@@ -85,6 +103,11 @@ window.addEventListener("load", async () => {
 
     updateTimeline(1, 1);
 
+
+    //Notas----------------------
+
+    setLoadingProgress(50,"Cargando array de notas...");
+
     loadNotas("up");
 
     scoreLoadArray("up");
@@ -92,7 +115,26 @@ window.addEventListener("load", async () => {
 
     //Layout----------------------
 
+    setLoadingProgress(60,"Configurando página...");
+
     updateLayout();
+
+
+
+    //Draw----------------------
+
+    setLoadingProgress(70,"Cargando imágenes...");
+
+    neckImage.src = fretboardImages[fretboardStyle];
+
+    setLoadingProgress(80,"Dibujando...");
+
+    resizeCanvas();
+
+
+    setLoadingProgress(100,"Finalizado");
+
+    hideLoadingScreen();
 
 });
 
@@ -546,7 +588,7 @@ menuPopup.querySelectorAll("button").forEach(button=>{
 
 });
 
-cmbDiapason.addEventListener("click", () => {
+cmbDiapason.addEventListener("change", () => {
 	setFretboardStyle(cmbDiapason.value);
 });
 

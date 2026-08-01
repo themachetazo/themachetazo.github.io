@@ -34,6 +34,9 @@ const leftPanel = document.getElementById("leftPanel");
 const btnToggleTopControls = document.getElementById("btnToggleTopControls");
 const topControlsContainer = document.getElementById("topControlsContainer");
 
+const loadingScreen = document.getElementById("loadingScreen");
+const loadingText = document.getElementById("loadingText");
+const loadingProgressBar = document.getElementById("loadingProgressBar");
 
 /*==================================================
 	REFERENCIAS DOM: MENU
@@ -245,9 +248,7 @@ const fretboardImages = {
 };
 
 let neckImageLoaded = false;
-
 const neckImage = new Image();
-neckImage.src = fretboardImages[fretboardStyle];
 
 
 /*==================================================

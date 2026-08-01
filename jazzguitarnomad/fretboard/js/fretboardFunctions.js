@@ -2,6 +2,24 @@
 FREATBOARD FUNCTIONS
 ==============================*/
 
+function setLoadingProgress(percent,text){
+
+	loadingProgressBar.style.width = percent + "%";
+	loadingText.textContent = text;
+}
+
+function hideLoadingScreen(){
+
+	loadingScreen.classList.add("isHidden");
+
+	setTimeout(() => {
+
+		loadingScreen.remove();
+
+	}, 350);
+
+}
+
 function updateTopBarMenu() {
 
     const menuFits = (brand.offsetWidth + mainMenuWidth + btnToggleTopControls.offsetWidth) <= window.innerWidth;
@@ -393,23 +411,14 @@ function setFretboardStyle(style) {
 
 	fretboardStyle = style;
 
-	if (fretboardStyle == "blank") {
-
-		neckImageLoaded = false;
-
-		drawFretboard();
-
-		if (typeof drawNotes === "function") {
-			drawNotes();
-		}
-
-		return;
-
-	}
-
 	neckImageLoaded = false;
 
-	neckImage.src = fretboardImages[fretboardStyle];
+	if (fretboardStyle != "blank") {
+		neckImage.src = fretboardImages[fretboardStyle];
+	}else{
+		drawFretboard();
+		drawNotes();
+	}
 
 }
 
@@ -503,7 +512,6 @@ function updateLayout() {
 		if (window.innerWidth < 768){
 
 			setWorkspaceLayout("score");
-			resizeCanvas();
 
 			return;
 		}
@@ -517,8 +525,6 @@ function updateLayout() {
 	}
 
 	setWorkspaceLayout();
-
-	resizeCanvas();
 
 }
 

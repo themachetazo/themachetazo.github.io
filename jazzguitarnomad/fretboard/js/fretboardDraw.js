@@ -181,10 +181,12 @@ function drawFretboard() {
 
 	// Fondo blanco base del canvas
 
-if (fretboardStyle == "blank"){
-	ctx.fillStyle = "#FFFFFF";
+	if (fretboardStyle == "blank"){
+		ctx.fillStyle = "#FFFFFF";
+	}else{
+		ctx.fillStyle = "#262626";
+	}
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
-}
 
 	// Sobresalido discreto de la imagen del diapasón
 	neckBleed = Math.max(3, stringSpace * 0.20);
