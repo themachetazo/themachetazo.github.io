@@ -101,23 +101,6 @@ html {
 
 }
 
-#loadingLogo{
-
-	text-align:center;
-
-	color:white;
-
-	width:64px;
-	height:64px;
-
-	object-fit:contain;
-
-	opacity:.95;
-
-	margin-bottom:10px;
-
-}
-
 #loadingSpinner{
 
 	width:48px;
@@ -182,6 +165,17 @@ html {
 
 }
 
+#loadingText.error{
+	
+	color:red;
+
+}
+
+#loadingText span{
+	
+	color:var(--color-main-text);
+
+}
 
 /* ===========================
    ESTRUCTURA PRINCIPAL
@@ -1496,7 +1490,6 @@ input[type="range"] {
 
 
 #player_repeatInfo b,
-#player_repeatInfo_2 b,
 #metronome_Info b{
 	color:var(--color-hightlight);
 }

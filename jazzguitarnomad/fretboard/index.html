@@ -13,7 +13,7 @@
 
 	<!-- CARGA -->
 	<div id="loadingScreen">
-		<img src="img/logo.png" id="loadingLogo">
+		<!--<img src="img/logo.png" id="loadingLogo">-->
 		<h1>JAZZ GUITAR NOMAD</h1>
 		<h2>Fretboard Builder</h2>
 		<div id="loadingSpinner"></div>
@@ -175,7 +175,6 @@
 								</select>
 							</div>
 						</div>
-
 						<div class="toolRow">
 							<span>Texto</span>
 							<input id="noteText" type="text" maxlength="3" placeholder="A">
@@ -310,57 +309,12 @@
 								<option value="piano" selected>Piano</option>
 							</select>
 						</div>
-					</div>
-
-					<div class="toolbarTop-Controls" id="topRepeats">
-						<span>REPETICIONES</span>
-						<div class="toolRow">
-							<select id="player_repeats">
-								<option value="1">1</option>
-								<option value="2" selected>2</option>
-								<option value="3">3</option>
-								<option value="4">4</option>
-								<option value="5">5</option>
-								<option value="6">6</option>
-								<option value="7">7</option>
-								<option value="8">8</option>
-								<option value="9">9</option>
-								<option value="10">10</option>
-							</select>
-						</div>
-						<div class="toolRow">
-							<div id="player_repeatInfo">Compás: <b>1</b><br>Repetición: <b>1</b></div>
-						</div>
-					</div>
-
-					<div class="toolbarTop-Controls" id="topCountIn">
-						<span>CUENTA ATRÁS</span>
-						<div class="toolRow">
-							<select id="player_countIn">
-								<option value="0">Sin cuenta atrás</option>
-								<option value="1">1 compás</option>
-								<option value="2">2 compases</option>
-							</select>
-						</div>
 						<div class="toolRow">
 							<label class="lblToggle" title="Activaar metrónomo">
 								<span class="lblToggleText">Metrónomo</span>
 								<input id="metronome_on" type="checkbox">
 								<span class="lblToggleSpan"></span>
 							</label>
-						</div>
-					</div>
-
-					<div class="toolbarTop-Controls" id="topTempo">
-						<span>TEMPO</span>
-						<div class="toolRow">
-							<button id="btnLessTempo">−</button>
-							<input id="numTempo" type="number" min="30" max="300" value="90">
-							<button id="btnMoreTempo">+</button>
-						</div>
-						<div class="toolRow">
-							<span>BPM</span>
-							<input type="range" id="sliderBpm" title="90" min="30" max="300" value="90">
 						</div>
 					</div>
 
@@ -376,6 +330,46 @@
 								<input id="player_swing" type="checkbox">
 								<span class="lblToggleSpan"></span>
 							</label>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topRepeats">
+						<span>REPETICIONES</span>
+						<div class="toolRow">
+							<span>Repeticiones</span>
+							<select id="player_repeats">
+								<option value="1">1</option>
+								<option value="2" selected>2</option>
+								<option value="3">3</option>
+								<option value="4">4</option>
+								<option value="5">5</option>
+								<option value="6">6</option>
+								<option value="7">7</option>
+								<option value="8">8</option>
+								<option value="9">9</option>
+								<option value="10">10</option>
+							</select>
+						</div>
+						<div class="toolRow">
+							<span>Cuenta atrás</span>
+							<select id="player_countIn">
+								<option value="0">No</option>
+								<option value="1">1 compás</option>
+								<option value="2">2 compases</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topTempo">
+						<span>TEMPO</span>
+						<div class="toolRow">
+							<button id="btnLessTempo">−</button>
+							<input id="numTempo" type="number" min="30" max="300" value="90">
+							<button id="btnMoreTempo">+</button>
+						</div>
+						<div class="toolRow">
+							<span>BPM</span>
+							<input type="range" id="sliderBpm" title="90" min="30" max="300" value="90">
 						</div>
 					</div>
 
