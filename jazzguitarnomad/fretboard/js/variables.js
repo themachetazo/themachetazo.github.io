@@ -37,6 +37,7 @@ const topControlsContainer = document.getElementById("topControlsContainer");
 const loadingScreen = document.getElementById("loadingScreen");
 const loadingText = document.getElementById("loadingText");
 const loadingProgressBar = document.getElementById("loadingProgressBar");
+const loadingSpinner = document.getElementById("loadingSpinner");
 
 /*==================================================
 	REFERENCIAS DOM: MENU
@@ -285,7 +286,6 @@ const sliderBpm = document.getElementById("sliderBpm");
 const samplerGate = document.getElementById("samplerGate");
 
 const player_repeatInfo = document.getElementById("player_repeatInfo");
-const player_repeatInfo_2 = document.getElementById("player_repeatInfo_2");
 
 const btnPlayStop = document.getElementById("btnPlayStop");
 const btnPlayStop_2 = document.getElementById("btnPlayStop_2");

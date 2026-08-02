@@ -20,6 +20,14 @@ function hideLoadingScreen(){
 
 }
 
+function setErrorLoadingProgress(err){
+
+	loadingText.innerHTML = "<i class='fa-solid fa-circle-exclamation'></i> Error " + loadingText.textContent + "<br><br><span>" + err + "</span>";
+	loadingText.classList.add("error");
+	loadingSpinner.style.display = "none";
+
+}
+
 function updateTopBarMenu() {
 
     const menuFits = (brand.offsetWidth + mainMenuWidth + btnToggleTopControls.offsetWidth) <= window.innerWidth;
@@ -277,7 +285,6 @@ function setMenu(m){
 		topFretboardDownload,
 		topVolumen,
 		topRepeats,
-		topCountIn,
 		topArticulation,
 		topMetronomePlay,
 		topMetronomeControls,
@@ -349,7 +356,6 @@ function setMenu(m){
 			showMenuControls(
 				topPlayStop,
 				topRepeats,
-				topCountIn,
 				topInstrument,
 				topArticulation,
 				topVolumen,
@@ -444,7 +450,7 @@ function setOrientation(o){
 
     updateOrientationButtons();
 
-    scoreRender();
+    if (isScoreVisible) scoreRender();
 
 }
 
@@ -496,7 +502,7 @@ function rotateFretboard(){
 
 }
 
-function updateLayout() {
+function setLayout() {
 
 	cursor.style.color = colorPicker.value;
 
@@ -509,12 +515,6 @@ function updateLayout() {
 		closeLeftPanel();
 		closeTopControls();
 
-		if (window.innerWidth < 768){
-
-			setWorkspaceLayout("score");
-
-			return;
-		}
 
 	} else {
 
@@ -522,9 +522,13 @@ function updateLayout() {
 
 		openTopControls();
 
+		setOrientation("horizontal");
+
+		noteText.focus();
+
 	}
 
-	setWorkspaceLayout();
+	setWorkspaceLayout("score");
 
 }
 

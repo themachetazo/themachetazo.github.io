@@ -31,110 +31,126 @@ neckImage.onerror = () => {
 
 window.addEventListener("load", async () => {
 
-    //Menu----------------------
+	try {
 
-    setLoadingProgress(0,"Configurando...");
+		// Menu ----------------------
 
-    mainMenuWidth = mainMenu.scrollWidth;
+		setLoadingProgress(0, "Configurando...");
 
-    if (!isAdmin) {
-	    btnSave.style.display = "none";
-	    btnDel.style.display = "none";
-	    btnCopyId.style.display = "none";
-	    topLibrary.style.display = "none";
-	    topFretboardDownload.style.display = "none";
-	    topScoreDownload.style.display = "none";
-	    topChords.style.display = "none";
-	    topAudio.style.display = "none";
-	    topBuffer.style.display = "none";
+		mainMenuWidth = mainMenu.scrollWidth;
 
-	    setMenu("edit");
-    }else{
-	    setMenu("projects");
-    }
+		if (!isAdmin) {
 
-    updateTopBarMenu();
+			btnSave.style.display = "none";
+			btnDel.style.display = "none";
+			btnCopyId.style.display = "none";
+			topLibrary.style.display = "none";
+			topFretboardDownload.style.display = "none";
+			topScoreDownload.style.display = "none";
+			topChords.style.display = "none";
+			topAudio.style.display = "none";
+			topBuffer.style.display = "none";
 
+			setMenu("edit");
 
+		} else {
 
-    //Project----------------------
+			setMenu("projects");
 
-    setLoadingProgress(10,"Cargando proyectos...");
+		}
 
-    setupProjectCategories();
-
-    loadDefaultProjects();
-
-    if (currentProjectId == null) {
-	    currentProjectId = generateProjectId();
-	    projectModified = true;
-    }
-
-    projectType = cmbProjectType.value;
+		updateTopBarMenu();
 
 
+		// Project ----------------------
 
-    //ScorePlayer----------------------
+		setLoadingProgress(10, "Cargando proyectos...");
 
-    setLoadingProgress(20,"Cargando metrónomo...");
+		setupProjectCategories();
 
-    metronome = new Metronome();
+		loadDefaultProjects();
 
-    metronome.setBpm(parseFloat(sliderBpm.value));
-    metronome.setVolume(0);
+		if (currentProjectId == null) {
 
-    setLoadingProgress(30,"Cargando instrumentos...");
+			currentProjectId = generateProjectId();
 
-    instruments = {
-        piano: createSampler("piano"),
-	cguitar: createSampler("cguitar")
-    };
+			projectModified = true;
 
-    instrument = instruments[currentInstrument];
+		}
 
-    setLoadingProgress(40,"Cargando reproductor...");
-
-    player = new MusicPlayer(instrument,metronome);
-
-    player.setInstrumentVolume(0);
-    player.setGate(samplerGate.value);
-
-    buildHtmlDivsTimeline();
-
-    updateTimeline(1, 1);
+		projectType = cmbProjectType.value;
 
 
-    //Notas----------------------
+		// ScorePlayer ----------------------
 
-    setLoadingProgress(50,"Cargando array de notas...");
+		setLoadingProgress(20, "Cargando metrónomo...");
 
-    loadNotas("up");
+		metronome = new Metronome();
 
-    scoreLoadArray("up");
+		metronome.setBpm(parseFloat(sliderBpm.value));
+		metronome.setVolume(0);
+
+		setLoadingProgress(30, "Cargando instrumentos...");
+
+		instruments = {
+
+			piano: createSampler("piano"),
+			cguitar: createSampler("cguitar")
+
+		};
+
+		instrument = instruments[currentInstrument];
+
+		setLoadingProgress(40, "Cargando reproductor...");
+
+		player = new MusicPlayer(instrument, metronome);
+
+		player.setInstrumentVolume(0);
+		player.setGate(samplerGate.value);
+
+		buildHtmlDivsTimeline();
+
+		updateTimeline(1, 1);
 
 
-    //Layout----------------------
+		// Notas ----------------------
 
-    setLoadingProgress(60,"Configurando página...");
+		setLoadingProgress(50, "Cargando array de notas...");
 
-    updateLayout();
+		loadNotas("up");
 
-
-
-    //Draw----------------------
-
-    setLoadingProgress(70,"Cargando imágenes...");
-
-    neckImage.src = fretboardImages[fretboardStyle];
-
-    setLoadingProgress(80,"Dibujando...");
-
-    resizeCanvas();
+		scoreLoadArray("up");
 
 
-    setLoadingProgress(100,"Finalizado");
+		// Layout ----------------------
 
-    hideLoadingScreen();
+		setLoadingProgress(60, "Configurando página...");
+
+		setLayout();
+
+
+		// Draw ----------------------
+
+		setLoadingProgress(70, "Cargando imágenes...");
+
+		neckImage.src = fretboardImages[fretboardStyle];
+
+		setLoadingProgress(80, "Dibujando...");
+
+		resizeCanvas();
+
+
+		setLoadingProgress(100, "Finalizado");
+
+		hideLoadingScreen();
+
+	} catch (error) {
+
+		console.error("Error durante la carga:", error);
+
+		setErrorLoadingProgress(error);
+
+	}
 
 });
 
@@ -302,8 +318,7 @@ document.addEventListener("playerBeat", (e) => {
             break;
     }
 
-    player_repeatInfo.innerHTML = "Compás: <b>" + countBars + "</b><br>Repetición: <b>" + repetitionSequence + "</b>";
-    player_repeatInfo_2.innerHTML = "Compás: <b>" + countBars + "&nbsp;</b>Repetición: <b>" + repetitionSequence + "</b>&nbsp;";
+    player_repeatInfo.innerHTML = "Compás: <b>" + countBars + "&nbsp;</b>Repetición: <b>" + repetitionSequence + "</b>";
 
 
 });
@@ -410,6 +425,7 @@ canvas.addEventListener("click", (e) => {
 		drawFretboard();
 		drawNotes();
 
+		if (!isMobile) noteText.focus();
 		noteText.value = "";
 
 		return;
@@ -438,17 +454,7 @@ canvas.addEventListener("click", (e) => {
 			noteText.value.trim().substring(0, 3)
 		);
 
-		drawFretboard();
-		drawNotes();
-
-		if (!isMobile) noteText.focus();
-		noteText.value = "";
-
-		return;
-
-	}
-
-	if (mode === "note") {
+	} else if (mode === "note") {
 
 		saveHistory();
 
