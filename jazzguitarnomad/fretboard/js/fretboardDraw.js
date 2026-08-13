@@ -4,12 +4,46 @@
 // CONFIGURACIÓN Y REDIMENSIONADO
 // ============================================================
 
+function loadFretboardImage() {
+
+	return new Promise((resolve, reject) => {
+
+		neckImage.onload = () => {
+
+			neckImageLoaded = true;
+
+			resolve();
+
+		};
+
+		neckImage.onerror = () => {
+
+			neckImageLoaded = false;
+
+			reject(
+				new Error(
+					`No se pudo cargar la imagen del diapasón: ${neckImage.src}`
+				)
+			);
+
+		};
+
+		neckImage.src = fretboardImages[fretboardStyle];
+
+	});
+
+}
+
+async function waitForLayout() {
+
+	await new Promise(resolve => requestAnimationFrame(resolve));
+	await new Promise(resolve => requestAnimationFrame(resolve));
+
+}
+
 function resizeCanvas() {
 
-	const topMarginTitle =
-		(showTitle.checked && title.trim() !== "")
-			? titleMargin
-			: 12;
+	const topMarginTitle = (showTitle.checked && title.trim() !== "") ? titleMargin : 12;
 
 	const isHorizontal = (rotation === 90 || rotation === 270);
 
@@ -34,7 +68,7 @@ function resizeCanvas() {
 				break;
 
 			//------------------------------------------------
-			// Horizontal (cejuela izquierda)
+			// Horizontal (cejuela derecha)
 			//------------------------------------------------
 
 			case 270://90:
@@ -56,7 +90,7 @@ function resizeCanvas() {
 				break;
 
 			//------------------------------------------------
-			// Horizontal (cejuela derecha)
+			// Horizontal (cejuela izquierda)
 			//------------------------------------------------
 
 			case 90://270:
@@ -115,63 +149,6 @@ function resizeCanvas() {
 }
 
 // ============================================================
-// GEOMETRÍA DEL DIAPASÓN
-// ============================================================
-
-function getFretPosition(fret) {
-
-	// Longitud útil del mástil
-	const neckLength =
-		(rotation === 90 || rotation === 270)
-			? boardWidth
-			: boardHeight;
-
-	let position;
-
-	//------------------------------------------------
-	// Modo sin escala (trastes equidistantes)
-	//------------------------------------------------
-
-	if (!displayMode) {
-
-		position = (neckLength / fretCount) * fret;
-
-	} else {
-
-		//------------------------------------------------
-		// Escala temperada real
-		//------------------------------------------------
-
-		const scaleLength = 648;
-
-		const realPosition =
-			scaleLength -
-			(scaleLength / Math.pow(2, fret / 12));
-
-		const lastFretPosition =
-			scaleLength -
-			(scaleLength / Math.pow(2, fretCount / 12));
-
-		position = (realPosition / lastFretPosition) * neckLength;
-
-	}
-
-	//------------------------------------------------
-	// Invertir el sentido del mástil
-	//------------------------------------------------
-
-	if (rotation === 180 || rotation === 90) { //rotation === 270) {
-
-		position = neckLength - position;
-
-	}
-
-	return position;
-
-}
-
-
-// ============================================================
 // RENDERIZADO PRINCIPAL
 // ============================================================
 
@@ -179,74 +156,31 @@ function drawFretboard() {
 
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	// Fondo blanco base del canvas
+	// Fondo del canvas
 
-	if (fretboardStyle == "blank"){
+	if (fretboardStyle == "blank") {
 		ctx.fillStyle = "#FFFFFF";
-	}else{
+	} else {
 		ctx.fillStyle = "#262626";
 	}
+
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 	// Sobresalido discreto de la imagen del diapasón
+
 	neckBleed = Math.max(3, stringSpace * 0.20);
 
 	// Radio de las esquinas redondeadas
+
 	neckRadius = Math.max(5, stringSpace * 0.28);
 
 	// Medidas finales de la imagen
+
 	imageLeft = boardleft - neckBleed;
 	imageTop = boardtop - neckBleed;
 	imageWidth = boardWidth + neckBleed * 2;
 	imageHeight = boardHeight + neckBleed * 2;
 
-	function roundedRectPath(x, y, width, height, radius) {
-
-		const r = Math.min(
-			radius,
-			width / 2,
-			height / 2
-		);
-
-		ctx.beginPath();
-
-		ctx.moveTo(x + r, y);
-
-		ctx.lineTo(x + width - r, y);
-		ctx.quadraticCurveTo(
-			x + width,
-			y,
-			x + width,
-			y + r
-		);
-
-		ctx.lineTo(x + width, y + height - r);
-		ctx.quadraticCurveTo(
-			x + width,
-			y + height,
-			x + width - r,
-			y + height
-		);
-
-		ctx.lineTo(x + r, y + height);
-		ctx.quadraticCurveTo(
-			x,
-			y + height,
-			x,
-			y + height - r
-		);
-
-		ctx.lineTo(x, y + r);
-		ctx.quadraticCurveTo(
-			x,
-			y,
-			x + r,
-			y
-		);
-
-		ctx.closePath();
-
-	}
 
 	//------------------------------------------------
 	// Imagen del diapasón
@@ -254,39 +188,29 @@ function drawFretboard() {
 
 	if (neckImageLoaded) {
 
-//Degradado
-
-ctx.save();
-
-for (let i = 8; i >= 1; i--) {
-
-	ctx.lineWidth = i * 1.5;
-
-	ctx.strokeStyle = `rgba(255,248,235,${0.02 * i})`;
-
-	roundedRectPath(
-		imageLeft,
-		imageTop,
-		imageWidth,
-		imageHeight,
-		neckRadius
-	);
-
-	ctx.stroke();
-
-}
-
-ctx.restore();
+		// Degradado
 
 		ctx.save();
 
-		roundedRectPath(
-			imageLeft,
-			imageTop,
-			imageWidth,
-			imageHeight,
-			neckRadius
-		);
+		for (let i = 8; i >= 1; i--) {
+
+			ctx.lineWidth = i * 1.5;
+			ctx.strokeStyle = `rgba(255,248,235,${0.02 * i})`;
+
+			roundedRectPath(imageLeft, imageTop, imageWidth, imageHeight, neckRadius);
+
+			ctx.stroke();
+
+		}
+
+		ctx.restore();
+
+
+		// Clip de la imagen
+
+		ctx.save();
+
+		roundedRectPath(imageLeft, imageTop, imageWidth, imageHeight, neckRadius);
 
 		ctx.clip();
 
@@ -300,40 +224,26 @@ ctx.restore();
 
 				ctx.save();
 
-				ctx.translate(
-					imageLeft,
-					imageTop + imageHeight
-				);
-
+				ctx.translate(imageLeft, imageTop + imageHeight);
 				ctx.rotate(-Math.PI / 2);
 
-				ctx.drawImage(
-					neckImage,
-					0,
-					0,
-					imageHeight,
-					imageWidth
-				);
+				ctx.drawImage(neckImage, 0, 0, imageHeight, imageWidth);
 
 				ctx.restore();
 
 				break;
 
+
 			//------------------------------------------------
 			// Horizontal (cejuela izquierda)
 			//------------------------------------------------
 
-			case 270://90:
+			case 270: // 90
 
-				ctx.drawImage(
-					neckImage,
-					imageLeft,
-					imageTop,
-					imageWidth,
-					imageHeight
-				);
+				ctx.drawImage(neckImage, imageLeft, imageTop, imageWidth, imageHeight);
 
 				break;
+
 
 			//------------------------------------------------
 			// Vertical (cejuela abajo)
@@ -343,47 +253,28 @@ ctx.restore();
 
 				ctx.save();
 
-				ctx.translate(
-					imageLeft + imageWidth,
-					imageTop
-				);
-
+				ctx.translate(imageLeft + imageWidth, imageTop);
 				ctx.rotate(Math.PI / 2);
 
-				ctx.drawImage(
-					neckImage,
-					0,
-					0,
-					imageHeight,
-					imageWidth
-				);
+				ctx.drawImage(neckImage, 0, 0, imageHeight, imageWidth);
 
 				ctx.restore();
 
 				break;
 
+
 			//------------------------------------------------
 			// Horizontal (cejuela derecha)
 			//------------------------------------------------
 
-			case 90://270:
+			case 90: // 270
 
 				ctx.save();
 
-				ctx.translate(
-					imageLeft + imageWidth,
-					imageTop + imageHeight
-				);
-
+				ctx.translate(imageLeft + imageWidth, imageTop + imageHeight);
 				ctx.rotate(Math.PI);
 
-				ctx.drawImage(
-					neckImage,
-					0,
-					0,
-					imageWidth,
-					imageHeight
-				);
+				ctx.drawImage(neckImage, 0, 0, imageWidth, imageHeight);
 
 				ctx.restore();
 
@@ -396,29 +287,21 @@ ctx.restore();
 	} else {
 
 		ctx.fillStyle = "#FFFFFF";
-
-		ctx.fillRect(
-			boardleft,
-			boardtop,
-			boardWidth,
-			boardHeight
-		);
+		ctx.fillRect(boardleft, boardtop, boardWidth, boardHeight);
 
 	}
+
 
 	//------------------------------------------------
 	// Trastes, cuerdas...
 	//------------------------------------------------
 
 	if (rotation === 90 || rotation === 270) {
-
 		drawHorizontal();
-
 	} else {
-
 		drawVertical();
-
 	}
+
 
 	//------------------------------------------------
 	// Título
@@ -431,31 +314,28 @@ ctx.restore();
 		do {
 
 			ctx.font = `bold ${fontSize}px Segoe UI`;
-
 			fontSize--;
 
-		} while (
-
-			ctx.measureText(title).width > boardWidth - 10 &&
-			fontSize > 10
-
-		);
+		} while (ctx.measureText(title).width > boardWidth - 10 && fontSize > 10);
 
 		ctx.fillStyle = "#000";
 		ctx.textAlign = "left";
 		ctx.textBaseline = "middle";
 
-		ctx.fillText(
-			title,
-			boardleft,
-			boardtop / 2
-		);
+		ctx.fillText(title, boardleft, boardtop / 2);
 
 	}
 
+
+	//------------------------------------------------
+	// Números
+	//------------------------------------------------
+
 	if (showFretNumbers) {
+
 		drawFretNumbers();
 		drawStringNumbers();
+
 	}
 
 }
@@ -796,6 +676,73 @@ function drawVertical() {
 
 }
 
+function roundedRectPath(x, y, width, height, radius) {
+
+	const r = Math.min(
+		radius,
+		width / 2,
+		height / 2
+	);
+
+	ctx.beginPath();
+
+	ctx.moveTo(
+		x + r,
+		y
+	);
+
+	ctx.lineTo(
+		x + width - r,
+		y
+	);
+
+	ctx.quadraticCurveTo(
+		x + width,
+		y,
+		x + width,
+		y + r
+	);
+
+	ctx.lineTo(
+		x + width,
+		y + height - r
+	);
+
+	ctx.quadraticCurveTo(
+		x + width,
+		y + height,
+		x + width - r,
+		y + height
+	);
+
+	ctx.lineTo(
+		x + r,
+		y + height
+	);
+
+	ctx.quadraticCurveTo(
+		x,
+		y + height,
+		x,
+		y + height - r
+	);
+
+	ctx.lineTo(
+		x,
+		y + r
+	);
+
+	ctx.quadraticCurveTo(
+		x,
+		y,
+		x + r,
+		y
+	);
+
+	ctx.closePath();
+
+}
+
 function drawFret(x1, y1, x2, y2, fretWidth) {
 
 	// Cuerpo metálico
@@ -845,6 +792,62 @@ function drawFret(x1, y1, x2, y2, fretWidth) {
 	);
 
 	ctx.stroke();
+
+}
+
+// ============================================================
+// GEOMETRÍA DEL DIAPASÓN
+// ============================================================
+
+function getFretPosition(fret) {
+
+	// Longitud útil del mástil
+	const neckLength =
+		(rotation === 90 || rotation === 270)
+			? boardWidth
+			: boardHeight;
+
+	let position;
+
+	//------------------------------------------------
+	// Modo sin escala (trastes equidistantes)
+	//------------------------------------------------
+
+	if (!displayMode) {
+
+		position = (neckLength / fretCount) * fret;
+
+	} else {
+
+		//------------------------------------------------
+		// Escala temperada real
+		//------------------------------------------------
+
+		const scaleLength = 648;
+
+		const realPosition =
+			scaleLength -
+			(scaleLength / Math.pow(2, fret / 12));
+
+		const lastFretPosition =
+			scaleLength -
+			(scaleLength / Math.pow(2, fretCount / 12));
+
+		position = (realPosition / lastFretPosition) * neckLength;
+
+	}
+
+	//------------------------------------------------
+	// Invertir el sentido del mástil
+	//------------------------------------------------
+
+	if (rotation === 180 || rotation === 90) { //rotation === 270) {
+
+		position = neckLength - position;
+
+	}
+
+	return position;
 
 }
 

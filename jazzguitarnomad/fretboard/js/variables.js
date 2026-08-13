@@ -45,7 +45,7 @@ const loadingSpinner = document.getElementById("loadingSpinner");
 
 const btnProyectos = document.getElementById("btnProyectos");
 const btnEdicion = document.getElementById("btnEdicion");
-const btnDiseno = document.getElementById("btnDiseno");
+const btnFretboard = document.getElementById("btnFretboard");
 const btnPlayer = document.getElementById("btnPlayer");
 const btnScore = document.getElementById("btnScore");
 const btnMetronome = document.getElementById("btnMetronome");
@@ -122,9 +122,8 @@ const btnRotate = document.getElementById("btnRotate");
 ==================================================*/
 
 const btnNewProject = document.getElementById("btnNewProject");
-const btnNew = document.getElementById("btnNew");
-const btnSave = document.getElementById("btnSave");
-const btnDel = document.getElementById("btnDel");
+const btnSaveProject = document.getElementById("btnSaveProject");
+const btnDelProject = document.getElementById("btnDelProject");
 const btnOpenLibrary = document.getElementById("btnOpenLibrary");
 const btnShare = document.getElementById("btnShare");
 const btnCopyCanvas = document.getElementById("btnCopyCanvas");
@@ -307,6 +306,7 @@ const sliderSamplerVolume = document.getElementById("samplerVolume");
 
 const metronome_btnPlayStop = document.getElementById("metronome_btnPlayStop");
 const metronome_timeline = document.getElementById("metronome_timeline");
+const metronome_Info = document.getElementById("metronome_Info");
 const metronome_volumen = document.getElementById("metronome_volumen");
 const metronome_volumen_2 = document.getElementById("metronome_volumen_2");
 const metronome_on = document.getElementById("metronome_on");
@@ -355,8 +355,6 @@ let firstTick = true;
 
 let projectBar = 4;
 let projectFigure = 4;
-
-//player_bufferState.innerHTML = "Ready";
 
 let metronome = null;
 let player = null;

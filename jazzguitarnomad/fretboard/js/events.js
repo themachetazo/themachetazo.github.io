@@ -4,31 +4,6 @@
 // INICIALIZACION
 //==================================================
 
-neckImage.onload = () => {
-
-	neckImageLoaded = true;
-
-	drawFretboard();
-	drawNotes();
-
-};
-
-neckImage.onerror = () => {
-
-	neckImageLoaded = false;
-
-	console.error(`No se pudo cargar la imagen del diapasón: ${neckImage.src}`);
-
-	fretboardStyle = "blank";
-	cmbDiapason.value = fretboardStyle;
-
-	setFretboardStyle(fretboardStyle);
-
-	drawFretboard();
-	drawNotes();
-
-};
-
 window.addEventListener("load", async () => {
 
 	try {
@@ -41,8 +16,8 @@ window.addEventListener("load", async () => {
 
 		if (!isAdmin) {
 
-			btnSave.style.display = "none";
-			btnDel.style.display = "none";
+			btnSaveProject.style.display = "none";
+			btnDelProject.style.display = "none";
 			btnCopyId.style.display = "none";
 			topLibrary.style.display = "none";
 			topFretboardDownload.style.display = "none";
@@ -60,6 +35,7 @@ window.addEventListener("load", async () => {
 		}
 
 		updateTopBarMenu();
+
 
 
 		// Project ----------------------
@@ -81,6 +57,7 @@ window.addEventListener("load", async () => {
 		projectType = cmbProjectType.value;
 
 
+
 		// ScorePlayer ----------------------
 
 		setLoadingProgress(20, "Cargando metrónomo...");
@@ -88,7 +65,7 @@ window.addEventListener("load", async () => {
 		metronome = new Metronome();
 
 		metronome.setBpm(parseFloat(sliderBpm.value));
-		metronome.setVolume(0);
+		metronome.setVolume(-12);
 
 		setLoadingProgress(30, "Cargando instrumentos...");
 
@@ -105,12 +82,14 @@ window.addEventListener("load", async () => {
 
 		player = new MusicPlayer(instrument, metronome);
 
+		player.setMetronomeOn(true);
 		player.setInstrumentVolume(0);
 		player.setGate(samplerGate.value);
 
 		buildHtmlDivsTimeline();
 
 		updateTimeline(1, 1);
+
 
 
 		// Notas ----------------------
@@ -122,25 +101,36 @@ window.addEventListener("load", async () => {
 		scoreLoadArray("up");
 
 
+
 		// Layout ----------------------
 
 		setLoadingProgress(60, "Configurando página...");
 
 		setLayout();
 
+		await waitForLayout();
+
 
 		// Draw ----------------------
 
 		setLoadingProgress(70, "Cargando imágenes...");
 
-		neckImage.src = fretboardImages[fretboardStyle];
+		await loadFretboardImage();
+
+		await waitForLayout();
 
 		setLoadingProgress(80, "Dibujando...");
 
 		resizeCanvas();
 
+		await waitForLayout();
 
-		setLoadingProgress(100, "Finalizado");
+		resizeCanvas();
+
+
+		// Fin ----------------------
+
+		setLoadingProgress(100, "Carga completada");
 
 		hideLoadingScreen();
 
@@ -560,8 +550,8 @@ btnEdicion.addEventListener("click", () => {
 	setMenu("edit");
 });
 
-btnDiseno.addEventListener("click", () => {
-	setMenu("design");
+btnFretboard.addEventListener("click", () => {
+	setMenu("fretboard");
 });
 
 btnPlayer.addEventListener("click", () => {
@@ -695,32 +685,23 @@ btnNewProject.addEventListener("click", () => {
 	newProject();
 });
 
-btnNew.addEventListener("click", () => {
-	newProject();
-});
-
-btnSave.addEventListener("click", () => {
+btnSaveProject.addEventListener("click", () => {
 	saveCurrentProject();
 });
 
-btnDel.addEventListener("click", () => {
+btnDelProject.addEventListener("click", () => {
 	deleteProject(currentProjectId);
 });
 
 btnEdit.addEventListener("click", () => {
-
 	setMode("note");
-
 });
 
 btnErase.addEventListener("click", () => {
-
 	setMode("erase");
-
 });
 
 btnUndo.addEventListener("click", () => {
-
 	undo();
 });
 
@@ -1049,6 +1030,11 @@ metronome_btnPlayStop.addEventListener("click", async function () {
 	metronome_btnPlayStop.classList.toggle("buttonPlay", false);
         metronome_btnPlayStop.classList.toggle("buttonStop", true);
 
+	if (!metronome_on.checked) {
+		metronome_on.checked = true;
+		setMetronmeOnPlaying(true);
+	}
+
         metronome.start();
 
     }
@@ -1059,7 +1045,7 @@ metronome_btnPlayStop.addEventListener("click", async function () {
 
 metronome_on.addEventListener("change", function () {
 
-    player.setMetronomeOn(this.checked);
+	setMetronmeOnPlaying(this.checked);
 
 });
 

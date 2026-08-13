@@ -1,3 +1,4 @@
+
 /*============================
 FREATBOARD FUNCTIONS
 ==============================*/
@@ -8,15 +9,17 @@ function setLoadingProgress(percent,text){
 	loadingText.textContent = text;
 }
 
-function hideLoadingScreen(){
+function hideLoadingScreen() {
 
-	loadingScreen.classList.add("isHidden");
+	loadingSpinner.style.display = "none";
 
 	setTimeout(() => {
 
-		loadingScreen.remove();
+		loadingScreen.classList.add("isHidden");
 
-	}, 350);
+		setTimeout(() => {loadingScreen.remove();}, 350);
+
+	}, 500);
 
 }
 
@@ -250,7 +253,7 @@ function setMenu(m){
 
 	btnProyectos.classList.remove("active");
 	btnEdicion.classList.remove("active");
-	btnDiseno.classList.remove("active");
+	btnFretboard.classList.remove("active");
 	btnPlayer.classList.remove("active");
 	btnScore.classList.remove("active");
 	btnMetronome.classList.remove("active");
@@ -259,7 +262,6 @@ function setMenu(m){
 		topProject,
 		topCategory,
 		topLibrary,
-		topShare,
 		topTitle,
 		topShare,
 		topEdit,
@@ -332,9 +334,9 @@ function setMenu(m){
 
 			break;
 
-		case "design":
+		case "fretboard":
 
-			btnDiseno.classList.add("active");
+			btnFretboard.classList.add("active");
 
 			showMenuControls(
 				topFretboardScale,
@@ -344,7 +346,7 @@ function setMenu(m){
 				topOrientation
 			);
 
-			menuSelectorText.textContent = "DISEÑO";
+			menuSelectorText.textContent = "MÁSTIL";
 			menuSelectorIcon.className = "fa-solid fa-pencil-ruler";
 
 			break;
@@ -419,11 +421,32 @@ function setFretboardStyle(style) {
 
 	neckImageLoaded = false;
 
-	if (fretboardStyle != "blank") {
-		neckImage.src = fretboardImages[fretboardStyle];
-	}else{
+	if (fretboardStyle !== "blank") {
+
+		loadFretboardImage()
+			.then(() => {
+
+				drawFretboard();
+				drawNotes();
+
+			})
+			.catch(error => {
+
+				console.error(error);
+
+				fretboardStyle = "blank";
+				cmbDiapason.value = fretboardStyle;
+
+				drawFretboard();
+				drawNotes();
+
+			});
+
+	} else {
+
 		drawFretboard();
 		drawNotes();
+
 	}
 
 }
@@ -603,3 +626,16 @@ function setInitialOrientation() {
 
 }
 
+function setMetronmeOnPlaying(value){
+
+    player.setMetronomeOn(value);
+
+    if (value){
+	metronome_timeline.style.display = "flex";
+	metronome_Info.innerHTML = "Beat: <b>1 / 1</b>";
+    }else{
+	metronome_timeline.style.display = "none";
+	metronome_Info.innerHTML = "";
+    }
+
+}
