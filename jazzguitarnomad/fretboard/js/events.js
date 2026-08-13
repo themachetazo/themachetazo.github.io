@@ -12,8 +12,6 @@ window.addEventListener("load", async () => {
 
 		setLoadingProgress(0, "Configurando...");
 
-		mainMenuWidth = mainMenu.scrollWidth;
-
 		if (!isAdmin) {
 
 			btnSaveProject.style.display = "none";
@@ -730,6 +728,14 @@ btnHorizontal.addEventListener("click", () => {
 btnRotate.addEventListener("click", () => {
     rotateFretboard();
     updateOrientationButtons();
+});
+
+btnVertical_2.addEventListener("click", () => {
+    setOrientation("vertical");
+});
+
+btnHorizontal_2.addEventListener("click", () => {
+    setOrientation("horizontal");
 });
 
 btnDisplay.addEventListener("click", () => {

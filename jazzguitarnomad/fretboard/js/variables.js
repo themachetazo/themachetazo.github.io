@@ -43,6 +43,8 @@ const loadingSpinner = document.getElementById("loadingSpinner");
 	REFERENCIAS DOM: MENU
 ==================================================*/
 
+const mainMenu = document.getElementById("mainMenu");
+
 const btnProyectos = document.getElementById("btnProyectos");
 const btnEdicion = document.getElementById("btnEdicion");
 const btnFretboard = document.getElementById("btnFretboard");
@@ -116,6 +118,8 @@ const btnDisplay = document.getElementById("btnDisplay");
 const btnVertical = document.getElementById("btnVertical");
 const btnHorizontal = document.getElementById("btnHorizontal");
 const btnRotate = document.getElementById("btnRotate");
+const btnVertical_2 = document.getElementById("btnVertical_2");
+const btnHorizontal_2 = document.getElementById("btnHorizontal_2");
 
 /*==================================================
 	REFERENCIAS DOM: PROYECTOS
@@ -156,7 +160,6 @@ let fretCount = parseInt(numFrets.value);
 
 let showFretNumbers = false;
 
-let mainMenuWidth = 0;
 let menuOpen = "";
 
 const maxMediaScreenWidth = 768;

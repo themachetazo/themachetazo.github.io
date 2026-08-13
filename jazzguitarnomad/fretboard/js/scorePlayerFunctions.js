@@ -1,3 +1,86 @@
+
+////////////////////////////////////////////////////////////
+//
+// ARRAYS DE ACORDES Y NOTAS
+//
+////////////////////////////////////////////////////////////
+
+function loadNotas(mode){
+
+    NOTAS = [];
+    ACORDES = [];
+
+    switch (mode) {
+
+        case "up":
+            NOTAS = sequenceUp.map(item => item.note);
+            ACORDES = [...chordsUp];
+            break;
+
+        case "down":
+            NOTAS = sequenceDown.map(item => item.note);
+            ACORDES = [...chordsDown];
+            break;
+
+        case "up-down":
+            NOTAS = sequenceUpDown.map(item => item.note);
+            ACORDES = [...chordsUpDown];
+            break;
+
+        case "down-up":
+            NOTAS = sequenceDownUp.map(item => item.note);
+            ACORDES = [...chordsDownUp];
+            break;
+
+    }
+
+    const result = [];
+
+    let currentChord = null;
+
+    for (const item of ACORDES) {
+
+        if (item.chord !== currentChord) {
+
+            currentChord = item.chord;
+
+            result.push([]);
+
+        }
+
+        result[result.length - 1].push(item.note);
+
+    }
+
+    ACORDES = result;
+
+}
+
+function scoreLoadArray(mode){
+
+    switch (mode) {
+
+        case "up":
+            scoreArray = (projectType === "sequence" ? sequenceUp : chordsUp);
+            break;
+
+        case "down":
+            scoreArray = (projectType === "sequence" ? sequenceDown : chordsDown);
+            break;
+
+        case "up-down":
+            scoreArray = (projectType === "sequence" ? sequenceUpDown : chordsUpDown);
+            break;
+
+        case "down-up":
+            scoreArray = (projectType === "sequence" ? sequenceDownUp : chordsDownUp);
+            break;
+
+    }
+
+}
+
+
 ////////////////////////////////////////////////////////////
 //
 // PROYECTO
@@ -155,63 +238,6 @@ function resetScorePlayer() {
     updateTimeline(1, 1);
 
     player.playing = false;
-
-}
-
-////////////////////////////////////////////////////////////
-//
-// ARRAYS DE ACORDES Y NOTAS
-//
-////////////////////////////////////////////////////////////
-
-function loadNotas(mode){
-
-    NOTAS = [];
-    ACORDES = [];
-
-    switch (mode) {
-
-        case "up":
-            NOTAS = sequenceUp.map(item => item.note);
-            ACORDES = [...chordsUp];
-            break;
-
-        case "down":
-            NOTAS = sequenceDown.map(item => item.note);
-            ACORDES = [...chordsDown];
-            break;
-
-        case "up-down":
-            NOTAS = sequenceUpDown.map(item => item.note);
-            ACORDES = [...chordsUpDown];
-            break;
-
-        case "down-up":
-            NOTAS = sequenceDownUp.map(item => item.note);
-            ACORDES = [...chordsDownUp];
-            break;
-
-    }
-
-    const result = [];
-
-    let currentChord = null;
-
-    for (const item of ACORDES) {
-
-        if (item.chord !== currentChord) {
-
-            currentChord = item.chord;
-
-            result.push([]);
-
-        }
-
-        result[result.length - 1].push(item.note);
-
-    }
-
-    ACORDES = result;
 
 }
 
@@ -1035,29 +1061,6 @@ async function svg_scoreToPNG(canvas, fileName = "partitura.png") {
 //
 ////////////////////////////////////////////////////////////
 
-function scoreLoadArray(mode){
-
-    switch (mode) {
-
-        case "up":
-            scoreArray = (projectType === "sequence" ? sequenceUp : chordsUp);
-            break;
-
-        case "down":
-            scoreArray = (projectType === "sequence" ? sequenceDown : chordsDown);
-            break;
-
-        case "up-down":
-            scoreArray = (projectType === "sequence" ? sequenceUpDown : chordsUpDown);
-            break;
-
-        case "down-up":
-            scoreArray = (projectType === "sequence" ? sequenceDownUp : chordsDownUp);
-            break;
-
-    }
-
-}
 
 async function scoreRender() {
 
@@ -1075,6 +1078,7 @@ async function scoreRender() {
     await vexTab_render();
 
 }
+
 
 
 ////////////////////////////////////////////////////////////
@@ -1139,6 +1143,15 @@ function scorePaint_stop() {
     scorePaint_hideProgressBar();
 
     scoreEventIndex = 0;
+
+    if (vexTab_container) {
+        vexTab_container.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "smooth"
+        });
+    }
+
 }
 
 // MODO DE VISUALIZACIÓN

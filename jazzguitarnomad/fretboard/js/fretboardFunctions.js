@@ -33,8 +33,7 @@ function setErrorLoadingProgress(err){
 
 function updateTopBarMenu() {
 
-    const menuFits = (brand.offsetWidth + mainMenuWidth + btnToggleTopControls.offsetWidth) <= window.innerWidth;
-
+    const menuFits = (brand.offsetWidth + mainMenu.scrollWidth + btnToggleTopControls.offsetWidth) <= window.innerWidth;
 
     if (menuFits) {
 
@@ -479,20 +478,13 @@ function setOrientation(o){
 
 function updateOrientationButtons(){
 
-	btnVertical.classList.toggle(
-	    "active",
-	    orientation === "vertical"
-	);
+	btnVertical.classList.toggle("active",orientation === "vertical");
+	btnHorizontal.classList.toggle("active",orientation === "horizontal");
 
-	btnHorizontal.classList.toggle(
-	    "active",
-	    orientation === "horizontal"
-	);
+	btnRotate.classList.toggle("active",rotated);
 
-	btnRotate.classList.toggle(
-	    "active",
-	    rotated
-	);
+	btnVertical_2.classList.toggle("active",orientation === "vertical");
+	btnHorizontal_2.classList.toggle("active",orientation === "horizontal");
 
 	resizeCanvas();
 
