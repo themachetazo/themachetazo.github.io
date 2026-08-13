@@ -611,6 +611,8 @@
 					<button id="btnShowProjectPanel" class="active" title="Ver biblioteca"><i class="fa-solid fa-folder-tree"></i><span>Biblioteca</span></button>
 					<button id="btnFretboardVisible" title="Ver partitura"><i class="fa-solid fa-guitar"></i><span>Fretboard</span></button>
 					<button id="btnScoreVisible" title="Ver partitura"><i class="fa-solid fa-file-lines"></i><span>Partitura</span></button>
+					<button id="btnVertical_2" class="active" title="Cambiar orientación"><i class="fa-solid fa-arrows-up-down"></i><span>Vertical</span></button>
+					<button id="btnHorizontal_2" title="Cambiar orientación"><i class="fa-solid fa-arrows-left-right"></i><span>Horizontal</span></button>
 					<button id="btnPlayStop_2" class="buttonPlay" title="Reproducir"><i class="fa-solid fa-play"></i><span>Play</span></button>
 				</div>
 				<div class="workspaceControls">
@@ -628,8 +630,10 @@
 			</div>
 
 			<div id="workspaceContent">
-				<div id="workspaceTitleText">Sin Título</div>
-				<canvas id="workspaceCanvas"></canvas>
+				<div id="workspaceCanvasContainer">
+					<div id="workspaceTitleText">Sin Título</div>
+					<canvas id="workspaceCanvas"></canvas>
+				</div>
 			</div>
 
 			<div id="workspaceScore">
