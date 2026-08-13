@@ -13,11 +13,10 @@
 
 	<!-- CARGA -->
 	<div id="loadingScreen">
-		<!--<img src="img/logo.png" id="loadingLogo">-->
 		<h1>JAZZ GUITAR NOMAD</h1>
 		<h2>Fretboard Builder</h2>
 		<div id="loadingSpinner"></div>
-		<div id="loadingText">Inicializando...</div>
+		<div id="loadingText"></div>
 		<div id="loadingProgress"><div id="loadingProgressBar"></div></div>
 	</div>
 
@@ -39,7 +38,7 @@
 			<nav id="mainMenu">
 				<button id="btnProyectos" class="menuButton"><i class="fa-solid fa-folder"></i>PROYECTOS</button>
 				<button id="btnEdicion" class="menuButton active"><i class="fa-solid fa-pen"></i>ESCRITURA</button>
-				<button id="btnDiseno" class="menuButton"><i class="fa-solid fa-pencil-ruler"></i>DISEÑO</button>
+				<button id="btnFretboard" class="menuButton"><i class="fa-solid fa-pencil-ruler"></i>MÁSTIL</button>
 				<button id="btnScore" class="menuButton"><i class="fa-solid fa-file-lines"></i>PARTITURA</button>
 				<button id="btnPlayer" class="menuButton"><i class="fa-solid fa-music"></i>PLAYER</button>
 				<button id="btnMetronome" class="menuButton"><i class="fa-solid fa-stopwatch"></i>METRÓNOMO</button>
@@ -58,7 +57,7 @@
 				<div id="menuPopup">
 					<button data-menu="projects"><i class="fa-solid fa-folder"></i>PROYECTOS</button>
 					<button data-menu="edit"><i class="fa-solid fa-pen"></i>ESCRITURA</button>
-					<button data-menu="design"><i class="fa-solid fa-pencil-ruler"></i>DISEÑO</button>
+					<button data-menu="fretboard"><i class="fa-solid fa-pencil-ruler"></i>MÁSTIL</button>
 					<button data-menu="score"><i class="fa-solid fa-file-lines"></i>PARTITURA</button>
 					<button data-menu="player"><i class="fa-solid fa-music"></i>PLAYER</button>
 					<button data-menu="metronome"><i class="fa-solid fa-stopwatch"></i>METRÓNOMO</button>
@@ -93,9 +92,9 @@
 					<div class="toolbarTop-Controls" id="topProject">
 						<span>PROYECTO</span>
 						<div class="toolRow">
-							<button id="btnNew" title="Nuevo proyecto"><i class="fa-solid fa-file"></i><span>Nuevo</span></button>
-							<button id="btnSave" title="Guardar proyecto"><i class="fa-solid fa-floppy-disk"></i><span>Guardar</span></button>
-							<button id="btnDel" title="Eliminar proyecto"><i class="fa-solid fa-trash-can"></i><span>Eliminar</span></button>
+							<button id="btnNewProject" title="Nuevo proyecto"><i class="fa-solid fa-file"></i><span>Nuevo</span></button>
+							<button id="btnSaveProject" title="Guardar proyecto"><i class="fa-solid fa-floppy-disk"></i><span>Guardar</span></button>
+							<button id="btnDelProject" title="Eliminar proyecto"><i class="fa-solid fa-trash-can"></i><span>Eliminar</span></button>
 						</div>
 					</div>
 
@@ -136,7 +135,7 @@
 							<button id="btnCopyCanvas" title="Copiar imagen al portapapeles"><i class="fa-solid fa-copy"></i><span>Copiar</span></button>
 						</div>
 						<div class="toolRow">
-							<button id="btnDownloadCanvas" title="Guardar imagen del fretboard "><i class="fa-solid fa-download"></i><span>Descargar</span></button>
+							<button id="btnDownloadCanvas" title="Guardar imagen"><i class="fa-solid fa-download"></i><span>Descargar</span></button>
 						</div>
 					</div>
 
@@ -277,6 +276,7 @@
 							<button id="btnMoreFrets">+</button>
 						</div>
 						<div class="toolRow">
+							<span>Trastes</span>
 							<input type="range" id="sliderFrets" title="10" min="4" max="24" value="10">
 						</div>
 					</div>
@@ -308,13 +308,6 @@
 								<option value="cguitar">Guitarra clásica</option>
 								<option value="piano" selected>Piano</option>
 							</select>
-						</div>
-						<div class="toolRow">
-							<label class="lblToggle" title="Activaar metrónomo">
-								<span class="lblToggleText">Metrónomo</span>
-								<input id="metronome_on" type="checkbox">
-								<span class="lblToggleSpan"></span>
-							</label>
 						</div>
 					</div>
 
@@ -388,7 +381,7 @@
 						</div>
 						<div class="toolRow">
 							<span>Metrónomo</span>
-							<input type="range" id="metronome_volumen_2" title="0" min="-40" max="0" step="1" value="0">
+							<input type="range" id="metronome_volumen_2" title="-12" min="-40" max="0" step="1" value="-12">
 						</div>
 					</div>
 
@@ -515,7 +508,7 @@
 							</select>
 						</div>
 						<div class="toolRow">
-							<span>Orientación</span>
+							<!--<span>Orientación</span>-->
 							<select id="cmbScoreLayout">
 								<option value="vertical" selected>Vertical</option>
 								<option value="horizontal">Horizontal</option>
@@ -548,7 +541,7 @@
 					<div class="toolbarTop-Controls" id="topMetronomePlay">
 						<span>METRÓNOMO</span>
 						<div class="toolRow">
-							<button id="metronome_btnPlayStop" class="buttonPlay" title="Iniciar"><i class="fa-solid fa-play"></i><span>Iniciar</span></button>
+							<button id="metronome_btnPlayStop" title="Iniciar"><i class="fa-solid fa-play"></i><span>Iniciar</span></button>
 						</div>
 					</div>
 
@@ -556,9 +549,14 @@
 						<span>CONTROLES</span>
 						<div class="toolRow">
 							<span>Volumen</span>
-							<input type="range" id="metronome_volumen" title="0" min="-40" max="0" step="1" value="0">
+							<input type="range" id="metronome_volumen" title="-12" min="-40" max="0" step="1" value="-12">
 						</div>
 						<div class="toolRow">
+							<label class="lblToggle" title="Metrónomo en reproducción">
+								<span class="lblToggleText">Activar</span>
+								<input id="metronome_on" type="checkbox" checked>
+								<span class="lblToggleSpan"></span>
+							</label>
 							<label class="lblToggle" title="Subdivisión del beat">
 								<span class="lblToggleText">Subdivisión</span>
 								<input id="metronome_subBeatSound" type="checkbox" checked>
@@ -610,7 +608,6 @@
 
 			<div id="workspaceHeader">
 				<div class="workspaceControls" id="workspaceControls">
-					<button id="btnNewProject" title="Nuevo proyecto"><i class="fa-solid fa-file"></i><span>Nuevo</span></button>
 					<button id="btnShowProjectPanel" class="active" title="Ver biblioteca"><i class="fa-solid fa-folder-tree"></i><span>Biblioteca</span></button>
 					<button id="btnFretboardVisible" title="Ver partitura"><i class="fa-solid fa-guitar"></i><span>Fretboard</span></button>
 					<button id="btnScoreVisible" title="Ver partitura"><i class="fa-solid fa-file-lines"></i><span>Partitura</span></button>
@@ -625,7 +622,7 @@
 					</div>
 				</div>
 				<div class="workspaceControls">
-					<div id="player_repeatInfo_2">Compás: <b>1</b>&nbsp;Repetición: <b>1</b>&nbsp;</div>
+					<div id="player_repeatInfo">Compás: <b>1</b>&nbsp;Repetición: <b>1</b>&nbsp;</div>
 					<div id="metronome_Info">Beat: <b>1 / 1</b></div>
 				</div>
 			</div>

@@ -218,6 +218,8 @@ html {
 	align-items:center;
 	justify-content:center;
 
+	color:inherit;
+
 //	background:var(--color-dark-background);
 
 	border-top:1px solid var(--color-tools);
@@ -1694,6 +1696,14 @@ input[type="range"] {
 
 }
 
+#metronome_btnPlayStop{
+
+	background:#2F80C0 !important;
+
+	color:#fff !important;
+
+}
+
 .buttonPlay{
 
 	background:#2F7A4D !important;
@@ -2020,21 +2030,14 @@ input[type="range"] {
 		position:absolute;
 		top:calc(100% + 6px);
 		right:0;
-
 		display:none;
 		flex-direction:column;
-
 		min-width:100%;
 		padding:6px;
-
 		border-radius:8px;
-
 		background:var(--color-dark-background);
-
 		border:1px solid var(--color-tools);
-
 		box-shadow:0 6px 20px rgba(0,0,0,.4);
-
 		z-index:1000;
 
 	}
@@ -2050,58 +2053,44 @@ input[type="range"] {
 		display:flex;
 		align-items:center;
 		gap:10px;
-
 		width:100%;
-
 		padding:10px 14px;
-
 		border:none;
-
 		background:none;
-
 		color:inherit;
-
 		text-align:left;
-
 		cursor:pointer;
 
 	}
 
 	#menuPopup button:hover{
-
 		background:var(--color-tools);
 		color:#fff;
-
 	}
 
 	/* ==========================
 	   Controles superiores
 	   ========================== */
 
-	#topControlsContainer{
+	#topControlsContainer {
 
-		width:100%;
+		width: 100%;
+		margin: 0;
+		padding: 0 12px;
 
-		margin:0;
+		background: var(--color-tools);
 
-		padding:0 12px;
+		border-top: 1px solid var(--color-tools);
+		border-bottom: 1px solid #111;
 
-		background:var(--color-dark-background);
+		box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
 
-		border-top:1px solid var(--color-tools);
-		border-bottom:1px solid #111;
+		max-height: 0;
+		overflow: hidden;
+		opacity: 0;
 
-		box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
-
-		max-height:0;
-
-		overflow:hidden;
-
-		opacity:0;
-
-		transform:translateY(-12px);
-
-		pointer-events:none;
+		transform: translateY(-12px);
+		pointer-events: none;
 
 		transition:
 			max-height .28s ease,
@@ -2111,117 +2100,192 @@ input[type="range"] {
 
 	}
 
-	#topControlsContainer.isOpen{
 
-		max-height:1000px;
+	#topControlsContainer.isOpen {
 
-		padding:12px;
+		max-height: 1000px;
 
-		opacity:1;
+		padding: 6px 12px;
 
-		transform:translateY(0);
+		opacity: 1;
 
-		pointer-events:auto;
+		transform: translateY(0);
 
-	}
-
-	#topControls{
-
-		min-width:0;
-
-		display:flex;
-
-		justify-content:center;
+		pointer-events: auto;
 
 	}
 
-	#toolbarTop{
 
-		display:flex;
+	#topControls {
 
-		flex-direction:row;
+		width: 100%;
+		min-width: 0;
 
-		flex-wrap:wrap;
-
-		justify-content:center;
-
-		align-items:flex-start;
-
-		gap:8px;
+		display: flex;
+		justify-content: center;
 
 	}
 
-	#toolbarTop .toolbarTop-Controls{
 
-		width:fit-content;
+	#toolbarTop {
 
-		max-width:100%;
+		width: 100%;
+		max-width: 100%;
 
-		flex-direction:column;
+		display: flex;
 
-		align-items:center;
+		flex-direction: row;
+		flex-wrap: wrap;
 
-		justify-content:flex-start;
+		justify-content: center;
+		align-items: center;
 
-		gap:8px;
+		gap: 6px;
 
-		margin:0;
+	}
 
+
+	#toolbarTop .toolbarTop-Controls {
+
+		width: fit-content;
+		max-width: 100%;
+
+		display: flex;
+
+		flex-direction: row;
+
+		align-items: center;
+		justify-content: center;
+
+		gap: 4px;
+
+		margin: 0;
+		padding: 0;
+
+		min-width: 0;
+		min-height: 0;
+		height: 32px;
+
+		font-size: 10px;
+
+		background: inherit;
+
+		flex: 0 1 auto;
+
+	}
+
+
+	#toolbarTop .toolbarTop-Controls.isHidden {
+
+		display: none;
+
+	}
+
+
+	#toolbarTop .toolbarTop-Controls > span {
+
+		display: none;
+
+	}
+
+
+	#toolbarTop .toolbarTop-Controls .toolRow {
+
+		width: auto;
+
+		flex: 0 1 auto;
+
+		display: flex;
+
+		align-items: center;
+
+		flex-wrap: nowrap;
+
+		gap: 6px;
+
+		margin: 0;
+		padding: 0;
+
+		min-width: 0;
+
+	}
+
+	#toolbarTop input[type="range"] {
+		width: 100px;
 	}
 
 	#toolbarTop input,
-	#toolbarTop select{
+	#toolbarTop select {
 
-		max-width:180px;
-//		min-height:24px;
+		max-width: 180px;
 
-	}
-
-
-	.toolbarTop-Controls{
-
-		min-height:60px;
+		min-width: 0;
 
 	}
 
-	.toolbarTop-Controls button,
-	#workspaceHeader button{
+
+	#toolbarTop .toolbarTop-Controls button,
+	#workspaceHeader button {
+
 		width: 30px;
 		height: 30px;
-		min-width:30px;
-		min-height:30px;
+
+		min-width: 30px;
+		min-height: 30px;
+
 		padding: 0;
+
+		margin: 0;
+
 	}
 
-	.toolbarTop-Controls button span,
-	#workspaceHeader button span{
-		display:none;
+
+	#toolbarTop .toolbarTop-Controls button span,
+	#workspaceHeader button span {
+
+		display: none;
+
 	}
 
-	.toolbarTop-Controls,
-	#workspaceHeader {
-		font-size:10px;
+
+	#toolbarTop .toolbarTop-Controls button i,
+	#workspaceHeader button i {
+
+		font-size: 12px;
+
 	}
 
-	.toolbarTop-Controls button i,
-	#workspaceHeader button i{
-		font-size:12px;
-	}
 
-	.toolbarTop-Controls select,
-	.toolbarTop-Controls input {
+	#toolbarTop .toolbarTop-Controls select,
+	#toolbarTop .toolbarTop-Controls input {
+
 		height: 30px;
-		min-height:30px;
+		min-height: 30px;
+
 	}
+
+	#workspaceHeader {
+
+		font-size: 10px;
+
+	}
+
 
 	/* ==========================
 	   Panel izquierdo
 	   ========================== */
 
 	#leftPanel{
-
 		padding:8px 6px;
+	}
 
+	#btnSaveAudio,
+	#btnRenderBuffer,
+	#btnPlayStopBuffer,
+	#btnCopyCanvas,
+	#btnDownloadCanvas{
+		width: 30px;
+		min-width:auto;
 	}
 
 }
