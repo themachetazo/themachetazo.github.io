@@ -1,3 +1,4 @@
+
 "use strict";
 
 // ============================================================
@@ -43,8 +44,7 @@ async function waitForLayout() {
 
 function resizeCanvas() {
 
-	const topMarginTitle = (showTitle.checked && title.trim() !== "") ? titleMargin : 12;
-
+	const topMarginTitle = showTitle.checked ? titleMargin : 12;
 	const isHorizontal = (rotation === 90 || rotation === 270);
 
 	let leftMargin = marginX;
@@ -56,10 +56,6 @@ function resizeCanvas() {
 
 		switch (rotation) {
 
-			//------------------------------------------------
-			// Vertical (cejuela arriba)
-			//------------------------------------------------
-
 			case 0:
 
 				leftMargin = 32;
@@ -67,20 +63,12 @@ function resizeCanvas() {
 
 				break;
 
-			//------------------------------------------------
-			// Horizontal (cejuela derecha)
-			//------------------------------------------------
-
-			case 270://90:
+			case 270:
 
 				leftMargin += 20;
 				bottomMargin = 32;
 
 				break;
-
-			//------------------------------------------------
-			// Vertical (cejuela abajo)
-			//------------------------------------------------
 
 			case 180:
 
@@ -89,11 +77,7 @@ function resizeCanvas() {
 
 				break;
 
-			//------------------------------------------------
-			// Horizontal (cejuela izquierda)
-			//------------------------------------------------
-
-			case 90://270:
+			case 90:
 
 				rightMargin += 20;
 				topMargin += 32;
@@ -118,17 +102,8 @@ function resizeCanvas() {
 
 	}
 
-	canvas.width = Math.round(
-		boardWidth +
-		leftMargin +
-		rightMargin
-	);
-
-	canvas.height = Math.round(
-		boardHeight +
-		topMargin +
-		bottomMargin
-	);
+	canvas.width = Math.round(boardWidth + leftMargin + rightMargin);
+	canvas.height = Math.round(boardHeight + topMargin + bottomMargin);
 
 	boardleft = leftMargin;
 	boardtop = topMargin;
@@ -307,7 +282,9 @@ function drawFretboard() {
 	// Título
 	//------------------------------------------------
 
-	if (showTitle.checked && title.trim() !== "") {
+	if (showTitle.checked){// && title.trim() !== "") {
+
+		let title = titleText.value.trim() || "Sin Título";
 
 		let fontSize = 24;
 
@@ -318,7 +295,12 @@ function drawFretboard() {
 
 		} while (ctx.measureText(title).width > boardWidth - 10 && fontSize > 10);
 
-		ctx.fillStyle = "#000";
+
+		if (fretboardStyle == "blank") {
+			ctx.fillStyle = "#000";
+		} else {
+			ctx.fillStyle = "#FFF";
+		}
 		ctx.textAlign = "left";
 		ctx.textBaseline = "middle";
 
@@ -340,6 +322,636 @@ function drawFretboard() {
 
 }
 
+function drawHorizontal() {
+
+	boardright = boardleft + boardWidth;
+	boardbottom = boardtop + boardHeight;
+
+	stringSpace = boardHeight / (stringCount - 1);
+	fretSpace = boardWidth / fretCount;
+
+	const reverseStrings = (rotation === 90);
+
+	//------------------------------------------------
+	// Trastes
+	//------------------------------------------------
+
+	for (let fret = 1; fret <= fretCount; fret++) {
+
+		const x = boardleft + getFretPosition(fret);
+
+		const fretWidth = Math.max(
+			2,
+			stringSpace * 0.10
+		);
+
+		const margin = fretWidth / 2;
+
+		if (fretboardStyle === "blank") {
+
+			drawFret(
+				x,
+				boardtop,
+				x,
+				boardbottom,
+				fretWidth
+			);
+
+		} else {
+
+			//------------------------------------------------
+			// Traste metálico realista
+			//------------------------------------------------
+
+			const y1 = imageTop + margin;
+			const y2 = imageTop + imageHeight - margin;
+
+			ctx.save();
+
+			// Sombra exterior
+
+			ctx.beginPath();
+			ctx.moveTo(x - fretWidth * 0.65, y1);
+			ctx.lineTo(x - fretWidth * 0.65, y2);
+
+			ctx.lineWidth = fretWidth * 1.8;
+			ctx.strokeStyle = "rgba(45,45,45,0.45)";
+			ctx.stroke();
+
+
+			// Cuerpo metálico con degradado
+
+			const gradient = ctx.createLinearGradient(
+				x - fretWidth,
+				0,
+				x + fretWidth,
+				0
+			);
+
+			gradient.addColorStop(0, "#686868");
+			gradient.addColorStop(0.18, "#b8b8b8");
+			gradient.addColorStop(0.38, "#eeeeee");
+			gradient.addColorStop(0.55, "#cfcfcf");
+			gradient.addColorStop(0.78, "#8c8c8c");
+			gradient.addColorStop(1, "#555555");
+
+			ctx.beginPath();
+			ctx.moveTo(x, y1);
+			ctx.lineTo(x, y2);
+
+			ctx.lineWidth = fretWidth;
+			ctx.strokeStyle = gradient;
+			ctx.stroke();
+
+
+			// Pequeño brillo central
+
+			ctx.beginPath();
+			ctx.moveTo(x - fretWidth * 0.15, y1);
+			ctx.lineTo(x - fretWidth * 0.15, y2);
+
+			ctx.lineWidth = Math.max(
+				0.35,
+				fretWidth * 0.16
+			);
+
+			ctx.strokeStyle = "rgba(255,255,255,0.55)";
+			ctx.stroke();
+
+
+			// Sombra fina en el lado derecho
+
+			ctx.beginPath();
+			ctx.moveTo(x + fretWidth * 0.30, y1);
+			ctx.lineTo(x + fretWidth * 0.30, y2);
+
+			ctx.lineWidth = Math.max(
+				0.35,
+				fretWidth * 0.12
+			);
+
+			ctx.strokeStyle = "rgba(30,30,30,0.45)";
+			ctx.stroke();
+
+			ctx.restore();
+
+		}
+
+	}
+
+	if (displayMode) {
+
+		drawInlays(
+			boardleft,
+			boardtop,
+			stringSpace
+		);
+
+	}
+
+	//------------------------------------------------
+	// Cuerdas
+	//------------------------------------------------
+
+	const stringBleed = Math.max(
+		3,
+		stringSpace * 0.10
+	);
+
+	for (let s = 0; s < stringCount; s++) {
+
+		const index =
+			reverseStrings
+				? stringCount - 1 - s
+				: s;
+
+		const y = boardtop + index * stringSpace;
+
+		let stringWidth;
+
+		if (s < 3) {
+
+			stringWidth = 1 + s * 0.2;
+
+		} else {
+
+			stringWidth = 1.8 + (s - 3) * 0.45;
+
+		}
+
+		if (fretboardStyle === "blank") {
+
+			ctx.beginPath();
+			ctx.moveTo(boardleft, y);
+			ctx.lineTo(boardright, y);
+			ctx.lineWidth = 1;
+			ctx.strokeStyle = "#000";
+			ctx.stroke();
+
+		} else {
+
+			//------------------------------------------------
+			// Cuerda metálica realista
+			//------------------------------------------------
+
+			const x1 = boardleft - stringBleed;
+			const x2 = boardright;
+
+			ctx.save();
+
+			// Sombra inferior
+
+			ctx.beginPath();
+			ctx.moveTo(x1, y + stringWidth * 0.30);
+			ctx.lineTo(x2, y + stringWidth * 0.30);
+
+			ctx.lineWidth = stringWidth * 1.15;
+			ctx.strokeStyle = "rgba(35,35,35,0.45)";
+			ctx.stroke();
+
+
+			// Cuerpo metálico
+
+			const gradient = ctx.createLinearGradient(
+				0,
+				y - stringWidth,
+				0,
+				y + stringWidth
+			);
+
+			gradient.addColorStop(0, "#555555");
+			gradient.addColorStop(0.22, "#a8a8a8");
+			gradient.addColorStop(0.45, "#f0f0f0");
+			gradient.addColorStop(0.58, "#c8c8c8");
+			gradient.addColorStop(0.80, "#777777");
+			gradient.addColorStop(1, "#404040");
+
+			ctx.beginPath();
+			ctx.moveTo(x1, y);
+			ctx.lineTo(x2, y);
+
+			ctx.lineWidth = stringWidth;
+			ctx.strokeStyle = gradient;
+			ctx.stroke();
+
+
+			// Brillo superior
+
+			ctx.beginPath();
+			ctx.moveTo(x1, y - stringWidth * 0.22);
+			ctx.lineTo(x2, y - stringWidth * 0.22);
+
+			ctx.lineWidth = Math.max(
+				0.25,
+				stringWidth * 0.16
+			);
+
+			ctx.strokeStyle = "rgba(255,255,255,0.65)";
+			ctx.stroke();
+
+
+			// Línea oscura central muy sutil
+
+			ctx.beginPath();
+			ctx.moveTo(x1, y + stringWidth * 0.12);
+			ctx.lineTo(x2, y + stringWidth * 0.12);
+
+			ctx.lineWidth = Math.max(
+				0.2,
+				stringWidth * 0.10
+			);
+
+			ctx.strokeStyle = "rgba(40,40,40,0.35)";
+			ctx.stroke();
+
+			ctx.restore();
+
+		}
+
+	}
+
+	//------------------------------------------------
+	// Cejuela
+	//------------------------------------------------
+
+	if (!displayMode) {
+
+		const fretWidth = Math.max(
+			2,
+			stringSpace * 0.10
+		);
+
+		const nutX =
+			rotation === 270
+				? boardleft
+				: boardright;
+
+		drawFret(
+			nutX,
+			boardtop,
+			nutX,
+			boardbottom,
+			fretWidth
+		);
+
+	} else {
+
+		if (fretboardStyle === "blank") {
+
+			const nutWidth = 3;
+			const gap = 5;
+
+			ctx.lineWidth = nutWidth;
+			ctx.strokeStyle = getNutColor();
+
+			const x1 =
+				rotation === 270
+					? boardleft
+					: boardright;
+
+			const x2 =
+				rotation === 270
+					? boardleft + gap
+					: boardright - gap;
+
+			ctx.beginPath();
+			ctx.moveTo(x1, boardtop);
+			ctx.lineTo(x1, boardbottom);
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.moveTo(x2, boardtop);
+			ctx.lineTo(x2, boardbottom);
+			ctx.stroke();
+
+		} else {
+
+			drawRealisticNut();
+
+		}
+
+	}
+
+}
+
+function drawVertical() {
+
+	boardright = boardleft + boardWidth;
+	boardbottom = boardtop + boardHeight;
+
+	stringSpace = boardWidth / (stringCount - 1);
+	fretSpace = boardHeight / fretCount;
+
+	const reverseStrings = (rotation === 180);
+
+	//------------------------------------------------
+	// Trastes
+	//------------------------------------------------
+
+	for (let fret = 1; fret <= fretCount; fret++) {
+
+		const y = boardtop + getFretPosition(fret);
+
+		const fretWidth = Math.max(
+			2,
+			stringSpace * 0.10
+		);
+
+		const margin = fretWidth / 2;
+
+		if (fretboardStyle === "blank") {
+
+			drawFret(
+				boardleft,
+				y,
+				boardright,
+				y,
+				fretWidth
+			);
+
+		} else {
+
+			//------------------------------------------------
+			// Traste metálico realista
+			//------------------------------------------------
+
+			const x1 = imageLeft + margin;
+			const x2 = imageLeft + imageWidth - margin;
+
+			ctx.save();
+
+			// Sombra exterior
+
+			ctx.beginPath();
+			ctx.moveTo(x1, y - fretWidth * 0.65);
+			ctx.lineTo(x2, y - fretWidth * 0.65);
+
+			ctx.lineWidth = fretWidth * 1.8;
+			ctx.strokeStyle = "rgba(45,45,45,0.45)";
+			ctx.stroke();
+
+
+			// Cuerpo metálico con degradado
+
+			const gradient = ctx.createLinearGradient(
+				0,
+				y - fretWidth,
+				0,
+				y + fretWidth
+			);
+
+			gradient.addColorStop(0, "#555555");
+			gradient.addColorStop(0.18, "#8c8c8c");
+			gradient.addColorStop(0.38, "#d0d0d0");
+			gradient.addColorStop(0.52, "#f0f0f0");
+			gradient.addColorStop(0.72, "#b0b0b0");
+			gradient.addColorStop(1, "#5b5b5b");
+
+			ctx.beginPath();
+			ctx.moveTo(x1, y);
+			ctx.lineTo(x2, y);
+
+			ctx.lineWidth = fretWidth;
+			ctx.strokeStyle = gradient;
+			ctx.stroke();
+
+
+			// Brillo superior
+
+			ctx.beginPath();
+			ctx.moveTo(x1, y - fretWidth * 0.15);
+			ctx.lineTo(x2, y - fretWidth * 0.15);
+
+			ctx.lineWidth = Math.max(
+				0.35,
+				fretWidth * 0.16
+			);
+
+			ctx.strokeStyle = "rgba(255,255,255,0.55)";
+			ctx.stroke();
+
+
+			// Sombra inferior
+
+			ctx.beginPath();
+			ctx.moveTo(x1, y + fretWidth * 0.30);
+			ctx.lineTo(x2, y + fretWidth * 0.30);
+
+			ctx.lineWidth = Math.max(
+				0.35,
+				fretWidth * 0.12
+			);
+
+			ctx.strokeStyle = "rgba(30,30,30,0.45)";
+			ctx.stroke();
+
+			ctx.restore();
+
+		}
+
+	}
+
+	if (displayMode) {
+
+		drawInlays(
+			boardleft,
+			boardtop,
+			stringSpace
+		);
+
+	}
+
+	//------------------------------------------------
+	// Cuerdas
+	//------------------------------------------------
+
+	const stringBleed = Math.max(
+		3,
+		stringSpace * 0.10
+	);
+
+	for (let s = 0; s < stringCount; s++) {
+
+		const index =
+			reverseStrings
+				? s
+				: stringCount - 1 - s;
+
+		const x = boardleft + index * stringSpace;
+
+		let stringWidth;
+
+		if (s < 3) {
+
+			stringWidth = 1 + s * 0.2;
+
+		} else {
+
+			stringWidth = 1.8 + (s - 3) * 0.45;
+
+		}
+
+		if (fretboardStyle === "blank") {
+
+			ctx.beginPath();
+			ctx.moveTo(x, boardtop);
+			ctx.lineTo(x, boardbottom);
+			ctx.lineWidth = 1;
+			ctx.strokeStyle = "#000";
+			ctx.stroke();
+
+		} else {
+
+			//------------------------------------------------
+			// Cuerda metálica realista
+			//------------------------------------------------
+
+			const y1 = boardtop - stringBleed;
+			const y2 = boardbottom;
+
+			ctx.save();
+
+			// Sombra lateral
+
+			ctx.beginPath();
+			ctx.moveTo(x + stringWidth * 0.30, y1);
+			ctx.lineTo(x + stringWidth * 0.30, y2);
+
+			ctx.lineWidth = stringWidth * 1.15;
+			ctx.strokeStyle = "rgba(35,35,35,0.45)";
+			ctx.stroke();
+
+
+			// Cuerpo metálico
+
+			const gradient = ctx.createLinearGradient(
+				x - stringWidth,
+				0,
+				x + stringWidth,
+				0
+			);
+
+			gradient.addColorStop(0, "#444444");
+			gradient.addColorStop(0.20, "#8c8c8c");
+			gradient.addColorStop(0.42, "#ededed");
+			gradient.addColorStop(0.55, "#c8c8c8");
+			gradient.addColorStop(0.80, "#737373");
+			gradient.addColorStop(1, "#3e3e3e");
+
+			ctx.beginPath();
+			ctx.moveTo(x, y1);
+			ctx.lineTo(x, y2);
+
+			ctx.lineWidth = stringWidth;
+			ctx.strokeStyle = gradient;
+			ctx.stroke();
+
+
+			// Brillo lateral
+
+			ctx.beginPath();
+			ctx.moveTo(x - stringWidth * 0.22, y1);
+			ctx.lineTo(x - stringWidth * 0.22, y2);
+
+			ctx.lineWidth = Math.max(
+				0.25,
+				stringWidth * 0.16
+			);
+
+			ctx.strokeStyle = "rgba(255,255,255,0.65)";
+			ctx.stroke();
+
+
+			// Sombra central sutil
+
+			ctx.beginPath();
+			ctx.moveTo(x + stringWidth * 0.12, y1);
+			ctx.lineTo(x + stringWidth * 0.12, y2);
+
+			ctx.lineWidth = Math.max(
+				0.2,
+				stringWidth * 0.10
+			);
+
+			ctx.strokeStyle = "rgba(40,40,40,0.35)";
+			ctx.stroke();
+
+			ctx.restore();
+
+		}
+
+	}
+
+	//------------------------------------------------
+	// Cejuela
+	//------------------------------------------------
+
+	if (!displayMode) {
+
+		const fretWidth = Math.max(
+			2,
+			stringSpace * 0.10
+		);
+
+		const nutY =
+			rotation === 0
+				? boardtop
+				: boardbottom;
+
+		drawFret(
+			boardleft,
+			nutY,
+			boardright,
+			nutY,
+			fretWidth
+		);
+
+	} else {
+
+		if (fretboardStyle === "blank") {
+
+			const nutWidth = 3;
+			const gap = 5;
+
+			ctx.lineWidth = nutWidth;
+			ctx.strokeStyle = getNutColor();
+
+			const y1 =
+				rotation === 0
+					? boardtop
+					: boardbottom;
+
+			const y2 =
+				rotation === 0
+					? boardtop + gap
+					: boardbottom - gap;
+
+			ctx.beginPath();
+			ctx.moveTo(boardleft, y1);
+			ctx.lineTo(boardright, y1);
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.moveTo(boardleft, y2);
+			ctx.lineTo(boardright, y2);
+			ctx.stroke();
+
+		} else {
+
+			drawRealisticNut();
+
+		}
+
+	}
+
+}
+
+
+
+
+
+
+/*
 function drawHorizontal() {
 
 	boardright = boardleft + boardWidth;
@@ -675,6 +1287,7 @@ function drawVertical() {
 	}
 
 }
+*/
 
 function roundedRectPath(x, y, width, height, radius) {
 
@@ -1001,7 +1614,11 @@ function drawFretNumbers() {
 
 	ctx.save();
 
-	ctx.fillStyle = "#000";
+	if (fretboardStyle == "blank") {
+		ctx.fillStyle = "#000";
+	} else {
+		ctx.fillStyle = "#FFF";
+	}
 	ctx.font = "12px Segoe UI";
 	ctx.textBaseline = "middle";
 
@@ -1063,7 +1680,11 @@ function drawStringNumbers() {
 
 	ctx.save();
 
-	ctx.fillStyle = "#000";
+	if (fretboardStyle == "blank") {
+		ctx.fillStyle = "#000";
+	} else {
+		ctx.fillStyle = "#FFF";
+	}
 	ctx.font = "12px Segoe UI";
 	ctx.textAlign = "center";
 	ctx.textBaseline = "middle";
@@ -1530,7 +2151,7 @@ function getStringColor() {
 function getInlayColor() {
 
 	if (fretboardStyle === "rosewood") {
-		return "rgba(245, 245, 245, 0.75)";
+		return "rgba(245, 245, 245, 0.5)";
 	}
 
 	return "rgba(0, 0, 0, 0.40)";

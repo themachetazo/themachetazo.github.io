@@ -752,7 +752,7 @@ async function vexTab_render() {
 
     if (chkScoreTitle.checked){
 
-        vexTab_createHeaderFooter(svg,scoreTitle,`${year} - ${scoreFooter}`);
+        vexTab_createHeaderFooter(svg,titleText.value.trim() || "Sin Título",`${year} - ${scoreFooter}`);
 
     }
 
@@ -1061,21 +1061,52 @@ async function svg_scoreToPNG(canvas, fileName = "partitura.png") {
 //
 ////////////////////////////////////////////////////////////
 
-
 async function scoreRender() {
 
-    const vexTabText = vexTab_generateVexTab(scoreArray,cmbTonalidad.value,cmbBar.value,cmbFigure.value,projectType);
+	const vexTabText = vexTab_generateVexTab(scoreArray,cmbTonalidad.value,cmbBar.value,cmbFigure.value,projectType);
 
-    vexTab_container.classList.remove("layout-left","layout-center");
-    vexTab_container.classList.add(cmbScoreLayout.value === "vertical" ? "layout-center" : "layout-left");
+	vexTab_container.classList.remove("layout-left","layout-center");
 
-    vexTab_container.innerHTML = vexTabText;
+	vexTab_container.classList.add(cmbScoreLayout.value === "vertical" ? "layout-center" : "layout-left");
 
-    // Volver a renderizar la partitura
-    await window.vextabStart(vexTab_container);
+	vexTab_container.innerHTML = vexTabText;
 
-    // Esperar a que termine y limpiar el SVG
-    await vexTab_render();
+	// Volver a renderizar la partitura
+
+	await window.vextabStart(vexTab_container);
+
+	// Esperar a que termine y limpiar el SVG
+
+	await vexTab_render();
+
+	//------------------------------------------------
+	// Ajustar alineación cuando la partitura desborda
+	//------------------------------------------------
+
+	if (cmbScoreLayout.value === "vertical" && vexTab_container) {
+
+		const svg = vexTab_container.querySelector("svg");
+
+		if (svg) {
+
+			const containerWidth = vexTab_container.clientWidth;
+			const svgWidth = svg.getBoundingClientRect().width;
+
+			if (svgWidth > containerWidth) {
+
+				vexTab_container.classList.remove("layout-center");
+				vexTab_container.classList.add("layout-left");
+
+			} else {
+
+				vexTab_container.classList.remove("layout-left");
+				vexTab_container.classList.add("layout-center");
+
+			}
+
+		}
+
+	}
 
 }
 
@@ -1167,20 +1198,85 @@ function scorePaint_getScoreDisplayMode() {
 // GRUPO PRINCIPAL
 
 function scorePaint_getScoreGroup() {
+
     if (!scoreSvg) {
         return null;
     }
 
-    const groups = [...scoreSvg.querySelectorAll("g")];
+    const mode =
+        scorePaint_getScoreDisplayMode();
 
-    const systemGroup = groups.find(group => {
-        const hasStaff = group.querySelector(".vf-stave");
-        const hasNotes = group.querySelector(".vf-stavenote, .vf-tabnote");
+    const elements = [];
 
-        return hasStaff && hasNotes;
-    });
+    //------------------------------------------------
+    // Pentagrama
+    //------------------------------------------------
 
-    return systemGroup || null;
+    if (mode === "all" || mode === "notation") {
+
+        elements.push(
+            ...scoreSvg.querySelectorAll(".vf-stave")
+        );
+
+        elements.push(
+            ...scoreSvg.querySelectorAll(".vf-stavenote")
+        );
+
+    }
+
+    //------------------------------------------------
+    // Tablatura
+    //------------------------------------------------
+
+    if (mode === "all" || mode === "tablature") {
+
+        elements.push(
+            ...scoreSvg.querySelectorAll(".vf-tabnote")
+        );
+
+        elements.push(
+            ...scorePaint_getTabRestTexts(scoreSvg)
+        );
+
+    }
+
+    if (elements.length === 0) {
+        return null;
+    }
+
+    //------------------------------------------------
+    // Buscar ancestro común
+    //------------------------------------------------
+
+    let commonParent =
+        elements[0].parentElement;
+
+    while (
+        commonParent &&
+        commonParent !== scoreSvg
+    ) {
+
+        const containsAll =
+            elements.every(element =>
+                commonParent.contains(element)
+            );
+
+        if (containsAll) {
+            return commonParent;
+        }
+
+        commonParent =
+            commonParent.parentElement;
+
+    }
+
+    //------------------------------------------------
+    // Si no hay un grupo común,
+    // usamos el propio SVG
+    //------------------------------------------------
+
+    return scoreSvg;
+
 }
 
 // OBTENER SISTEMAS REALES
@@ -1938,77 +2034,205 @@ function scorePaint_clearAllHighlights(svg) {
 
 function scorePaint_autoScroll(event) {
 
-    const container = vexTab_container;
+	if (!chkAutoScroll.checked) {
+		return;
+	}
 
-    if (!container || !scoreSvg)
-        return;
+	const container = vexTab_container;
 
-    //------------------------------------------------
-    // Horizontal
-    //------------------------------------------------
+	if (!container || !scoreSvg)
+		return;
 
-    if (cmbScoreLayout.value === "horizontal") {
+	const svgRect = scoreSvg.getBoundingClientRect();
+	const viewBox = scoreSvg.viewBox.baseVal;
 
-        const svgRect = scoreSvg.getBoundingClientRect();
-        const viewBox = scoreSvg.viewBox.baseVal;
-        const scale = svgRect.width / viewBox.width;
+	const scaleX = svgRect.width / viewBox.width;
+	const scaleY = svgRect.height / viewBox.height;
 
-        const x = event.x * scale;
-        const trigger = container.scrollLeft + container.clientWidth * 0.70;
+	//------------------------------------------------
+	// Posición del evento dentro del SVG
+	//------------------------------------------------
 
-        if (x > trigger) {
+	const eventX = event.x * scaleX;
+	const eventY = event.y * scaleY;
 
-            const margin = container.clientWidth * 0.35;
+	//------------------------------------------------
+	// Posición del SVG dentro del contenedor
+	//------------------------------------------------
 
-            let target = x - margin;
+	const containerRect = container.getBoundingClientRect();
 
-            const maxScroll = container.scrollWidth - container.clientWidth;
+	const svgOffsetX =
+		svgRect.left -
+		containerRect.left +
+		container.scrollLeft;
 
-            target = Math.max(
-                0,
-                Math.min(target, maxScroll)
-            );
+	const absoluteX =
+		svgOffsetX +
+		eventX;
 
-            container.scrollTo({
-                left: target,
-                behavior: "smooth"
-            });
+	//------------------------------------------------
+	// Scroll horizontal
+	//------------------------------------------------
 
-        }
+	const leftTrigger =
+		container.scrollLeft +
+		container.clientWidth * 0.15;
 
-    }
+	const rightTrigger =
+		container.scrollLeft +
+		container.clientWidth * 0.70;
 
-    //------------------------------------------------
-    // Vertical
-    //------------------------------------------------
+	let targetX =
+		container.scrollLeft;
 
-    else {
+	if (absoluteX > rightTrigger) {
 
-        if (event.systemIndex === scoreCurrentSystem)
-            return;
+		const margin =
+			container.clientWidth * 0.35;
 
-        scoreCurrentSystem = event.systemIndex;
+		targetX =
+			absoluteX -
+			margin;
 
-        const svgRect = scoreSvg.getBoundingClientRect();
-        const viewBox = scoreSvg.viewBox.baseVal;
-        const scale = svgRect.height / viewBox.height;
+	} else if (absoluteX < leftTrigger) {
 
-        const margin = container.clientHeight * 0.15;
+		const margin =
+			container.clientWidth * 0.15;
 
-        let target = event.y * scale - margin;
+		targetX =
+			absoluteX -
+			margin;
 
-        const maxScroll = container.scrollHeight - container.clientHeight;
+	}
 
-        target = Math.max(
-            0,
-            Math.min(target, maxScroll)
-        );
+	//------------------------------------------------
+	// Modo horizontal
+	//------------------------------------------------
 
-        container.scrollTo({
-            top: target,
-            behavior: "smooth"
-        });
+	if (cmbScoreLayout.value === "horizontal") {
 
-    }
+		const maxScrollX =
+			container.scrollWidth -
+			container.clientWidth;
+
+		targetX =
+			Math.max(
+				0,
+				Math.min(targetX,maxScrollX)
+			);
+
+		if (targetX !== container.scrollLeft) {
+
+			container.scrollTo({
+				left:targetX,
+				behavior:"smooth"
+			});
+
+		}
+
+		return;
+
+	}
+
+	//------------------------------------------------
+	// Modo vertical
+	//
+	// El scroll vertical pertenece al BODY
+	//------------------------------------------------
+
+	const eventDocumentY =
+		svgRect.top +
+		eventY +
+		window.scrollY;
+
+	const topTrigger =
+		window.scrollY +
+		window.innerHeight * 0.15;
+
+	const bottomTrigger =
+		window.scrollY +
+		window.innerHeight * 0.75;
+
+	let targetY =
+		window.scrollY;
+
+	if (eventDocumentY > bottomTrigger) {
+
+		const margin =
+			window.innerHeight * 0.15;
+
+		targetY =
+			eventDocumentY -
+			margin;
+
+	} else if (eventDocumentY < topTrigger) {
+
+		const margin =
+			window.innerHeight * 0.15;
+
+		targetY =
+			eventDocumentY -
+			margin;
+
+	}
+
+	//------------------------------------------------
+	// Limitar scroll horizontal
+	//------------------------------------------------
+
+	const maxScrollX =
+		container.scrollWidth -
+		container.clientWidth;
+
+	targetX =
+		Math.max(
+			0,
+			Math.min(targetX,maxScrollX)
+		);
+
+	//------------------------------------------------
+	// Limitar scroll vertical del BODY
+	//------------------------------------------------
+
+	const maxScrollY =
+		document.documentElement.scrollHeight -
+		window.innerHeight;
+
+	targetY =
+		Math.max(
+			0,
+			Math.min(targetY,maxScrollY)
+		);
+
+	//------------------------------------------------
+	// Aplicar scroll
+	//------------------------------------------------
+
+	if (
+		targetX !== container.scrollLeft ||
+		targetY !== window.scrollY
+	) {
+
+		window.scrollTo({
+			left:targetX,
+			top:targetY,
+			behavior:"smooth"
+		});
+
+	}
+
+	//------------------------------------------------
+	// El scroll horizontal pertenece al contenedor
+	//------------------------------------------------
+
+	if (targetX !== container.scrollLeft) {
+
+		container.scrollTo({
+			left:targetX,
+			behavior:"smooth"
+		});
+
+	}
 
 }

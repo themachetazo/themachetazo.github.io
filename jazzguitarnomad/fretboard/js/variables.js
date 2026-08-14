@@ -6,7 +6,10 @@
 ==================================================*/
 
 const params = new URLSearchParams(window.location.search);
-const isAdmin = params.has("admin");
+
+const user = params.get("user");
+
+const isAdmin = user === "admin";
 
 if (params.has("project")) {
 	currentProjectId = params.get("project");
@@ -51,6 +54,7 @@ const btnFretboard = document.getElementById("btnFretboard");
 const btnPlayer = document.getElementById("btnPlayer");
 const btnScore = document.getElementById("btnScore");
 const btnMetronome = document.getElementById("btnMetronome");
+const btnAudio = document.getElementById("btnAudio");
 
 const btnMenuSelector = document.getElementById("btnMenuSelector");
 const menuPopup = document.getElementById("menuPopup");
@@ -91,6 +95,7 @@ const topProject = document.getElementById("topProject");
 const topCategory = document.getElementById("topCategory");
 const topLibrary = document.getElementById("topLibrary");
 const topTitle = document.getElementById("topTitle");
+const topTitleViewMode = document.getElementById("topTitleViewMode");
 const topShare = document.getElementById("topShare");
 const topEdit = document.getElementById("topEdit");
 const topUndo = document.getElementById("topUndo");
@@ -106,6 +111,11 @@ const topMetronome = document.getElementById("topMetronome");
 const topTempo = document.getElementById("topTempo");
 const topForm = document.getElementById("topForm");
 const topTimeSignature = document.getElementById("topTimeSignature");
+const topBuffer = document.getElementById("topBuffer");
+const topAudio = document.getElementById("topAudio");
+const topScoreDownload = document.getElementById("topScoreDownload");
+const topChords = document.getElementById("topChords");
+
 
 /*==================================================
 	REFERENCIAS DOM: BARRA DE HERRAMIENTAS
@@ -151,7 +161,6 @@ let xmlProjects = "projects/fretboard-projects.xml";
 btnToggleLibrary.title = "Server: " + xmlProjects;
 
 let mode = "note";
-let title = "";
 
 let displayMode = true;
 
@@ -174,7 +183,7 @@ const VERTICAL_WIDTH = HORIZONTAL_HEIGHT;
 const VERTICAL_HEIGHT = HORIZONTAL_WIDTH;
 
 const MIN_NECK_LENGTH = 420;
-const MAX_NECK_LENGTH = 1200;
+const MAX_NECK_LENGTH = 1320;
 
 const PIXELS_PER_FRET = 55;
 
@@ -258,11 +267,6 @@ const neckImage = new Image();
 	REFERENCIAS DOM: PLAYER y PARTITURA
 ==================================================*/
 
-const topScoreDownload = document.getElementById("topScoreDownload");
-const topChords = document.getElementById("topChords");
-const topAudio = document.getElementById("topAudio");
-const topBuffer = document.getElementById("topBuffer");
-
 const btnLessTempo = document.getElementById("btnLessTempo");
 const btnMoreTempo = document.getElementById("btnMoreTempo");
 const numTempo = document.getElementById("numTempo");
@@ -315,6 +319,8 @@ const metronome_volumen_2 = document.getElementById("metronome_volumen_2");
 const metronome_on = document.getElementById("metronome_on");
 const metronome_subBeatSound = document.getElementById("metronome_subBeatSound");
 
+const chkAutoScroll = document.getElementById("chkAutoScroll");
+
 const vexTab_container = document.querySelector(".vextab-auto");
 
 const EVENT_X_TOLERANCE = 12;
@@ -338,7 +344,6 @@ const cmbScoreLayout = document.getElementById("cmbScoreLayout");
 const sliderScoreStaveDistance = document.getElementById("sliderScoreStaveDistance");
 const sliderScoreStaveMargin = document.getElementById("sliderScoreStaveMargin");
 const chkScoreTitle = document.getElementById("chkScoreTitle");
-const chkScoreVisible = document.getElementById("chkScoreVisible");
 const btnScoreVisible = document.getElementById("btnScoreVisible");
 
 let scoreScale = "auto";
@@ -347,7 +352,6 @@ let isFretboardVisible = true;
 let isScoreVisible = true;
 
 let scoreArray = [];
-let scoreTitle = "Sin Título";
 let scoreFooter = "www.jazzguitarnomad.com";
 
 let projectType = "sequence";
