@@ -16,10 +16,10 @@ window.addEventListener("load", async () => {
 
 			btnAudio.style.display = "none";
 
-			titleText.style.display = "none";//.disabled = true;
-			topTitle.style.display = "none";
-
 			if (user === null) {
+
+				titleText.style.display = "none";
+				topTitle.style.display = "none";
 
 				btnEdicion.style.display = "none";
 
@@ -31,6 +31,8 @@ window.addEventListener("load", async () => {
 				setMenu("fretboard");
 
 			}else{
+
+				topTitleViewMode.style.display = "none";
 
 				btnSaveProject.style.display = "none";
 				btnDelProject.style.display = "none";
