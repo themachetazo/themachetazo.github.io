@@ -28,7 +28,6 @@
 
 			<div id="brand">
 				<img id="brandLogo" src="img/logo.png" alt="Jazz Guitar Nomad">
-
 				<div id="brandName">
 					<span class="brandTitle">JAZZ GUITAR NOMAD</span>
 					<span class="brandSubtitle">Fretboard Builder</span>
@@ -40,8 +39,9 @@
 				<button id="btnEdicion" class="menuButton active"><i class="fa-solid fa-pen"></i>ESCRITURA</button>
 				<button id="btnFretboard" class="menuButton"><i class="fa-solid fa-pencil-ruler"></i>MÁSTIL</button>
 				<button id="btnScore" class="menuButton"><i class="fa-solid fa-file-lines"></i>PARTITURA</button>
-				<button id="btnPlayer" class="menuButton"><i class="fa-solid fa-music"></i>PLAYER</button>
+				<button id="btnPlayer" class="menuButton"><i class="fa-solid fa-radio"></i>PLAYER</button>
 				<button id="btnMetronome" class="menuButton"><i class="fa-solid fa-stopwatch"></i>METRÓNOMO</button>
+				<button id="btnAudio" class="menuButton"><i class="fa-solid fa-file-audio"></i>AUDIO</button>
 			</nav>
 
 			<div id="topBarActions">
@@ -59,8 +59,9 @@
 					<button data-menu="edit"><i class="fa-solid fa-pen"></i>ESCRITURA</button>
 					<button data-menu="fretboard"><i class="fa-solid fa-pencil-ruler"></i>MÁSTIL</button>
 					<button data-menu="score"><i class="fa-solid fa-file-lines"></i>PARTITURA</button>
-					<button data-menu="player"><i class="fa-solid fa-music"></i>PLAYER</button>
+					<button data-menu="player"><i class="fa-solid fa-radio"></i>PLAYER</button>
 					<button data-menu="metronome"><i class="fa-solid fa-stopwatch"></i>METRÓNOMO</button>
+					<button data-menu="audio"><i class="fa-solid fa-file-audio"></i>AUDIO</button>
 				</div>
 
 				<button id="btnToggleTopControls" type="button" class="topBarSelector" title="Mostrar controles" aria-label="Mostrar controles" aria-expanded="false">
@@ -112,13 +113,38 @@
 					<div class="toolbarTop-Controls" id="topTitle">
 						<span>TÍTULO</span>
 						<div class="toolRow">
-							<input id="titleText" type="text" maxlength="60" placeholder="Título">
+							<input id="titleText" type="text" maxlength="60" placeholder="Sin Título">
 						</div>
-						<label class="lblToggle" title="Mostrar título">
-							<span class="lblToggleText">Mostrar</span>
-							<input id="showTitle" type="checkbox">
-							<span class="lblToggleSpan"></span>
-						</label>
+						<div class="toolRow">
+							<label class="lblToggle" title="Mostrar título en mástil">
+								<span class="lblToggleText">Mástil</span>
+								<input id="showTitle" type="checkbox">
+								<span class="lblToggleSpan"></span>
+							</label>
+							<label class="lblToggle" title="Mostrar Encabezado/Pie de partitura">
+								<span class="lblToggleText">Partitura</span>
+								<input id="chkScoreTitle" type="checkbox">
+								<span class="lblToggleSpan"></span>
+							</label>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topTitleViewMode">
+						<span>TÍTULO</span>
+						<div class="toolRow">
+							<label class="lblToggle" title="Mostrar título en mástil">
+								<span class="lblToggleText">Mástil</span>
+								<input id="showTitleViewMode" type="checkbox">
+								<span class="lblToggleSpan"></span>
+							</label>
+						</div>
+						<div class="toolRow">
+							<label class="lblToggle" title="Mostrar Encabezado/Pie de partitura">
+								<span class="lblToggleText">Partitura</span>
+								<input id="chkScoreTitleViewMode" type="checkbox">
+								<span class="lblToggleSpan"></span>
+							</label>
+						</div>
 					</div>
 
 					<div class="toolbarTop-Controls" id="topShare">
@@ -130,7 +156,7 @@
 					</div>
 
 					<div class="toolbarTop-Controls" id="topFretboardDownload">
-						<span>IMAGEN</span>
+						<span>MÁSTIL</span>
 						<div class="toolRow">
 							<button id="btnCopyCanvas" title="Copiar imagen al portapapeles"><i class="fa-solid fa-copy"></i><span>Copiar</span></button>
 						</div>
@@ -138,6 +164,14 @@
 							<button id="btnDownloadCanvas" title="Guardar imagen"><i class="fa-solid fa-download"></i><span>Descargar</span></button>
 						</div>
 					</div>
+
+					<div class="toolbarTop-Controls" id="topScoreDownload">
+						<span>PARTITURA</span>
+						<div class="toolRow">
+							<button id="btnScoreDownloadImage" title="Descargar PNG y SVG"><i class="fa-solid fa-image"></i><span>PNG/SVG</span></button>
+						</div>
+					</div>
+
 
 					<!-- PANEL EDITAR -->
 
@@ -289,7 +323,7 @@
 							<button id="btnMoreNumberFrets">+</button>
 						</div>
 						<label class="lblToggle" title="Mostrar números">
-							<span class="lblToggleText">Mostrar</span>
+							<span class="lblToggleText">Números</span>
 							<input id="showNumber" type="checkbox">
 							<span class="lblToggleSpan"></span>
 						</label>
@@ -309,6 +343,11 @@
 								<option value="piano" selected>Piano</option>
 							</select>
 						</div>
+						<label class="lblToggle" title="Auto Scroll">
+							<span class="lblToggleText">Auto Scroll</span>
+							<input id="chkAutoScroll" type="checkbox">
+							<span class="lblToggleSpan"></span>
+						</label>
 					</div>
 
 					<div class="toolbarTop-Controls" id="topArticulation">
@@ -385,6 +424,17 @@
 						</div>
 					</div>
 
+					<div class="toolbarTop-Controls" id="topReset">
+						<span>RESET</span>
+						<div class="toolRow">
+							<button id="btnResetScorePalyer" title="Reset"><i class="fa-solid fa-clock-rotate-left"></i><span>Reset</span></button>
+						</div>
+					</div>
+
+
+
+					<!-- PANEL AUDIO -->
+
 					<div class="toolbarTop-Controls" id="topBuffer">
 						<span>BUFFER</span>
 						<div class="toolRow">
@@ -405,13 +455,6 @@
 						</div>
 						<div class="toolRow">
 							<button id="btnSaveAudio" title="Guardar Audio"><i class="fa-solid fa-floppy-disk"></i><span>Guardar</span></button>
-						</div>
-					</div>
-
-					<div class="toolbarTop-Controls" id="topReset">
-						<span>RESET</span>
-						<div class="toolRow">
-							<button id="btnResetScorePalyer" title="Reset"><i class="fa-solid fa-clock-rotate-left"></i><span>Reset</span></button>
 						</div>
 					</div>
 
@@ -448,6 +491,7 @@
 					<div class="toolbarTop-Controls" id="topTonality">
 						<span>TONALIDAD</span>
 						<div class="toolRow">
+							<span>Key</span>
 							<select id="tonalidad">
 								<option value="C" selected>C</option>
 								<option value="Db">Db</option>
@@ -477,24 +521,6 @@
 						<div class="toolRow">
 							<span>Zoom</span>
 							<input type="range" id="sliderScoreZoom" title="50%" value="50" min="10" max="100" step="5">
-						</div>
-					</div>
-
-					<div class="toolbarTop-Controls" id="topScoreVisible">
-						<span>VISTA</span>
-						<div class="toolRow">
-							<label class="lblToggle" title="Ver Partitura">
-								<span class="lblToggleText">Ver Partitura</span>
-								<input id="chkScoreVisible" type="checkbox" checked>
-								<span class="lblToggleSpan"></span>
-							</label>
-						</div>
-						<div class="toolRow">
-							<label class="lblToggle" title="Mostrar Encabezado/Pie">
-								<span class="lblToggleText">Encabezado/Pie</span>
-								<input id="chkScoreTitle" type="checkbox" checked>
-								<span class="lblToggleSpan"></span>
-							</label>
 						</div>
 					</div>
 
@@ -528,13 +554,6 @@
 						</div>
 					</div>
 
-					<div class="toolbarTop-Controls" id="topScoreDownload">
-						<span>DESCARGAR</span>
-						<div class="toolRow">
-							<button id="btnScoreDownloadImage" title="Descargar PNG y SVG"><i class="fa-solid fa-image"></i><span>PNG/SVG</span></button>
-						</div>
-					</div>
-
 
 					<!-- PANEL METRONOME -->
 
@@ -553,7 +572,7 @@
 						</div>
 						<div class="toolRow">
 							<label class="lblToggle" title="Metrónomo en reproducción">
-								<span class="lblToggleText">Activar</span>
+								<span class="lblToggleText">On/Off</span>
 								<input id="metronome_on" type="checkbox" checked>
 								<span class="lblToggleSpan"></span>
 							</label>
@@ -627,13 +646,13 @@
 					<div id="player_repeatInfo">Compás: <b>1</b>&nbsp;Repetición: <b>1</b>&nbsp;</div>
 					<div id="metronome_Info">Beat: <b>1 / 1</b></div>
 				</div>
+				<div class="workspaceControls">
+					<div id="workspaceTitleText">Sin Título</div>
+				</div>
 			</div>
 
 			<div id="workspaceContent">
-				<div id="workspaceCanvasContainer">
-					<div id="workspaceTitleText">Sin Título</div>
-					<canvas id="workspaceCanvas"></canvas>
-				</div>
+				<canvas id="workspaceCanvas"></canvas>
 			</div>
 
 			<div id="workspaceScore">
@@ -679,9 +698,9 @@ Jazz Guitar Nomad - 2026
 	<script src="js/fretboardDraw.js"></script>
 	<script src="js/projects.js"></script>
 	<script src="js/clipboard.js"></script>
-	<script src="js/fretboardFunctions.js"></script>
+	<script src="js/mainFunctions.js"></script>
 	<script src="js/scorePlayerFunctions.js"></script>
-	<script src="js/events.js"></script>
+	<script src="js/mainEvents.js"></script>
 
 
 </body>

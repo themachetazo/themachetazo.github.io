@@ -1,7 +1,7 @@
 
 :root{
 	--color-main-text:#d5d5d5;
-	--color-hightlight:#FCD22D;
+	--color-hightlight:#1268A8;//64B5F6;//FCD22D;
 	--color-dark-background:#262626;
 	--color-light-background:#2d2d2d;
 	--color-tools:#413F3F;
@@ -117,11 +117,15 @@ html {
 
 @keyframes loadingSpin{
 
-	to{
+	to{transform:rotate(360deg);}
 
-		transform:rotate(360deg);
+}
 
-	}
+#loadingSpinner.isCompleted{
+
+	animation:none;
+
+	border:4px solid var(--color-hightlight);
 
 }
 
@@ -220,7 +224,7 @@ html {
 
 	color:inherit;
 
-//	background:var(--color-dark-background);
+	background:#000;
 
 	border-top:1px solid var(--color-tools);
 
@@ -240,6 +244,7 @@ html {
 
 	min-width:0;
 	min-height:0;
+
 }
 
 #workspace.horizontal{
@@ -289,7 +294,6 @@ html {
 	overflow:auto;
 
 	padding:20px;
-	padding-top:0px;
 
 	min-width:0;
 	min-height:0;
@@ -298,56 +302,22 @@ html {
 
 }
 
-#workspaceCanvasContainer{
-
-	width:max-content;
-
-	min-width:100%;
-
-	display:flex;
-
-	flex-direction:column;
-
-	align-items:center;
-
-	flex:0 0 auto;
-
-}
-
-#workspaceTitleText{
-
-	display:flex;
-
-	align-items:center;
-	justify-content:center;
-
-	width:100%;
-
-	min-height:36px;
-
-	padding:8px;
-
-	box-sizing:border-box;
-
-	color:var(--color-main-text);
-
-	font-weight:700;
-
-	text-align:center;
-
-	white-space:nowrap;
-	overflow:hidden;
-	text-overflow:ellipsis;
-
-}
-
 #workspaceCanvas{
 
 	display:block;
 
-	border-radius:2px;
-
 	flex:0 0 auto;
+
+	width:auto;
+	height:auto;
+
+	max-width:none;
+	max-height:none;
+
+	margin-left:auto;
+	margin-right:auto;
+
+	border-radius:2px;
 
 }
 
@@ -365,7 +335,6 @@ html {
 
 	padding:8px 10px;
 
-	border-top:1px solid rgba(255,255,255,.22);
 	border-bottom:1px solid rgba(255,255,255,.22);
 
 	background:var(--color-tools);
@@ -385,6 +354,31 @@ html {
 	width:100%;
 
 	flex-wrap:wrap;
+
+}
+
+#workspaceTitleText{
+
+	display:flex;
+
+	align-items:center;
+	justify-content:center;
+
+	width:100%;
+
+	padding:0px;
+
+	box-sizing:border-box;
+
+	color:var(--color-main-text);
+
+	font-weight:700;
+
+	text-align:center;
+
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
 
 }
 
@@ -439,7 +433,6 @@ html {
 
 }
 
-
 .vextab-auto{
 
 	width:80%;
@@ -464,20 +457,17 @@ html {
 
 }
 
-
 #workspace.vertical .vextab-auto{
 
 	width:100%;
 
 }
 
-
 .vextab-auto.layout-center{
 
 	justify-content:center;
 
 }
-
 
 .vextab-auto.layout-left{
 
@@ -492,17 +482,11 @@ html {
 =========================== */
 
 #metronome_timeline{
-
 	display:flex;
-
 	flex-wrap:nowrap;
-
 	gap:4px;
-
 	align-items:center;
-
 	width:max-content;
-
 }
 
 .metronome_pulse{
@@ -518,7 +502,7 @@ html {
 }
 
 .metronome_pulse.metronome_beat{
-    background:var(--color-hightlight);
+    background:var(--color-main-text);
 }
 
 .metronome_pulse.metronome_sub{
@@ -526,9 +510,9 @@ html {
 }
 
 .metronome_pulse.metronome_current{
-    background:#00ff66 !important;
+    background:var(--color-hightlight) !important;
     transform:scale(1.18);
-    box-shadow:0 0 12px #00ff66;
+    box-shadow:0 0 12px #fff;
 }
 
 
@@ -663,7 +647,6 @@ html {
 	background: var(--color-tools);
 	color: #fff;
 
-//	background: rgba(255, 255, 255, 0.16);
 }
 
 .projectCategoryButton i {
@@ -791,9 +774,7 @@ html {
 
     padding:0 18px;
 
-//    background:var(--color-dark-background);
-
-    border-bottom:1px solid var(--color-tools);
+    border-bottom:1px solid var(--color-dark-background);
 
 }
 
@@ -803,7 +784,7 @@ html {
 
 	align-items:center;
 
-	gap:10px;
+	gap:8px;
 
 	flex-shrink:0;
 
@@ -821,6 +802,8 @@ html {
 
 	white-space:nowrap;
 
+	padding-right:6px;
+
 }
 
 #brandLogo {
@@ -834,7 +817,7 @@ html {
 
 .brandTitle {
 
-	color: #fff;
+//	color: #fff;
 
 	font-size: 17px;
 	font-weight:700;
@@ -855,17 +838,19 @@ html {
 
 #mainMenu{
 
-    display:flex;
+	display:flex;
 
-    align-items:stretch;
+	flex-wrap:nowrap;
 
-    margin-left:40px;
+	flex-shrink:0;
 
-    flex:1;
+	white-space:nowrap;
 
 }
 
 .menuButton{
+
+    flex:0 0 auto;
 
     position:relative;
 
@@ -885,10 +870,9 @@ html {
 
     background:transparent;
 
-    color:inherit;
+    color:var(--color-main-text);
 
     font-size:inherit;
-    font-weight:700;
 
     cursor:pointer;
 
@@ -909,15 +893,14 @@ html {
 
     position:absolute;
 
-    left:18px;
-
-    right:18px;
+    left:0;
+    right:0;
 
     bottom:0;
 
     height:3px;
 
-    background:var(--color-hightlight);
+    background:var(--color-main-text);
 
     transform:scaleX(0);
 
@@ -933,8 +916,14 @@ html {
 
 .menuButton.active{
 
-    color:var(--color-hightlight);
     font-weight:700;
+
+}
+
+.menuButton.active:hover{
+
+    color:#fff;
+    background:var(--color-tools);
 
 }
 
@@ -957,7 +946,7 @@ html {
 }
 
 #mainMenu button:focus-visible {
-	outline: 2px solid var(--color-hightlight);
+	outline: 2px solid var(--color-main-text);
 	outline-offset: 2px;
 }
 
@@ -1198,7 +1187,7 @@ html {
 
 	padding:0 14px;
 
-	background:var(--color-light-background);
+	background:var(--color-dark-background);
 
 	border-bottom:0 solid var(--color-tools);
 
@@ -1378,9 +1367,9 @@ html {
 
 #btnToggleLibrary:hover{
 
-	background:rgba(255,255,255,.08);
-
-	color:var(--color-hightlight);
+	background:var(--color-hightlight);
+	color:#000;
+	border: 1px solid #000;
 
 }
 
@@ -1414,8 +1403,7 @@ html {
 
 }
 
-.toolbarTop-Controls input,
-.toolbarTop-Controls select{
+.toolbarTop-Controls input{
 
 	height:30px;
 
@@ -1429,14 +1417,88 @@ html {
 	font-size:inherit;
 
 	background-color: var(--color-dark-background);
-	color: #fff;
-//	border-color: #777;
+	color:var(--color-main-text);
+
 
 }
 
 .toolbarTop-Controls select{
-	color:inherit;
+
+	height:30px;
+
+	padding:0 6px 0 6px;
+
+	box-sizing:border-box;
+
+	border:1px solid rgba(255,255,255,0.12);
+	border-radius:5px;
+
+	font-size:inherit;
+
+	background-color:var(--color-dark-background);
+	color:var(--color-main-text);
+
+	cursor:pointer;
+
+	outline:none;
+
+	appearance:auto;
+
+	transition:
+		background-color .2s,
+		border-color .2s,
+		color .2s;
+
 	min-width:70px;
+
+}
+
+
+.toolbarTop-Controls select:hover{
+
+	background-color:#4a4848;
+
+	border-color:rgba(255,255,255,0.25);
+
+}
+
+
+.toolbarTop-Controls select:focus{
+
+	border-color:var(--color-hightlight);
+
+	box-shadow:0 0 0 1px var(--color-hightlight);
+
+}
+
+
+.toolbarTop-Controls select option{
+
+	background-color:var(--color-tools);
+
+	color:var(--color-main-text);
+
+	padding:8px 10px;
+
+}
+
+
+.toolbarTop-Controls select option:checked{
+
+	background-color:var(--color-main-text);
+
+	color:#000;
+
+	font-weight:700;
+
+}
+
+.toolbarTop-Controls select option:hover{
+
+	background-color:var(--color-hightlight);
+
+	color:#000;
+
 }
 
 .toolbarTop-Controls select:disabled,
@@ -1448,12 +1510,14 @@ html {
 .toolbarTop-Controls select:not(:disabled):hover{
 
 	cursor:pointer;
-
+/*
 	box-shadow:
 		0 0 8px var(--color-hightlight),
 		0 0 16px rgba(252, 210, 45, 0.45);
+*/
 }
 
+/*
 .toolbarTop-Controls input:not(:disabled):hover,
 .toolbarTop-Controls input[type="range"]::-webkit-slider-thumb,
 .toolbarTop-Controls input[type="range"]::-webkit-slider-runnable-track {
@@ -1461,26 +1525,22 @@ html {
 	cursor: pointer;
 
 }
+*/
 
 .toolbarTop-Controls select:focus-visible {
-	outline: 2px solid var(--color-hightlight);
+	outline: 2px solid var(--color-main-text);
 	outline-offset: 2px;
 }
 
 .toolbarTop-Controls input:not([type="range"]):focus-visible {
-	outline: 2px solid var(--color-hightlight);
+	outline: 2px solid var(--color-main-text);
 	outline-offset: 2px;
 }
 
 input[type="range"] {
 	//appearance: slider-vertical;
 	max-width:100px;
-	accent-color:var(--color-hightlight);
-
-}
-
-#titleText{
-	width:220px;
+	accent-color:var(--color-main-text);
 
 }
 
@@ -1523,7 +1583,7 @@ input[type="range"] {
 
 #player_repeatInfo b,
 #metronome_Info b{
-	color:var(--color-hightlight);
+//	color:var(--color-hightlight);
 }
 
 
@@ -1574,17 +1634,20 @@ input[type="range"] {
 .toolbarTop-Controls button:not(:disabled):hover,
 #workspaceHeader button:not(:disabled):hover{
 
-	color: #fff;
-	border: 1px solid var(--color-hightlight);
+	color:#000;
+	background: var(--color-hightlight);
+	border: 1px solid #000;
+
+/*
 	box-shadow:
 		0 0 8px var(--color-hightlight),
 		0 0 16px rgba(252, 210, 45, 0.45);
-
+*/
 }
 
 .toolbarTop-Controls button:focus-visible,
 #workspaceHeader button:focus-visible{
-	outline: 2px solid var(--color-hightlight);
+	outline: 2px solid var(--color-main-text);
 	outline-offset: 2px;
 }
 
@@ -1598,9 +1661,8 @@ input[type="range"] {
 
 	font-weight:700;
 
-	background: #000;
-	color: var(--color-hightlight);
-	border-color: var(--color-hightlight);
+	background:var(--color-main-text);
+	color:#000;
 
 }
 
@@ -1728,31 +1790,39 @@ input[type="range"] {
 
 #metronome_btnPlayStop{
 
-	background:#2F80C0 !important;
-
-	color:#fff !important;
+	background:var(--color-main-text) !important;
+	color:#000 !important;
 
 }
 
 .buttonPlay{
 
-	background:#2F7A4D !important;
+	background:var(--color-hightlight) !important;
+	color:#var(--color-main-text) !important;
+	border: 1px solid var(--color-main-text) !important;
 
-	color:#fff !important;
+}
 
+.buttonPlay:hover{
+
+	border: 1px solid #000 !important;
+
+}
+
+#metronome_btnPlayStop:hover{
+	background:var(--color-hightlight) !important;
 }
 
 .buttonStop{
 
 	background:#B22222 !important;
-
 	color:#fff !important;
 
 }
 
 
 #player_bufferState{
-	color:var(--color-hightlight);
+	color:var(--color-main-text);
 }
 
 
@@ -1808,7 +1878,7 @@ input[type="range"] {
 
 	border-radius: 20px;
 
-	background: var(--color-main-text);
+	background: var(--color-dark-background);
 
 	transition: background .20s ease;
 
@@ -1830,7 +1900,7 @@ input[type="range"] {
 
 	border-radius: 50%;
 
-	background: #000;
+	background: var(--color-main-text);
 
 	box-shadow: 0 1px 3px rgba(0,0,0,.25);
 
@@ -1840,11 +1910,13 @@ input[type="range"] {
 
 .lblToggle input:checked + .lblToggleSpan {
 
-	background: var(--color-hightlight);
+	background: var(--color-main-text);
 
 }
 
 .lblToggle input:checked + .lblToggleSpan::before {
+
+	background: var(--color-dark-background);
 
 	transform: translateX(16px);
 
@@ -1926,23 +1998,17 @@ input[type="range"] {
 
 	#brandLogo{
 
-		width:42px;
-		height:42px;
+		width:40px;
+		height:40px;
 
 	}
 
-	/* Logo */
-
 	.brandTitle{
-
-		font-size:11px;
-
+		font-size:10px;
 	}
 
 	.brandSubtitle{
-
 		font-size:9px;
-
 	}
 
 	/* ==========================
@@ -1976,28 +2042,9 @@ input[type="range"] {
 
 	}
 
-	.menuSelectorTop{
-
-		display:flex;
-
-		align-items:center;
-		justify-content:center;
-
-		gap:3px;
-
-		line-height:1;
-
-	}
-
 	.menuSelectorTop > i:first-child{
 
-		width:16px;
-
-		font-size:14px;
-
-		text-align:center;
-
-		flex:0 0 16px;
+		font-size:10px;
 
 	}
 
@@ -2355,6 +2402,19 @@ input[type="range"] {
 	#btnDownloadCanvas{
 		width: 30px;
 		min-width:auto;
+	}
+
+
+	/* ==========================
+	   Loading
+	   ========================== */
+
+	#loadingScreen, #loadingText{
+		font-size: 10px;
+	}
+
+	#loadingProgress{
+		width:200px;
 	}
 
 }
