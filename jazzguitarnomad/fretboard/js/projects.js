@@ -58,7 +58,6 @@ function newProject() {
 	history = [];
 
 	// Preparar entrada de notas
-	title = ""
 	noteText.value = "";
 	noteText.focus();
 
