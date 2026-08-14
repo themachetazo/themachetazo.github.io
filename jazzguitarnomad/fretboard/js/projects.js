@@ -587,7 +587,7 @@ function loadProject(project) {
 	updateSelectedProject();
 
 	workspaceTitleText.textContent = project.title;
-	title = project.title;
+
 	titleText.value = project.title;
 
 	// Seleccionar la categoría del proyecto
