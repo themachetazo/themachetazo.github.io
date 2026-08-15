@@ -20,6 +20,9 @@
 		<div id="loadingProgress"><div id="loadingProgressBar"></div></div>
 	</div>
 
+	<!-- PLAY FLOTANTE -->
+	<button id="scoreFloatingPlay" type="button" title="Reproducir"><i class="fa-solid fa-play"></i></button>
+
 	<!-- FRETBOARD -->
 	<div id="appLayout">
 
@@ -30,13 +33,13 @@
 				<img id="brandLogo" src="img/logo.png" alt="Jazz Guitar Nomad">
 				<div id="brandName">
 					<span class="brandTitle">JAZZ GUITAR NOMAD</span>
-					<span class="brandSubtitle">Fretboard Builder</span>
+					<span id="subtituleText" class="brandSubtitle">Fretboard Builder</span>
 				</div>
 			</div>
 
 			<nav id="mainMenu">
 				<button id="btnProyectos" class="menuButton"><i class="fa-solid fa-folder"></i>PROYECTOS</button>
-				<button id="btnEdicion" class="menuButton active"><i class="fa-solid fa-pen"></i>ESCRITURA</button>
+				<button id="btnEdicion" class="menuButton active"><i class="fa-solid fa-pen"></i>EDITAR</button>
 				<button id="btnFretboard" class="menuButton"><i class="fa-solid fa-pencil-ruler"></i>MÁSTIL</button>
 				<button id="btnScore" class="menuButton"><i class="fa-solid fa-file-lines"></i>PARTITURA</button>
 				<button id="btnPlayer" class="menuButton"><i class="fa-solid fa-radio"></i>PLAYER</button>
@@ -55,13 +58,13 @@
 				</button>
 
 				<div id="menuPopup">
-					<button data-menu="projects"><i class="fa-solid fa-folder"></i>PROYECTOS</button>
-					<button data-menu="edit"><i class="fa-solid fa-pen"></i>ESCRITURA</button>
-					<button data-menu="fretboard"><i class="fa-solid fa-pencil-ruler"></i>MÁSTIL</button>
-					<button data-menu="score"><i class="fa-solid fa-file-lines"></i>PARTITURA</button>
-					<button data-menu="player"><i class="fa-solid fa-radio"></i>PLAYER</button>
-					<button data-menu="metronome"><i class="fa-solid fa-stopwatch"></i>METRÓNOMO</button>
-					<button data-menu="audio"><i class="fa-solid fa-file-audio"></i>AUDIO</button>
+					<button id="btnProyectosPopup" data-menu="projects"><i class="fa-solid fa-folder"></i>PROYECTOS</button>
+					<button id="btnEdicionPopup" data-menu="edit"><i class="fa-solid fa-pen"></i>EDITAR</button>
+					<button id="btnFretboardPopup" data-menu="fretboard"><i class="fa-solid fa-pencil-ruler"></i>MÁSTIL</button>
+					<button id="btnScorePopup" data-menu="score"><i class="fa-solid fa-file-lines"></i>PARTITURA</button>
+					<button id="btnPlayerPopup" data-menu="player"><i class="fa-solid fa-radio"></i>PLAYER</button>
+					<button id="btnMetronomePopup" data-menu="metronome"><i class="fa-solid fa-stopwatch"></i>METRÓNOMO</button>
+					<button id="btnAudioPopup" data-menu="audio"><i class="fa-solid fa-file-audio"></i>AUDIO</button>
 				</div>
 
 				<button id="btnToggleTopControls" type="button" class="topBarSelector" title="Mostrar controles" aria-label="Mostrar controles" aria-expanded="false">
@@ -130,17 +133,17 @@
 					</div>
 
 					<div class="toolbarTop-Controls" id="topTitleViewMode">
-						<span>TÍTULO</span>
-						<div class="toolRow">
+						<span>ENCABEZADO</span>
+						<div class="toolRow" id="topTitleViewModeFretboard">
 							<label class="lblToggle" title="Mostrar título en mástil">
-								<span class="lblToggleText">Mástil</span>
+								<span class="lblToggleText">Título</span>
 								<input id="showTitleViewMode" type="checkbox">
 								<span class="lblToggleSpan"></span>
 							</label>
 						</div>
-						<div class="toolRow">
+						<div class="toolRow" id="topTitleViewModeScore">
 							<label class="lblToggle" title="Mostrar Encabezado/Pie de partitura">
-								<span class="lblToggleText">Partitura</span>
+								<span class="lblToggleText">Título/Pie</span>
 								<input id="chkScoreTitleViewMode" type="checkbox">
 								<span class="lblToggleSpan"></span>
 							</label>
@@ -178,7 +181,7 @@
 					<div class="toolbarTop-Controls" id="topEdit">
 						<span>ESCRIBIR</span>
 						<div class="toolRow">
-							<button id="btnEdit" class="active" title="Escribir nota"><i class="fa-solid fa-pen"></i><span>Nota</span></button>
+							<button id="btnEdit" title="Escribir nota"><i class="fa-solid fa-pen"></i><span>Nota</span></button>
 							<button id="btnNutMode" title="Escribir nejilla"><i class="fa-solid fa-grip-lines"></i><span>Cejilla</span></button>
 						</div>
 					</div>
@@ -296,8 +299,6 @@
 					<div class="toolbarTop-Controls" id="topOrientation">
 						<span>ORIENTACIÓN</span>
 						<div class="toolRow">
-							<button id="btnVertical" class="active" title="Cambiar orientación"><i class="fa-solid fa-arrows-up-down"></i><span>Vertical</span></button>
-							<button id="btnHorizontal" title="Cambiar orientación"><i class="fa-solid fa-arrows-left-right"></i><span>Horizontal</span></button>
 							<button id="btnRotate" title="Rotar"><i class="fa-solid fa-rotate"></i><span>Rotar</span></button>
 						</div>
 					</div>
@@ -318,9 +319,9 @@
 					<div class="toolbarTop-Controls" id="topNumbers">
 						<span>NÚMEROS</span>
 						<div class="toolRow">
-							<button id="btnLessNumberFrets">−</button>
-							<input id="numberFrets" type="number" min="1" max="19" value="1">
-							<button id="btnMoreNumberFrets">+</button>
+							<button id="btnLessNumberFrets" disabled>−</button>
+							<input id="numberFrets" type="number" min="1" max="19" value="1" disabled>
+							<button id="btnMoreNumberFrets" disabled>+</button>
 						</div>
 						<label class="lblToggle" title="Mostrar números">
 							<span class="lblToggleText">Números</span>
@@ -630,21 +631,21 @@
 					<button id="btnShowProjectPanel" class="active" title="Ver biblioteca"><i class="fa-solid fa-folder-tree"></i><span>Biblioteca</span></button>
 					<button id="btnFretboardVisible" title="Ver partitura"><i class="fa-solid fa-guitar"></i><span>Fretboard</span></button>
 					<button id="btnScoreVisible" title="Ver partitura"><i class="fa-solid fa-file-lines"></i><span>Partitura</span></button>
-					<button id="btnVertical_2" class="active" title="Cambiar orientación"><i class="fa-solid fa-arrows-up-down"></i><span>Vertical</span></button>
-					<button id="btnHorizontal_2" title="Cambiar orientación"><i class="fa-solid fa-arrows-left-right"></i><span>Horizontal</span></button>
+					<button id="btnVertical" class="active" title="Cambiar orientación"><i class="fa-solid fa-arrows-up-down"></i><span>Vertical</span></button>
+					<button id="btnHorizontal" title="Cambiar orientación"><i class="fa-solid fa-arrows-left-right"></i><span>Horizontal</span></button>
 					<button id="btnPlayStop_2" class="buttonPlay" title="Reproducir"><i class="fa-solid fa-play"></i><span>Play</span></button>
 				</div>
 				<div class="workspaceControls">
 					<div id="metronome_timeline">
-						<div class="metronome_pulse metronome_beat metronome_bar metronome_current" data-index="0"></div>
+						<div class="metronome_pulse metronome_beat metronome_bar" data-index="0"></div>
 						<div class="metronome_pulse metronome_beat metronome_bar" data-index="1"></div>
 						<div class="metronome_pulse metronome_beat metronome_bar" data-index="2"></div>
-						<div class="metronome_pulse metronome_beat" data-index="3"></div>
+						<div class="metronome_pulse metronome_beat metronome_bar" data-index="3"></div>
 					</div>
 				</div>
-				<div class="workspaceControls">
+				<div class="workspaceControls" id="workspaceTimeInfo">
 					<div id="player_repeatInfo">Compás: <b>1</b>&nbsp;Repetición: <b>1</b>&nbsp;</div>
-					<div id="metronome_Info">Beat: <b>1 / 1</b></div>
+					<div id="metronome_Info">Metrónomo: <b>1 / 1</b></div>
 				</div>
 				<div class="workspaceControls">
 					<div id="workspaceTitleText">Sin Título</div>
@@ -667,9 +668,8 @@
 		</main>
 
 		<!-- CANVAS CURSOR -->
-		<div id="cursorTool">
-			<i class="fa-solid fa-pencil"></i>
-		</div>
+
+		<div id="cursorTool"><i class="fa-solid fa-pencil"></i></div>
 
 	</div><!-- Fin appLayout -->
 
