@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<fretboardProjects version="1.0">
+<fretboardProjects version="2.0">
 
 	<categories>
 		<category id="1">Acordes</category>
@@ -7,10 +7,12 @@
 		<category id="3">Otros</category>
 	</categories>
 
-	<project id="7ceffc21d4d946cea22cee52e1376a55" title="Adios" category="2" fretCount="16" view="no-scale">
+	<project id="7ceffc21d4d946cea22cee52e1376a55" title="Adios" category="2">
 		<settings>
 			<orientation>horizontal</orientation>
 			<fretboardStyle>rosewood</fretboardStyle>
+			<fretCount>16</fretCount>
+			<displayMode>no-scale</displayMode>
 		</settings>
 		<notes>
 			<note string="5" fret="1" color="#0080ff" text=""/>
@@ -26,10 +28,12 @@
 		</nutNotes>
 	</project>
 
-	<project id="104681fbcc784302894e0e159141a418" title="TRITONE" category="3" fretCount="7" view="no-scale">
+	<project id="104681fbcc784302894e0e159141a418" title="TRITONE" category="3">
 		<settings>
 			<orientation>horizontal</orientation>
 			<fretboardStyle>rosewood</fretboardStyle>
+			<fretCount>7</fretCount>
+			<displayMode>no-scale</displayMode>
 		</settings>
 		<notes>
 			<note string="2" fret="4" color="#ff0000" text=""/>
@@ -43,10 +47,12 @@
 		</nutNotes>
 	</project>
 
-	<project id="b568f802474943669bb094652803af3f" title="asas" category="1" fretCount="10" view="scale">
+	<project id="b568f802474943669bb094652803af3f" title="asas" category="1">
 		<settings>
 			<orientation>vertical</orientation>
 			<fretboardStyle>maple</fretboardStyle>
+			<fretCount>10</fretCount>
+			<displayMode>scale</displayMode>
 		</settings>
 		<notes>
 			<note string="5" fret="2" color="#ffffff" text=""/>
@@ -58,10 +64,12 @@
 		</nutNotes>
 	</project>
 
-	<project id="95b496fc57e74a639c53e1745e0b2d13" title="asafasfasfsfasfsfsffa dg  alfhFH GLDHG DSL" category="2" fretCount="10" view="scale">
+	<project id="95b496fc57e74a639c53e1745e0b2d13" title="asafasfasfsfasfsfsffa dg  alfhFH GLDHG DSL" category="2">
 		<settings>
 			<orientation>vertical</orientation>
 			<fretboardStyle>maple</fretboardStyle>
+			<fretCount>10</fretCount>
+			<displayMode>scale</displayMode>
 		</settings>
 		<notes>
 			<note string="2" fret="1" color="#ffffff" text=""/>
@@ -74,10 +82,12 @@
 		</nutNotes>
 	</project>
 
-	<project id="9dd221539719417b867622b730105c65" title="h" category="1" fretCount="10" view="scale">
+	<project id="9dd221539719417b867622b730105c65" title="h" category="1">
 		<settings>
 			<orientation>vertical</orientation>
 			<fretboardStyle>rosewood</fretboardStyle>
+			<fretCount>10</fretCount>
+			<displayMode>scale</displayMode>
 		</settings>
 		<notes>
 			<note string="5" fret="1" color="#ffffff" text=""/>
@@ -90,10 +100,12 @@
 		</nutNotes>
 	</project>
 
-	<project id="3580043a7bef4124a7f80b5ab13cdf74" title="woh" category="3" fretCount="10" view="scale">
+	<project id="3580043a7bef4124a7f80b5ab13cdf74" title="woh" category="3">
 		<settings>
 			<orientation>vertical</orientation>
 			<fretboardStyle>maple</fretboardStyle>
+			<fretCount>16</fretCount>
+			<displayMode>scale</displayMode>
 		</settings>
 		<notes>
 			<note string="5" fret="2" color="#0080ff" text=""/>
