@@ -1701,7 +1701,6 @@ html {
 }
 
 input[type="range"] {
-	/*appearance: slider-vertical;*/
 	max-width:100px;
 	accent-color:var(--color-main-text);
 
