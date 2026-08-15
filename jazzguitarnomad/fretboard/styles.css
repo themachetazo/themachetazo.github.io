@@ -848,6 +848,8 @@ html {
 
 	gap: 6px;
 
+	background: var(--color-tools);
+
 }
 
 .projectItem:last-child {
