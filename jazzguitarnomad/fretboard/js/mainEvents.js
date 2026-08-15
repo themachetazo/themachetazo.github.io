@@ -612,9 +612,15 @@ btnShowProjectPanel.addEventListener("click", () => {
 
 btnToggleLibrary.addEventListener("click", () => {
 
-	showProjectPanel();
+	const prefix = "Server: ";
 
-	if (isScoreVisible) scoreRender();
+	if (btnToggleLibrary.title.startsWith(prefix)) {
+
+		const path = btnToggleLibrary.title.substring(prefix.length);
+
+		window.open(path, "_blank");
+
+	}
 
 });
 
