@@ -31,6 +31,18 @@ body {
 	color:var(--color-main-text);
 }
 
+a {
+	color:#FFF;
+	text-decoration:none;
+}
+
+a:hover {
+	text-decoration:underline;
+}
+
+a:visited {
+	color:#FFF;
+}
 
 /* ==========================================================
    SCROLLBAR
@@ -271,14 +283,26 @@ html {
 	--left-panel-width: 0px;
 }
 
+
+/* ===========================
+   FOOTER
+=========================== */
+
 #footer{
 
 	min-height:80px;
 	flex-shrink:0;
 
-	display:flex;
-	align-items:center;
-	justify-content:center;
+	display:grid;
+
+	grid-template-columns:repeat(3, 1fr);
+
+	grid-template-rows:auto auto;
+
+	column-gap:40px;
+	row-gap:20px;
+
+	padding:20px 40px;
 
 	color:inherit;
 
@@ -287,6 +311,87 @@ html {
 	border-top:1px solid var(--color-tools);
 
 }
+
+#footer .footerDivs{
+
+	display:flex;
+
+	flex-direction:column;
+
+	align-items:center;
+
+	justify-content:flex-start;
+
+	gap:10px;
+
+	text-align:center;
+
+}
+
+#footer .footerSocial{
+
+	display:flex;
+
+	flex-direction:row;
+
+	justify-content:center;
+
+	align-items:center;
+
+	gap:12px;
+
+}
+
+#footer .footerSocial a{
+	display:inline-flex !important;
+	margin:0 12px !important;
+}
+
+#footer i[class*="fa-"]{
+
+	font-size:20px;
+
+}
+
+#footer .footerSocial i[class*="fa-"]{
+
+	font-size:24px;
+
+}
+
+#footer .footerDivs a i,
+#footer .footerDivs span i{
+
+	margin-right:6px;
+
+}
+
+#footer .copyRights{
+
+	grid-column:1 / -1;
+
+	display:flex;
+
+	flex-direction:column;
+
+	align-items:center;
+
+	justify-content:center;
+
+	text-align:center;
+
+	padding-top:10px;
+
+}
+
+#footer .copyRights div{
+	display:flex;
+	flex-direction:row;
+	align-items:center;
+	justify-content:center;
+	gap:20px;
+}
+
 
 /* ===========================
    WORKSPACE
@@ -301,7 +406,8 @@ html {
 	overflow:hidden;
 
 	min-width:0;
-	min-height:0;
+
+	min-height:450px;
 
 }
 
@@ -2473,6 +2579,125 @@ input[type="range"] {
 
 	#loadingProgress{
 		width:200px;
+	}
+
+}
+
+/* =================================
+   FOOTER - TABLET
+================================= */
+
+@media (max-width:900px){
+
+	#footer{
+
+		grid-template-columns:repeat(2, minmax(200px, 300px));
+
+		justify-content:center;
+
+		column-gap:50px;
+
+		row-gap:25px;
+
+		padding:20px 30px;
+
+		font-size: 10px;
+
+	}
+
+	#footer .footerDivs{
+
+		width:100%;
+
+		align-items:center;
+
+		text-align:center;
+
+	}
+
+	#footer .footerDivs:nth-child(3){
+
+		grid-column:1 / -1;
+
+	}
+
+	#footer .copyRights{
+
+		grid-column:1 / -1;
+
+		width:100%;
+
+		display:flex;
+
+		flex-direction:column;
+
+		align-items:center;
+
+		justify-content:center;
+
+		text-align:center;
+
+		padding-top:15px;
+
+	}
+
+}
+
+
+/* =================================
+   FOOTER - MÓVIL
+================================= */
+
+@media (max-width:600px){
+
+	#footer{
+
+		grid-template-columns:1fr;
+
+		grid-template-rows:auto;
+
+		gap:25px;
+
+		padding:25px 20px;
+
+		font-size: 10px;
+
+	}
+
+	#footer .footerDivs{
+
+		width:100%;
+
+		align-items:center;
+
+		text-align:center;
+
+	}
+
+	#footer .footerDivs:nth-child(3){
+
+		grid-column:auto;
+
+	}
+
+	#footer .copyRights{
+
+		grid-column:auto;
+
+		width:100%;
+
+		display:flex;
+
+		flex-direction:column;
+
+		align-items:center;
+
+		justify-content:center;
+
+		text-align:center;
+
+		padding-top:15px;
+
 	}
 
 }

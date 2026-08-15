@@ -30,9 +30,9 @@
 		<header id="topBar">
 
 			<div id="brand">
-				<img id="brandLogo" src="img/logo.png" alt="Jazz Guitar Nomad">
+				<a href="#"><img id="brandLogo" src="img/logo.png" alt="Jazz Guitar Nomad"></a>
 				<div id="brandName">
-					<span class="brandTitle">JAZZ GUITAR NOMAD</span>
+					<span class="brandTitle"><a href="#">JAZZ GUITAR NOMAD</a></span>
 					<span id="subtituleText" class="brandSubtitle">Fretboard Builder</span>
 				</div>
 			</div>
@@ -601,24 +601,24 @@
 					<button id="btnToggleLibrary"><i class="fa-solid fa-eye"></i></button><!--fa-up-right-from-square-->
 				</div>
 
-<!--
-<div class="projectCategory">
-	<button type="button" class="projectCategoryButton" data-project-category="1" aria-expanded="false">
-		<span>Acordes</span>
-		<i class="fa-solid fa-chevron-down"></i>
-	</button>
-	<ul class="projectCategoryList" id="projectCategoryList">
-		<li class="projectItem">
-			<button type="button" class="projectOpenButton" data-project-id="b568f802474943669bb094652803af3f" title="Abrir: Título">
-				<span class="projectTitle">Título</span>
-			</button>
-			<button type="button" class="projectDeleteButton" title="Eliminar proyecto">
-				<i class="fa-solid fa-trash"></i>
-			</button>
-		</li>
-	</ul>
-</div>
--->
+				<!--
+				<div class="projectCategory">
+					<button type="button" class="projectCategoryButton" data-project-category="1" aria-expanded="false">
+						<span>Acordes</span>
+						<i class="fa-solid fa-chevron-down"></i>
+					</button>
+					<ul class="projectCategoryList" id="projectCategoryList">
+						<li class="projectItem">
+							<button type="button" class="projectOpenButton" data-project-id="b568f802474943669bb094652803af3f" title="Abrir: Título">
+								<span class="projectTitle">Título</span>
+							</button>
+							<button type="button" class="projectDeleteButton" title="Eliminar proyecto">
+								<i class="fa-solid fa-trash"></i>
+							</button>
+						</li>
+					</ul>
+				</div>
+				-->
 
 			</div>
 		</aside>
@@ -675,11 +675,50 @@
 
 	<!-- FOOTER -->
 
-	<div id="footer">
+	<footer id="footer">
 
-Jazz Guitar Nomad - 2026
+		<div class="footerDivs">
+			<a href="#">
+				<img id="brandLogo" src="img/logo.png" alt="Jazz Guitar Nomad">
+				<br>
+				<strong>JAZZ GUITAR NOMAD</strong>
+			</a>
+			<p>Herramienta interactiva para el estudio de la guitarra, acordes y escalas.</p>
+		</div>
 
-	</div><!-- Fin footer -->
+		<div class="footerDivs">
+			<strong>CONTACTO</strong>
+			<a href="#"><i class="fa-solid fa-envelope"></i>info@jazzguitarnomad.com</a>
+			<a href="#"><i class="fa-solid fa-phone"></i>+34 910 000 000</a>
+			<span><i class="fa-solid fa-location-dot"></i>Madrid, España</span>
+			<br>
+			<strong>SÍGUENOS</strong>
+			<div class="footerSocial">
+				<a href="#"><i class="fa-brands fa-facebook"></i></a>
+				<a href="#"><i class="fa-brands fa-instagram"></i></a>
+				<a href="#"><i class="fa-brands fa-youtube"></i></a>
+			</div>
+		</div>
+
+		<div class="footerDivs">
+			<strong>RECURSOS</strong>
+			<a href="#"><i class="fa-solid fa-globe"></i>Página web</a>
+			<a href="#"><i class="fa-solid fa-graduation-cap"></i>Aula Virtual</a>
+			<a href="#"><i class="fa-brands fa-github"></i>GitHub</a>
+		</div>
+
+		<div class="copyRights">
+			<br>
+			<span>© 2026 Jazz Guitar Nomad. Todos los derechos reservados.</span>
+			<br>
+			<div>
+				<a href="#">Privacidad</a>
+				<a href="#">Aviso legal</a>
+				<a href="#">Cookies</a>
+			</div>
+		</div>
+
+	</footer><!-- Fin footer -->
 
 
 	<!-- JAVASCRIPT -->
