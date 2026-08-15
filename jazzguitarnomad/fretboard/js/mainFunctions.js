@@ -31,6 +31,64 @@ function setErrorLoadingProgress(err){
 
 }
 
+function setUserControls(){
+
+	cursor.innerHTML = "";
+
+	if (!isAdmin) {
+
+		btnAudio.style.display = "none";
+
+		if (user === null) {
+
+			subtituleText.textContent = "Fretboard Viewer";
+
+			titleText.style.display = "none";
+			topTitle.style.display = "none";
+
+			btnEdicion.style.display = "none";
+			btnProyectos.style.display = "none";
+			btnEdicionPopup.style.display = "none";
+			btnProyectosPopup.style.display = "none";
+
+			btnShowProjectPanel.style.display = "none";
+
+			closeLeftPanel();
+
+			setMenu("fretboard");
+
+		}else{
+
+			topTitleViewMode.style.display = "none";
+
+			btnSaveProject.style.display = "none";
+			btnDelProject.style.display = "none";
+			btnCopyId.style.display = "none";
+			topLibrary.style.display = "none";
+			topCategory.style.display = "none";
+			topFretboardDownload.style.display = "none";
+			topScoreDownload.style.display = "none";
+			topChords.style.display = "none";
+			topAudio.style.display = "none";
+			topBuffer.style.display = "none";
+
+			setMenu("projects");
+
+		}
+
+
+	} else {
+
+		topTitleViewMode.style.display = "none";
+
+		setMenu("projects");
+
+	}
+
+	updateTopBarMenu();
+
+}
+
 function updateTopBarMenu() {
 
 	const topBarWidth = topBar.clientWidth;
@@ -57,10 +115,7 @@ function updateTopBarMenu() {
 	});
 
 
-	const requiredWidth =
-		brandWidth +
-		menuWidth +
-		toggleWidth;
+	const requiredWidth = brandWidth + menuWidth + toggleWidth;
 
 
 	// Restaurar visibilidad
@@ -140,9 +195,16 @@ function showProjectPanel(){
 
 	if (appLayout.classList.contains("leftPanelHidden")) {
 
-		if (window.innerWidth <= maxMediaScreenWidth) {
+		if (window.innerWidth <= maxMediaScreenWidth &&
+			orientation === "vertical") {
 
 			closeTopControls();
+
+			if (isFretboardVisible && isScoreVisible) {
+
+				setWorkspaceLayout("score");
+
+			}
 
 		}
 
@@ -153,6 +215,26 @@ function showProjectPanel(){
 	}
 
 	closeLeftPanel();
+
+}
+
+function updateMobileLeftPanel() {
+
+	if (window.innerWidth <= maxMediaScreenWidth) {
+
+		if (btnShowProjectPanel.classList.contains("active")) {
+
+			btnShowProjectPanel.classList.remove("active");
+
+		}
+
+		if (!appLayout.classList.contains("leftPanelHidden")) {
+
+			closeLeftPanel();
+
+		}
+
+	}
 
 }
 
@@ -200,48 +282,45 @@ function closeTopControls() {
 
 function setMode(newMode) {
 
+	if (mode === newMode) {
+
+		newMode = "view";
+
+	}
+
 	mode = newMode;
 
-	btnEdit.classList.toggle(
-		"active",
-		newMode === "note"
-	);
+	btnEdit.classList.toggle("active",newMode === "note");
 
-	btnErase.classList.toggle(
-		"active",
-		newMode === "erase"
-	);
+	btnErase.classList.toggle("active",newMode === "erase");
 
-	btnNutMode.classList.toggle(
-		"active",
-		newMode === "barre"
-	);
+	btnNutMode.classList.toggle("active",newMode === "barre");
 
-	btnNutMode.setAttribute(
-		"aria-pressed",
-		String(newMode === "barre")
-	);
+	btnNutMode.setAttribute("aria-pressed",String(newMode === "barre"));
 
 	switch (newMode) {
 
+		case "view":
+
+			cursor.innerHTML = '';
+
+			break;
+
 		case "note":
 
-			cursor.innerHTML =
-				'<i class="fa-solid fa-pencil"></i>';
+			cursor.innerHTML = '<i class="fa-solid fa-pencil"></i>';
 
 			break;
 
 		case "erase":
 
-			cursor.innerHTML =
-				'<i class="fa-solid fa-eraser"></i>';
+			cursor.innerHTML = '<i class="fa-solid fa-eraser"></i>';
 
 			break;
 
 		case "barre":
 
-			cursor.innerHTML =
-				'<i class="fa-solid fa-grip-lines"></i>';
+			cursor.innerHTML = '<i class="fa-solid fa-grip-lines"></i>';
 
 			break;
 
@@ -366,7 +445,7 @@ function setMenu(m){
 				topNoteNames
 			);
 
-			menuSelectorText.textContent = "ESCRITURA";
+			menuSelectorText.textContent = "EDICIÓN";
 			menuSelectorIcon.className = "fa-solid fa-pen";
 
 			break;
@@ -387,6 +466,9 @@ function setMenu(m){
 
 			menuSelectorText.textContent = "MÁSTIL";
 			menuSelectorIcon.className = "fa-solid fa-pencil-ruler";
+
+			topTitleViewModeScore.style.display = "none";
+			topTitleViewModeFretboard.style.display = "flex";
 
 			break;
 
@@ -426,6 +508,9 @@ function setMenu(m){
 			menuSelectorText.textContent = "PARTITURA";
 			menuSelectorIcon.className = "fa-solid fa-file-lines";
 
+			topTitleViewModeScore.style.display = "flex";
+			topTitleViewModeFretboard.style.display = "none";
+
 			break;
 
 		case "metronome":
@@ -449,7 +534,6 @@ function setMenu(m){
 			btnAudio.classList.add("active");
 
 			showMenuControls(
-				topPlayStop,
 				topBuffer,
 				topAudio
 			);
@@ -538,9 +622,6 @@ function updateOrientationButtons(){
 	btnHorizontal.classList.toggle("active",orientation === "horizontal");
 
 	btnRotate.classList.toggle("active",rotated);
-
-	btnVertical_2.classList.toggle("active",orientation === "vertical");
-	btnHorizontal_2.classList.toggle("active",orientation === "horizontal");
 
 	resizeCanvas();
 
@@ -666,27 +747,55 @@ function setLayout() {
 
 function setWorkspaceLayout(mode){
 
-	switch(mode){
+	//------------------------------------------------
+	// Móvil + vertical + panel de proyectos abierto
+	//------------------------------------------------
 
-		case "score":
+	if (window.innerWidth <= maxMediaScreenWidth &&
+		orientation === "vertical" &&
+		!appLayout.classList.contains("leftPanelHidden")) {
 
-			if (isScoreVisible && !isFretboardVisible) {
-				return;
-			}
+		if (mode === "score") {
 
-			isScoreVisible = !isScoreVisible;
+			isScoreVisible = true;
+			isFretboardVisible = false;
 
-			break;
+		} else if (mode === "fretboard") {
 
-		case "fretboard":
+			isFretboardVisible = true;
+			isScoreVisible = false;
 
-			if (isFretboardVisible && !isScoreVisible) {
-				return;
-			}
+		}
 
-			isFretboardVisible = !isFretboardVisible;
+	} else {
 
-			break;
+		//------------------------------------------------
+		// Comportamiento normal
+		//------------------------------------------------
+
+		switch(mode){
+
+			case "score":
+
+				if (isScoreVisible && !isFretboardVisible) {
+					return;
+				}
+
+				isScoreVisible = !isScoreVisible;
+
+				break;
+
+			case "fretboard":
+
+				if (isFretboardVisible && !isScoreVisible) {
+					return;
+				}
+
+				isFretboardVisible = !isFretboardVisible;
+
+				break;
+
+		}
 
 	}
 
@@ -714,8 +823,8 @@ function setWorkspaceLayout(mode){
 
 	}
 
-	btnFretboardVisible.classList.toggle("active", isFretboardVisible);
-	btnScoreVisible.classList.toggle("active", isScoreVisible);
+	btnFretboardVisible.classList.toggle("active",isFretboardVisible);
+	btnScoreVisible.classList.toggle("active",isScoreVisible);
 
 	if (isScoreVisible) scoreRender();
 
@@ -732,19 +841,5 @@ function setInitialOrientation() {
 		setOrientation("horizontal");
 
 	}
-
-}
-
-function setMetronmeOnPlaying(value){
-
-    player.setMetronomeOn(value);
-
-    if (value){
-	metronome_timeline.style.display = "flex";
-	metronome_Info.innerHTML = "Beat: <b>1 / 1</b>";
-    }else{
-	metronome_timeline.style.display = "none";
-	metronome_Info.innerHTML = "";
-    }
 
 }

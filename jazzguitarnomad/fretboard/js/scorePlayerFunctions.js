@@ -97,13 +97,14 @@ async function playMusic(){
 
         btnPlayStop.disabled = false;
         btnPlayStop_2.disabled = false;
+        scoreFloatingPlay.disabled = false;
+
         samplerVolume.disabled = false;
 
 	if (metronome_on.checked){
 	        metronome_volumen.disabled = false;
         	metronome_volumen_2.disabled = false;
 	}
-
 
         btnPlayStop.innerHTML = "<i class='fa-solid fa-stop'></i><span>Stop</span>";
 	btnPlayStop_2.innerHTML = btnPlayStop.innerHTML;
@@ -113,6 +114,16 @@ async function playMusic(){
 
 	btnPlayStop_2.classList.toggle("buttonPlay", false);
         btnPlayStop_2.classList.toggle("buttonStop", true);
+
+	scoreFloatingPlay.innerHTML = "<i class='fa-solid fa-stop'></i>";
+	scoreFloatingPlay.classList.add("stop");
+	if (chkAutoScroll.checked) scoreFloatingPlay.style.display = "flex";
+
+	workspaceTimeInfo.style.display = "flex";
+
+	//Abrir y cerrar controles
+	topControlsWasOpen = topControlsContainer.classList.contains("isOpen");
+	if (topControlsWasOpen) closeTopControls();
 
         await Tone.start();
 
@@ -148,10 +159,100 @@ async function playMusic(){
 	btnPlayStop_2.classList.toggle("buttonPlay", true);
         btnPlayStop_2.classList.toggle("buttonStop", false);
 
+	scoreFloatingPlay.innerHTML = "<i class='fa-solid fa-play'></i>";
+	scoreFloatingPlay.classList.remove("stop");
+	scoreFloatingPlay.style.display = "none";
+
+	//Abrir y cerrar controles
+	if (topControlsWasOpen) openTopControls();
+	topControlsWasOpen = false;
+
         player.stop();
 
         scorePaint_stop();
+        
+	buildHtmlDivsTimeline();
 
+	metronome_Info.innerHTML = "Metrónomo: <b>1 / 1</b>";
+	player_repeatInfo.innerHTML = "Compás: <b>1&nbsp;</b>Repetición: <b>1</b>";
+
+	workspaceTimeInfo.style.display = "none";
+
+    }
+
+}
+
+async function metronomePlayStop(){
+
+    await Tone.start();
+
+    if (Tone.context.state !== "running") {
+
+        await Tone.context.resume();
+
+    }
+
+    if (metronome.playing) {
+
+	setControlsEnabled(true);
+
+	metronome_btnPlayStop.innerHTML = "<i class='fa-solid fa-play'></i><span>Play</span>";
+
+	metronome_btnPlayStop.classList.toggle("buttonPlay", true);
+        metronome_btnPlayStop.classList.toggle("buttonStop", false);
+
+	workspaceTimeInfo.style.display = "none";
+        
+	buildHtmlDivsTimeline();
+
+        metronome.stop();
+
+    }else {
+
+	setControlsEnabled(false);
+
+	metronome_btnPlayStop.disabled = false;
+	metronome_volumen.disabled = false;
+	sliderBpm.disabled = false;
+	btnLessTempo.disabled = false;
+	btnMoreTempo.disabled = false;
+
+	metronome_btnPlayStop.innerHTML = "<i class='fa-solid fa-stop'></i><span>Stop</span>";
+
+	metronome_btnPlayStop.classList.toggle("buttonPlay", false);
+        metronome_btnPlayStop.classList.toggle("buttonStop", true);
+
+	if (!metronome_on.checked) {
+		metronome_on.checked = true;
+		setMetronmeOnPlaying(true);
+
+		workspaceTimeInfo.style.display = "none";
+
+		buildHtmlDivsTimeline();
+
+	}else{
+		workspaceTimeInfo.style.display = "flex";
+	}
+
+        metronome.start();
+
+    }
+
+    metronome_btnPlayStop.focus({ focusVisible: true });
+
+}
+
+
+function setMetronmeOnPlaying(value){
+
+    player.setMetronomeOn(value);
+
+    if (value){
+	metronome_timeline.style.display = "flex";
+    }else{
+	metronome_timeline.style.display = "none";
+
+	metronome_Info.innerHTML = "";
     }
 
 }
@@ -235,7 +336,7 @@ function resetScorePlayer() {
     vexTab_container.scrollLeft = 0;
     vexTab_container.scrollTop = 0;
 
-    updateTimeline(1, 1);
+    buildHtmlDivsTimeline();
 
     player.playing = false;
 
@@ -310,8 +411,6 @@ function updateTimeline(beat,subBeat) {
     const index = (beat - 1) * metronome.subdivision + (subBeat - 1);
 
     if (pulses[index]) pulses[index].classList.add("metronome_current");
-
-    metronome_Info.innerHTML = "Beat: <b>" + beat + " / " + subBeat +"</b>";
 
 }
 

@@ -12,53 +12,7 @@ window.addEventListener("load", async () => {
 
 		setLoadingProgress(0, "Configurando usuario...");
 
-		if (!isAdmin) {
-
-			btnAudio.style.display = "none";
-
-			if (user === null) {
-
-				titleText.style.display = "none";
-				topTitle.style.display = "none";
-
-				btnEdicion.style.display = "none";
-
-				btnProyectos.style.display = "none";
-				btnShowProjectPanel.style.display = "none";
-
-				closeLeftPanel();
-
-				setMenu("fretboard");
-
-			}else{
-
-				topTitleViewMode.style.display = "none";
-
-				btnSaveProject.style.display = "none";
-				btnDelProject.style.display = "none";
-				btnCopyId.style.display = "none";
-				topLibrary.style.display = "none";
-				topCategory.style.display = "none";
-				topFretboardDownload.style.display = "none";
-				topScoreDownload.style.display = "none";
-				topChords.style.display = "none";
-				topAudio.style.display = "none";
-				topBuffer.style.display = "none";
-
-				setMenu("edit");
-
-			}
-
-
-		} else {
-
-			topTitleViewMode.style.display = "none";
-
-			setMenu("projects");
-
-		}
-
-		updateTopBarMenu();
+		setUserControls();
 
 
 
@@ -112,7 +66,7 @@ window.addEventListener("load", async () => {
 
 		buildHtmlDivsTimeline();
 
-		updateTimeline(1, 1);
+		workspaceTimeInfo.style.display = "none";
 
 
 
@@ -179,6 +133,8 @@ window.addEventListener("resize", () => {
     menuPopup.classList.remove("isOpen");
     btnMenuSelector.classList.remove("active");
 
+    updateMobileLeftPanel();
+
     updateTopBarMenu();
 
     resizeCanvas();
@@ -242,12 +198,14 @@ document.addEventListener("metronomeBeat",(e) => {
 
         case "start":
         case "tick":
+	
+	    updateTimeline(beat,subBeat);
 
             break;
 
     }
 
-    updateTimeline(beat,subBeat);
+    metronome_Info.innerHTML = "Metrónomo: <b>" + beat + " / " + subBeat +"</b>";
 
 });
 
@@ -316,6 +274,10 @@ document.addEventListener("playerBeat", (e) => {
 
         case "end":
 
+            countBars = 1;
+            repetitionSequence = 1;
+            firstTick = true;
+
             setControlsEnabled(true);
 
             isPlaying = false;
@@ -334,7 +296,6 @@ document.addEventListener("playerBeat", (e) => {
 
     player_repeatInfo.innerHTML = "Compás: <b>" + countBars + "&nbsp;</b>Repetición: <b>" + repetitionSequence + "</b>";
 
-
 });
 
 
@@ -348,16 +309,18 @@ document.addEventListener("playerBeat", (e) => {
 
 canvas.addEventListener("mouseenter", () => {
 
+	if (mode === "view") return;
+
 	if (window.innerWidth <= maxMediaScreenWidth) {
 		cursor.style.display = "none";
-		return;
+	}else{
+		cursor.style.display = "block";
 	}
-
-	cursor.style.display = "block";
-
 });
 
 canvas.addEventListener("mouseleave", () => {
+
+	if (mode === "view") return;
 
 	cursor.style.display = "none";
 
@@ -374,6 +337,8 @@ canvas.addEventListener("mouseleave", () => {
 });
 
 canvas.addEventListener("mousemove", (e) => {
+
+	if (mode === "view") return;
 
 	if (window.innerWidth <= maxMediaScreenWidth) {
 
@@ -402,6 +367,8 @@ canvas.addEventListener("mousemove", (e) => {
 });
 
 canvas.addEventListener("click", (e) => {
+
+	if (mode === "view") return;
 
 	projectModified = true;
 
@@ -548,16 +515,6 @@ colorPicker.addEventListener("change", () => {
 
 });
 
-titleText.addEventListener("input", () => {
-
-    workspaceTitleText.textContent = titleText.value.trim() || "Sin Título";
-
-    resizeCanvas();
-
-    if (isScoreVisible) scoreRender();
-
-});
-
 btnNewCategory.addEventListener("click", () => {
 	addCategory();
 });
@@ -655,9 +612,20 @@ btnToggleTopControls.addEventListener("click", () => {
 
 		}
 */
+
 		openTopControls();
 
 	}
+
+});
+
+titleText.addEventListener("input", () => {
+
+    workspaceTitleText.textContent = titleText.value.trim() || "Sin Título";
+
+    resizeCanvas();
+
+    if (isScoreVisible) scoreRender();
 
 });
 
@@ -674,6 +642,22 @@ showTitleViewMode.addEventListener("change", () => {
 	showTitle.checked = showTitleViewMode.checked;
 
 	resizeCanvas();
+
+});
+
+chkScoreTitle.addEventListener("change", function () {
+
+    chkScoreTitleViewMode.checked = chkScoreTitle.checked;
+
+    if (isScoreVisible) scoreRender();
+
+});
+
+chkScoreTitleViewMode.addEventListener("change", function () {
+
+    chkScoreTitle.checked = chkScoreTitleViewMode.checked;
+
+    if (isScoreVisible) scoreRender();
 
 });
 
@@ -771,14 +755,6 @@ btnRotate.addEventListener("click", () => {
     updateOrientationButtons();
 });
 
-btnVertical_2.addEventListener("click", () => {
-    setOrientation("vertical");
-});
-
-btnHorizontal_2.addEventListener("click", () => {
-    setOrientation("horizontal");
-});
-
 btnDisplay.addEventListener("click", () => {
 
     displayMode = !displayMode;
@@ -787,6 +763,10 @@ btnDisplay.addEventListener("click", () => {
 
     chkInlays.checked = Boolean(displayMode);
     chkInlays.disabled = Boolean(!displayMode);
+
+    btnLessNumberFrets.disabled = Boolean(displayMode);
+    numberFrets.disabled = Boolean(displayMode);
+    btnMoreNumberFrets.disabled = Boolean(displayMode);
 
     drawFretboard();
     drawNotes();
@@ -1053,50 +1033,7 @@ metronome_volumen_2.addEventListener("input", function () {
 
 metronome_btnPlayStop.addEventListener("click", async function () {
 
-    await Tone.start();
-
-    if (Tone.context.state !== "running") {
-
-        await Tone.context.resume();
-
-    }
-
-    if (metronome.playing) {
-
-	setControlsEnabled(true);
-
-	metronome_btnPlayStop.innerHTML = "<i class='fa-solid fa-play'></i><span>Play</span>";
-
-	metronome_btnPlayStop.classList.toggle("buttonPlay", true);
-        metronome_btnPlayStop.classList.toggle("buttonStop", false);
-
-        metronome.stop();
-
-    }else {
-
-	setControlsEnabled(false);
-
-	metronome_btnPlayStop.disabled = false;
-	metronome_volumen.disabled = false;
-	sliderBpm.disabled = false;
-	btnLessTempo.disabled = false;
-	btnMoreTempo.disabled = false;
-
-	metronome_btnPlayStop.innerHTML = "<i class='fa-solid fa-stop'></i><span>Stop</span>";
-
-	metronome_btnPlayStop.classList.toggle("buttonPlay", false);
-        metronome_btnPlayStop.classList.toggle("buttonStop", true);
-
-	if (!metronome_on.checked) {
-		metronome_on.checked = true;
-		setMetronmeOnPlaying(true);
-	}
-
-        metronome.start();
-
-    }
-
-    metronome_btnPlayStop.focus({ focusVisible: true });
+	await metronomePlayStop();
 
 });
 
@@ -1172,6 +1109,14 @@ btnPlayStop_2.addEventListener("click", async function () {
 
 });
 
+scoreFloatingPlay.addEventListener("click", async function () {
+
+	playMusic();
+
+	scoreFloatingPlay.focus({ focusVisible: true });
+
+});
+
 btnResetScorePalyer.addEventListener("click", async function () {
 
     resetScorePlayer();
@@ -1244,22 +1189,6 @@ cmbScoreStaves.addEventListener("change", function () {
     scorePaint_stop();
 
     initScorePlayback(scoreSvg);
-
-});
-
-chkScoreTitle.addEventListener("change", function () {
-
-    chkScoreTitleViewMode.checked = chkScoreTitle.checked;
-
-    if (isScoreVisible) scoreRender();
-
-});
-
-chkScoreTitleViewMode.addEventListener("change", function () {
-
-    chkScoreTitle.checked = chkScoreTitleViewMode.checked;
-
-    if (isScoreVisible) scoreRender();
 
 });
 
