@@ -38,6 +38,7 @@ a {
 
 a:hover {
 	text-decoration:underline;
+	color:#FFF;
 }
 
 a:visited {
@@ -499,6 +500,7 @@ html {
 
 	padding:8px 10px;
 
+	border-top:1px solid rgba(255,255,255,.22);
 	border-bottom:1px solid rgba(255,255,255,.22);
 
 	background:var(--color-tools);
@@ -936,6 +938,8 @@ html {
     min-height:60px;
 
     padding:0 18px;
+
+    background:#000;
 
 }
 
