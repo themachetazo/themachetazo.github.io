@@ -89,159 +89,216 @@ function scoreLoadArray(mode){
 
 async function playMusic(){
 
-    if (!isPlaying) {
+	if (!isPlaying) {
 
-        isPlaying = true;
+		isPlaying = true;
 
-        setControlsEnabled(false);
+		setControlsEnabled(false);
 
-        btnPlayStop.disabled = false;
-        btnPlayStop_2.disabled = false;
-        scoreFloatingPlay.disabled = false;
+		btnPlayStop.disabled = false;
+		btnPlayStop_2.disabled = false;
+		scoreFloatingPlay.disabled = false;
 
-        samplerVolume.disabled = false;
+		samplerVolume.disabled = false;
 
-	if (metronome_on.checked){
-	        metronome_volumen.disabled = false;
-        	metronome_volumen_2.disabled = false;
+		if (metronome_on.checked){
+
+			metronome_volumen.disabled = false;
+			metronome_volumen_2.disabled = false;
+
+		}
+
+		setPlayStopButton(btnPlayStop, true);
+		setPlayStopButton(btnPlayStop_2, true);
+
+		scoreFloatingPlay.innerHTML =
+			"<i class='fa-solid fa-stop'></i>";
+
+		scoreFloatingPlay.classList.add("stop");
+
+		if (chkAutoScroll.checked) {
+			scoreFloatingPlay.style.display = "flex";
+		}
+
+		// Mostrar timeline e información
+
+		workspaceTimeInfo.style.display = "flex";
+
+		// Abrir y cerrar controles
+
+		topControlsWasOpen =
+			topControlsContainer.classList.contains("isOpen");
+
+		if (topControlsWasOpen) {
+			closeTopControls();
+		}
+
+		await Tone.start();
+
+		Tone.Transport.stop();
+		Tone.Transport.position = 0;
+
+		player.startWithCountIn(() => {
+
+			if (projectType == "sequence") {
+
+				player.playSequence(NOTAS);
+
+			} else {
+
+				player.playChord(ACORDES);
+
+			}
+
+		});
+
+	} else {
+
+		// IMPORTANTE:
+		// Cambiar el estado ANTES de player.stop()
+		// porque player.stop() puede emitir "playerBeat: stop".
+
+		isPlaying = false;
+
+		player.stop();
+
+		if (metronome.playing) {
+			metronome.stop();
+		}
+
+		scorePaint_stop();
+
+		setControlsEnabled(true);
+
+		setPlayStopButton(btnPlayStop, false);
+		setPlayStopButton(btnPlayStop_2, false);
+
+		scoreFloatingPlay.innerHTML =
+			"<i class='fa-solid fa-play'></i>";
+
+		scoreFloatingPlay.classList.remove("stop");
+		scoreFloatingPlay.style.display = "none";
+
+		// Ocultar timeline e información
+
+		workspaceTimeInfo.style.display = "none";
+
+		// Abrir y cerrar controles
+
+		if (topControlsWasOpen) {
+			openTopControls();
+		}
+
+		topControlsWasOpen = false;
+
+		resetPlaybackUI();
+
 	}
-
-        btnPlayStop.innerHTML = "<i class='fa-solid fa-stop'></i><span>Stop</span>";
-	btnPlayStop_2.innerHTML = btnPlayStop.innerHTML;
-
-	btnPlayStop.classList.toggle("buttonPlay", false);
-        btnPlayStop.classList.toggle("buttonStop", true);
-
-	btnPlayStop_2.classList.toggle("buttonPlay", false);
-        btnPlayStop_2.classList.toggle("buttonStop", true);
-
-	scoreFloatingPlay.innerHTML = "<i class='fa-solid fa-stop'></i>";
-	scoreFloatingPlay.classList.add("stop");
-	if (chkAutoScroll.checked) scoreFloatingPlay.style.display = "flex";
-
-	workspaceTimeInfo.style.display = "flex";
-
-	//Abrir y cerrar controles
-	topControlsWasOpen = topControlsContainer.classList.contains("isOpen");
-	if (topControlsWasOpen) closeTopControls();
-
-        await Tone.start();
-
-        Tone.Transport.stop();
-        Tone.Transport.position = 0;
-
-        player.startWithCountIn(() => {
-
-            if (projectType == "sequence") {
-
-                player.playSequence(NOTAS);
-
-            } else {
-
-                player.playChord(ACORDES);
-
-            }
-
-        });
-
-    } else {
-
-        isPlaying = false;
-
-        setControlsEnabled(true);
-
-        btnPlayStop.innerHTML = "<i class='fa-solid fa-play'></i><span>Play</span>";
-	btnPlayStop_2.innerHTML = btnPlayStop.innerHTML;
-
-	btnPlayStop.classList.toggle("buttonPlay", true);
-        btnPlayStop.classList.toggle("buttonStop", false);
-
-	btnPlayStop_2.classList.toggle("buttonPlay", true);
-        btnPlayStop_2.classList.toggle("buttonStop", false);
-
-	scoreFloatingPlay.innerHTML = "<i class='fa-solid fa-play'></i>";
-	scoreFloatingPlay.classList.remove("stop");
-	scoreFloatingPlay.style.display = "none";
-
-	//Abrir y cerrar controles
-	if (topControlsWasOpen) openTopControls();
-	topControlsWasOpen = false;
-
-        player.stop();
-
-        scorePaint_stop();
-        
-	buildHtmlDivsTimeline();
-
-	metronome_Info.innerHTML = "Metrónomo: <b>1 / 1</b>";
-	player_repeatInfo.innerHTML = "Compás: <b>1&nbsp;</b>Repetición: <b>1</b>";
-
-	workspaceTimeInfo.style.display = "none";
-
-    }
 
 }
 
 async function metronomePlayStop(){
 
-    await Tone.start();
+	await Tone.start();
 
-    if (Tone.context.state !== "running") {
+	if (Tone.context.state !== "running") {
+		await Tone.context.resume();
+	}
 
-        await Tone.context.resume();
+	if (metronome.playing) {
 
-    }
+		metronome.stop();
 
-    if (metronome.playing) {
+		setControlsEnabled(true);
 
-	setControlsEnabled(true);
+		setPlayStopButton(metronome_btnPlayStop, false);
 
-	metronome_btnPlayStop.innerHTML = "<i class='fa-solid fa-play'></i><span>Play</span>";
+		resetMetronomeUI();
 
-	metronome_btnPlayStop.classList.toggle("buttonPlay", true);
-        metronome_btnPlayStop.classList.toggle("buttonStop", false);
-
-	workspaceTimeInfo.style.display = "none";
-        
-	buildHtmlDivsTimeline();
-
-        metronome.stop();
-
-    }else {
-
-	setControlsEnabled(false);
-
-	metronome_btnPlayStop.disabled = false;
-	metronome_volumen.disabled = false;
-	sliderBpm.disabled = false;
-	btnLessTempo.disabled = false;
-	btnMoreTempo.disabled = false;
-
-	metronome_btnPlayStop.innerHTML = "<i class='fa-solid fa-stop'></i><span>Stop</span>";
-
-	metronome_btnPlayStop.classList.toggle("buttonPlay", false);
-        metronome_btnPlayStop.classList.toggle("buttonStop", true);
-
-	if (!metronome_on.checked) {
-		metronome_on.checked = true;
-		setMetronmeOnPlaying(true);
+		// Ocultar timeline e información
 
 		workspaceTimeInfo.style.display = "none";
 
-		buildHtmlDivsTimeline();
+	} else {
 
-	}else{
-		workspaceTimeInfo.style.display = "flex";
+		setControlsEnabled(false);
+
+		metronome_btnPlayStop.disabled = false;
+		metronome_volumen.disabled = false;
+		sliderBpm.disabled = false;
+		btnLessTempo.disabled = false;
+		btnMoreTempo.disabled = false;
+
+		setPlayStopButton(metronome_btnPlayStop, true);
+
+		if (!metronome_on.checked) {
+
+			metronome_on.checked = true;
+
+			setMetronmeOnPlaying(true);
+
+			workspaceTimeInfo.style.display = "none";
+
+			resetMetronomeUI();
+
+		} else {
+
+			workspaceTimeInfo.style.display = "flex";
+
+		}
+
+		metronome.start();
+
 	}
 
-        metronome.start();
-
-    }
-
-    metronome_btnPlayStop.focus({ focusVisible: true });
+	metronome_btnPlayStop.focus({ focusVisible: true });
 
 }
 
+function resetPlaybackUI(){
+
+	buildHtmlDivsTimeline();
+
+	metronome_Info.innerHTML = "Metrónomo: <b>1 / 1</b>";
+
+	player_repeatInfo.innerHTML = "Repetición: <b>1</b>&nbsp;Compás: <b>1</b>";
+
+	countBars = 1;
+	repetitionSequence = 1;
+	firstTick = true;
+
+//	window.scrollTo({top: 0,left: 0,behavior: "smooth"});
+
+}
+
+function resetMetronomeUI(){
+
+	buildHtmlDivsTimeline();
+
+	metronome_Info.innerHTML = "Metrónomo: <b>1 / 1</b>";
+
+}
+
+function setPlayStopButton(button, isPlaying, showText = true){
+
+	if (isPlaying) {
+
+		button.innerHTML = showText
+			? "<i class='fa-solid fa-stop'></i><span>Stop</span>"
+			: "<i class='fa-solid fa-stop'></i>";
+
+	} else {
+
+		button.innerHTML = showText
+			? "<i class='fa-solid fa-play'></i><span>Play</span>"
+			: "<i class='fa-solid fa-play'></i>";
+
+	}
+
+	button.classList.toggle("buttonPlay", !isPlaying);
+	button.classList.toggle("buttonStop", isPlaying);
+
+}
 
 function setMetronmeOnPlaying(value){
 

@@ -162,12 +162,12 @@ stop() {
 
 restart() {
 
-    emitMetronomeBeat(1,1,"restart");
+	emitMetronomeBeat(1,1,"restart");
 
-    if (!this.playing) return;
+	if (!this.playing) return;
 
-    this.stop();
-    this.start();
+	this.stop();
+	this.start();
 
 }
 
@@ -177,38 +177,46 @@ restart() {
 
 tick(time) {
 
-    const beat = this.beat, subBeat = this.subBeat;
+	time = Math.max(0,time);
 
-    if (subBeat === 1) {
+	const beat = this.beat, subBeat = this.subBeat;
 
-        this.synth.triggerAttackRelease(
-            beat === 1 ? "C6" : "G5",
-            "32n",
-            time
-        );
+	if (subBeat === 1) {
 
-    } else if (this.subBeatSound) {
+		this.synth.triggerAttackRelease(
+			beat === 1 ? "C6" : "G5",
+			"32n",
+			time
+		);
 
-        this.synth.triggerAttackRelease(
-            "E5",
-            "32n",
-            time
-        );
+	} else if (this.subBeatSound) {
 
-    }
+		this.synth.triggerAttackRelease(
+			"E5",
+			"32n",
+			time
+		);
 
-    Tone.Draw.schedule(() => {
-        emitMetronomeBeat(beat,subBeat,"tick");
-    }, time);
+	}
 
-    if (++this.subBeat > this.subdivision) {
+	Tone.Draw.schedule(() => {
 
-        this.subBeat = 1;
+		if (!this.playing) {
+			return;
+		}
 
-        if (++this.beat > this.beatsPerBar)
-            this.beat = 1;
+		emitMetronomeBeat(beat,subBeat,"tick");
 
-    }
+	}, time);
+
+	if (++this.subBeat > this.subdivision) {
+
+		this.subBeat = 1;
+
+		if (++this.beat > this.beatsPerBar)
+			this.beat = 1;
+
+	}
 
 }
 

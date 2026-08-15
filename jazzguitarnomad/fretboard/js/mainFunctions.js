@@ -38,6 +38,7 @@ function setUserControls(){
 	if (!isAdmin) {
 
 		btnAudio.style.display = "none";
+		btnAudioPopup.style.display = "none";
 
 		if (user === null) {
 
@@ -309,6 +310,9 @@ function setMode(newMode) {
 		case "note":
 
 			cursor.innerHTML = '<i class="fa-solid fa-pencil"></i>';
+
+			noteText.value = "";
+			noteText.focus();
 
 			break;
 

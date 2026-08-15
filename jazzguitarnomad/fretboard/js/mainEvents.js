@@ -123,25 +123,9 @@ window.addEventListener("load", async () => {
 });
 
 
-
 //==================================================
 // DOCUMENT
 //==================================================
-
-window.addEventListener("resize", () => {
-
-    menuPopup.classList.remove("isOpen");
-    btnMenuSelector.classList.remove("active");
-
-    updateMobileLeftPanel();
-
-    updateTopBarMenu();
-
-    resizeCanvas();
-
-    if (!isPlaying && isScoreVisible) scoreRender();
-
-});
 
 document.addEventListener("keydown",(e)=>{
 
@@ -163,6 +147,21 @@ document.addEventListener("click",(e)=>{
 
 });
 
+window.addEventListener("resize", () => {
+
+    menuPopup.classList.remove("isOpen");
+    btnMenuSelector.classList.remove("active");
+
+    updateMobileLeftPanel();
+
+    updateTopBarMenu();
+
+    resizeCanvas();
+
+    if (!isPlaying && isScoreVisible) scoreRender();
+
+});
+
 
 
 ////////////////////////////////////////////////////////////
@@ -180,32 +179,29 @@ function emitMetronomeBeat(beat,subBeat,mode="tick") {
 
 }
 
-document.addEventListener("metronomeBeat",(e) => {
+document.addEventListener("metronomeBeat", (e) => {
 
-    let { beat,subBeat,mode } = e.detail;
+	let { beat, subBeat, mode } = e.detail;
 
-    switch (mode) {
+	switch (mode) {
 
-        case "restart":
-        case "stop":
+		case "restart":
+		case "stop":
 
-            beat=1;
-            subBeat=1;
+			resetMetronomeUI();
 
-            buildHtmlDivsTimeline();
+			break;
 
-            break;
+		case "start":
+		case "tick":
 
-        case "start":
-        case "tick":
-	
-	    updateTimeline(beat,subBeat);
+			updateTimeline(beat, subBeat);
 
-            break;
+			metronome_Info.innerHTML = "Metrónomo: <b>" + beat + " / " + subBeat + "</b>";
 
-    }
+			break;
 
-    metronome_Info.innerHTML = "Metrónomo: <b>" + beat + " / " + subBeat +"</b>";
+	}
 
 });
 
@@ -224,80 +220,108 @@ function emitPlayerBeat(beat, subBeat, mode = "tick", repetition = 1) {
 
 document.addEventListener("playerBeat", (e) => {
 
-    let { beat, subBeat, mode, repetition } = e.detail;
+	let { beat, subBeat, mode, repetition } = e.detail;
 
-    switch (mode) {
+	switch (mode) {
 
-        case "sequence":
-        case "chord":
+		case "sequence":
+		case "chord":
 
-            countBars = 1;
-            repetitionSequence = 1;
-            firstTick = true;
+			countBars = 1;
+			repetitionSequence = 1;
+			firstTick = true;
 
-            break;
+			break;
 
-        case "tick":
+		case "tick":
 
-            if (beat === 1 && subBeat === 1) {
+			if (beat === 1 && subBeat === 1) {
 
-                if (firstTick)
-                    firstTick = false;
-                else
-                    countBars++;
+				if (firstTick) {
 
-            }
+					firstTick = false;
 
-            scorePaint_scoreTick();
+				} else {
 
-            break;
+					countBars++;
 
-        case "repeat":
+				}
 
-            repetitionSequence = repetition;
-            countBars = 1;
-            firstTick = true;
+			}
 
-            scorePaint_stop();
+			scorePaint_scoreTick();
 
-            break;
+			break;
 
-        case "stop":
+		case "repeat":
 
-            countBars = 1;
-            repetitionSequence = 1;
-            firstTick = true;
+			repetitionSequence = repetition;
+			countBars = 1;
+			firstTick = true;
 
-            scorePaint_stop();
+			scorePaint_stop();
 
-            break;
+			break;
 
-        case "end":
+		case "stop":
 
-            countBars = 1;
-            repetitionSequence = 1;
-            firstTick = true;
+			scorePaint_stop();
 
-            setControlsEnabled(true);
+			resetPlaybackUI();
 
-            isPlaying = false;
+			// Solo ocultar si realmente hemos parado.
+			// Durante el arranque/count-in isPlaying sigue siendo true.
 
-            btnPlayStop.innerHTML = "<i class='fa-solid fa-play'></i><span>Play</span>";
-            btnPlayStop_2.innerHTML = btnPlayStop.innerHTML;
+			if (!isPlaying) {
 
-            btnPlayStop.classList.toggle("buttonPlay", true);
-            btnPlayStop.classList.toggle("buttonStop", false);
+				workspaceTimeInfo.style.display = "none";
 
-            btnPlayStop_2.classList.toggle("buttonPlay", true);
-            btnPlayStop_2.classList.toggle("buttonStop", false);
+			}
 
-            break;
-    }
+			break;
 
-    player_repeatInfo.innerHTML = "Compás: <b>" + countBars + "&nbsp;</b>Repetición: <b>" + repetitionSequence + "</b>";
+		case "end":
+
+			scorePaint_stop();
+
+			resetPlaybackUI();
+
+			setControlsEnabled(true);
+
+			isPlaying = false;
+
+			setPlayStopButton(btnPlayStop, false);
+			setPlayStopButton(btnPlayStop_2, false);
+
+			scoreFloatingPlay.innerHTML =
+				"<i class='fa-solid fa-play'></i>";
+
+			scoreFloatingPlay.classList.remove("stop");
+			scoreFloatingPlay.style.display = "none";
+
+			// La reproducción ha terminado realmente
+
+			workspaceTimeInfo.style.display = "none";
+
+			// Abrir y cerrar controles
+
+			if (topControlsWasOpen) {
+				openTopControls();
+			}
+
+			topControlsWasOpen = false;
+
+			break;
+
+	}
+
+	if (mode === "sequence" || mode === "chord" || mode === "tick" || mode === "repeat") {
+
+		player_repeatInfo.innerHTML = "Repetición: <b>" + repetitionSequence + "&nbsp;</b>Compás: <b>" + countBars + "</b>";
+
+	}
 
 });
-
 
 
 
@@ -603,15 +627,6 @@ btnToggleTopControls.addEventListener("click", () => {
 		closeTopControls();
 
 	} else {
-
-/*
-		// En móvil, abrir Controles cierra la Biblioteca
-		if (window.innerWidth <= maxMediaScreenWidth) {
-
-			closeLeftPanel();
-
-		}
-*/
 
 		openTopControls();
 
