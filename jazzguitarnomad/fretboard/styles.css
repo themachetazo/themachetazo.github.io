@@ -819,6 +819,8 @@ html {
 
 	font-size: 9px;
 	transition: transform 0.18s ease;
+
+	background: var(--color-tools);
 }
 
 .projectCategoryButton[aria-expanded="true"] i {
@@ -847,8 +849,6 @@ html {
 	align-items: center;
 
 	gap: 6px;
-
-	background: var(--color-tools);
 
 }
 
