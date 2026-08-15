@@ -114,6 +114,7 @@ function loadProject(project) {
 	setOrientation(orientation);
 
 	fretboardStyle = project.settings?.fretboardStyle || "maple";
+	cmbDiapason.value = fretboardStyle;
 	setFretboardStyle(fretboardStyle);
 
 	// Notas
