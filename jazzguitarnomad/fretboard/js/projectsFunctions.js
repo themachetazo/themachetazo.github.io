@@ -130,7 +130,7 @@ function loadProject(project) {
 	if (typeof scoreScale === "number") {
 		cmbScoreScale.value = "zoom";
 	}else{
-		cmbScoreScale.value = scoreScale;
+		cmbScoreScale.value = scoreScale; //auto
 	}
 	if (scoreScale === "auto"){
 		sliderScoreZoom.value = "50";
@@ -154,6 +154,7 @@ function loadProject(project) {
 
 	currentInstrument = project.settings?.currentInstrument || "piano";
 	cmbSamplerInstrument.value = currentInstrument;
+	setInstrument(currentInstrument);
 
 	fretNumbers = project.settings?.fretNumbers || 1;
 	numberFrets.value = fretNumbers;
