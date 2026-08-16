@@ -159,6 +159,98 @@ function updateFretNumberControls() {
 
 }
 
+function setControlsEnabled(enabled) {
+    const controls = document.querySelectorAll(
+        "input, select, button"
+    );
+
+    controls.forEach(control => {
+        control.disabled = !enabled;
+    });
+
+    btnResetScorePalyer.disabled = false;
+}
+
+function updateFigureOptions() {
+    const previousValue = cmbFigure.value;
+    const denominator = cmbBar.value.split("/")[1];
+    cmbFigure.innerHTML = "";
+    if (denominator === "4") {
+        cmbFigure.innerHTML = `
+            <option value="1">Negra</option>
+            <option value="2">Corchea</option>
+            <option value="4">Semicorchea</option>
+        `;
+	cmbFigure.disabled = false;
+    } else if (denominator === "8") {
+        cmbFigure.innerHTML = `<option value="2">Corchea</option>`;
+	cmbFigure.disabled = true;
+    }
+    const option = cmbFigure.querySelector(`option[value="${previousValue}"]`);
+    if (option) option.selected = true;
+}
+
+
+function getBarGroups() {
+    const time = cmbBar.value;
+    const [numerator, denominator] = time.split("/").map(Number);
+    if (denominator === 4) {
+        projectBar = numerator;
+        projectFigure = parseInt(cmbFigure.value, 10);
+    } else if (time === "6/8") {
+        projectBar = 2;
+        projectFigure = 3;
+    } else if (time === "9/8") {
+        projectBar = 3;
+        projectFigure = 3;
+    } else if (time === "12/8") {
+        projectBar = 4;
+        projectFigure = 3;
+    } else if (time === "5/8") {
+        projectBar = 1;
+        projectFigure = 5;
+    } else if (time === "7/8") {
+        projectBar = 1;
+        projectFigure = 7;
+    }
+}
+
+function setBarGroups() {
+
+	if (projectFigure === 3) {
+
+		if (projectBar === 2) {
+
+			cmbBar.value = "6/8";
+
+		} else if (projectBar === 3) {
+
+			cmbBar.value = "9/8";
+
+		} else if (projectBar === 4) {
+
+			cmbBar.value = "12/8";
+
+		}
+
+	} else if (projectFigure === 5) {
+
+		cmbBar.value = "5/8";
+
+	} else if (projectFigure === 7) {
+
+		cmbBar.value = "7/8";
+
+	} else {
+
+		cmbBar.value = projectBar + "/4";
+
+		cmbFigure.value = projectFigure;
+
+	}
+
+}
+
 function saveHistory() {
 
 	const snapshot = {

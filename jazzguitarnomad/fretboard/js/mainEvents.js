@@ -918,27 +918,27 @@ sliderBpm.addEventListener("input", function () {
 
 	sliderBpm.title = this.value;
 
-	numTempo.value = parseInt(this.value);
+	numBpm.value = parseInt(this.value);
 
-	metronome.setBpm(parseFloat(numTempo.value));
+	metronome.setBpm(parseFloat(numBpm.value));
 
 	player.setGate(samplerGate.value);
 
 });
 
-numTempo.addEventListener("change", () => {
+numBpm.addEventListener("change", () => {
 
-	let tempoCount = parseInt(numTempo.value);
+	let tempoCount = parseInt(numBpm.value);
 
 	// Limitar también si el usuario escribe un valor manualmente
 	tempoCount = Math.max(30, Math.min(300, tempoCount));
 
-	numTempo.value = tempoCount;
+	numBpm.value = tempoCount;
 
-	sliderBpm.value = parseInt(numTempo.value);
-	sliderBpm.title = numTempo.value;
+	sliderBpm.value = parseInt(numBpm.value);
+	sliderBpm.title = numBpm.value;
 
-	metronome.setBpm(parseFloat(numTempo.value));
+	metronome.setBpm(parseFloat(numBpm.value));
 
 	player.setGate(samplerGate.value);
 
@@ -946,16 +946,16 @@ numTempo.addEventListener("change", () => {
 
 btnLessTempo.addEventListener("click", () => {
 
-	let nTempo = numTempo.value == null || numTempo.value === "" ? 1 : parseInt(numTempo.value);
+	let nTempo = numBpm.value == null || numBpm.value === "" ? 1 : parseInt(numBpm.value);
 
 	if (nTempo <= 30) {return;}
 
-	numTempo.value = nTempo - 1;
+	numBpm.value = nTempo - 1;
 
-	sliderBpm.value = parseInt(numTempo.value);
-	sliderBpm.title = numTempo.value;
+	sliderBpm.value = parseInt(numBpm.value);
+	sliderBpm.title = numBpm.value;
 
-	metronome.setBpm(parseFloat(numTempo.value));
+	metronome.setBpm(parseFloat(numBpm.value));
 
 	player.setGate(samplerGate.value);
 
@@ -963,16 +963,16 @@ btnLessTempo.addEventListener("click", () => {
 
 btnMoreTempo.addEventListener("click", () => {
 
-	let nTempo = numTempo.value == null || numTempo.value === "" ? 1 : parseInt(numTempo.value);
+	let nTempo = numBpm.value == null || numBpm.value === "" ? 1 : parseInt(numBpm.value);
 
 	if (nTempo >= 300) {return;}
 
-	numTempo.value = nTempo + 1;
+	numBpm.value = nTempo + 1;
 
-	sliderBpm.value = parseInt(numTempo.value);
-	sliderBpm.title = numTempo.value;
+	sliderBpm.value = parseInt(numBpm.value);
+	sliderBpm.title = numBpm.value;
 
-	metronome.setBpm(parseFloat(numTempo.value));
+	metronome.setBpm(parseFloat(numBpm.value));
 
 	player.setGate(samplerGate.value);
 

@@ -109,6 +109,7 @@ function loadProject(project) {
 
 	displayMode = project.settings?.displayMode === "scale";
 	btnDisplay.classList.toggle("active", displayMode);
+	chkInlays.checked = displayMode === "scale";
 
 	orientation = project.settings?.orientation === "vertical" ? "vertical" : "horizontal";
 	setOrientation(orientation);
@@ -116,6 +117,47 @@ function loadProject(project) {
 	fretboardStyle = project.settings?.fretboardStyle || "maple";
 	cmbDiapason.value = fretboardStyle;
 	setFretboardStyle(fretboardStyle);
+
+/*
+let rotation = 0;
+let projectBar = 4;
+let projectFigure = 4;
+let scoreScale = "auto";
+let projectType = "sequence";
+let tipoSecuencia = "up";
+let countBars = 1;
+let repetitionSequence = 1;
+let currentInstrument = "piano";
+let fretNumbers = 1;
+let showFretNumbers = false;
+let bpm = 90;
+let key = "C";
+let scoreStaves = "all";
+let scoreLayout = "vertical";
+let swing = false;
+let metronomeOn = true;
+let isFretboardVisible = true;
+let isScoreVisible = true;
+
+btnRotate , btnVertical , btnHorizontal // vertical: 0 / 180, horizontal: 90 / 270
+cmbBar , cmbFigure setBarGroups()
+cmbScoreScale:auto,zoom (number) , sliderScoreZoom
+cmbProjectType:sequence,chord
+cmbTipoSecuencia:up,down,up-down,down-up
+player_countIn (0-2)
+player_repeats (1-10)
+cmbSamplerInstrument
+numberFrets
+showNumber
+numBpm , sliderBpm
+cmbTonalidad
+cmbScoreStaves:all,notation,tablature
+cmbScoreLayout:vertical,horizontal
+player_swing
+metronome_on
+btnFretboardVisible
+btnScoreVisible
+*/
 
 	// Notas
 
@@ -176,9 +218,28 @@ function getCurrentProject() {
 
 		settings: {
 			fretCount,
-			displayMode: displayMode ? "scale" : "no-scale",
+			displayMode,
 			orientation,
-			fretboardStyle:fretboardStyle
+			fretboardStyle,
+			rotation,
+			projectBar,
+			scoreScale,
+			projectType,
+			tipoSecuencia,
+			countBars,
+			projectFigure,
+			repetitionSequence,
+			isFretboardVisible,
+			isScoreVisible,
+			currentInstrument,
+			fretNumbers,
+			showFretNumbers,
+			bpm,
+			key,
+			scoreStaves,
+			scoreLayout,
+			swing,
+			metronomeOn
 		},
 
 		notes: notes.map(note => ({
@@ -230,6 +291,25 @@ function projectToXml(project, indent = "\t") {
 	lines.push(`${indent}\t\t<fretboardStyle>${escapeXml(project.settings.fretboardStyle)}</fretboardStyle>`);
 	lines.push(`${indent}\t\t<fretCount>${project.settings.fretCount}</fretCount>`);
 	lines.push(`${indent}\t\t<displayMode>${project.settings.displayMode}</displayMode>`);
+	lines.push(`${indent}\t\t<rotation>${project.settings.rotation}</rotation>`);
+	lines.push(`${indent}\t\t<projectBar>${project.settings.projectBar}</projectBar>`);
+	lines.push(`${indent}\t\t<scoreScale>${project.settings.scoreScale}</scoreScale>`);
+	lines.push(`${indent}\t\t<projectType>${project.settings.projectType}</projectType>`);
+	lines.push(`${indent}\t\t<tipoSecuencia>${project.settings.tipoSecuencia}</tipoSecuencia>`);
+	lines.push(`${indent}\t\t<countBars>${project.settings.countBars}</countBars>`);
+	lines.push(`${indent}\t\t<projectFigure>${project.settings.projectFigure}</projectFigure>`);
+	lines.push(`${indent}\t\t<repetitionSequence>${project.settings.repetitionSequence}</repetitionSequence>`);
+	lines.push(`${indent}\t\t<isFretboardVisible>${project.settings.isFretboardVisible}</isFretboardVisible>`);
+	lines.push(`${indent}\t\t<isScoreVisible>${project.settings.isScoreVisible}</isScoreVisible>`);
+	lines.push(`${indent}\t\t<currentInstrument>${project.settings.currentInstrument}</currentInstrument>`);
+	lines.push(`${indent}\t\t<fretNumbers>${project.settings.fretNumbers}</fretNumbers>`);
+	lines.push(`${indent}\t\t<showFretNumbers>${project.settings.showFretNumbers}</showFretNumbers>`);
+	lines.push(`${indent}\t\t<bpm>${project.settings.bpm}</bpm>`);
+	lines.push(`${indent}\t\t<key>${project.settings.key}</key>`);
+	lines.push(`${indent}\t\t<scoreStaves>${project.settings.scoreStaves}</scoreStaves>`);
+	lines.push(`${indent}\t\t<scoreLayout>${project.settings.scoreLayout}</scoreLayout>`);
+	lines.push(`${indent}\t\t<swing>${project.settings.swing}</swing>`);
+	lines.push(`${indent}\t\t<metronomeOn>${project.settings.metronomeOn}</metronomeOn>`);
 	lines.push(`${indent}\t</settings>`);
 
 	lines.push(`${indent}\t<notes>`);
@@ -367,7 +447,7 @@ function parseProjectsXml(xmlText) {
 
 			id: projectNode.getAttribute("id") || generateProjectId(),
 
-			title: projectNode.getAttribute("title") || "Sin título",
+			title: projectNode.getAttribute("title") || "Sin Título",
 
 			category: projectNode.getAttribute("category"),
 
@@ -375,7 +455,26 @@ function parseProjectsXml(xmlText) {
 				orientation: getSetting("orientation","horizontal"),
 				fretboardStyle: getSetting("fretboardStyle","maple"),
 				fretCount: parseInt(getSetting("fretCount","10")),
-				displayMode: getSetting("displayMode","scale")
+				displayMode: getSetting("displayMode","scale"),
+				rotation: getSetting("rotation", 0),
+				projectBar: getSetting("projectBar", 4),
+				projectFigure: getSetting("projectFigure", 4),
+				scoreScale: getSetting("scoreScale", "auto"),
+				projectType: getSetting("projectType", "sequence"),
+				tipoSecuencia: getSetting("tipoSecuencia", "up"),
+				countBars: getSetting("countBars", 1),
+				repetitionSequence: getSetting("repetitionSequence", 1),
+				isFretboardVisible: getSetting("isFretboardVisible", true),
+				isScoreVisible: getSetting("isScoreVisible", true),
+				currentInstrument: getSetting("currentInstrument", "piano"),
+				fretNumbers: getSetting("fretNumbers", 1),
+				showFretNumbers: getSetting("showFretNumbers", false),
+				bpm: getSetting("bpm", 90),
+				key: getSetting("key", "C"),
+				scoreStaves: getSetting("scoreStaves", "all"),
+				scoreLayout: getSetting("scoreLayout", "vertical"),
+				swing: getSetting("swing", false),
+				metronomeOn: getSetting("metronomeOn", true)
 			},
 
 			notes: [],

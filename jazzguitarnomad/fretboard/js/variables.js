@@ -171,18 +171,36 @@ let xmlProjects = "projects/fretboard-projects.xml";
 
 btnToggleLibrary.title = "Server: " + xmlProjects;
 
-let mode = "view";
-
-let displayMode = true;
-
 const stringCount = 6;
-let fretCount = parseInt(numFrets.value);
-
-let showFretNumbers = false;
-
-let menuOpen = "";
 
 const maxMediaScreenWidth = 768;
+
+let mode = "view";
+let menuOpen = "";
+
+let displayMode = true;
+let fretCount = 10;
+let orientation = "vertical";
+let rotation = 0; /* vertical: 0 / 180, horizontal: 90 / 270 */
+let rotated = false;
+let projectBar = 4;
+let projectFigure = 4;
+let scoreScale = "auto";
+let projectType = "sequence";
+let countBars = 0;
+let repetitionSequence = 2;
+let isFretboardVisible = true;
+let isScoreVisible = true;
+let currentInstrument = "piano";
+let tipoSecuencia = "up";
+let fretNumbers = 1;
+let showFretNumbers = false;
+let bpm = 90;
+let key = "C";
+let scoreStaves = "all";
+let scoreLayout = "vertical";
+let swing = false;
+let metronomeOn = true;
 
 /*==================================================
 	GEOMETRÍA Y MEDIDAS DEL DIAPASÓN
@@ -218,10 +236,6 @@ let imageHeight;
 
 let neckBleed;
 let neckRadius;
-
-let orientation = "vertical";
-let rotation = 0; // vertical: 0 / 180, horizontal: 90 / 270
-let rotated = false;
 
 
 /*==================================================
@@ -280,7 +294,7 @@ const scoreFloatingPlay = document.getElementById("scoreFloatingPlay");
 
 const btnLessTempo = document.getElementById("btnLessTempo");
 const btnMoreTempo = document.getElementById("btnMoreTempo");
-const numTempo = document.getElementById("numTempo");
+const numBpm = document.getElementById("numBpm");
 const btnTime4 = document.getElementById("btnTime4");
 const btnTime3 = document.getElementById("btnTime3");
 
@@ -293,9 +307,9 @@ const chkNoteNames = document.getElementById("chkNoteNames");
 
 const cmbProjectType = document.getElementById("cmbProjectType");
 
-const cmbBar = document.getElementById("bar");
-const cmbFigure = document.getElementById("figure");
-const cmbTonalidad = document.getElementById("tonalidad");
+const cmbBar = document.getElementById("cmbBar");
+const cmbFigure = document.getElementById("cmbFigure");
+const cmbTonalidad = document.getElementById("cmbTonalidad");
 const cmbTipoSecuencia = document.getElementById("cmbTipoSecuencia");
 
 const sliderBpm = document.getElementById("sliderBpm");
@@ -358,28 +372,15 @@ const sliderScoreStaveMargin = document.getElementById("sliderScoreStaveMargin")
 const chkScoreTitle = document.getElementById("chkScoreTitle");
 const btnScoreVisible = document.getElementById("btnScoreVisible");
 
-let scoreScale = "auto";
-
-let isFretboardVisible = true;
-let isScoreVisible = true;
-
 let scoreArray = [];
 let scoreFooter = "www.jazzguitarnomad.com";
 
-let projectType = "sequence";
-
-let countBars = 1;
-let repetitionSequence = 1;
 let firstTick = true;
-
-let projectBar = 4;
-let projectFigure = 4;
 
 let metronome = null;
 let player = null;
 
 let instruments = null;
-let currentInstrument = "piano";
 let instrument = null;
 
 let isPlaying = false;
