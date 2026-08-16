@@ -397,7 +397,7 @@
 						<span>TEMPO</span>
 						<div class="toolRow">
 							<button id="btnLessTempo">−</button>
-							<input id="numTempo" type="number" min="30" max="300" value="90">
+							<input id="numBpm" type="number" min="30" max="300" value="90">
 							<button id="btnMoreTempo">+</button>
 						</div>
 						<div class="toolRow">
@@ -466,7 +466,7 @@
 						<span>ARMADURA</span>
 						<div class="toolRow">
 							<span>Compás</span>
-							<select id="bar">
+							<select id="cmbBar">
 								<option value="2/4">2/4</option>
 								<option value="3/4">3/4</option>
 								<option value="4/4" selected>4/4</option>
@@ -481,7 +481,7 @@
 						</div>
 						<div class="toolRow">
 							<span>Figura</span>
-							<select id="figure">
+							<select id="cmbFigure">
 								<option value="1" selected>Negra</option>
 								<option value="2">Corchea</option>
 								<option value="4">Semicorchea</option>
@@ -493,7 +493,7 @@
 						<span>TONALIDAD</span>
 						<div class="toolRow">
 							<span>Key</span>
-							<select id="tonalidad">
+							<select id="cmbTonalidad">
 								<option value="C" selected>C</option>
 								<option value="Db">Db</option>
 								<option value="D">D</option>
@@ -579,7 +579,7 @@
 							</label>
 							<label class="lblToggle" title="Subdivisión del beat">
 								<span class="lblToggleText">Subdivisión</span>
-								<input id="metronome_subBeatSound" type="checkbox" checked>
+								<input id="metronome_subBeatSound" type="checkbox">
 								<span class="lblToggleSpan"></span>
 							</label>
 						</div>
@@ -598,7 +598,7 @@
 			<div id="projectPanel">
 				<div class="projectPanelHeader">
 					<span id="projectPanelHeaderTitle">PROYECTOS</span>
-					<button id="btnToggleLibrary"><i class="fa-solid fa-eye"></i></button><!--fa-up-right-from-square-->
+					<button id="btnToggleLibrary"><i class="fa-solid fa-up-right-from-square"></i></button>
 				</div>
 
 <!--
@@ -686,11 +686,11 @@
 
 		<div class="footerDivs">
 			<a href="#">
-				<img id="footerBrandLogo" src="img/logo.png" alt="Jazz Guitar Nomad">
-				<br><br>
 				<strong>JAZZ GUITAR NOMAD</strong>
+				<br><br>
+				<img id="footerBrandLogo" src="img/logo.png" alt="Jazz Guitar Nomad">
 			</a>
-			<p>Herramienta interactiva para el estudio de la guitarra de Jazz.</p>
+			<br>
 			<strong>SÍGUENOS</strong>
 			<div class="footerSocial">
 				<a href="#"><i class="fa-brands fa-facebook"></i></a>
