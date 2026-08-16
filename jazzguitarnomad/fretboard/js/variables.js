@@ -201,6 +201,7 @@ let scoreStaves = "all";
 let scoreLayout = "vertical";
 let swing = false;
 let metronomeOn = true;
+let inlays = true;
 
 /*==================================================
 	GEOMETRÍA Y MEDIDAS DEL DIAPASÓN

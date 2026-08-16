@@ -109,7 +109,10 @@ function loadProject(project) {
 
 	displayMode = project.settings?.displayMode === "scale";
 	btnDisplay.classList.toggle("active", displayMode);
-	chkInlays.checked = displayMode === "scale";
+
+	inlays = project.settings?.inlays || false;
+	chkInlays.cheked = inlays;
+	chkInlays.disabled = displayMode === "no-scale";
 
 	orientation = project.settings?.orientation === "vertical" ? "vertical" : "horizontal";
 	rotation = project.settings?.rotation || 0;
@@ -246,6 +249,7 @@ function getCurrentProject() {
 			displayMode,
 			orientation,
 			fretboardStyle,
+			inlays,
 			rotation,
 			projectBar,
 			scoreScale,
@@ -316,6 +320,7 @@ function projectToXml(project, indent = "\t") {
 	lines.push(`${indent}\t\t<fretboardStyle>${escapeXml(project.settings.fretboardStyle)}</fretboardStyle>`);
 	lines.push(`${indent}\t\t<fretCount>${project.settings.fretCount}</fretCount>`);
 	lines.push(`${indent}\t\t<displayMode>${project.settings.displayMode}</displayMode>`);
+	lines.push(`${indent}\t\t<inlays>${project.settings.inlays}</inlays>`);
 	lines.push(`${indent}\t\t<rotation>${project.settings.rotation}</rotation>`);
 	lines.push(`${indent}\t\t<projectBar>${project.settings.projectBar}</projectBar>`);
 	lines.push(`${indent}\t\t<scoreScale>${project.settings.scoreScale}</scoreScale>`);
@@ -481,6 +486,7 @@ function parseProjectsXml(xmlText) {
 				fretboardStyle: getSetting("fretboardStyle","maple"),
 				fretCount: parseInt(getSetting("fretCount","10")),
 				displayMode: getSetting("displayMode","scale"),
+				inlays: getSetting("inlays","scale"),
 				rotation: getSetting("rotation", 0),
 				projectBar: getSetting("projectBar", 4),
 				projectFigure: getSetting("projectFigure", 4),
