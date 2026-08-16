@@ -111,10 +111,10 @@ function loadProject(project) {
 	btnDisplay.classList.toggle("active", displayMode);
 
 	inlays = project.settings?.inlays || false;
-	chkInlays.cheked = inlays;
 	chkInlays.disabled = displayMode === false;
+	chkInlays.cheked = inlays;
 
-	orientation = project.settings?.orientation === "vertical" ? "vertical" : "horizontal";
+	orientation = project.settings?.orientation || "vertical";
 	rotated = project.settings?.rotated || false;
 	setOrientation(orientation);
 
@@ -136,7 +136,7 @@ function loadProject(project) {
 		cmbScoreScale.value = scoreScale; //auto
 	}
 
-	projectType = project.settings?.projectType === "sequence" ? "sequence" : "chord";
+	projectType = project.settings?.projectType || "sequence";
 	cmbProjectType.value = projectType;
 
 	tipoSecuencia = project.settings?.tipoSecuencia || "up";
@@ -169,7 +169,7 @@ function loadProject(project) {
 	scoreStaves = project.settings?.scoreStaves || "all";
 	cmbScoreStaves.value = scoreStaves;
 
-	scoreLayout = project.settings?.scoreLayout === "vertical" ? "vertical" : "horizontal";
+	scoreLayout = project.settings?.scoreLayout || "vertical";
 	cmbScoreLayout.value = scoreLayout;
 
 	swing = project.settings?.swing || false;
@@ -182,6 +182,8 @@ function loadProject(project) {
 	btnFretboardVisible.classList.toggle("active",isFretboardVisible);
 	isScoreVisible = project.settings?.isScoreVisible || false;
 	btnScoreVisible.classList.toggle("active",isScoreVisible);
+
+	setWorkspaceLayout();
 
 
 	// Notas
