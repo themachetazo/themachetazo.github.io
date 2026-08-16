@@ -1235,12 +1235,28 @@ sliderScoreZoom.addEventListener("change", function () {
 
 btnScoreVisible.addEventListener("click", () => {
 
-	setWorkspaceLayout("score");
+	if (isScoreVisible && !isFretboardVisible) {
+
+		return;
+
+	}
+
+	isScoreVisible = !isScoreVisible;
+
+	setWorkspaceLayout();
 
 });
 
 btnFretboardVisible.addEventListener("click", () => {
 
-	setWorkspaceLayout("fretboard");
+	if (isFretboardVisible && !isScoreVisible) {
+
+		return;
+
+	}
+
+	isFretboardVisible = !isFretboardVisible;
+
+	setWorkspaceLayout();
 
 });

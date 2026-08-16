@@ -837,66 +837,36 @@ function setLayout() {
 
 	}
 
-	setWorkspaceLayout("score");
+	setWorkspaceLayout();
+
 
 }
 
-function setWorkspaceLayout(mode){
+function setWorkspaceLayout(){
 
 	//------------------------------------------------
-	// Móvil + vertical + panel de proyectos abierto
+	// Nunca permitir que ambos estén ocultos
 	//------------------------------------------------
 
-	if (window.innerWidth <= maxMediaScreenWidth &&
-		orientation === "vertical" &&
-		!appLayout.classList.contains("leftPanelHidden")) {
+	if (!isScoreVisible && !isFretboardVisible) {
 
-		if (mode === "score") {
-
-			isScoreVisible = true;
-			isFretboardVisible = false;
-
-		} else if (mode === "fretboard") {
-
-			isFretboardVisible = true;
-			isScoreVisible = false;
-
-		}
-
-	} else {
-
-		//------------------------------------------------
-		// Comportamiento normal
-		//------------------------------------------------
-
-		switch(mode){
-
-			case "score":
-
-				if (isScoreVisible && !isFretboardVisible) {
-					return;
-				}
-
-				isScoreVisible = !isScoreVisible;
-
-				break;
-
-			case "fretboard":
-
-				if (isFretboardVisible && !isScoreVisible) {
-					return;
-				}
-
-				isFretboardVisible = !isFretboardVisible;
-
-				break;
-
-		}
+		isFretboardVisible = true;
 
 	}
 
-	workspaceContent.style.display = isFretboardVisible ? "" : "none";
-	workspaceScore.style.display = isScoreVisible ? "" : "none";
+	//------------------------------------------------
+	// Mostrar / ocultar
+	//------------------------------------------------
+
+	workspaceContent.style.display =
+		isFretboardVisible ? "" : "none";
+
+	workspaceScore.style.display =
+		isScoreVisible ? "" : "none";
+
+	//------------------------------------------------
+	// Configurar layout
+	//------------------------------------------------
 
 	workspace.classList.remove(
 		"horizontal",
@@ -919,10 +889,29 @@ function setWorkspaceLayout(mode){
 
 	}
 
-	btnFretboardVisible.classList.toggle("active",isFretboardVisible);
-	btnScoreVisible.classList.toggle("active",isScoreVisible);
+	//------------------------------------------------
+	// Estado de los botones
+	//------------------------------------------------
 
-	if (isScoreVisible) scoreRender();
+	btnFretboardVisible.classList.toggle(
+		"active",
+		isFretboardVisible
+	);
+
+	btnScoreVisible.classList.toggle(
+		"active",
+		isScoreVisible
+	);
+
+	//------------------------------------------------
+	// Renderizar partitura
+	//------------------------------------------------
+
+	if (isScoreVisible) {
+
+		scoreRender();
+
+	}
 
 }
 
