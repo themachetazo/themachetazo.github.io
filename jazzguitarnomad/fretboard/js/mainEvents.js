@@ -45,6 +45,8 @@ window.addEventListener("load", async () => {
 		metronome.setBpm(parseFloat(sliderBpm.value));
 		metronome.setVolume(-12);
 		metronome.subBeatSound = metronome_subBeatSound.checked;
+		metronome.setMeter(projectBar);
+		metronome.setSubdivision(projectFigure);
 
 		setLoadingProgress(30, "Cargando instrumentos...");
 

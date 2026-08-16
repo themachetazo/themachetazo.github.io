@@ -1,422 +1,426 @@
 class MusicPlayer {
 
-    constructor(instrument, metronome) {
+	constructor(instrument, metronome) {
 
-	this.instrument = instrument;
+		this.instrument = instrument;
+		this.metronome = metronome;
+		this.part = null;
+		this.playing = false;
+		this.gate = null;
+		this.repeticiones = 2;
+		this.metronomeOn = false;
+		this.autoMetronome = false;
+		this.stopEvent = null;
+		this.repeatEvents = [];
+		this.countInEvent = null;
+		this.countInBars = 0;
+		this.swingFeel = false;
+		this.swingAmount = 0.66;
 
-	this.metronome = metronome;
+		////////////////////////////////////////////////////////////
+		// BUFFER
+		////////////////////////////////////////////////////////////
 
-        this.part = null;
+		this.lastNotes = null;
+		this.lastMode = null;
 
-        this.playing = false;
+	}
 
-	this.gate = null;
+	////////////////////////////////////////////////////////////
+	// CONFIGURACIÓN
+	////////////////////////////////////////////////////////////
 
-	this.repeticiones = 2;
+	setCountInBars(bars) {
 
-	this.metronomeOn = false;
+		this.countInBars = parseInt(bars, 10);
 
-	this.autoMetronome = false;
+	}
 
-	this.stopEvent = null;
+	setRepeticiones(repeats) {
 
-	this.countInBars = 0;
+		this.repeticiones = parseInt(repeats, 10);
+		this.restart();
 
-	this.swingFeel = false;
-	this.swingAmount = 0.66;
+	}
 
-        ////////////////////////////////////////////////////////////
-        // BUFFER (para render offline)
-        ////////////////////////////////////////////////////////////
+	setGate(gate) {
 
-        this.lastNotes = null;
+		const step = Tone.Time(this.metronome.subdivisionFigure()).toSeconds();
+		this.gate = step * (parseInt(gate, 10) / 100);
 
-        this.lastMode = null;
+	}
 
-    }
+	setInstrumentVolume(db) {
 
-    ////////////////////////////////////////////////////////////
-    // CONFIGURACIÓN
-    ////////////////////////////////////////////////////////////
+		this.instrument.volume.value = db;
 
-    setCountInBars(bars) {
+	}
 
-        this.countInBars = parseInt(bars);
+	setMetronomeOn(enabled) {
 
-    }
+		this.metronomeOn = enabled;
+		this.restart();
 
-    setRepeticiones(repeats){
+	}
 
-	this.repeticiones = parseInt(repeats);
+	////////////////////////////////////////////////////////////
+	// ACENTOS
+	////////////////////////////////////////////////////////////
 
-	this.restart();
+	getVelocity(beat, subBeat) {
 
-    }
+		if (this.swingFeel && this.metronome.subdivision === 2) {
 
-    setGate(gate) {
+			if (beat === 1 && subBeat === 1) return 0.90;
+			if (subBeat === 2) return 1.00;
 
-        const step = Tone.Time(this.metronome.subdivisionFigure()).toSeconds();
+			return 0.85;
 
-        this.gate = step * (parseInt(gate, 10) / 100);
+		}
 
-    }
+		if (beat === 1 && subBeat === 1) return 1.00;
+		if (subBeat === 1) return 0.90;
 
-    setInstrumentVolume(db) {
+		return 0.65;
 
-        this.instrument.volume.value = db;
+	}
 
-    }
+	////////////////////////////////////////////////////////////
+	// CUENTA ATRÁS
+	////////////////////////////////////////////////////////////
 
-    setMetronomeOn(enabled) {
+	startWithCountIn(callback) {
 
-        this.metronomeOn = enabled;
+		if (this.countInBars <= 0) {
 
-        this.restart();
+			callback();
+			return;
 
-    }
+		}
 
-////////////////////////////////////////////////////////////
-//
-// ACENTOS
-//
-////////////////////////////////////////////////////////////
+		if (this.countInEvent !== null) {
 
-getVelocity(beat, subBeat) {
+			Tone.Transport.clear(this.countInEvent);
+			this.countInEvent = null;
 
-    ////////////////////////////////////////////////////////
-    // Swing en corcheas
-    ////////////////////////////////////////////////////////
+		}
 
-    if (this.swingFeel && this.metronome.subdivision === 2) {
+		Tone.Transport.stop();
+		Tone.Transport.position = 0;
 
-        if (beat === 1 && subBeat === 1) return 0.90;
+		let beat = 1;
 
-        if (subBeat === 2) return 1.00;
+		const totalBeats = this.metronome.beatsPerBar * this.countInBars;
 
-        return 0.85;
+		this.countInEvent = Tone.Transport.scheduleRepeat(
 
-    }
+			(time) => {
 
-    ////////////////////////////////////////////////////////
-    // Comportamiento normal
-    ////////////////////////////////////////////////////////
+				if (beat === 1) {
 
-    if (beat === 1 && subBeat === 1) return 1.00;
+					this.metronome.synth.triggerAttackRelease("C6", "32n", time);
 
-    if (subBeat === 1) return 0.90;
+				} else {
 
-    return 0.65;
+					this.metronome.synth.triggerAttackRelease("G5", "32n", time);
 
-}
+				}
 
+				beat++;
 
-    ////////////////////////////////////////////////////////////
-    // CUENTA ATRAS
-    ////////////////////////////////////////////////////////////
+				if (beat > this.metronome.beatsPerBar) {
+					beat = 1;
+				}
 
-startWithCountIn(callback) {
+			},
 
-    ////////////////////////////////////////////////////////////
-    // Sin cuenta atrás
-    ////////////////////////////////////////////////////////////
+			"4n"
 
-    if (this.countInBars <= 0) {
+		);
 
-        callback();
+		const endTime = Math.max(
+			0,
+			Tone.Time("4n").toSeconds() * totalBeats
+		);
 
-        return;
+		Tone.Transport.scheduleOnce(
 
-    }
+			() => {
 
-    ////////////////////////////////////////////////////////////
-    // Limpiar estado previo
-    ////////////////////////////////////////////////////////////
+				if (this.countInEvent !== null) {
 
-    if (this.countInEvent !== null) {
+					Tone.Transport.clear(this.countInEvent);
+					this.countInEvent = null;
 
-        Tone.Transport.clear(this.countInEvent);
+				}
 
-        this.countInEvent = null;
+				Tone.Transport.stop();
+				Tone.Transport.position = 0;
 
-    }
+				callback();
 
-    Tone.Transport.stop();
+			},
 
-    Tone.Transport.position = 0;
+			endTime
 
-    ////////////////////////////////////////////////////////////
-    // Variables
-    ////////////////////////////////////////////////////////////
+		);
 
-    let beat = 1;
+		Tone.Transport.start();
 
-    const totalBeats =
-        this.metronome.beatsPerBar * this.countInBars;
+	}
 
-    ////////////////////////////////////////////////////////////
-    // Cuenta atrás (siempre negras)
-    ////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////
+	// RESTART
+	////////////////////////////////////////////////////////////
 
-    this.countInEvent = Tone.Transport.scheduleRepeat(
+	restart() {
 
-        (time) => {
+		if (!this.playing) return;
 
-            ////////////////////////////////////////////////////
-            // Click
-            ////////////////////////////////////////////////////
+		if (this.lastMode === "sequence") {
 
-            if (beat === 1) {
+			this.playSequence(this.lastNotes);
 
-                this.metronome.synth.triggerAttackRelease(
-                    "C6",
-                    "32n",
-                    time
-                );
+		} else if (this.lastMode === "chord") {
 
-            } else {
+			this.playChord(this.lastNotes);
 
-                this.metronome.synth.triggerAttackRelease(
-                    "G5",
-                    "32n",
-                    time
-                );
+		}
 
-            }
+	}
 
-            ////////////////////////////////////////////////////
-            // Siguiente beat
-            ////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////
+	// PLAY
+	////////////////////////////////////////////////////////////
 
-            beat++;
+	playSequence(listaNotas) {
 
-            ////////////////////////////////////////////////////
-            // Cambio de compás
-            ////////////////////////////////////////////////////
+		this.playEvents(listaNotas, "sequence");
 
-            if (beat > this.metronome.beatsPerBar) {
+	}
 
-                beat = 1;
+	playChord(chordArray) {
 
-            }
+		this.playEvents(chordArray, "chord");
 
-        },
+	}
 
-        "4n"
+	playEvents(items, mode) {
 
-    );
+		this.stop(false);
 
-    ////////////////////////////////////////////////////////////
-    // Lanzar reproducción al terminar
-    ////////////////////////////////////////////////////////////
+		this.lastNotes = [...items];
+		this.lastMode = mode;
 
-    const endTime =
-        Tone.Time("4n") * totalBeats;
+		const stepSeconds = Tone.Time(this.metronome.subdivisionFigure()).toSeconds();
+		const gate = this.gate;
+		const stepsPerBar = this.metronome.beatsPerBar * this.metronome.subdivision;
+		const totalBars = Math.max(1, Math.ceil(items.length / stepsPerBar));
+		const eventos = [];
 
-    Tone.Transport.scheduleOnce(() => {
+		let tiempo = 0;
 
-        if (this.countInEvent !== null) {
+		for (let i = 0; i < items.length; i++) {
 
-            Tone.Transport.clear(this.countInEvent);
+			const beat =
+				Math.floor(i / this.metronome.subdivision) %
+				this.metronome.beatsPerBar + 1;
 
-            this.countInEvent = null;
+			const subBeat = i % this.metronome.subdivision + 1;
 
-        }
+			eventos.push([
+				Math.max(0, tiempo),
+				{ value: items[i], beat, subBeat }
+			]);
 
-        Tone.Transport.stop();
+			if (this.swingFeel && this.metronome.subdivision === 2) {
 
-        Tone.Transport.position = 0;
+				tiempo += subBeat === 1
+					? stepSeconds * (this.swingAmount * 2)
+					: stepSeconds * ((1 - this.swingAmount) * 2);
 
-        callback();
+			} else {
 
-    }, endTime);
+				tiempo += stepSeconds;
 
-    ////////////////////////////////////////////////////////////
-    // Arrancar
-    ////////////////////////////////////////////////////////////
+			}
 
-    Tone.Transport.start();
+		}
 
-}
+		const duracion = Math.max(
+			0,
+			stepsPerBar * totalBars * stepSeconds
+		);
 
-    ////////////////////////////////////////////////////////////
-    // RESTART
-    ////////////////////////////////////////////////////////////
+		this.part = new Tone.Part(
 
+			(time, data) => {
 
-restart() {
+				Tone.Draw.schedule(
+					() => emitPlayerBeat(data.beat, data.subBeat, "tick"),
+					time
+				);
 
-    if (!this.playing) {return;}
+				this.instrument.triggerAttackRelease(
+					data.value,
+					gate,
+					time,
+					this.getVelocity(data.beat, data.subBeat)
+				);
 
-//    if (!this.lastNotes || this.lastNotes.length === 0) {return;}
+			},
 
-    if (this.lastMode === "sequence") {
+			eventos
 
-        this.playSequence(this.lastNotes);
+		);
 
-    }else if (this.lastMode === "chord") {
+		this.part.loop = true;
+		this.part.loopStart = 0;
+		this.part.loopEnd = duracion;
+		this.part.start(0);
 
-        this.playChord(this.lastNotes);
+		this.repeatEvents = [];
 
-    }
+		for (let r = 1; r <= this.repeticiones; r++) {
 
-}
+			const repeatTime = Math.max(0, duracion * (r - 1));
 
-    ////////////////////////////////////////////////////////////
-    // PLAY
-    ////////////////////////////////////////////////////////////
+			this.repeatEvents.push(
+				Tone.Transport.scheduleOnce(
+					() => emitPlayerBeat(1, 1, "repeat", r),
+					repeatTime
+				)
+			);
 
-playSequence(listaNotas) {
-    this.playEvents(listaNotas,"sequence");
-}
+		}
 
-playChord(chordArray) {
-    this.playEvents(chordArray,"chord");
-}
+		Tone.Transport.position = 0;
+		Tone.Transport.loop = false;
 
-playEvents(items, mode) {
+		if (this.stopEvent !== null) {
 
-    this.stop();
+			Tone.Transport.clear(this.stopEvent);
+			this.stopEvent = null;
 
-    this.lastNotes = [...items];
-    this.lastMode = mode;
+		}
 
-    const stepSeconds = Tone.Time(this.metronome.subdivisionFigure()).toSeconds();
-    const gate = this.gate;
-    const stepsPerBar = this.metronome.beatsPerBar * this.metronome.subdivision;
-    const totalBars = Math.max(1, Math.ceil(items.length / stepsPerBar));
-    const eventos = [];
+		const stopTime = Math.max(
+			0,
+			duracion * this.repeticiones
+		);
 
-    let tiempo = 0;
+		this.stopEvent = Tone.Transport.scheduleOnce(
 
-    for (let i = 0; i < items.length; i++) {
+			() => {
 
-        const beat =
-            Math.floor(i / this.metronome.subdivision) %
-            this.metronome.beatsPerBar + 1;
+				this.stopEvent = null;
 
-        const subBeat =
-            i % this.metronome.subdivision + 1;
+				emitPlayerBeat(1, 1, "end");
 
-        eventos.push([tiempo, { value: items[i], beat, subBeat }]);
+				this.stop(false);
 
-        if (this.swingFeel && this.metronome.subdivision === 2)
-            tiempo += subBeat === 1 ? stepSeconds * (this.swingAmount * 2) : stepSeconds * ((1 - this.swingAmount) * 2);
-        else
-            tiempo += stepSeconds;
+			},
 
-    }
+			stopTime
 
-    const duracion = stepsPerBar * totalBars * stepSeconds;
+		);
 
-    this.part = new Tone.Part((time, data) => {
+		if (this.metronomeOn) {
 
-        Tone.Draw.schedule(
-            () => emitPlayerBeat(data.beat, data.subBeat, "tick"),
-            time
-        );
+			this.autoMetronome = true;
+			this.metronome.start();
 
-        this.instrument.triggerAttackRelease(
-            data.value,
-            gate,
-            time,
-            this.getVelocity(data.beat, data.subBeat)
-        );
+		} else {
 
-    }, eventos);
+			this.autoMetronome = false;
 
-    this.part.loop = true;
-    this.part.loopStart = 0;
-    this.part.loopEnd = duracion;
-    this.part.start(0);
+		}
 
-    this.repeatEvents = [];
+		if (Tone.Transport.state !== "started") {
+			Tone.Transport.start();
+		}
 
-    for (let r = 1; r <= this.repeticiones; r++) {
+		this.playing = true;
 
-        this.repeatEvents.push(
-            Tone.Transport.scheduleOnce(
-                () => emitPlayerBeat(1, 1, "repeat", r),
-                duracion * (r - 1)
-            )
-        );
+	}
 
-    }
+	////////////////////////////////////////////////////////////
+	// STOP
+	////////////////////////////////////////////////////////////
 
-    Tone.Transport.position = 0;
-    Tone.Transport.loop = false;
+	stop(emitEvent = true) {
 
-    if (this.stopEvent !== null)
-        Tone.Transport.clear(this.stopEvent);
+		if (this.stopEvent !== null) {
 
-    this.stopEvent = Tone.Transport.scheduleOnce(
-        () => {
+			Tone.Transport.clear(this.stopEvent);
+			this.stopEvent = null;
 
-            emitPlayerBeat(1, 1, "end");
+		}
 
-            this.stop();
+		if (this.repeatEvents) {
 
-        },
-        duracion * this.repeticiones
-    );
+			this.repeatEvents.forEach(id => Tone.Transport.clear(id));
+			this.repeatEvents = [];
 
-    if (this.metronomeOn) {
+		}
 
-        this.autoMetronome = true;
-        this.metronome.start();
+		if (this.countInEvent !== null) {
 
-    }
-    else {
+			Tone.Transport.clear(this.countInEvent);
+			this.countInEvent = null;
 
-        this.autoMetronome = false;
+		}
 
-    }
+		Tone.Transport.stop();
+		Tone.Transport.position = 0;
 
-    if (Tone.Transport.state !== "started")
-        Tone.Transport.start();
+		if (this.part) {
 
-    this.playing = true;
+			try {
+				this.part.stop(0);
+			} catch (error) {
+				console.warn("Error al detener Tone.Part:", error);
+			}
 
-}
+			try {
+				this.part.dispose();
+			} catch (error) {
+				console.warn("Error al liberar Tone.Part:", error);
+			}
 
-    ////////////////////////////////////////////////////////////
-    // STOP
-    ////////////////////////////////////////////////////////////
+			this.part = null;
 
-stop() {
+		}
 
-    if (this.stopEvent !== null) {
-        Tone.Transport.clear(this.stopEvent);
-        this.stopEvent = null;
-    }
+		if (this.audioPlayer) {
 
-    if (this.repeatEvents) {
-        this.repeatEvents.forEach(id => Tone.Transport.clear(id));
-        this.repeatEvents = [];
-    }
+			try {
+				this.audioPlayer.stop(0);
+			} catch (error) {
+				console.warn("Error al detener audioPlayer:", error);
+			}
 
-    Tone.Transport.stop();
-    Tone.Transport.position = 0;
+			try {
+				this.audioPlayer.dispose();
+			} catch (error) {
+				console.warn("Error al liberar audioPlayer:", error);
+			}
 
-    if (this.part) {
-        this.part.stop();
-        this.part.dispose();
-        this.part = null;
-    }
+			this.audioPlayer = null;
 
-    if (this.audioPlayer) {
-        this.audioPlayer.stop();
-        this.audioPlayer.dispose();
-        this.audioPlayer = null;
-    }
+		}
 
-    if (this.autoMetronome)
-        this.metronome.stop();
+		if (this.autoMetronome) {
+			this.metronome.stop();
+		}
 
-    this.autoMetronome = false;
-    this.playing = false;
+		this.autoMetronome = false;
+		this.playing = false;
 
-    emitPlayerBeat(1,1,"stop");
+		if (emitEvent) {
+			emitPlayerBeat(1, 1, "stop");
+		}
 
-}
+	}
 
 }

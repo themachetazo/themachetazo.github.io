@@ -288,20 +288,11 @@ function showProjectPanel(){
 
 	if (appLayout.classList.contains("leftPanelHidden")) {
 
-		if (window.innerWidth <= maxMediaScreenWidth &&
-			orientation === "vertical") {
-
-			closeTopControls();
-
-			if (isFretboardVisible && isScoreVisible) {
-
-				setWorkspaceLayout("score");
-
-			}
-
-		}
+		closeTopControls();
 
 		openLeftPanel();
+
+		setWorkspaceLayout();
 
 		return;
 
@@ -843,6 +834,25 @@ function setLayout() {
 }
 
 function setWorkspaceLayout(){
+
+	//------------------------------------------------
+	// Móvil + vertical + panel de proyectos abierto
+	//------------------------------------------------
+
+	const isMobileProjectPanel =
+		window.innerWidth <= maxMediaScreenWidth &&
+		orientation === "vertical" &&
+		!appLayout.classList.contains("leftPanelHidden");
+
+	if (isMobileProjectPanel) {
+
+		if (isFretboardVisible && isScoreVisible) {
+
+			isScoreVisible = false;
+
+		}
+
+	}
 
 	//------------------------------------------------
 	// Nunca permitir que ambos estén ocultos
