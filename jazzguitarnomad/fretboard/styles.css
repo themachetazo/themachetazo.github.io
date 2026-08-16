@@ -339,13 +339,13 @@ html {
 
 	align-items:center;
 
-	gap:12px;
+	gap:8px;
 
 }
 
 #footer .footerSocial a{
 	display:inline-flex !important;
-	margin:0 12px !important;
+	margin:0 8px !important;
 }
 
 #footer i[class*="fa-"]{
@@ -408,7 +408,7 @@ html {
 
 	min-width:0;
 
-	min-height:450px;
+	min-height:500px;
 
 }
 
@@ -592,7 +592,8 @@ html {
 	padding:20px;
 
 	min-width:0;
-	min-height:0;
+
+	min-height:300px;
 
 	text-align:center;
 
