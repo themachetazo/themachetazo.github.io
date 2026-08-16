@@ -112,7 +112,7 @@ function loadProject(project) {
 
 	inlays = project.settings?.inlays || false;
 	chkInlays.cheked = inlays;
-	chkInlays.disabled = displayMode === "no-scale";
+	chkInlays.disabled = displayMode === false;
 
 	orientation = project.settings?.orientation === "vertical" ? "vertical" : "horizontal";
 	rotation = project.settings?.rotation || 0;
@@ -135,8 +135,8 @@ function loadProject(project) {
 	if (scoreScale === "auto"){
 		sliderScoreZoom.value = "50";
 	}else{
-		sliderScoreZoom.value = parseInt(scoreScale);
-		scoreScale = "zoom";
+		scoreScale = parseFloat(scoreScale / 100);
+		sliderScoreZoom.value = scoreScale;
 	}
 	sliderScoreZoom.title = sliderScoreZoom.value + "%";
 
