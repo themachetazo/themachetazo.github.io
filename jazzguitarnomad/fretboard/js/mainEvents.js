@@ -873,10 +873,7 @@ btnLessFrets.addEventListener("click", () => {
 
 btnMoreNumberFrets.addEventListener("click", () => {
 
-	let nFrets =
-		numberFrets.value == null || numberFrets.value === ""
-			? 1
-			: parseInt(numberFrets.value);
+	let nFrets = numberFrets.value == null || numberFrets.value === "" ? 1 : parseInt(numberFrets.value);
 
 	const maxFirstFret = 25 - fretCount;
 

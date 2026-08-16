@@ -112,52 +112,77 @@ function loadProject(project) {
 	chkInlays.checked = displayMode === "scale";
 
 	orientation = project.settings?.orientation === "vertical" ? "vertical" : "horizontal";
+	rotation = project.settings?.rotation || 0;
 	setOrientation(orientation);
 
 	fretboardStyle = project.settings?.fretboardStyle || "maple";
 	cmbDiapason.value = fretboardStyle;
 	setFretboardStyle(fretboardStyle);
 
-/*
-let rotation = 0;
-let projectBar = 4;
-let projectFigure = 4;
-let scoreScale = "auto";
-let projectType = "sequence";
-let tipoSecuencia = "up";
-let countBars = 1;
-let repetitionSequence = 1;
-let currentInstrument = "piano";
-let fretNumbers = 1;
-let showFretNumbers = false;
-let bpm = 90;
-let key = "C";
-let scoreStaves = "all";
-let scoreLayout = "vertical";
-let swing = false;
-let metronomeOn = true;
-let isFretboardVisible = true;
-let isScoreVisible = true;
+	projectBar = project.settings?.projectBar || 4;
+	projectFigure = project.settings?.projectFigure || 1;
+	setBarGroups();
 
-btnRotate , btnVertical , btnHorizontal // vertical: 0 / 180, horizontal: 90 / 270
-cmbBar , cmbFigure setBarGroups()
-cmbScoreScale:auto,zoom (number) , sliderScoreZoom
-cmbProjectType:sequence,chord
-cmbTipoSecuencia:up,down,up-down,down-up
-player_countIn (0-2)
-player_repeats (1-10)
-cmbSamplerInstrument
-numberFrets
-showNumber
-numBpm , sliderBpm
-cmbTonalidad
-cmbScoreStaves:all,notation,tablature
-cmbScoreLayout:vertical,horizontal
-player_swing
-metronome_on
-btnFretboardVisible
-btnScoreVisible
-*/
+	scoreScale = project.settings?.scoreScale;
+	if (typeof scoreScale === "number") {
+		cmbScoreScale.value = "zoom";
+	}else{
+		cmbScoreScale.value = scoreScale;
+	}
+	if (scoreScale === "auto"){
+		sliderScoreZoom.value = "50";
+	}else{
+		sliderScoreZoom.value = parseInt(scoreScale);
+		scoreScale = "zoom";
+	}
+	sliderScoreZoom.title = sliderScoreZoom.value + "%";
+
+	projectType = project.settings?.projectType === "sequence" ? "sequence" : "chord";
+	cmbProjectType.value = projectType;
+
+	tipoSecuencia = project.settings?.tipoSecuencia || "up";
+	cmbTipoSecuencia.value = tipoSecuencia;
+
+	countBars = project.settings?.countBars || 0;
+	player_countIn.value = countBars;
+
+	repetitionSequence = project.settings?.repetitionSequence || 2;
+	player_repeats.value = repetitionSequence;
+
+	currentInstrument = project.settings?.currentInstrument || "piano";
+	cmbSamplerInstrument.value = currentInstrument;
+
+	fretNumbers = project.settings?.fretNumbers || 1;
+	numberFrets.value = fretNumbers;
+
+	showFretNumbers = project.settings?.showFretNumbers || false;
+	showNumber.checked = showFretNumbers;
+
+	bpm = project.settings?.bpm || 90;
+	numBpm.value = bpm;
+	sliderBpm.value = bpm;
+	sliderBpm.title = bpm;
+
+	key = project.settings?.key || "C";
+	cmbTonalidad.value = key;
+
+	scoreStaves = project.settings?.scoreStaves || "all";
+	cmbScoreStaves.value = scoreStaves;
+
+	scoreLayout = project.settings?.scoreLayout === "vertical" ? "vertical" : "horizontal";
+	cmbScoreLayout.value = scoreLayout;
+
+	swing = project.settings?.swing || false;
+	player_swing.checked = swing;
+
+	metronomeOn = project.settings?.metronomeOn || true;
+	metronome_on.checked = metronomeOn;
+
+	isFretboardVisible = project.settings?.isFretboardVisible || true;
+	btnFretboardVisible.classList.toggle("active",isFretboardVisible);
+	isScoreVisible = project.settings?.isScoreVisible || false;
+	btnScoreVisible.classList.toggle("active",isScoreVisible);
+
 
 	// Notas
 
