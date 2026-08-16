@@ -42,7 +42,7 @@ window.addEventListener("load", async () => {
 
 		metronome = new Metronome();
 
-		metronome.setBpm(parseFloat(sliderBpm.value));
+		metronome.setBpm(parseFloat(bpm));
 		metronome.setVolume(-12);
 		metronome.subBeatSound = metronome_subBeatSound.checked;
 		metronome.setMeter(projectBar);
@@ -63,7 +63,7 @@ window.addEventListener("load", async () => {
 
 		player = new MusicPlayer(instrument, metronome);
 
-		player.setMetronomeOn(true);
+		player.setMetronomeOn(metronomeOn);
 		player.setInstrumentVolume(0);
 		player.setGate(samplerGate.value);
 

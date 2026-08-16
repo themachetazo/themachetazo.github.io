@@ -117,6 +117,7 @@ function loadProject(project) {
 	orientation = project.settings?.orientation || "vertical";
 	rotated = project.settings?.rotated || false;
 	setOrientation(orientation);
+	rotateFretboard();
 
 	fretboardStyle = project.settings?.fretboardStyle || "maple";
 	cmbDiapason.value = fretboardStyle;
