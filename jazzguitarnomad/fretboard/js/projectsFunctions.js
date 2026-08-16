@@ -845,7 +845,7 @@ async function chooseProjectsFile() {
 	const file = await projectsFileHandle.getFile();
 	const xmlText = await file.text();
 
-	projectPanelHeaderTitle.innerHTML = "BIBLIOTECA LOCAL";
+//	projectPanelHeaderTitle.innerHTML = "BIBLIOTECA LOCAL";
 
 	btnToggleLibrary.title = "Local: " + fileHandle.name;
 
