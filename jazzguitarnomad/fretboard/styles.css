@@ -1578,6 +1578,8 @@ html {
 
 	font-size:inherit;
 
+	text-align: center;
+
 	background-color: var(--color-dark-background);
 	color:var(--color-main-text);
 
