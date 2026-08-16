@@ -115,7 +115,7 @@ function loadProject(project) {
 	chkInlays.disabled = displayMode === false;
 
 	orientation = project.settings?.orientation === "vertical" ? "vertical" : "horizontal";
-	rotation = project.settings?.rotation || 0;
+	rotated = project.settings?.rotated || false;
 	setOrientation(orientation);
 
 	fretboardStyle = project.settings?.fretboardStyle || "maple";
@@ -127,18 +127,14 @@ function loadProject(project) {
 	setBarGroups();
 
 	scoreScale = project.settings?.scoreScale;
-	if (typeof scoreScale === "number") {
+	if (scoreScale !== "auto") {
 		cmbScoreScale.value = "zoom";
+		sliderScoreZoom.value = scoreScale;
+		sliderScoreZoom.title = sliderScoreZoom.value + "%";
+		scoreScale = parseFloat(scoreScale / 100);
 	}else{
 		cmbScoreScale.value = scoreScale; //auto
 	}
-	if (scoreScale === "auto"){
-		sliderScoreZoom.value = "50";
-	}else{
-		scoreScale = parseFloat(scoreScale / 100);
-		sliderScoreZoom.value = scoreScale;
-	}
-	sliderScoreZoom.title = sliderScoreZoom.value + "%";
 
 	projectType = project.settings?.projectType === "sequence" ? "sequence" : "chord";
 	cmbProjectType.value = projectType;
@@ -251,7 +247,7 @@ function getCurrentProject() {
 			orientation,
 			fretboardStyle,
 			inlays,
-			rotation,
+			rotated,
 			projectBar,
 			scoreScale,
 			projectType,
@@ -322,7 +318,7 @@ function projectToXml(project, indent = "\t") {
 	lines.push(`${indent}\t\t<fretCount>${project.settings.fretCount}</fretCount>`);
 	lines.push(`${indent}\t\t<displayMode>${project.settings.displayMode}</displayMode>`);
 	lines.push(`${indent}\t\t<inlays>${project.settings.inlays}</inlays>`);
-	lines.push(`${indent}\t\t<rotation>${project.settings.rotation}</rotation>`);
+	lines.push(`${indent}\t\t<rotated>${project.settings.rotated}</rotated>`);
 	lines.push(`${indent}\t\t<projectBar>${project.settings.projectBar}</projectBar>`);
 	lines.push(`${indent}\t\t<scoreScale>${project.settings.scoreScale}</scoreScale>`);
 	lines.push(`${indent}\t\t<projectType>${project.settings.projectType}</projectType>`);
@@ -488,7 +484,7 @@ function parseProjectsXml(xmlText) {
 				fretCount: parseInt(getSetting("fretCount","10")),
 				displayMode: getSetting("displayMode","scale"),
 				inlays: getSetting("inlays","scale"),
-				rotation: getSetting("rotation", 0),
+				rotated: getSetting("rotated", false),
 				projectBar: getSetting("projectBar", 4),
 				projectFigure: getSetting("projectFigure", 4),
 				scoreScale: getSetting("scoreScale", "auto"),

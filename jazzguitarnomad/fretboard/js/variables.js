@@ -163,6 +163,8 @@ const projectPanelHeaderTitle = document.getElementById("projectPanelHeaderTitle
 const btnShowProjectPanel = document.getElementById("btnShowProjectPanel");
 const btnToggleLibrary = document.getElementById("btnToggleLibrary");
 
+let xmlVersion = 1;
+
 /*==================================================
 	CONFIGURACIÓN GENERAL DE LA APLICACIÓN
 ==================================================*/
