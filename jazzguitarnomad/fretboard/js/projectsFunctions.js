@@ -142,6 +142,8 @@ function loadProject(project) {
 	tipoSecuencia = project.settings?.tipoSecuencia || "up";
 	cmbTipoSecuencia.value = tipoSecuencia;
 
+	scoreLoadArray(cmbTipoSecuencia.value);
+
 	countBars = project.settings?.countBars || 0;
 	player_countIn.value = countBars;
 
@@ -222,6 +224,8 @@ function loadProject(project) {
 	projectModified = false;
 
 	resizeCanvas();
+
+	if (isScoreVisible) scoreRender();
 
 }
 
