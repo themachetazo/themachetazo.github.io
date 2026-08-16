@@ -13,6 +13,24 @@
 			<fretboardStyle>rosewood</fretboardStyle>
 			<fretCount>16</fretCount>
 			<displayMode>no-scale</displayMode>
+			<rotation>0</rotation>
+			<projectBar>4</projectBar>
+			<projectFigure>4</projectFigure>
+			<scoreScale>auto</scoreScale>
+			<projectType>sequence</projectType>
+			<tipoSecuencia>up</tipoSecuencia>
+			<countBars>1</countBars>
+			<repetitionSequence>1</repetitionSequence>
+			<isFretboardVisible>true</isFretboardVisible>
+			<isScoreVisible>true</isScoreVisible>
+			<currentInstrument>piano</currentInstrument>
+			<fretNumbers>1</fretNumbers>
+			<showFretNumbers>false</showFretNumbers>
+			<bpm>90</bpm>
+			<key>C</key>
+			<scoreStaves>all</scoreStaves>
+			<scoreLayout>vertical</scoreLayout>
+			<swing>false</swing>
 		</settings>
 		<notes>
 			<note string="5" fret="1" color="#0080ff" text=""/>
@@ -34,6 +52,24 @@
 			<fretboardStyle>rosewood</fretboardStyle>
 			<fretCount>7</fretCount>
 			<displayMode>no-scale</displayMode>
+			<rotation>0</rotation>
+			<projectBar>4</projectBar>
+			<projectFigure>4</projectFigure>
+			<scoreScale>auto</scoreScale>
+			<projectType>sequence</projectType>
+			<tipoSecuencia>up</tipoSecuencia>
+			<countBars>1</countBars>
+			<repetitionSequence>1</repetitionSequence>
+			<isFretboardVisible>true</isFretboardVisible>
+			<isScoreVisible>true</isScoreVisible>
+			<currentInstrument>piano</currentInstrument>
+			<fretNumbers>1</fretNumbers>
+			<showFretNumbers>false</showFretNumbers>
+			<bpm>90</bpm>
+			<key>C</key>
+			<scoreStaves>all</scoreStaves>
+			<scoreLayout>vertical</scoreLayout>
+			<swing>false</swing>
 		</settings>
 		<notes>
 			<note string="2" fret="4" color="#ff0000" text=""/>
@@ -53,6 +89,24 @@
 			<fretboardStyle>maple</fretboardStyle>
 			<fretCount>10</fretCount>
 			<displayMode>scale</displayMode>
+			<rotation>0</rotation>
+			<projectBar>4</projectBar>
+			<projectFigure>4</projectFigure>
+			<scoreScale>auto</scoreScale>
+			<projectType>sequence</projectType>
+			<tipoSecuencia>up</tipoSecuencia>
+			<countBars>1</countBars>
+			<repetitionSequence>1</repetitionSequence>
+			<isFretboardVisible>true</isFretboardVisible>
+			<isScoreVisible>true</isScoreVisible>
+			<currentInstrument>piano</currentInstrument>
+			<fretNumbers>1</fretNumbers>
+			<showFretNumbers>false</showFretNumbers>
+			<bpm>90</bpm>
+			<key>C</key>
+			<scoreStaves>all</scoreStaves>
+			<scoreLayout>vertical</scoreLayout>
+			<swing>false</swing>
 		</settings>
 		<notes>
 			<note string="5" fret="2" color="#ffffff" text=""/>
@@ -70,6 +124,24 @@
 			<fretboardStyle>maple</fretboardStyle>
 			<fretCount>10</fretCount>
 			<displayMode>scale</displayMode>
+			<rotation>0</rotation>
+			<projectBar>4</projectBar>
+			<projectFigure>4</projectFigure>
+			<scoreScale>auto</scoreScale>
+			<projectType>sequence</projectType>
+			<tipoSecuencia>up</tipoSecuencia>
+			<countBars>1</countBars>
+			<repetitionSequence>1</repetitionSequence>
+			<isFretboardVisible>true</isFretboardVisible>
+			<isScoreVisible>true</isScoreVisible>
+			<currentInstrument>piano</currentInstrument>
+			<fretNumbers>1</fretNumbers>
+			<showFretNumbers>false</showFretNumbers>
+			<bpm>90</bpm>
+			<key>C</key>
+			<scoreStaves>all</scoreStaves>
+			<scoreLayout>vertical</scoreLayout>
+			<swing>false</swing>
 		</settings>
 		<notes>
 			<note string="2" fret="1" color="#ffffff" text=""/>
@@ -88,6 +160,24 @@
 			<fretboardStyle>rosewood</fretboardStyle>
 			<fretCount>10</fretCount>
 			<displayMode>scale</displayMode>
+			<rotation>0</rotation>
+			<projectBar>4</projectBar>
+			<projectFigure>4</projectFigure>
+			<scoreScale>auto</scoreScale>
+			<projectType>sequence</projectType>
+			<tipoSecuencia>up</tipoSecuencia>
+			<countBars>1</countBars>
+			<repetitionSequence>1</repetitionSequence>
+			<isFretboardVisible>true</isFretboardVisible>
+			<isScoreVisible>true</isScoreVisible>
+			<currentInstrument>piano</currentInstrument>
+			<fretNumbers>1</fretNumbers>
+			<showFretNumbers>false</showFretNumbers>
+			<bpm>90</bpm>
+			<key>C</key>
+			<scoreStaves>all</scoreStaves>
+			<scoreLayout>vertical</scoreLayout>
+			<swing>false</swing>
 		</settings>
 		<notes>
 			<note string="5" fret="1" color="#ffffff" text=""/>
@@ -106,6 +196,24 @@
 			<fretboardStyle>maple</fretboardStyle>
 			<fretCount>16</fretCount>
 			<displayMode>scale</displayMode>
+			<rotation>0</rotation>
+			<projectBar>4</projectBar>
+			<projectFigure>4</projectFigure>
+			<scoreScale>auto</scoreScale>
+			<projectType>sequence</projectType>
+			<tipoSecuencia>up</tipoSecuencia>
+			<countBars>1</countBars>
+			<repetitionSequence>1</repetitionSequence>
+			<isFretboardVisible>true</isFretboardVisible>
+			<isScoreVisible>true</isScoreVisible>
+			<currentInstrument>piano</currentInstrument>
+			<fretNumbers>1</fretNumbers>
+			<showFretNumbers>false</showFretNumbers>
+			<bpm>90</bpm>
+			<key>C</key>
+			<scoreStaves>all</scoreStaves>
+			<scoreLayout>vertical</scoreLayout>
+			<swing>false</swing>
 		</settings>
 		<notes>
 			<note string="5" fret="2" color="#0080ff" text=""/>
