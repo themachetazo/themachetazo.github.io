@@ -466,6 +466,8 @@ html {
 	background:var(--color-dark-background);
 
 	border-top:1px solid rgba(255,255,255,.22);
+	border-bottom:1px solid #000;
+
 }
 
 #workspaceCanvas{
@@ -598,6 +600,9 @@ html {
 	text-align:center;
 
 	background:var(--color-dark-background);
+
+	border-top:1px solid rgba(255,255,255,.22);
+	border-bottom:1px solid #000;
 
 }
 
