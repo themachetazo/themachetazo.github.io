@@ -561,7 +561,7 @@ function setMenu(m){
 			);
 
 			menuSelectorText.textContent = "MÁSTIL";
-			menuSelectorIcon.className = "fa-solid fa-pencil-ruler";
+			menuSelectorIcon.className = "fa-solid fa-guitar";
 
 			topTitleViewModeScore.style.display = "none";
 			topTitleViewModeFretboard.style.display = "flex";
