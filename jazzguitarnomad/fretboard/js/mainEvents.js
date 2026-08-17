@@ -615,14 +615,16 @@ btnOpenLibrary.addEventListener("click", () => {
 	// Preguntar solo si hay cambios sin guardar
 	if (projectModified) {
 
-		if (confirm("¿Quieres guardar los cambios?")) {
-			saveCurrentProject();
+		if (!confirm("Hay cambios sin guardar que se perderán. ¿Deseas abrir una nueva biblioteca de proyectos?")) {
+			return;
 		}
 	}
 
+	projectModified = false;
+	currentProjectId = null;
+
 	chooseXMLProjectsFile();
 
-	currentProjectId = null;
 	newProject();
 
 	showProjectPanel();
@@ -632,8 +634,6 @@ btnOpenLibrary.addEventListener("click", () => {
 btnShowProjectPanel.addEventListener("click", () => {
 
 	showProjectPanel();
-
-//	if (isScoreVisible) scoreRender();
 
 });
 
