@@ -68,8 +68,6 @@ function loadProject(project) {
 	updateSelectedProject();
 
 	projectTitle = project.title;
-//	workspaceTitleText.textContent = projectTitle;
-//	titleText.value = projectTitle;
 
 	// Seleccionar la categoría del proyecto
 	projectCategory.value = project.category;
@@ -82,92 +80,55 @@ function loadProject(project) {
 	// Settings
 
 	fretCount = Math.max(5, Math.min(24, project.settings?.fretCount));
-//	numFrets.value = fretCount;
-//	sliderFrets.value = fretCount;
-//	sliderFrets.title = fretCount;
 
 	displayMode = project.settings?.displayMode || true;
-//	btnDisplay.classList.toggle("active", displayMode);
 
 	inlays = project.settings?.inlays || false;
-//	chkInlays.disabled = displayMode === false;
-//	chkInlays.cheked = displayMode === false ? false; inlays;
 
 	orientation = project.settings?.orientation || "vertical";
 	rotated = project.settings?.rotated || false;
-//	setOrientation(orientation);
-//	rotateFretboard();
 
 	fretboardStyle = project.settings?.fretboardStyle || "maple";
-//	cmbDiapason.value = fretboardStyle;
-//	setFretboardStyle(fretboardStyle);
 
 	projectBar = project.settings?.projectBar || 4;
 	projectFigure = project.settings?.projectFigure || 1;
 	setBarGroups();
 
 	scoreScale = project.settings?.scoreScale;
-/*
-	if (scoreScale !== "auto") {
-		cmbScoreScale.value = "zoom";
-		sliderScoreZoom.value = scoreScale;
-		sliderScoreZoom.title = sliderScoreZoom.value + "%";
-		scoreScale = parseFloat(scoreScale / 100);
-	}else{
-		cmbScoreScale.value = scoreScale; //auto
-	}
-*/
 
 	projectType = project.settings?.projectType || "sequence";
-//	cmbProjectType.value = projectType;
 
 	tipoSecuencia = project.settings?.tipoSecuencia || "up";
-//	cmbTipoSecuencia.value = tipoSecuencia;
 
 	scoreLoadArray(tipoSecuencia);
 
 	countBars = project.settings?.countBars || 0;
-//	player_countIn.value = countBars;
-
 	repetitionSequence = project.settings?.repetitionSequence || 2;
-//	player_repeats.value = repetitionSequence;
 
 	currentInstrument = project.settings?.currentInstrument || "piano";
-//	cmbSamplerInstrument.value = currentInstrument;
-//	setInstrument(currentInstrument);
 
 	fretNumbers = project.settings?.fretNumbers || 1;
-//	numberFrets.value = fretNumbers;
-
 	showFretNumbers = project.settings?.showFretNumbers || false;
-//	showNumber.checked = showFretNumbers;
 
 	bpm = project.settings?.bpm || 90;
-//	numBpm.value = bpm;
-//	sliderBpm.value = bpm;
-//	sliderBpm.title = bpm;
-
 	key = project.settings?.key || "C";
-//	cmbTonalidad.value = key;
 
 	scoreStaves = project.settings?.scoreStaves || "all";
-//	cmbScoreStaves.value = scoreStaves;
-
 	scoreLayout = project.settings?.scoreLayout || "vertical";
-//	cmbScoreLayout.value = scoreLayout;
 
 	swing = project.settings?.swing || false;
-//	player_swing.checked = swing;
-
 	metronomeOn = project.settings?.metronomeOn || true;
-//	metronome_on.checked = metronomeOn;
 
 	isFretboardVisible = project.settings?.isFretboardVisible || true;
-//	btnFretboardVisible.classList.toggle("active",isFretboardVisible);
 	isScoreVisible = project.settings?.isScoreVisible || false;
-//	btnScoreVisible.classList.toggle("active",isScoreVisible);
 
 	setDefaultControlsValues("loadProject");
+
+	setFretboardStyle(fretboardStyle);
+
+	setOrientation(orientation);
+
+	rotateFretboard();
 
 	setWorkspaceLayout();
 
@@ -177,10 +138,13 @@ function loadProject(project) {
 	metronome.setMeter(projectBar);
 	metronome.setSubdivision(projectFigure);
 
+	setInstrument(currentInstrument);
+
 	player.setMetronomeOn(metronomeOn);
 	player.setRepeticiones(repetitionSequence);
 	player.setCountInBars(countBars);
 	player.setSwingFeel(swing);
+	player.setGate(samplerGate.value);
 
 	resetPlaybackUI();
 

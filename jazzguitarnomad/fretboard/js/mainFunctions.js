@@ -85,15 +85,9 @@ function setDefaultControlsValues(state){
 
 	btnDisplay.classList.toggle("active", displayMode);
 	chkInlays.disabled = displayMode === false;
-	chkInlays.cheked = displayMode === false ? false : inlays;
+	chkInlays.checked = displayMode ? inlays : false;
 
 	cmbDiapason.value = fretboardStyle;
-
-	if (state === "loadProject"){
-		setFretboardStyle(fretboardStyle);
-		setOrientation(orientation);
-		rotateFretboard();
-	}
 
 	noteText.value = "";
 
@@ -102,14 +96,12 @@ function setDefaultControlsValues(state){
 		noteText.focus();
 	}
 
-//	projectCategory.value = 
-
 	setBarGroups();
 
 	if (scoreScale !== "auto") {
 		cmbScoreScale.value = "zoom";
-		scoreScale = parseFloat(scoreScale / 100);
 		sliderScoreZoom.value = scoreScale;
+		scoreScale = parseFloat(scoreScale / 100);
 	}else{
 		cmbScoreScale.value = scoreScale; //auto
 		sliderScoreZoom.value = 50;
@@ -117,7 +109,6 @@ function setDefaultControlsValues(state){
 	sliderScoreZoom.title = sliderScoreZoom.value + "%";
 
 	cmbProjectType.value = projectType;
-
 	cmbTipoSecuencia.value = tipoSecuencia;
 
 	scoreLoadArray(cmbTipoSecuencia.value);
@@ -127,8 +118,6 @@ function setDefaultControlsValues(state){
 	player_repeats.value = repetitionSequence;
 
 	cmbSamplerInstrument.value = currentInstrument;
-
-	if (state === "loadProject") setInstrument(currentInstrument);
 
 	numberFrets.value = fretNumbers;
 	showNumber.checked = showFretNumbers;
@@ -140,7 +129,6 @@ function setDefaultControlsValues(state){
 	cmbTonalidad.value = key;
 
 	cmbScoreStaves.value = scoreStaves;
-
 	cmbScoreLayout.value = scoreLayout;
 
 	player_swing.checked = swing;
@@ -228,7 +216,6 @@ function updateTopBarMenu() {
 	mainMenu.style.visibility = "hidden";
 	mainMenu.style.display = "flex";
 
-
 	let menuWidth = 0;
 
 	mainMenu.querySelectorAll(".menuButton").forEach(button => {
@@ -237,15 +224,12 @@ function updateTopBarMenu() {
 
 	});
 
-
 	const requiredWidth = brandWidth + menuWidth + toggleWidth;
-
 
 	// Restaurar visibilidad
 
 	mainMenu.style.visibility = "";
 	mainMenu.style.display = previousDisplay;
-
 
 	if (requiredWidth <= topBarWidth) {
 
