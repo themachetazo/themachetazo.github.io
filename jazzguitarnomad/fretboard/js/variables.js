@@ -177,9 +177,11 @@ const stringCount = 6;
 
 const maxMediaScreenWidth = 768;
 
-let mode = "view";
 let menuOpen = "";
 
+let mode = "view";
+
+let projectTitle = "Sin Título";
 let displayMode = true;
 let fretCount = 10;
 let orientation = "vertical";

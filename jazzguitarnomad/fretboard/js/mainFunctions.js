@@ -31,7 +31,129 @@ function setErrorLoadingProgress(err){
 
 }
 
-function setUserControls(){
+function setDefaultControlsValues(state){
+
+	if (state === "init"){
+
+		orientation = "vertical";
+		rotation = 0;
+		rotated = false;
+		currentInstrument = "piano";
+		fretNumbers = 1;
+		showFretNumbers = false;
+		bpm = 90;
+		key = "C";
+		scoreStaves = "all";
+		scoreLayout = "vertical";
+
+	}
+
+	if (state !== "loadProject"){
+
+		displayMode = true;
+		fretCount = 10;
+		projectBar = 4;
+		projectFigure = 1;
+		scoreScale = "auto";
+		projectType = "sequence";
+		countBars = 0;
+		repetitionSequence = 2;
+		isFretboardVisible = true;
+		isScoreVisible = false;
+		tipoSecuencia = "up";
+		swing = false;
+		metronomeOn = true;
+		inlays = true;
+
+	}
+
+	if (state === "newProject"){
+		projectTitle = "Sin Título";
+	}
+
+	titleText.value = projectTitle;
+	workspaceTitleText.textContent = projectTitle;
+
+	showTitle.checked = false;
+	chkScoreTitle.checked = false;
+	showTitleViewMode.checked = false;
+	chkScoreTitleViewMode.checked = false;
+
+	numFrets.value = fretCount;
+	sliderFrets.value = fretCount;
+	sliderFrets.title = fretCount;
+
+	btnDisplay.classList.toggle("active", displayMode);
+	chkInlays.disabled = displayMode === false;
+	chkInlays.cheked = displayMode === false ? false : inlays;
+
+	cmbDiapason.value = fretboardStyle;
+
+	if (state === "loadProject"){
+		setFretboardStyle(fretboardStyle);
+		setOrientation(orientation);
+		rotateFretboard();
+	}
+
+	noteText.value = "";
+
+	if (state === "newProject"){
+		setMode("edit");
+		noteText.focus();
+	}
+
+//	projectCategory.value = 
+
+	setBarGroups();
+
+	if (scoreScale !== "auto") {
+		cmbScoreScale.value = "zoom";
+		scoreScale = parseFloat(scoreScale / 100);
+		sliderScoreZoom.value = scoreScale;
+	}else{
+		cmbScoreScale.value = scoreScale; //auto
+		sliderScoreZoom.value = 50;
+	}
+	sliderScoreZoom.title = sliderScoreZoom.value + "%";
+
+	cmbProjectType.value = projectType;
+
+	cmbTipoSecuencia.value = tipoSecuencia;
+
+	scoreLoadArray(cmbTipoSecuencia.value);
+
+	player_countIn.value = countBars;
+
+	player_repeats.value = repetitionSequence;
+
+	cmbSamplerInstrument.value = currentInstrument;
+
+	if (state === "loadProject") setInstrument(currentInstrument);
+
+	numberFrets.value = fretNumbers;
+	showNumber.checked = showFretNumbers;
+
+	numBpm.value = bpm;
+	sliderBpm.value = bpm;
+	sliderBpm.title = bpm;
+
+	cmbTonalidad.value = key;
+
+	cmbScoreStaves.value = scoreStaves;
+
+	cmbScoreLayout.value = scoreLayout;
+
+	player_swing.checked = swing;
+
+	metronome_on.checked = metronomeOn;
+
+	btnFretboardVisible.classList.toggle("active",isFretboardVisible);
+	btnScoreVisible.classList.toggle("active",isScoreVisible);
+
+}
+
+
+function setUserControlsStates(){
 
 	cursor.innerHTML = "";
 
@@ -288,18 +410,14 @@ function showProjectPanel(){
 
 	if (appLayout.classList.contains("leftPanelHidden")) {
 
-		closeTopControls();
-
 		openLeftPanel();
 
 		setWorkspaceLayout();
 
-		return;
+	}else{
 
+		closeLeftPanel();
 	}
-
-	closeLeftPanel();
-
 }
 
 function updateMobileLeftPanel() {
@@ -835,6 +953,7 @@ function setLayout() {
 
 function setWorkspaceLayout(){
 
+/*
 	//------------------------------------------------
 	// Móvil + vertical + panel de proyectos abierto
 	//------------------------------------------------
@@ -853,6 +972,7 @@ function setWorkspaceLayout(){
 		}
 
 	}
+*/
 
 	//------------------------------------------------
 	// Nunca permitir que ambos estén ocultos

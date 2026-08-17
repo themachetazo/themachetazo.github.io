@@ -37,19 +37,15 @@ function newProject() {
 	// Actualizar selección en la biblioteca
 	updateSelectedProject();
 
-	titleText.value = "Sin Título";
-	workspaceTitleText.textContent = titleText.value;
-
-	showTitle.checked = false;
-
-	setMode("note");
+	// Establecer los valores iniciales de las variables y controles
+	setDefaultControlsValues("newProject");
 
 	// Actualizar cursor personalizado
 	if (typeof updateCanvasCursorColor === "function") {
 		updateCanvasCursorColor();
 	}
 
-	// Limpiar contenido
+	// Limpiar contenido de notas
 	notes = [];
 	barreNotes = [];
 	nutNotes = Array(stringCount).fill(null);
@@ -57,28 +53,11 @@ function newProject() {
 	// Limpiar historial
 	history = [];
 
-	// Preparar entrada de notas
-	noteText.value = "";
-	noteText.focus();
-
-/*
-	fretCount = 10;
-	numFrets.value = fretCount;
-
-	displayMode = true;
-	btnDisplay.classList.add("active");
-
-	setOrientation("vertical");
-
-	fretboardStyle = "maple";
-	useNeckImage = true;
-
-	cmbDiapason.value = fretboardStyle;
-
-	neckImage.src = fretboardImages.maple;
-*/
+	setWorkspaceLayout();
 
 	resizeCanvas();
+
+	if (isScoreVisible) scoreRender();
 
 }
 
@@ -88,9 +67,9 @@ function loadProject(project) {
 
 	updateSelectedProject();
 
-	workspaceTitleText.textContent = project.title;
-
-	titleText.value = project.title;
+	projectTitle = project.title;
+//	workspaceTitleText.textContent = projectTitle;
+//	titleText.value = projectTitle;
 
 	// Seleccionar la categoría del proyecto
 	projectCategory.value = project.category;
@@ -103,31 +82,32 @@ function loadProject(project) {
 	// Settings
 
 	fretCount = Math.max(5, Math.min(24, project.settings?.fretCount));
-	numFrets.value = fretCount;
-	sliderFrets.value = fretCount;
-	sliderFrets.title = fretCount;
+//	numFrets.value = fretCount;
+//	sliderFrets.value = fretCount;
+//	sliderFrets.title = fretCount;
 
-	displayMode = project.settings?.displayMode === "scale";
-	btnDisplay.classList.toggle("active", displayMode);
+	displayMode = project.settings?.displayMode || true;
+//	btnDisplay.classList.toggle("active", displayMode);
 
 	inlays = project.settings?.inlays || false;
-	chkInlays.disabled = displayMode === false;
-	chkInlays.cheked = inlays;
+//	chkInlays.disabled = displayMode === false;
+//	chkInlays.cheked = displayMode === false ? false; inlays;
 
 	orientation = project.settings?.orientation || "vertical";
 	rotated = project.settings?.rotated || false;
-	setOrientation(orientation);
-	rotateFretboard();
+//	setOrientation(orientation);
+//	rotateFretboard();
 
 	fretboardStyle = project.settings?.fretboardStyle || "maple";
-	cmbDiapason.value = fretboardStyle;
-	setFretboardStyle(fretboardStyle);
+//	cmbDiapason.value = fretboardStyle;
+//	setFretboardStyle(fretboardStyle);
 
 	projectBar = project.settings?.projectBar || 4;
 	projectFigure = project.settings?.projectFigure || 1;
 	setBarGroups();
 
 	scoreScale = project.settings?.scoreScale;
+/*
 	if (scoreScale !== "auto") {
 		cmbScoreScale.value = "zoom";
 		sliderScoreZoom.value = scoreScale;
@@ -136,55 +116,58 @@ function loadProject(project) {
 	}else{
 		cmbScoreScale.value = scoreScale; //auto
 	}
+*/
 
 	projectType = project.settings?.projectType || "sequence";
-	cmbProjectType.value = projectType;
+//	cmbProjectType.value = projectType;
 
 	tipoSecuencia = project.settings?.tipoSecuencia || "up";
-	cmbTipoSecuencia.value = tipoSecuencia;
+//	cmbTipoSecuencia.value = tipoSecuencia;
 
-	scoreLoadArray(cmbTipoSecuencia.value);
+	scoreLoadArray(tipoSecuencia);
 
 	countBars = project.settings?.countBars || 0;
-	player_countIn.value = countBars;
+//	player_countIn.value = countBars;
 
 	repetitionSequence = project.settings?.repetitionSequence || 2;
-	player_repeats.value = repetitionSequence;
+//	player_repeats.value = repetitionSequence;
 
 	currentInstrument = project.settings?.currentInstrument || "piano";
-	cmbSamplerInstrument.value = currentInstrument;
-	setInstrument(currentInstrument);
+//	cmbSamplerInstrument.value = currentInstrument;
+//	setInstrument(currentInstrument);
 
 	fretNumbers = project.settings?.fretNumbers || 1;
-	numberFrets.value = fretNumbers;
+//	numberFrets.value = fretNumbers;
 
 	showFretNumbers = project.settings?.showFretNumbers || false;
-	showNumber.checked = showFretNumbers;
+//	showNumber.checked = showFretNumbers;
 
 	bpm = project.settings?.bpm || 90;
-	numBpm.value = bpm;
-	sliderBpm.value = bpm;
-	sliderBpm.title = bpm;
+//	numBpm.value = bpm;
+//	sliderBpm.value = bpm;
+//	sliderBpm.title = bpm;
 
 	key = project.settings?.key || "C";
-	cmbTonalidad.value = key;
+//	cmbTonalidad.value = key;
 
 	scoreStaves = project.settings?.scoreStaves || "all";
-	cmbScoreStaves.value = scoreStaves;
+//	cmbScoreStaves.value = scoreStaves;
 
 	scoreLayout = project.settings?.scoreLayout || "vertical";
-	cmbScoreLayout.value = scoreLayout;
+//	cmbScoreLayout.value = scoreLayout;
 
 	swing = project.settings?.swing || false;
-	player_swing.checked = swing;
+//	player_swing.checked = swing;
 
 	metronomeOn = project.settings?.metronomeOn || true;
-	metronome_on.checked = metronomeOn;
+//	metronome_on.checked = metronomeOn;
 
 	isFretboardVisible = project.settings?.isFretboardVisible || true;
-	btnFretboardVisible.classList.toggle("active",isFretboardVisible);
+//	btnFretboardVisible.classList.toggle("active",isFretboardVisible);
 	isScoreVisible = project.settings?.isScoreVisible || false;
-	btnScoreVisible.classList.toggle("active",isScoreVisible);
+//	btnScoreVisible.classList.toggle("active",isScoreVisible);
+
+	setDefaultControlsValues("loadProject");
 
 	setWorkspaceLayout();
 
@@ -833,7 +816,7 @@ function downloadBlob(blob, filename) {
 }
 
 
-async function chooseXMLProjectsFile() {
+async function openXMLProjectsFile() {
 
 	if (!window.showOpenFilePicker) {
 		alert(
@@ -853,6 +836,7 @@ async function chooseXMLProjectsFile() {
 		multiple: false
 	});
 
+
 	projectsFileHandle = fileHandle;
 
 	const file = await projectsFileHandle.getFile();
@@ -869,7 +853,7 @@ async function chooseXMLProjectsFile() {
 }
 
 
-async function loadDefaultXMLProjects() {
+async function loadXMLProjects() {
 
 	try {
 

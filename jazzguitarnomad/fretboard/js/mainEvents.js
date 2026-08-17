@@ -12,7 +12,9 @@ window.addEventListener("load", async () => {
 
 		setLoadingProgress(0, "Configurando usuario...");
 
-		setUserControls();
+		setDefaultControlsValues("init");
+
+		setUserControlsStates();
 
 
 
@@ -22,7 +24,7 @@ window.addEventListener("load", async () => {
 
 		setupProjectCategories();
 
-		loadDefaultXMLProjects();
+		loadXMLProjects();
 
 		if (currentProjectId === null) {
 
@@ -74,7 +76,6 @@ window.addEventListener("load", async () => {
 		workspaceTimeInfo.style.display = "none";
 
 
-
 		// Notas ----------------------
 
 		setLoadingProgress(50, "Cargando array de notas...");
@@ -109,7 +110,6 @@ window.addEventListener("load", async () => {
 		await waitForLayout();
 
 		resizeCanvas();
-
 
 
 		// Fin ----------------------
@@ -620,14 +620,14 @@ btnOpenLibrary.addEventListener("click", () => {
 		}
 	}
 
+	openXMLProjectsFile();
+
 	projectModified = false;
 	currentProjectId = null;
 
-	chooseXMLProjectsFile();
-
 	newProject();
 
-	showProjectPanel();
+	openLeftPanel();
 
 });
 
@@ -669,7 +669,9 @@ btnToggleTopControls.addEventListener("click", () => {
 
 titleText.addEventListener("input", () => {
 
-    workspaceTitleText.textContent = titleText.value.trim() || "Sin Título";
+    projectTitle = titleText.value.trim() || "Sin Título";
+
+    workspaceTitleText.textContent = projectTitle;
 
     resizeCanvas();
 
