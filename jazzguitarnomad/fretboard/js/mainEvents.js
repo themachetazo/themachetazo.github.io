@@ -22,17 +22,17 @@ window.addEventListener("load", async () => {
 
 		setupProjectCategories();
 
-		loadDefaultProjects();
+		loadDefaultXMLProjects();
 
-		if (currentProjectId == null) {
+		if (currentProjectId === null) {
 
 			currentProjectId = generateProjectId();
 
 			projectModified = true;
 
+		}else{
+			loadProject(currentProjectId);
 		}
-
-		projectType = cmbProjectType.value;
 
 
 
@@ -44,7 +44,6 @@ window.addEventListener("load", async () => {
 
 		metronome.setBpm(parseFloat(bpm));
 		metronome.setVolume(-12);
-		metronome.subBeatSound = metronome_subBeatSound.checked;
 		metronome.setMeter(projectBar);
 		metronome.setSubdivision(projectFigure);
 
@@ -66,6 +65,9 @@ window.addEventListener("load", async () => {
 		player.setMetronomeOn(metronomeOn);
 		player.setInstrumentVolume(0);
 		player.setGate(samplerGate.value);
+		player.repeticiones(repetitionSequence);
+		player.countInBars(countBars);
+		player.swingFeel(swing);
 
 		buildHtmlDivsTimeline();
 
@@ -107,6 +109,14 @@ window.addEventListener("load", async () => {
 		await waitForLayout();
 
 		resizeCanvas();
+
+
+
+		// Fin ----------------------
+		
+		setLoadingProgress(90, "Configurando partitura...");
+
+		if (isScoreVisible) scoreRender();
 
 
 		// Fin ----------------------
@@ -602,14 +612,28 @@ cmbDiapason.addEventListener("change", () => {
 
 btnOpenLibrary.addEventListener("click", () => {
 
-	chooseProjectsFile();
+	// Preguntar solo si hay cambios sin guardar
+	if (projectModified) {
+
+		if (confirm("¿Quieres guardar los cambios?")) {
+			saveCurrentProject();
+		}
+	}
+
+	chooseXMLProjectsFile();
+
+	currentProjectId = null;
+	newProject();
+
+	showProjectPanel();
+
 });
 
 btnShowProjectPanel.addEventListener("click", () => {
 
 	showProjectPanel();
 
-	if (isScoreVisible) scoreRender();
+//	if (isScoreVisible) scoreRender();
 
 });
 

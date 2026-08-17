@@ -44,7 +44,7 @@ class Metronome {
 
         this.subdivision = 1;
 
-	this.subBeatSound = true;
+	this.subBeatSound = false;
 
 	////////////////////////////////////////////////////////////
 	// CALLBACK
@@ -91,9 +91,11 @@ class Metronome {
             case 2: return "8n";
             case 3: return "8t";
             case 4: return "16n";
+/*
             case 5: return Tone.Time('4n')/5;
             case 6: return "16t";
             case 7: return Tone.Time('4n')/7;
+*/
             default: return "4n";
 
         }

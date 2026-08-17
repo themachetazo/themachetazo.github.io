@@ -188,6 +188,18 @@ function loadProject(project) {
 
 	setWorkspaceLayout();
 
+	// Player
+
+	metronome.setBpm(parseFloat(bpm));
+	metronome.setMeter(projectBar);
+	metronome.setSubdivision(projectFigure);
+
+	player.setMetronomeOn(metronomeOn);
+	player.repeticiones(repetitionSequence);
+	player.countInBars(countBars);
+	player.swingFeel(swing);
+
+	resetPlaybackUI();
 
 	// Notas
 
@@ -561,7 +573,7 @@ function parseProjectsXml(xmlText) {
 
 }
 
-function renderProjectList() {
+function renderHTMLProjectsList() {
 
 	// Eliminar todas las categorías actuales excepto la cabecera
 	projectPanel.querySelectorAll(".projectCategory").forEach(category => category.remove());
@@ -761,7 +773,7 @@ function saveCurrentProject() {
 
 	projectModified = false;
 
-	renderProjectList();
+	renderHTMLProjectsList();
 	saveProjectsFile();
 
 }
@@ -821,7 +833,7 @@ function downloadBlob(blob, filename) {
 }
 
 
-async function chooseProjectsFile() {
+async function chooseXMLProjectsFile() {
 
 	if (!window.showOpenFilePicker) {
 		alert(
@@ -852,12 +864,12 @@ async function chooseProjectsFile() {
 
 	projects = parseProjectsXml(xmlText);
 
-	renderProjectList();
+	renderHTMLProjectsList();
 
 }
 
 
-async function loadDefaultProjects() {
+async function loadDefaultXMLProjects() {
 
 	try {
 
@@ -871,7 +883,7 @@ async function loadDefaultProjects() {
 
 		projects = parseProjectsXml(xmlText);
 
-		renderProjectList();
+		renderHTMLProjectsList();
 
 	} catch (error) {
 
@@ -900,7 +912,7 @@ async function deleteProject(id) {
 	projects = projects.filter(p => p.id !== id);
 
 	// Actualizar la lista
-	renderProjectList();
+	renderHTMLProjectsList();
 
 	// Guardar el XML
 	saveProjectsFile();
@@ -994,7 +1006,7 @@ function addCategory() {
 	categories.push(category);
 
 	refreshCategoryList();
-	renderProjectList();
+	renderHTMLProjectsList();
 
 	projectCategory.value = category.id;
 
@@ -1064,7 +1076,7 @@ function deleteCategory() {
 
 	refreshCategoryList();
 
-	renderProjectList();
+	renderHTMLProjectsList();
 
 	if (categories.length > 0) {
 		projectCategory.value = categories[0].id;
