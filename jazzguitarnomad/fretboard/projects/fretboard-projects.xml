@@ -12,7 +12,7 @@
 			<orientation>horizontal</orientation>
 			<fretboardStyle>rosewood</fretboardStyle>
 			<fretCount>24</fretCount>
-			<displayMode>no-scale</displayMode>
+			<displayMode>false</displayMode>
 			<inlays>false</inlays>
 			<rotated>true</rotated>
 			<projectBar>3</projectBar>
@@ -52,8 +52,8 @@
 			<orientation>horizontal</orientation>
 			<fretboardStyle>rosewood</fretboardStyle>
 			<fretCount>7</fretCount>
-			<displayMode>no-scale</displayMode>
-			<inlays>true</inlays>
+			<displayMode>true</displayMode>
+			<inlays>false</inlays>
 			<rotated>false</rotated>
 			<projectBar>4</projectBar>
 			<projectFigure>4</projectFigure>
