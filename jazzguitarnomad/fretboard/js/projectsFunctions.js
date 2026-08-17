@@ -195,9 +195,9 @@ function loadProject(project) {
 	metronome.setSubdivision(projectFigure);
 
 	player.setMetronomeOn(metronomeOn);
-	player.repeticiones(repetitionSequence);
-	player.countInBars(countBars);
-	player.swingFeel(swing);
+	player.setRepeticiones(repetitionSequence);
+	player.setCountInBars(countBars);
+	player.setSwingFeel(swing);
 
 	resetPlaybackUI();
 

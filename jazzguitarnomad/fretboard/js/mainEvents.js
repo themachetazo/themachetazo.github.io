@@ -65,9 +65,9 @@ window.addEventListener("load", async () => {
 		player.setMetronomeOn(metronomeOn);
 		player.setInstrumentVolume(0);
 		player.setGate(samplerGate.value);
-		player.repeticiones(repetitionSequence);
-		player.countInBars(countBars);
-		player.swingFeel(swing);
+		player.setRepeticiones(repetitionSequence);
+		player.setCountInBars(countBars);
+		player.setSwingFeel(swing);
 
 		buildHtmlDivsTimeline();
 
@@ -1118,7 +1118,7 @@ samplerGate.addEventListener("input", function () {
 
 player_swing.addEventListener("change", function () {
 
-    player.swingFeel = this.checked;
+    player.setSwingFeel = this.checked;
 
     if (this.checked) metronome_subBeatSound.checked = false;
 
