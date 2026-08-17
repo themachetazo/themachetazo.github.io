@@ -11,26 +11,27 @@
 		<settings>
 			<orientation>horizontal</orientation>
 			<fretboardStyle>rosewood</fretboardStyle>
-			<fretCount>16</fretCount>
+			<fretCount>24</fretCount>
 			<displayMode>no-scale</displayMode>
-			<rotation>0</rotation>
-			<projectBar>4</projectBar>
+			<inlays>false</inlays>
+			<rotated>true</rotated>
+			<projectBar>3</projectBar>
 			<projectFigure>4</projectFigure>
-			<scoreScale>auto</scoreScale>
+			<scoreScale>30</scoreScale>
 			<projectType>sequence</projectType>
-			<tipoSecuencia>up</tipoSecuencia>
-			<countBars>1</countBars>
-			<repetitionSequence>1</repetitionSequence>
-			<isFretboardVisible>true</isFretboardVisible>
+			<tipoSecuencia>down-up</tipoSecuencia>
+			<countBars>2</countBars>
+			<repetitionSequence>10</repetitionSequence>
+			<isFretboardVisible>false</isFretboardVisible>
 			<isScoreVisible>true</isScoreVisible>
-			<currentInstrument>piano</currentInstrument>
-			<fretNumbers>1</fretNumbers>
+			<currentInstrument>cguitar</currentInstrument>
+			<fretNumbers>5</fretNumbers>
 			<showFretNumbers>false</showFretNumbers>
-			<bpm>90</bpm>
-			<key>C</key>
-			<scoreStaves>all</scoreStaves>
-			<scoreLayout>vertical</scoreLayout>
-			<swing>false</swing>
+			<bpm>120</bpm>
+			<key>D</key>
+			<scoreStaves>notation</scoreStaves>
+			<scoreLayout>horizontal</scoreLayout>
+			<swing>true</swing>
 		</settings>
 		<notes>
 			<note string="5" fret="1" color="#0080ff" text=""/>
@@ -52,7 +53,8 @@
 			<fretboardStyle>rosewood</fretboardStyle>
 			<fretCount>7</fretCount>
 			<displayMode>no-scale</displayMode>
-			<rotation>0</rotation>
+			<inlays>true</inlays>
+			<rotated>false</rotated>
 			<projectBar>4</projectBar>
 			<projectFigure>4</projectFigure>
 			<scoreScale>auto</scoreScale>
@@ -89,7 +91,8 @@
 			<fretboardStyle>maple</fretboardStyle>
 			<fretCount>10</fretCount>
 			<displayMode>scale</displayMode>
-			<rotation>0</rotation>
+			<inlays>true</inlays>
+			<rotated>false</rotated>
 			<projectBar>4</projectBar>
 			<projectFigure>4</projectFigure>
 			<scoreScale>auto</scoreScale>
@@ -124,7 +127,8 @@
 			<fretboardStyle>maple</fretboardStyle>
 			<fretCount>10</fretCount>
 			<displayMode>scale</displayMode>
-			<rotation>0</rotation>
+			<inlays>true</inlays>
+			<rotated>false</rotated>
 			<projectBar>4</projectBar>
 			<projectFigure>4</projectFigure>
 			<scoreScale>auto</scoreScale>
@@ -160,7 +164,8 @@
 			<fretboardStyle>rosewood</fretboardStyle>
 			<fretCount>10</fretCount>
 			<displayMode>scale</displayMode>
-			<rotation>0</rotation>
+			<inlays>true</inlays>
+			<rotated>false</rotated>
 			<projectBar>4</projectBar>
 			<projectFigure>4</projectFigure>
 			<scoreScale>auto</scoreScale>
@@ -196,7 +201,8 @@
 			<fretboardStyle>maple</fretboardStyle>
 			<fretCount>16</fretCount>
 			<displayMode>scale</displayMode>
-			<rotation>0</rotation>
+			<inlays>true</inlays>
+			<rotated>false</rotated>
 			<projectBar>4</projectBar>
 			<projectFigure>4</projectFigure>
 			<scoreScale>auto</scoreScale>
