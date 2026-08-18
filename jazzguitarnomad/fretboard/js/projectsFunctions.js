@@ -5,21 +5,8 @@
 // ==================================================
 
 
-function escapeXml(value) {
-
-	return String(value ?? "")
-		.replace(/&/g, "&amp;")
-		.replace(/</g, "&lt;")
-		.replace(/>/g, "&gt;")
-		.replace(/"/g, "&quot;")
-		.replace(/'/g, "&apos;");
-
-}
-
-
 function newProject() {
 
-	// Preguntar solo si hay cambios sin guardar
 	if (projectModified) {
 
 		if (!confirm("¿Crear un proyecto nuevo? Se perderán los cambios no guardados.")) {
@@ -28,30 +15,23 @@ function newProject() {
 
 	}
 
-	// Nuevo identificador
 	currentProjectId = generateProjectId();
 
-	// Ya no hay cambios pendientes
-	projectModified = false;
+	projectModified = true;
 
-	// Actualizar selección en la biblioteca
-	updateSelectedProject();
-
-	// Establecer los valores iniciales de las variables y controles
 	setDefaultControlsValues("newProject");
 
-	// Actualizar cursor personalizado
-	if (typeof updateCanvasCursorColor === "function") {
-		updateCanvasCursorColor();
-	}
+	loadNotas(tipoSecuencia);
+	scoreLoadArray(tipoSecuencia);
+//	loadArrays(tipoSecuencia);
 
-	// Limpiar contenido de notas
-	notes = [];
-	barreNotes = [];
-	nutNotes = Array(stringCount).fill(null);
+	setFretboardStyle(fretboardStyle);
 
-	// Limpiar historial
-	history = [];
+	setOrientation(orientation);
+
+	rotateFretboard();
+
+	updateSelectedProject();
 
 	setWorkspaceLayout();
 
@@ -64,8 +44,6 @@ function newProject() {
 function loadProject(project) {
 
 	currentProjectId = project.id;
-
-	updateSelectedProject();
 
 	projectTitle = project.title;
 
@@ -122,16 +100,6 @@ function loadProject(project) {
 	isFretboardVisible = project.settings?.isFretboardVisible || true;
 	isScoreVisible = project.settings?.isScoreVisible || false;
 
-	setDefaultControlsValues("loadProject");
-
-	setFretboardStyle(fretboardStyle);
-
-	setOrientation(orientation);
-
-	rotateFretboard();
-
-	setWorkspaceLayout();
-
 	// Player
 
 	metronome.setBpm(parseFloat(bpm));
@@ -181,7 +149,24 @@ function loadProject(project) {
 	});
 
 	history = [];
+
 	projectModified = false;
+
+	loadNotas(tipoSecuencia);
+	scoreLoadArray(tipoSecuencia);
+//	loadArrays(tipoSecuencia);
+
+	setDefaultControlsValues("loadProject");
+
+	setFretboardStyle(fretboardStyle);
+
+	setOrientation(orientation);
+
+	rotateFretboard();
+
+	updateSelectedProject();
+
+	setWorkspaceLayout();
 
 	resizeCanvas();
 
@@ -1031,5 +1016,16 @@ function deleteCategory() {
 	}
 
 	saveProjectsFile();
+
+}
+
+function escapeXml(value) {
+
+	return String(value ?? "")
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&apos;");
 
 }

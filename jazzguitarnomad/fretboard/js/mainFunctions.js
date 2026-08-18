@@ -50,6 +50,7 @@ function setDefaultControlsValues(state){
 
 	if (state !== "loadProject"){
 
+		projectTitle = "";
 		displayMode = true;
 		fretCount = 10;
 		projectBar = 4;
@@ -67,12 +68,8 @@ function setDefaultControlsValues(state){
 
 	}
 
-	if (state === "newProject"){
-		projectTitle = "Sin Título";
-	}
-
 	titleText.value = projectTitle;
-	workspaceTitleText.textContent = projectTitle;
+	workspaceTitleText.textContent = projectTitle === "" ? "Sin Título" : projectTitle;
 
 	showTitle.checked = false;
 	chkScoreTitle.checked = false;
@@ -92,8 +89,10 @@ function setDefaultControlsValues(state){
 	noteText.value = "";
 
 	if (state === "newProject"){
-		setMode("edit");
+
+		setMode("note");
 		noteText.focus();
+
 	}
 
 	setBarGroups();
@@ -110,8 +109,6 @@ function setDefaultControlsValues(state){
 
 	cmbProjectType.value = projectType;
 	cmbTipoSecuencia.value = tipoSecuencia;
-
-	scoreLoadArray(cmbTipoSecuencia.value);
 
 	player_countIn.value = countBars;
 
@@ -137,6 +134,16 @@ function setDefaultControlsValues(state){
 
 	btnFretboardVisible.classList.toggle("active",isFretboardVisible);
 	btnScoreVisible.classList.toggle("active",isScoreVisible);
+
+	if (state !== "loadProject"){
+		// Limpiar contenido de notas
+		notes = [];
+		barreNotes = [];
+		nutNotes = Array(stringCount).fill(null);
+
+		// Limpiar historial
+		history = [];
+	}
 
 }
 
@@ -402,26 +409,6 @@ function showProjectPanel(){
 
 		closeLeftPanel();
 	}
-}
-
-function updateMobileLeftPanel() {
-
-	if (window.innerWidth <= maxMediaScreenWidth) {
-
-		if (btnShowProjectPanel.classList.contains("active")) {
-
-			btnShowProjectPanel.classList.remove("active");
-
-		}
-
-		if (!appLayout.classList.contains("leftPanelHidden")) {
-
-			closeLeftPanel();
-
-		}
-
-	}
-
 }
 
 function openLeftPanel(){
@@ -801,8 +788,6 @@ function setOrientation(o){
 
 	scrollToFretboardNut();
 
-	if (isScoreVisible) scoreRender();
-
 }
 
 function updateOrientationButtons(){
@@ -811,8 +796,6 @@ function updateOrientationButtons(){
 	btnHorizontal.classList.toggle("active",orientation === "horizontal");
 
 	btnRotate.classList.toggle("active",rotated);
-
-	resizeCanvas();
 
 }
 
@@ -915,6 +898,7 @@ function setLayout() {
 		cursor.style.display = "none";
 
 		closeLeftPanel();
+
 		closeTopControls();
 
 
@@ -925,8 +909,6 @@ function setLayout() {
 		openTopControls();
 
 		setOrientation("horizontal");
-
-		noteText.focus();
 
 	}
 
@@ -972,11 +954,9 @@ function setWorkspaceLayout(){
 	// Mostrar / ocultar
 	//------------------------------------------------
 
-	workspaceContent.style.display =
-		isFretboardVisible ? "" : "none";
+	workspaceContent.style.display = isFretboardVisible ? "" : "none";
 
-	workspaceScore.style.display =
-		isScoreVisible ? "" : "none";
+	workspaceScore.style.display = isScoreVisible ? "" : "none";
 
 	//------------------------------------------------
 	// Configurar layout
@@ -1007,38 +987,15 @@ function setWorkspaceLayout(){
 	// Estado de los botones
 	//------------------------------------------------
 
-	btnFretboardVisible.classList.toggle(
-		"active",
-		isFretboardVisible
-	);
+	btnFretboardVisible.classList.toggle("active",isFretboardVisible);
 
-	btnScoreVisible.classList.toggle(
-		"active",
-		isScoreVisible
-	);
+	btnScoreVisible.classList.toggle("active",isScoreVisible);
 
 	//------------------------------------------------
 	// Renderizar partitura
 	//------------------------------------------------
 
-	if (isScoreVisible) {
+//	if (isScoreVisible) scoreRender();
 
-		scoreRender();
-
-	}
-
-}
-
-function setInitialOrientation() {
-
-	if (window.innerWidth <= maxMediaScreenWidth) {
-
-		setOrientation("vertical");
-
-	}else{
-
-		setOrientation("horizontal");
-
-	}
 
 }

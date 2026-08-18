@@ -12,10 +12,7 @@ window.addEventListener("load", async () => {
 
 		setLoadingProgress(0, "Configurando usuario...");
 
-		setDefaultControlsValues("init");
-
 		setUserControlsStates();
-
 
 
 		// Project ----------------------
@@ -28,19 +25,30 @@ window.addEventListener("load", async () => {
 
 		if (currentProjectId === null) {
 
-			currentProjectId = generateProjectId();
+			setDefaultControlsValues("init");
 
+			currentProjectId = generateProjectId();
 			projectModified = true;
 
 		}else{
+
 			loadProject(currentProjectId);
+
 		}
 
+
+		// Layout ----------------------
+
+		setLoadingProgress(20, "Configurando página...");
+
+		setLayout();
+
+		await waitForLayout();
 
 
 		// ScorePlayer ----------------------
 
-		setLoadingProgress(20, "Cargando metrónomo...");
+		setLoadingProgress(30, "Cargando metrónomo...");
 
 		metronome = new Metronome();
 
@@ -49,7 +57,7 @@ window.addEventListener("load", async () => {
 		metronome.setMeter(projectBar);
 		metronome.setSubdivision(projectFigure);
 
-		setLoadingProgress(30, "Cargando instrumentos...");
+		setLoadingProgress(40, "Cargando instrumentos...");
 
 		instruments = {
 
@@ -60,7 +68,7 @@ window.addEventListener("load", async () => {
 
 		instrument = instruments[currentInstrument];
 
-		setLoadingProgress(40, "Cargando reproductor...");
+		setLoadingProgress(50, "Cargando reproductor...");
 
 		player = new MusicPlayer(instrument, metronome);
 
@@ -78,24 +86,14 @@ window.addEventListener("load", async () => {
 
 		// Notas ----------------------
 
-		setLoadingProgress(50, "Cargando array de notas...");
+		setLoadingProgress(60, "Cargando array de notas...");
 
-		loadNotas("up");
-
-		scoreLoadArray("up");
-
-
-
-		// Layout ----------------------
-
-		setLoadingProgress(60, "Configurando página...");
-
-		setLayout();
-
-		await waitForLayout();
+		loadNotas(tipoSecuencia);
+		scoreLoadArray(tipoSecuencia);
+//		loadArrays(tipoSecuencia);
 
 
-		// Draw ----------------------
+		// Imagenes ----------------------
 
 		setLoadingProgress(70, "Cargando imágenes...");
 
@@ -103,7 +101,10 @@ window.addEventListener("load", async () => {
 
 		await waitForLayout();
 
-		setLoadingProgress(80, "Dibujando...");
+
+		// Dibujado ----------------------
+
+		setLoadingProgress(80, "Dibujando notas...");
 
 		resizeCanvas();
 
@@ -112,11 +113,12 @@ window.addEventListener("load", async () => {
 		resizeCanvas();
 
 
-		// Fin ----------------------
+		// Partitura ----------------------
 		
-		setLoadingProgress(90, "Configurando partitura...");
+		setLoadingProgress(90, "Cargando partitura...");
 
 		if (isScoreVisible) scoreRender();
+
 
 
 		// Fin ----------------------
@@ -148,6 +150,7 @@ document.addEventListener("keydown",(e)=>{
 
 	e.preventDefault();
 	undo();
+
 });
 
 document.addEventListener("click",(e)=>{
@@ -162,16 +165,16 @@ document.addEventListener("click",(e)=>{
 
 window.addEventListener("resize", () => {
 
+/*
     menuPopup.classList.remove("isOpen");
     btnMenuSelector.classList.remove("active");
-
-    updateMobileLeftPanel();
 
     updateTopBarMenu();
 
     resizeCanvas();
 
     if (!isPlaying && isScoreVisible) scoreRender();
+*/
 
 });
 
@@ -793,16 +796,35 @@ btnNutMode.addEventListener("click", () => {
 });
 
 btnVertical.addEventListener("click", () => {
-    setOrientation("vertical");
+
+	setOrientation("vertical");
+
+	resizeCanvas();
+
+	if (isScoreVisible) scoreRender();
+
 });
 
 btnHorizontal.addEventListener("click", () => {
-    setOrientation("horizontal");
+
+	setOrientation("horizontal");
+
+	resizeCanvas();
+
+	if (isScoreVisible) scoreRender();
+
 });
 
 btnRotate.addEventListener("click", () => {
-    rotateFretboard();
-    updateOrientationButtons();
+
+	rotateFretboard();
+
+	updateOrientationButtons();
+
+	resizeCanvas();
+
+	if (isScoreVisible) scoreRender();
+
 });
 
 btnDisplay.addEventListener("click", () => {
@@ -1040,13 +1062,15 @@ cmbProjectType.addEventListener("change", function () {
 
     projectType = cmbProjectType.value;
 
-    scoreLoadArray(cmbTipoSecuencia.value);
+    scoreLoadArray(this.value);
 
     if (isScoreVisible) scoreRender();
 
 });
 
 cmbTipoSecuencia.addEventListener("change", function () {
+
+    tipoSecuencia = cmbTipoSecuencia.value;
 
     loadNotas(this.value);
 
@@ -1055,6 +1079,28 @@ cmbTipoSecuencia.addEventListener("change", function () {
     if (isScoreVisible) scoreRender();
 
 });
+
+/*
+cmbProjectType.addEventListener("change", function () {
+
+    projectType = cmbProjectType.value;
+
+    loadArrays(tipoSecuencia);
+
+    if (isScoreVisible) scoreRender();
+
+});
+
+cmbTipoSecuencia.addEventListener("change", function () {
+
+    tipoSecuencia = cmbTipoSecuencia.value;
+
+    loadArrays(tipoSecuencia);
+
+    if (isScoreVisible) scoreRender();
+
+});
+*/
 
 metronome_volumen.addEventListener("input", function () {
 
@@ -1273,6 +1319,8 @@ btnScoreVisible.addEventListener("click", () => {
 
 	setWorkspaceLayout();
 
+	if (isScoreVisible) scoreRender();
+
 });
 
 btnFretboardVisible.addEventListener("click", () => {
@@ -1286,5 +1334,7 @@ btnFretboardVisible.addEventListener("click", () => {
 	isFretboardVisible = !isFretboardVisible;
 
 	setWorkspaceLayout();
+
+	if (isScoreVisible) scoreRender();
 
 });

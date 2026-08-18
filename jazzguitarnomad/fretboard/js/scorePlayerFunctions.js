@@ -5,6 +5,65 @@
 //
 ////////////////////////////////////////////////////////////
 
+/*
+function loadArrays(mode) {
+
+    NOTAS = [];
+    ACORDES = [];
+
+    let sequence;
+    let chords;
+
+    switch (mode) {
+
+        case "up":
+            sequence = sequenceUp;
+            chords = chordsUp;
+            break;
+
+        case "down":
+            sequence = sequenceDown;
+            chords = chordsDown;
+            break;
+
+        case "up-down":
+            sequence = sequenceUpDown;
+            chords = chordsUpDown;
+            break;
+
+        case "down-up":
+            sequence = sequenceDownUp;
+            chords = chordsDownUp;
+            break;
+
+    }
+
+    NOTAS = sequence.map(item => item.note);
+    ACORDES = [...chords];
+
+    scoreArray = (projectType === "sequence" ? sequence : chords);
+
+    const result = [];
+    let currentChord = null;
+
+    for (const item of ACORDES) {
+
+        if (item.chord !== currentChord) {
+
+            currentChord = item.chord;
+            result.push([]);
+
+        }
+
+        result[result.length - 1].push(item.note);
+
+    }
+
+    ACORDES = result;
+
+}
+*/
+
 function loadNotas(mode){
 
     NOTAS = [];
@@ -1165,7 +1224,9 @@ async function svg_scoreToPNG(canvas, fileName = "partitura.png") {
 
 async function scoreRender() {
 
-	const vexTabText = vexTab_generateVexTab(scoreArray,cmbTonalidad.value,cmbBar.value,cmbFigure.value,projectType);
+console.log(scoreArray);
+
+	const vexTabText = vexTab_generateVexTab(scoreArray,cmbTonalidad.value,cmbBar.value,cmbFigure.value,cmbProjectType.value);
 
 	vexTab_container.classList.remove("layout-left","layout-center");
 
