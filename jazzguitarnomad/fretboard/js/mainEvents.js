@@ -613,7 +613,7 @@ cmbDiapason.addEventListener("change", () => {
 	setFretboardStyle(cmbDiapason.value);
 });
 
-btnOpenLibrary.addEventListener("click", () => {
+btnOpenLibrary.addEventListener("click", async () => {
 
 	// Preguntar solo si hay cambios sin guardar
 	if (projectModified) {
@@ -625,12 +625,18 @@ btnOpenLibrary.addEventListener("click", () => {
 
 	openXMLProjectsFile();
 
-	projectModified = false;
-	currentProjectId = null;
+	const opened = await openXMLProjectsFile();
 
-	newProject();
+	if (opened) {
 
-	openLeftPanel();
+		projectModified = false;
+		currentProjectId = null;
+
+		newProject();
+
+		openLeftPanel();
+
+	}
 
 });
 

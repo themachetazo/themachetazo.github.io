@@ -27,6 +27,8 @@ function newProject() {
 
 	setFretboardStyle(fretboardStyle);
 
+	setMetronmeOnPlaying(metronomeOn);
+
 	setOrientation(orientation);
 
 	updateSelectedProject();
@@ -111,6 +113,8 @@ function loadProject(project) {
 	player.setCountInBars(countBars);
 	player.setSwingFeel(swing);
 	player.setGate(samplerGate.value);
+
+	setMetronmeOnPlaying(metronomeOn);
 
 	resetPlaybackUI();
 
@@ -760,41 +764,54 @@ function downloadBlob(blob, filename) {
 
 }
 
-
 async function openXMLProjectsFile() {
 
-	if (!window.showOpenFilePicker) {
-		alert(
-			"Tu navegador no permite editar directamente el XML. " +
-			"Al guardar se descargará " + xmlProjects
-		);
-		return;
+	try {
+
+		if (!window.showOpenFilePicker) {
+
+			alert(
+				"Tu navegador no permite editar directamente el XML. " +
+				"Al guardar se descargará " + xmlProjects
+			);
+
+			return false;
+		}
+
+		const [fileHandle] = await window.showOpenFilePicker({
+			types: [{
+				description: "Proyectos de Fretboard",
+				accept: {
+					"application/xml": [".xml"]
+				}
+			}],
+			multiple: false
+		});
+
+		projectsFileHandle = fileHandle;
+
+		const file = await projectsFileHandle.getFile();
+		const xmlText = await file.text();
+
+		// projectPanelHeaderTitle.innerHTML = "BIBLIOTECA LOCAL";
+
+		btnToggleLibrary.title = "Local: " + fileHandle.name;
+
+		projects = parseProjectsXml(xmlText);
+
+		renderHTMLProjectsList();
+
+		return true;
+
+	} catch (error) {
+
+		// Cancelar el selector de archivos también entra aquí
+		if (error.name !== "AbortError") {
+//			console.error("Error al abrir la biblioteca:", error);
+		}
+
+		return false;
 	}
-
-	const [fileHandle] = await window.showOpenFilePicker({
-		types: [{
-			description: "Proyectos de Fretboard",
-			accept: {
-				"application/xml": [".xml"]
-			}
-		}],
-		multiple: false
-	});
-
-
-	projectsFileHandle = fileHandle;
-
-	const file = await projectsFileHandle.getFile();
-	const xmlText = await file.text();
-
-//	projectPanelHeaderTitle.innerHTML = "BIBLIOTECA LOCAL";
-
-	btnToggleLibrary.title = "Local: " + fileHandle.name;
-
-	projects = parseProjectsXml(xmlText);
-
-	renderHTMLProjectsList();
-
 }
 
 
