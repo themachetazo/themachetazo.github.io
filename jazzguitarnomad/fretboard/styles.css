@@ -350,7 +350,7 @@ html {
 
 #footer i[class*="fa-"]{
 
-	font-size:16px;
+	font-size:14px;
 
 }
 
@@ -1106,6 +1106,7 @@ html {
 
 .menuButton i{
 
+    font-size:12px;
     transition:.2s;
 
 }
@@ -1247,7 +1248,7 @@ html {
 
 .topBarSelector span{
 
-	font-size:9px;
+	font-size:10px;
 
 	font-weight:700;
 
@@ -1284,6 +1285,7 @@ html {
 
 	text-align:center;
 
+	font-size:12px !important;
 }
 
 .menuArrow{
@@ -2641,6 +2643,18 @@ input[type="range"] {
 
 	}
 
+	#footer .footerDivs i[class*="fa-"]{
+
+		font-size:12px;
+
+	}
+
+	#footer .footerSocial i[class*="fa-"]{
+
+		font-size:24px;
+
+	}
+
 }
 
 */
@@ -2699,6 +2713,18 @@ input[type="range"] {
 		text-align:center;
 
 		padding-top:15px;
+
+	}
+
+	#footer .footerDivs i[class*="fa-"]{
+
+		font-size:12px;
+
+	}
+
+	#footer .footerSocial i[class*="fa-"]{
+
+		font-size:24px;
 
 	}
 
