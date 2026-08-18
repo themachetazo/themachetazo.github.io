@@ -32,6 +32,7 @@
 			<scoreStaves>notation</scoreStaves>
 			<scoreLayout>horizontal</scoreLayout>
 			<swing>true</swing>
+			<metronomeOn>true</metronomeOn>
 		</settings>
 		<notes>
 			<note string="5" fret="1" color="#0080ff" text=""/>
@@ -72,6 +73,7 @@
 			<scoreStaves>all</scoreStaves>
 			<scoreLayout>vertical</scoreLayout>
 			<swing>false</swing>
+			<metronomeOn>false</metronomeOn>
 		</settings>
 		<notes>
 			<note string="2" fret="4" color="#ff0000" text=""/>
@@ -110,6 +112,7 @@
 			<scoreStaves>all</scoreStaves>
 			<scoreLayout>vertical</scoreLayout>
 			<swing>false</swing>
+			<metronomeOn>false</metronomeOn>
 		</settings>
 		<notes>
 			<note string="5" fret="2" color="#ffffff" text=""/>
@@ -146,6 +149,7 @@
 			<scoreStaves>all</scoreStaves>
 			<scoreLayout>vertical</scoreLayout>
 			<swing>false</swing>
+			<metronomeOn>false</metronomeOn>
 		</settings>
 		<notes>
 			<note string="2" fret="1" color="#ffffff" text=""/>
@@ -183,6 +187,7 @@
 			<scoreStaves>all</scoreStaves>
 			<scoreLayout>vertical</scoreLayout>
 			<swing>false</swing>
+			<metronomeOn>false</metronomeOn>
 		</settings>
 		<notes>
 			<note string="5" fret="1" color="#ffffff" text=""/>
@@ -220,6 +225,7 @@
 			<scoreStaves>all</scoreStaves>
 			<scoreLayout>vertical</scoreLayout>
 			<swing>false</swing>
+			<metronomeOn>false</metronomeOn>
 		</settings>
 		<notes>
 			<note string="5" fret="2" color="#0080ff" text=""/>
