@@ -117,6 +117,9 @@ function setDefaultControlsValues(state){
 	cmbSamplerInstrument.value = currentInstrument;
 
 	numberFrets.value = fretNumbers;
+
+console.log("setup: " + showFretNumbers);
+
 	showNumber.checked = showFretNumbers;
 
 	numBpm.value = bpm;

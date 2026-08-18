@@ -88,6 +88,8 @@ function loadProject(project) {
 	fretNumbers = project.settings?.fretNumbers || 1;
 	showFretNumbers = project.settings?.showFretNumbers || false;
 
+console.log("load: " + showFretNumbers);
+
 	bpm = project.settings?.bpm || 90;
 	key = project.settings?.key || "C";
 
@@ -152,11 +154,11 @@ function loadProject(project) {
 
 	projectModified = false;
 
+	setDefaultControlsValues("loadProject");
+
 	loadNotas(tipoSecuencia);
 	scoreLoadArray(tipoSecuencia);
 //	loadArrays(tipoSecuencia);
-
-	setDefaultControlsValues("loadProject");
 
 	setFretboardStyle(fretboardStyle);
 
