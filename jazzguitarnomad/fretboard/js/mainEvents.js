@@ -165,11 +165,11 @@ document.addEventListener("click",(e)=>{
 
 window.addEventListener("resize", () => {
 
+    updateTopBarMenu();
+
 /*
     menuPopup.classList.remove("isOpen");
     btnMenuSelector.classList.remove("active");
-
-    updateTopBarMenu();
 
     resizeCanvas();
 

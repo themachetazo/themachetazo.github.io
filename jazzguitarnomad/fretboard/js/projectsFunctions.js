@@ -57,50 +57,50 @@ function loadProject(project) {
 
 	// Settings
 
-	fretCount = Math.max(5, Math.min(24, project.settings?.fretCount));
+	fretCount = Math.max(5, Math.min(24, project.settings?.fretCount ?? 10));
 
-	displayMode = project.settings?.displayMode || true;
+	displayMode = project.settings?.displayMode ?? true;
 
-	inlays = project.settings?.inlays || false;
+	inlays = project.settings?.inlays ?? false;
 
-	orientation = project.settings?.orientation || "vertical";
-	rotated = project.settings?.rotated || false;
+	orientation = project.settings?.orientation ?? "vertical";
+	rotated = project.settings?.rotated ?? false;
 
-	fretboardStyle = project.settings?.fretboardStyle || "maple";
+	fretboardStyle = project.settings?.fretboardStyle ?? "maple";
 
-	projectBar = project.settings?.projectBar || 4;
-	projectFigure = project.settings?.projectFigure || 1;
+	projectBar = project.settings?.projectBar ?? 4;
+	projectFigure = project.settings?.projectFigure ?? 1;
 	setBarGroups();
 
 	scoreScale = project.settings?.scoreScale;
 
-	projectType = project.settings?.projectType || "sequence";
+	projectType = project.settings?.projectType ?? "sequence";
 
-	tipoSecuencia = project.settings?.tipoSecuencia || "up";
+	tipoSecuencia = project.settings?.tipoSecuencia ?? "up";
 
 	scoreLoadArray(tipoSecuencia);
 
-	countBars = project.settings?.countBars || 0;
-	repetitionSequence = project.settings?.repetitionSequence || 2;
+	countBars = project.settings?.countBars ?? 0;
+	repetitionSequence = project.settings?.repetitionSequence ?? 2;
 
-	currentInstrument = project.settings?.currentInstrument || "piano";
+	currentInstrument = project.settings?.currentInstrument ?? "piano";
 
-	fretNumbers = project.settings?.fretNumbers || 1;
-	showFretNumbers = project.settings?.showFretNumbers || false;
+	fretNumbers = project.settings?.fretNumbers ?? 1;
+	showFretNumbers = project.settings?.showFretNumbers ?? false;
 
 console.log("load: " + showFretNumbers);
 
-	bpm = project.settings?.bpm || 90;
-	key = project.settings?.key || "C";
+	bpm = project.settings?.bpm ?? 90;
+	key = project.settings?.key ?? "C";
 
-	scoreStaves = project.settings?.scoreStaves || "all";
-	scoreLayout = project.settings?.scoreLayout || "vertical";
+	scoreStaves = project.settings?.scoreStaves ?? "all";
+	scoreLayout = project.settings?.scoreLayout ?? "vertical";
 
-	swing = project.settings?.swing || false;
-	metronomeOn = project.settings?.metronomeOn || true;
+	swing = project.settings?.swing ?? false;
+	metronomeOn = project.settings?.metronomeOn ?? true;
 
-	isFretboardVisible = project.settings?.isFretboardVisible || true;
-	isScoreVisible = project.settings?.isScoreVisible || false;
+	isFretboardVisible = project.settings?.isFretboardVisible ?? true;
+	isScoreVisible = project.settings?.isScoreVisible ?? false;
 
 	// Player
 

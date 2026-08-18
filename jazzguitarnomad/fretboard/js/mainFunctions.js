@@ -150,7 +150,6 @@ console.log("setup: " + showFretNumbers);
 
 }
 
-
 function setUserControlsStates(){
 
 	cursor.innerHTML = "";
@@ -305,7 +304,6 @@ function updateFigureOptions() {
     const option = cmbFigure.querySelector(`option[value="${previousValue}"]`);
     if (option) option.selected = true;
 }
-
 
 function getBarGroups() {
     const time = cmbBar.value;
