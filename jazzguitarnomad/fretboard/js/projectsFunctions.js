@@ -29,8 +29,6 @@ function newProject() {
 
 	setOrientation(orientation);
 
-	rotateFretboard();
-
 	updateSelectedProject();
 
 	setWorkspaceLayout();
@@ -59,12 +57,12 @@ function loadProject(project) {
 
 	fretCount = Math.max(5, Math.min(24, project.settings?.fretCount ?? 10));
 
-	displayMode = project.settings?.displayMode ?? true;
+	displayMode = parseBoolean(project.settings?.displayMode, true);
 
-	inlays = project.settings?.inlays ?? false;
+	inlays = parseBoolean(project.settings?.inlays, false);
 
 	orientation = project.settings?.orientation ?? "vertical";
-	rotated = project.settings?.rotated ?? false;
+	rotated = parseBoolean(project.settings?.rotated, false);
 
 	fretboardStyle = project.settings?.fretboardStyle ?? "maple";
 
@@ -86,7 +84,7 @@ function loadProject(project) {
 	currentInstrument = project.settings?.currentInstrument ?? "piano";
 
 	fretNumbers = project.settings?.fretNumbers ?? 1;
-	showFretNumbers = project.settings?.showFretNumbers ?? false;
+	showFretNumbers = parseBoolean(project.settings?.showFretNumbers, false);
 
 	bpm = project.settings?.bpm ?? 90;
 	key = project.settings?.key ?? "C";
@@ -94,11 +92,11 @@ function loadProject(project) {
 	scoreStaves = project.settings?.scoreStaves ?? "all";
 	scoreLayout = project.settings?.scoreLayout ?? "vertical";
 
-	swing = project.settings?.swing ?? false;
-	metronomeOn = project.settings?.metronomeOn ?? true;
+	swing = parseBoolean(project.settings?.swing, false);
+	metronomeOn = parseBoolean(project.settings?.metronomeOn, true);
 
-	isFretboardVisible = project.settings?.isFretboardVisible ?? true;
-	isScoreVisible = project.settings?.isScoreVisible ?? false;
+	isFretboardVisible = parseBoolean(project.settings?.isFretboardVisible, true);
+	isScoreVisible = parseBoolean(project.settings?.isScoreVisible, false);
 
 	// Player
 
@@ -161,8 +159,6 @@ function loadProject(project) {
 	setFretboardStyle(fretboardStyle);
 
 	setOrientation(orientation);
-
-	rotateFretboard();
 
 	updateSelectedProject();
 

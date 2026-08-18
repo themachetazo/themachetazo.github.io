@@ -117,7 +117,6 @@ function setDefaultControlsValues(state){
 	cmbSamplerInstrument.value = currentInstrument;
 
 	numberFrets.value = fretNumbers;
-
 	showNumber.checked = showFretNumbers;
 
 	numBpm.value = bpm;
@@ -997,4 +996,21 @@ function setWorkspaceLayout(){
 //	if (isScoreVisible) scoreRender();
 
 
+}
+
+function parseBoolean(value, defaultValue = false) {
+
+	if (value === undefined || value === null) {
+		return defaultValue;
+	}
+
+	if (typeof value === "boolean") {
+		return value;
+	}
+
+	if (typeof value === "string") {
+		return value.toLowerCase() === "true";
+	}
+
+	return Boolean(value);
 }
