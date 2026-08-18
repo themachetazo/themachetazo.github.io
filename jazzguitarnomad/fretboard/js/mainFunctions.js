@@ -118,8 +118,6 @@ function setDefaultControlsValues(state){
 
 	numberFrets.value = fretNumbers;
 
-console.log("setup: " + showFretNumbers);
-
 	showNumber.checked = showFretNumbers;
 
 	numBpm.value = bpm;
