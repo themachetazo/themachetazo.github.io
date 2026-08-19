@@ -11,7 +11,8 @@
 </head>
 <body>
 
-	<!-- CARGA -->
+	<!-- LOAD SCREEN -->
+
 	<div id="loadingScreen">
 		<h1>JAZZ GUITAR NOMAD</h1>
 		<h2>Fretboard Builder</h2>
@@ -21,12 +22,16 @@
 	</div>
 
 	<!-- PLAY FLOTANTE -->
+
 	<button id="scoreFloatingPlay" type="button" title="Reproducir"><i class="fa-solid fa-play"></i></button>
 
-	<!-- FRETBOARD -->
-	<div id="appLayout">
+
+	<!-- LAYOUT -->
+
+	<div id="appLayout" class="leftPanelHidden">
 
 		<!-- CABECERA SUPERIOR -->
+
 		<header id="topBar">
 
 			<div id="brand">
@@ -79,6 +84,9 @@
 
 		</header><!-- Fin topBar -->
 
+
+		<!-- PANEL CONTROLES-->
+
 		<div id="topControlsContainer">
 
 			<div id="topControls">
@@ -89,7 +97,7 @@
 					<div class="toolbarTop-Controls" id="topLibrary">
 						<span>BIBLIOTECA</span>
 						<div class="toolRow">
-							<button id="btnOpenLibrary" title="Abrir biblioteca de proyectos"><i class="fa-solid fa-folder-open"></i><span>Abrir</span></button>
+							<button id="btnOpenProjects" title="Abrir biblioteca de proyectos"><i class="fa-solid fa-folder-open"></i><span>Abrir</span></button>
 						</div>
 					</div>
 
@@ -260,6 +268,9 @@
 						<div class="toolRow">
 							<select id="cmbChords" disabled>
 							    <option value="1">1</option>
+							    <option value="2">2</option>
+							    <option value="3">3</option>
+							    <option value="4">4</option>
 							</select>
 						</div>
 						<div class="toolRow">
@@ -511,11 +522,11 @@
 					</div>
 
 					<div class="toolbarTop-Controls" id="topScoreScale">
-						<span>ESCALA</span>
+						<span>TAMAÑO</span>
 						<div class="toolRow">
 							<span>Escala</span>
 							<select id="cmbScoreScale">
-								<option value="auto" selected>Auto</option>
+								<option value="auto" selected>Ajustar</option>
 								<option value="zoom">Zoom</option>
 							</select>
 						</div>
@@ -591,66 +602,74 @@
 
 		</div> <!-- Fin topControlsContainer -->
 
-		<!-- PANEL MENU IZQUIERDO -->
-		<aside id="leftPanel">
 
-			<!-- Lista preparada para los proyectos -->
-			<div id="projectPanel">
-				<div class="projectPanelHeader">
-					<span id="projectPanelHeaderTitle">PROYECTOS</span>
-					<button id="btnToggleLibrary"><i class="fa-solid fa-up-right-from-square"></i></button>
-				</div>
+		<!-- CONTROLES WORKSPACE -->
 
-<!--
-				<div class="projectCategory">
-					<button type="button" class="projectCategoryButton" data-project-category="1" aria-expanded="false">
-						<span>Acordes</span>
-						<i class="fa-solid fa-chevron-down"></i>
-					</button>
-					<ul class="projectCategoryList" id="projectCategoryList">
-						<li class="projectItem">
-							<button type="button" class="projectOpenButton" data-project-id="b568f802474943669bb094652803af3f" title="Abrir: Título">
-								<span class="projectTitle">Título</span>
-							</button>
-							<button type="button" class="projectDeleteButton" title="Eliminar proyecto">
-								<i class="fa-solid fa-trash"></i>
-							</button>
-						</li>
-					</ul>
-				</div>
--->
+		<div id="workspaceHeader">
 
+			<div class="workspaceControls" id="workspaceControls">
+				<button id="btnPlayStop_2" class="buttonPlay" title="Reproducir"><i class="fa-solid fa-play"></i><span>Play</span></button>
+				<button id="btnShowProjectPanel" title="Ver biblioteca"><i class="fa-solid fa-folder-tree"></i><span>Proyectos</span></button>
+				<button id="btnFretboardVisible" title="Ver partitura"><i class="fa-solid fa-guitar"></i><span>Fretboard</span></button>
+				<button id="btnScoreVisible" title="Ver partitura"><i class="fa-solid fa-file-lines"></i><span>Partitura</span></button>
+				<button id="btnVertical" class="active" title="Cambiar orientación"><i class="fa-solid fa-arrows-up-down"></i><span>Vertical</span></button>
+				<button id="btnHorizontal" title="Cambiar orientación"><i class="fa-solid fa-arrows-left-right"></i><span>Horizontal</span></button>
 			</div>
-		</aside>
+			<div class="workspaceControls">
+				<div id="metronome_timeline">
+					<div class="metronome_pulse metronome_beat metronome_bar" data-index="0"></div>
+					<div class="metronome_pulse metronome_beat metronome_bar" data-index="1"></div>
+					<div class="metronome_pulse metronome_beat metronome_bar" data-index="2"></div>
+					<div class="metronome_pulse metronome_beat metronome_bar" data-index="3"></div>
+				</div>
+			</div>
+			<div class="workspaceControls" id="workspaceTimeInfo">
+				<div id="player_repeatInfo">Compás: <b>1</b>&nbsp;Repetición: <b>1</b>&nbsp;</div>
+				<div id="metronome_Info">Metrónomo: <b>1 / 1</b></div>
+			</div>
+			<div class="workspaceControls">
+				<div id="workspaceTitleText">Sin Título</div>
+			</div>
 
-		<!-- CANVAS Y PARTITURA-->
+		</div> <!-- Fin Controles Workspace -->
+
+
+
+		<!-- PROJECTOS, CANVAS Y PARTITURA-->
 		<main id="workspace" class="horizontal">
 
-			<div id="workspaceHeader">
-				<div class="workspaceControls" id="workspaceControls">
-					<button id="btnPlayStop_2" class="buttonPlay" title="Reproducir"><i class="fa-solid fa-play"></i><span>Play</span></button>
-					<button id="btnShowProjectPanel" class="active" title="Ver biblioteca"><i class="fa-solid fa-folder-tree"></i><span>Proyectos</span></button>
-					<button id="btnFretboardVisible" title="Ver partitura"><i class="fa-solid fa-guitar"></i><span>Fretboard</span></button>
-					<button id="btnScoreVisible" title="Ver partitura"><i class="fa-solid fa-file-lines"></i><span>Partitura</span></button>
-					<button id="btnVertical" class="active" title="Cambiar orientación"><i class="fa-solid fa-arrows-up-down"></i><span>Vertical</span></button>
-					<button id="btnHorizontal" title="Cambiar orientación"><i class="fa-solid fa-arrows-left-right"></i><span>Horizontal</span></button>
-				</div>
-				<div class="workspaceControls">
-					<div id="metronome_timeline">
-						<div class="metronome_pulse metronome_beat metronome_bar" data-index="0"></div>
-						<div class="metronome_pulse metronome_beat metronome_bar" data-index="1"></div>
-						<div class="metronome_pulse metronome_beat metronome_bar" data-index="2"></div>
-						<div class="metronome_pulse metronome_beat metronome_bar" data-index="3"></div>
+
+			<!-- PANEL MENU IZQUIERDO -->
+			<aside id="leftPanel">
+
+				<!-- Lista preparada para los proyectos -->
+				<div id="projectPanel">
+					<div class="projectPanelHeader">
+						<span id="projectPanelHeaderTitle">PROYECTOS</span>
+						<button id="btnToggleLibrary"><i class="fa-solid fa-up-right-from-square"></i></button>
 					</div>
+
+	<!--
+					<div class="projectCategory">
+						<button type="button" class="projectCategoryButton" data-project-category="1" aria-expanded="false">
+							<span>Acordes</span>
+							<i class="fa-solid fa-chevron-down"></i>
+						</button>
+						<ul class="projectCategoryList" id="projectCategoryList">
+							<li class="projectItem">
+								<button type="button" class="projectOpenButton" data-project-id="b568f802474943669bb094652803af3f" title="Abrir: Título">
+									<span class="projectTitle">Título</span>
+								</button>
+								<button type="button" class="projectDeleteButton" title="Eliminar proyecto">
+									<i class="fa-solid fa-trash"></i>
+								</button>
+							</li>
+						</ul>
+					</div>
+	-->
+
 				</div>
-				<div class="workspaceControls" id="workspaceTimeInfo">
-					<div id="player_repeatInfo">Compás: <b>1</b>&nbsp;Repetición: <b>1</b>&nbsp;</div>
-					<div id="metronome_Info">Metrónomo: <b>1 / 1</b></div>
-				</div>
-				<div class="workspaceControls">
-					<div id="workspaceTitleText">Sin Título</div>
-				</div>
-			</div>
+			</aside> <!-- Fin Panel izquierdo -->
 
 			<div id="workspaceContent">
 				<canvas id="workspaceCanvas"></canvas>
@@ -665,7 +684,8 @@
 				</div>
 			</div>
 
-		</main>
+		</main> <!-- Fin Canvas y partitura -->
+
 
 		<!-- CANVAS CURSOR -->
 
