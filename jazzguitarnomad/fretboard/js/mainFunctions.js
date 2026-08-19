@@ -88,13 +88,6 @@ function setDefaultControlsValues(state){
 
 	noteText.value = "";
 
-	if (state === "newProject"){
-
-		setMode("note");
-		noteText.focus();
-
-	}
-
 	setBarGroups();
 
 	if (scoreScale !== "auto") {
@@ -129,21 +122,31 @@ function setDefaultControlsValues(state){
 	cmbScoreLayout.value = scoreLayout;
 
 	player_swing.checked = swing;
+	if (player_swing.checked) metronome_subBeatSound.checked = false;
 
 	metronome_on.checked = metronomeOn;
 
 	btnFretboardVisible.classList.toggle("active",isFretboardVisible);
 	btnScoreVisible.classList.toggle("active",isScoreVisible);
 
+	metronome_volumen.value = -12;
+	metronome_volumen_2.value = metronome_volumen.value;
+	metronome_volumen.title = metronome_volumen.value + " dB";
+	metronome_volumen_2.title = metronome_volumen.title;
+
+	samplerVolume.value = 0;
+	samplerVolume.title = samplerVolume.value + " dB";
+
+	samplerGate.value = 100;
+	samplerVolume.title = "100";
+
 	if (state !== "loadProject"){
-		// Limpiar contenido de notas
 		notes = [];
 		barreNotes = [];
 		nutNotes = Array(stringCount).fill(null);
-
-		// Limpiar historial
-		history = [];
 	}
+
+	history = [];
 
 }
 
@@ -152,6 +155,8 @@ function setUserControlsStates(){
 	cursor.innerHTML = "";
 
 	if (!isAdmin) {
+
+		btnToggleLibrary.style.display = "none";
 
 		btnAudio.style.display = "none";
 		btnAudioPopup.style.display = "none";
@@ -360,6 +365,8 @@ function setBarGroups() {
 
 	}
 
+	updateFigureOptions();
+
 }
 
 function saveHistory() {
@@ -481,8 +488,10 @@ function setMode(newMode) {
 
 			cursor.innerHTML = '<i class="fa-solid fa-pencil"></i>';
 
-			noteText.value = "";
-			noteText.focus();
+			if (window.innerWidth <= maxMediaScreenWidth) {
+				noteText.value = "";
+				noteText.focus();
+			}
 
 			break;
 

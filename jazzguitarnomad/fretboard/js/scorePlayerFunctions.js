@@ -146,6 +146,28 @@ function scoreLoadArray(mode){
 //
 ////////////////////////////////////////////////////////////
 
+function setPlayerValues(){
+
+	metronome.setBpm(parseFloat(bpm));
+	metronome.setVolume(-12);
+	metronome.setMeter(projectBar);
+	metronome.setSubdivision(projectFigure);
+
+	setInstrument(currentInstrument);
+
+	player.setInstrumentVolume(0);
+	player.setGate(100);
+
+	player.setRepeticiones(repetitionSequence);
+	player.setCountInBars(countBars);
+	player.setSwingFeel(swing);
+
+	setMetronmeOnPlaying(metronomeOn);
+
+	resetPlaybackUI();
+
+}
+
 async function playMusic(){
 
 	if (!isPlaying) {
@@ -419,7 +441,9 @@ function createSampler(name) {
 
 function setInstrument(name) {
 
-    if (!instruments[name]) {return;}
+    if (!instruments[name]) return;
+
+    if (currentInstrument === name) return;
 
     currentInstrument = name;
 

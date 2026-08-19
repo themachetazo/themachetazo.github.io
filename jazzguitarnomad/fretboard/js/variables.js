@@ -9,12 +9,8 @@ const params = new URLSearchParams(window.location.search);
 
 const user = params.get("user");
 
-const isAdmin = user === "admin";
+let isAdmin = null;
 
-if (params.has("project")) {
-	currentProjectId = params.get("project");
-	projectModified = true;
-}
 
 /*==================================================
 	REFERENCIAS DOM: CANVAS
@@ -149,7 +145,7 @@ const btnRotate = document.getElementById("btnRotate");
 const btnNewProject = document.getElementById("btnNewProject");
 const btnSaveProject = document.getElementById("btnSaveProject");
 const btnDelProject = document.getElementById("btnDelProject");
-const btnOpenLibrary = document.getElementById("btnOpenLibrary");
+const btnOpenProjects = document.getElementById("btnOpenProjects");
 const btnShare = document.getElementById("btnShare");
 const btnCopyCanvas = document.getElementById("btnCopyCanvas");
 const btnDownloadCanvas = document.getElementById("btnDownloadCanvas");
@@ -159,7 +155,6 @@ const chordProjectList = document.getElementById("chordProjectList");
 const scaleProjectList = document.getElementById("scaleProjectList");
 const otherProjectList = document.getElementById("otherProjectList");
 const projectCategory = document.getElementById("projectCategory");
-const projectPanelHeaderTitle = document.getElementById("projectPanelHeaderTitle");
 const btnShowProjectPanel = document.getElementById("btnShowProjectPanel");
 const btnToggleLibrary = document.getElementById("btnToggleLibrary");
 
@@ -169,7 +164,9 @@ let xmlVersion = 1;
 	CONFIGURACIÓN GENERAL DE LA APLICACIÓN
 ==================================================*/
 
-let xmlProjects = "projects/fretboard-projects.xml";
+let xmlProjectsPath = "projects/";
+
+let xmlProjects = xmlProjectsPath + "default-projects.xml";
 
 btnToggleLibrary.title = "Server: " + xmlProjects;
 
@@ -267,6 +264,8 @@ const maxHistory = 50;
 	PROYECTOS
 ==================================================*/
 
+let projectsLoaded = false;
+
 let projects = [];
 let projectsFileHandle = null;
 
@@ -304,6 +303,7 @@ const btnTime4 = document.getElementById("btnTime4");
 const btnTime3 = document.getElementById("btnTime3");
 
 const btnScoreDownloadImage = document.getElementById("btnScoreDownloadImage");
+const cmbChords = document.getElementById("cmbChords");
 const btnNewChord = document.getElementById("btnNewChord");
 const btnDelChord = document.getElementById("btnDelChord");
 

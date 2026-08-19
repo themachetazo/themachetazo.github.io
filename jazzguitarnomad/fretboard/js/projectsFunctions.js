@@ -9,123 +9,93 @@ function newProject() {
 
 	if (projectModified) {
 
-		if (!confirm("¿Crear un proyecto nuevo? Se perderán los cambios no guardados.")) {
+		if (!confirm(
+			"¿Crear un proyecto nuevo? Se perderán los cambios no guardados."
+		)) {
 			return;
 		}
 
 	}
 
+	// NUEVO ID
+
 	currentProjectId = generateProjectId();
+
+	// ESTADO
 
 	projectModified = true;
 
+	// VALORES POR DEFECTO
+
 	setDefaultControlsValues("newProject");
+
+	setMode("note");
+
+	// DATOS MUSICALES
 
 	loadNotas(tipoSecuencia);
 	scoreLoadArray(tipoSecuencia);
-//	loadArrays(tipoSecuencia);
+	// loadArrays(tipoSecuencia);
 
-	setFretboardStyle(fretboardStyle);
+	// ACTUALIZAR INTERFAZ
 
-	setMetronmeOnPlaying(metronomeOn);
-
-	setOrientation(orientation);
-
-	updateSelectedProject();
-
-	setWorkspaceLayout();
-
-	resizeCanvas();
-
-	if (isScoreVisible) scoreRender();
-
+	restartProjectValues();
 }
 
 function loadProject(project) {
 
-	currentProjectId = project.id;
+	if (!project) return;
+
+	// DATOS GENERALES
 
 	projectTitle = project.title;
 
-	// Seleccionar la categoría del proyecto
+	// CATEGORÍA
+
 	projectCategory.value = project.category;
 
-	// Si la categoría no existe, seleccionar la primera disponible
-	if (projectCategory.value !== project.category && categories.length > 0) {
-		projectCategory.value = categories[0].id;
-	}
+	if (projectCategory.value !== project.category && categories.length > 0) projectCategory.value = categories[0].id;
 
-	// Settings
+	// SETTINGS
 
 	fretCount = Math.max(5, Math.min(24, project.settings?.fretCount ?? 10));
-
 	displayMode = parseBoolean(project.settings?.displayMode, true);
-
 	inlays = parseBoolean(project.settings?.inlays, false);
-
 	orientation = project.settings?.orientation ?? "vertical";
 	rotated = parseBoolean(project.settings?.rotated, false);
-
 	fretboardStyle = project.settings?.fretboardStyle ?? "maple";
-
 	projectBar = project.settings?.projectBar ?? 4;
 	projectFigure = project.settings?.projectFigure ?? 1;
+
 	setBarGroups();
 
 	scoreScale = project.settings?.scoreScale;
-
 	projectType = project.settings?.projectType ?? "sequence";
-
 	tipoSecuencia = project.settings?.tipoSecuencia ?? "up";
-
-	scoreLoadArray(tipoSecuencia);
-
 	countBars = project.settings?.countBars ?? 0;
 	repetitionSequence = project.settings?.repetitionSequence ?? 2;
-
 	currentInstrument = project.settings?.currentInstrument ?? "piano";
-
 	fretNumbers = project.settings?.fretNumbers ?? 1;
 	showFretNumbers = parseBoolean(project.settings?.showFretNumbers, false);
-
 	bpm = project.settings?.bpm ?? 90;
 	key = project.settings?.key ?? "C";
-
 	scoreStaves = project.settings?.scoreStaves ?? "all";
 	scoreLayout = project.settings?.scoreLayout ?? "vertical";
-
 	swing = parseBoolean(project.settings?.swing, false);
 	metronomeOn = parseBoolean(project.settings?.metronomeOn, true);
-
 	isFretboardVisible = parseBoolean(project.settings?.isFretboardVisible, true);
 	isScoreVisible = parseBoolean(project.settings?.isScoreVisible, false);
 
-	// Player
+	// NOTAS
 
-	metronome.setBpm(parseFloat(bpm));
-	metronome.setMeter(projectBar);
-	metronome.setSubdivision(projectFigure);
-
-	setInstrument(currentInstrument);
-
-	player.setMetronomeOn(metronomeOn);
-	player.setRepeticiones(repetitionSequence);
-	player.setCountInBars(countBars);
-	player.setSwingFeel(swing);
-	player.setGate(samplerGate.value);
-
-	setMetronmeOnPlaying(metronomeOn);
-
-	resetPlaybackUI();
-
-	// Notas
-
-	notes = project.notes.map(note => ({
+	notes = (project.notes || []).map(note => ({
 		string: note.string,
 		fret: note.fret,
 		color: note.color,
 		text: note.text
 	}));
+
+	// BARRAS
 
 	barreNotes = (project.barres || []).map(barre => ({
 		fret: barre.fret,
@@ -134,14 +104,13 @@ function loadProject(project) {
 		text: barre.text
 	}));
 
+	// NUT
+
 	nutNotes = Array(stringCount).fill(null);
 
 	(project.nutNotes || []).forEach(note => {
 
-		if (
-			note.string >= 0 &&
-			note.string < stringCount
-		) {
+		if (note.string >= 0 && note.string < stringCount) {
 			nutNotes[note.string] = {
 				color: note.color,
 				text: note.text
@@ -150,27 +119,204 @@ function loadProject(project) {
 
 	});
 
-	history = [];
+	// ESTADO
 
 	projectModified = false;
 
+	// ACTUALIZAR CONTROLES
+
 	setDefaultControlsValues("loadProject");
+	setOrientation(orientation);
+
+	// DATOS MUSICALES
 
 	loadNotas(tipoSecuencia);
 	scoreLoadArray(tipoSecuencia);
-//	loadArrays(tipoSecuencia);
+	// loadArrays(tipoSecuencia);
+
+	// ACTUALIZAR INTERFAZ
+
+	restartProjectValues();
+
+}
+
+function restartProjectValues(){
 
 	setFretboardStyle(fretboardStyle);
 
-	setOrientation(orientation);
-
-	updateSelectedProject();
-
 	setWorkspaceLayout();
 
-	resizeCanvas();
+	setPlayerValues();
+
+	if (isFretboardVisible) resizeCanvas();
 
 	if (isScoreVisible) scoreRender();
+
+}
+
+async function loadXMLProjectsFile() {
+
+	projectsLoaded = false;
+
+	try {
+
+		const response = await fetch(xmlProjects);
+
+		if (!response.ok) {
+			throw new Error("No se pudo leer " + xmlProjects);
+		}
+
+		const xmlText = await response.text();
+
+		projects = parseProjectsXml(xmlText);
+
+		projectsLoaded = true;
+
+	} catch (error) {
+
+		console.warn(
+			"No se pudo cargar el archivo '" + xmlProjects + "' de proyectos del Servidor.",
+			error
+		);
+
+	}
+
+}
+
+async function openXMLProjectsFile() {
+
+	try {
+
+		if (!window.showOpenFilePicker) {
+
+			alert(
+				"Tu navegador no permite editar directamente el XML. " +
+				"Al guardar se descargará " + xmlProjects
+			);
+
+			return false;
+		}
+
+
+		// --------------------------------
+		// SELECCIONAR ARCHIVO
+		// --------------------------------
+
+		const [fileHandle] =
+			await window.showOpenFilePicker({
+
+				types: [{
+					description: "Proyectos de Fretboard",
+
+					accept: {
+						"application/xml": [".xml"]
+					}
+
+				}],
+
+				multiple: false
+
+			});
+
+
+		// --------------------------------
+		// GUARDAR HANDLE
+		// --------------------------------
+
+		projectsFileHandle = fileHandle;
+
+		xmlProjects = fileHandle.name;
+
+		btnToggleLibrary.title = "Local: " + fileHandle.name;
+
+
+		// --------------------------------
+		// LEER ARCHIVO
+		// --------------------------------
+
+		const file = await fileHandle.getFile();
+
+		const xmlText = await file.text();
+
+
+		// --------------------------------
+		// PARSEAR XML
+		// --------------------------------
+
+		const loadedProjects =
+			parseProjectsXml(xmlText);
+
+
+		// --------------------------------
+		// REEMPLAZAR PROYECTOS
+		// --------------------------------
+
+		projects = loadedProjects;
+
+
+		// --------------------------------
+		// ESTADO INICIAL
+		// --------------------------------
+
+		projectModified = false;
+
+		currentProjectId = null;
+
+
+		// --------------------------------
+		// RENDERIZAR LISTA
+		// --------------------------------
+
+		renderHTMLProjectsList();
+
+
+		// --------------------------------
+		// ABRIR PANEL
+		// --------------------------------
+
+		openLeftPanel();
+
+
+		// --------------------------------
+		// ABRIR PRIMER PROYECTO
+		// --------------------------------
+
+		if (projects.length > 0) {
+
+			selectProject(projects[0]);
+
+		} else {
+
+			// Si el XML está vacío,
+			// crear un proyecto nuevo.
+
+			newProject();
+
+		}
+
+
+		return true;
+
+
+	} catch (error) {
+
+		// Cancelar selector de archivos
+		if (error.name === "AbortError") {
+
+			return false;
+
+		}
+
+
+		console.error(
+			"Error al abrir la biblioteca de proyectos:",
+			error
+		);
+
+
+		return false;
+
+	}
 
 }
 
@@ -508,15 +654,26 @@ function parseProjectsXml(xmlText) {
 function renderHTMLProjectsList() {
 
 	// Eliminar todas las categorías actuales excepto la cabecera
-	projectPanel.querySelectorAll(".projectCategory").forEach(category => category.remove());
+	projectPanel
+		.querySelectorAll(".projectCategory")
+		.forEach(category => category.remove());
+
 
 	getSortedCategories().forEach(category => {
 
-		// ---------- Contenedor de la categoría ----------
+		// --------------------------------
+		// CONTENEDOR DE LA CATEGORÍA
+		// --------------------------------
+
 		const categoryContainer = document.createElement("div");
+
 		categoryContainer.className = "projectCategory";
 
-		// ---------- Botón de la categoría ----------
+
+		// --------------------------------
+		// BOTÓN DE LA CATEGORÍA
+		// --------------------------------
+
 		const categoryButton = document.createElement("button");
 
 		categoryButton.type = "button";
@@ -524,27 +681,41 @@ function renderHTMLProjectsList() {
 		categoryButton.dataset.projectCategory = category.id;
 		categoryButton.setAttribute("aria-expanded", "false");
 
+
 		const title = document.createElement("span");
+
 		title.textContent = category.name;
 
+
 		const icon = document.createElement("i");
+
 		icon.className = "fa-solid fa-chevron-down";
+
 
 		categoryButton.appendChild(title);
 		categoryButton.appendChild(icon);
 
-		// ---------- Lista de proyectos ----------
+
+		// --------------------------------
+		// LISTA DE PROYECTOS
+		// --------------------------------
+
 		const list = document.createElement("ul");
 
 		list.className = "projectCategoryList";
 		list.id = `projectList_${category.id}`;
+
 
 		categoryContainer.appendChild(categoryButton);
 		categoryContainer.appendChild(list);
 
 		projectPanel.appendChild(categoryContainer);
 
-		// ---------- Proyectos ----------
+
+		// --------------------------------
+		// PROYECTOS DE LA CATEGORÍA
+		// --------------------------------
+
 		const categoryProjects = projects
 			.filter(project => project.category === category.id)
 			.sort((a, b) =>
@@ -557,11 +728,17 @@ function renderHTMLProjectsList() {
 				)
 			);
 
+
 		categoryProjects.forEach(project => {
 
 			const item = document.createElement("li");
 
 			item.className = "projectItem";
+
+
+			// --------------------------------
+			// BOTÓN ABRIR PROYECTO
+			// --------------------------------
 
 			const openButton = document.createElement("button");
 
@@ -569,32 +746,32 @@ function renderHTMLProjectsList() {
 			openButton.className = "projectOpenButton";
 			openButton.dataset.projectId = project.id;
 
+			openButton.title = `Abrir: ${project.title}`;
+
+
 			const titleSpan = document.createElement("span");
 
 			titleSpan.className = "projectTitle";
 			titleSpan.textContent = project.title;
 
+
 			openButton.appendChild(titleSpan);
 
-			openButton.title = `Abrir: ${project.title}`;
 
+			// Al pulsar, seleccionamos explícitamente
 			openButton.addEventListener("click", () => {
-				loadProject(project);
+
+				selectProject(project);
+
 			});
 
-			if (project.id === currentProjectId) {
-
-				requestAnimationFrame(() => {
-
-					openProjectCategory(project.category);
-
-					openButton.click();
-
-				});
-
-			}
 
 			item.appendChild(openButton);
+
+
+			// --------------------------------
+			// BOTÓN ELIMINAR
+			// --------------------------------
 
 			if (isAdmin) {
 
@@ -604,7 +781,9 @@ function renderHTMLProjectsList() {
 				deleteButton.className = "projectDeleteButton";
 				deleteButton.title = "Eliminar proyecto";
 
-				deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+				deleteButton.innerHTML =
+					'<i class="fa-solid fa-trash"></i>';
+
 
 				deleteButton.addEventListener("click", e => {
 
@@ -614,9 +793,11 @@ function renderHTMLProjectsList() {
 
 				});
 
+
 				item.appendChild(deleteButton);
 
 			}
+
 
 			list.appendChild(item);
 
@@ -624,29 +805,55 @@ function renderHTMLProjectsList() {
 
 	});
 
+
+	// --------------------------------
+	// EVENTOS DE CATEGORÍAS
+	// --------------------------------
+
 	setupProjectCategories();
+
+
+	// --------------------------------
+	// ACTUALIZAR PROYECTO SELECCIONADO
+	// --------------------------------
 
 	updateSelectedProject();
 
 }
 
-function openProjectCategory(category) {
+function selectProject(project) {
 
-	const button = document.querySelector(
-		`.projectCategoryButton[data-project-category="${category}"]`
-	);
-
-	if (!button) {
+	if (!project) {
 		return;
 	}
 
-	const isOpen = button.getAttribute("aria-expanded") === "true";
 
-	if (!isOpen) {
+	// --------------------------------
+	// SELECCIONAR
+	// --------------------------------
 
-		button.click();
+	currentProjectId = project.id;
 
-	}
+
+	// --------------------------------
+	// ABRIR CATEGORÍA
+	// --------------------------------
+
+	openProjectCategory(project.category);
+
+
+	// --------------------------------
+	// MARCAR EN LA LISTA
+	// --------------------------------
+
+	updateSelectedProject();
+
+
+	// --------------------------------
+	// CARGAR DATOS
+	// --------------------------------
+
+	loadProject(project);
 
 }
 
@@ -679,6 +886,26 @@ function setupProjectCategories() {
 		});
 
 	});
+
+}
+
+function openProjectCategory(category) {
+
+	const button = document.querySelector(
+		`.projectCategoryButton[data-project-category="${category}"]`
+	);
+
+	if (!button) {
+		return;
+	}
+
+	const isOpen = button.getAttribute("aria-expanded") === "true";
+
+	if (!isOpen) {
+
+		button.click();
+
+	}
 
 }
 
@@ -747,7 +974,6 @@ async function saveProjectsFile() {
 
 }
 
-
 function downloadBlob(blob, filename) {
 
 	const url = URL.createObjectURL(blob);
@@ -761,84 +987,6 @@ function downloadBlob(blob, filename) {
 	link.remove();
 
 	URL.revokeObjectURL(url);
-
-}
-
-async function openXMLProjectsFile() {
-
-	try {
-
-		if (!window.showOpenFilePicker) {
-
-			alert(
-				"Tu navegador no permite editar directamente el XML. " +
-				"Al guardar se descargará " + xmlProjects
-			);
-
-			return false;
-		}
-
-		const [fileHandle] = await window.showOpenFilePicker({
-			types: [{
-				description: "Proyectos de Fretboard",
-				accept: {
-					"application/xml": [".xml"]
-				}
-			}],
-			multiple: false
-		});
-
-		projectsFileHandle = fileHandle;
-
-		const file = await projectsFileHandle.getFile();
-		const xmlText = await file.text();
-
-		// projectPanelHeaderTitle.innerHTML = "BIBLIOTECA LOCAL";
-
-		btnToggleLibrary.title = "Local: " + fileHandle.name;
-
-		projects = parseProjectsXml(xmlText);
-
-		renderHTMLProjectsList();
-
-		return true;
-
-	} catch (error) {
-
-		// Cancelar el selector de archivos también entra aquí
-		if (error.name !== "AbortError") {
-//			console.error("Error al abrir la biblioteca:", error);
-		}
-
-		return false;
-	}
-}
-
-
-async function loadXMLProjects() {
-
-	try {
-
-		const response = await fetch(xmlProjects);
-
-		if (!response.ok) {
-			throw new Error("No se pudo leer " + xmlProjects);
-		}
-
-		const xmlText = await response.text();
-
-		projects = parseProjectsXml(xmlText);
-
-		renderHTMLProjectsList();
-
-	} catch (error) {
-
-		console.warn(
-			"No se pudieron cargar los proyectos iniciales.",
-			error
-		);
-
-	}
 
 }
 
@@ -881,7 +1029,8 @@ function generateCategoryId() {
 
 function updateSelectedProject() {
 
-	document.querySelectorAll(".projectOpenButton")
+	document
+		.querySelectorAll(".projectOpenButton")
 		.forEach(button => {
 
 			button.classList.toggle(

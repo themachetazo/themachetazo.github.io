@@ -39,7 +39,6 @@ class MusicPlayer {
 	setRepeticiones(repeats) {
 
 		this.repeticiones = parseInt(repeats, 10);
-		this.restart();
 
 	}
 
@@ -59,7 +58,6 @@ class MusicPlayer {
 	setMetronomeOn(enabled) {
 
 		this.metronomeOn = enabled;
-		this.restart();
 
 	}
 
