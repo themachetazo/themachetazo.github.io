@@ -23,12 +23,12 @@
 
 	<!-- PLAY FLOTANTE -->
 
-	<button id="scoreFloatingPlay" type="button" title="Reproducir"><i class="fa-solid fa-play"></i></button>
+	<button id="scoreFloatingStopButton" type="button" title="Stop"><i class="fa-solid fa-stop"></i></button>
 
 
 	<!-- LAYOUT -->
 
-	<div id="appLayout" class="leftPanelHidden">
+	<div id="appLayout">
 
 		<!-- CABECERA SUPERIOR -->
 
@@ -371,7 +371,7 @@
 						<div class="toolRow">
 							<label class="lblToggle" title="Swing Feel">
 								<span class="lblToggleText">Swing</span>
-								<input id="player_swing" type="checkbox">
+								<input id="chkPlayerSwing" type="checkbox">
 								<span class="lblToggleSpan"></span>
 							</label>
 						</div>
@@ -381,7 +381,7 @@
 						<span>REPETICIONES</span>
 						<div class="toolRow">
 							<span>Repeticiones</span>
-							<select id="player_repeats">
+							<select id="cmbPlayerRepeats">
 								<option value="1">1</option>
 								<option value="2" selected>2</option>
 								<option value="3">3</option>
@@ -396,7 +396,7 @@
 						</div>
 						<div class="toolRow">
 							<span>Cuenta atrás</span>
-							<select id="player_countIn">
+							<select id="cmbCountIn">
 								<option value="0">No</option>
 								<option value="1">1 compás</option>
 								<option value="2">2 compases</option>
@@ -417,13 +417,6 @@
 						</div>
 					</div>
 
-					<div class="toolbarTop-Controls" id="topPlayStop">
-						<span>REPRODUCIR</span>
-						<div class="toolRow">
-							<button id="btnPlayStop" class="buttonPlay" title="Reproducir"><i class="fa-solid fa-play"></i><span>Play</span></button>
-						</div>
-					</div>
-
 					<div class="toolbarTop-Controls" id="topVolumen">
 						<span>VOLUMEN</span>
 						<div class="toolRow">
@@ -432,7 +425,7 @@
 						</div>
 						<div class="toolRow">
 							<span>Metrónomo</span>
-							<input type="range" id="metronome_volumen_2" title="-12" min="-40" max="0" step="1" value="-12">
+							<input type="range" id="sliderMetronomeVolumen_2" title="-12" min="-40" max="0" step="1" value="-12">
 						</div>
 					</div>
 
@@ -572,7 +565,7 @@
 					<div class="toolbarTop-Controls" id="topMetronomePlay">
 						<span>METRÓNOMO</span>
 						<div class="toolRow">
-							<button id="metronome_btnPlayStop" title="Iniciar"><i class="fa-solid fa-play"></i><span>Iniciar</span></button>
+							<button id="btnPlayStopMetronome" title="Iniciar"><i class="fa-solid fa-play"></i><span>Iniciar</span></button>
 						</div>
 					</div>
 
@@ -580,17 +573,17 @@
 						<span>CONTROLES</span>
 						<div class="toolRow">
 							<span>Volumen</span>
-							<input type="range" id="metronome_volumen" title="-12" min="-40" max="0" step="1" value="-12">
+							<input type="range" id="sliderMetronomeVolumen" title="-12" min="-40" max="0" step="1" value="-12">
 						</div>
 						<div class="toolRow">
 							<label class="lblToggle" title="Metrónomo en reproducción">
 								<span class="lblToggleText">On Play</span>
-								<input id="metronome_on" type="checkbox" checked>
+								<input id="chkMetronomeOn" type="checkbox" checked>
 								<span class="lblToggleSpan"></span>
 							</label>
 							<label class="lblToggle" title="Subdivisión del beat">
 								<span class="lblToggleText">Subdivisión</span>
-								<input id="metronome_subBeatSound" type="checkbox">
+								<input id="chkMetronomeBeatSound" type="checkbox">
 								<span class="lblToggleSpan"></span>
 							</label>
 						</div>
@@ -608,7 +601,7 @@
 		<div id="workspaceHeader">
 
 			<div class="workspaceControls" id="workspaceControls">
-				<button id="btnPlayStop_2" class="buttonPlay" title="Reproducir"><i class="fa-solid fa-play"></i><span>Play</span></button>
+				<button id="btnPlayStop" class="buttonPlay" title="Reproducir" disabled><i class="fa-solid fa-play"></i><span>Play</span></button>
 				<button id="btnShowProjectPanel" title="Ver biblioteca"><i class="fa-solid fa-folder-tree"></i><span>Proyectos</span></button>
 				<button id="btnFretboardVisible" title="Ver partitura"><i class="fa-solid fa-guitar"></i><span>Fretboard</span></button>
 				<button id="btnScoreVisible" title="Ver partitura"><i class="fa-solid fa-file-lines"></i><span>Partitura</span></button>
@@ -638,9 +631,8 @@
 		<!-- PROJECTOS, CANVAS Y PARTITURA-->
 		<main id="workspace" class="horizontal">
 
-
 			<!-- PANEL MENU IZQUIERDO -->
-			<aside id="leftPanel">
+			<div id="workspaceProjectsPanel" class="panelHidden">
 
 				<!-- Lista preparada para los proyectos -->
 				<div id="projectPanel">
@@ -669,18 +661,20 @@
 	-->
 
 				</div>
-			</aside> <!-- Fin Panel izquierdo -->
+			</div> <!-- Fin Panel izquierdo -->
 
-			<div id="workspaceContent">
+			<div id="workspaceFretboard">
 				<canvas id="workspaceCanvas"></canvas>
 			</div>
 
 			<div id="workspaceScore">
 				<div id="vextab-score" class="vextab-auto" editor="false" editor-width="0" editor-height="0" style="color:white;">
+<!--
 					options scale=0.7 stave-distance=20
 					tab-stems=true tab-stem-direction=up
 					tabstave notation=true tablature=true key=C time=4/4 clef=treble
 					options space=70
+-->
 				</div>
 			</div>
 
@@ -744,10 +738,10 @@
 
 	<script>if ("serviceWorker" in navigator) {window.addEventListener("load", () => {navigator.serviceWorker.register("service-worker.js");});}</script>
 
-	<script src="js/tone.js"></script> <!--sampler-->
-	<script src="js/lame.min.js"></script> <!--mp3-->
-	<script src="js/buffer-audio.js"></script> <!--buffer & audio-->
-	<script src="js/vextab.div.dev.js"></script> <!--score-->
+	<script src="js/lib/tone.js"></script> <!--sampler-->
+	<script src="js/lib/lame.min.js"></script> <!--mp3-->
+	<script src="js/lib/buffer-audio.js"></script> <!--buffer & audio-->
+	<script src="js/lib/vextab.div.dev.js"></script> <!--score-->
 
 	<script src="js/CMetronome.js"></script> <!--metronome-->
 	<script src="js/CMusicPlayer.js"></script> <!--player-->
@@ -755,7 +749,6 @@
 	<script src="js/variables.js"></script>
 	<script src="js/fretboardDraw.js"></script>
 	<script src="js/projectsFunctions.js"></script>
-	<script src="js/clipboard.js"></script>
 	<script src="js/mainFunctions.js"></script>
 	<script src="js/scorePlayerFunctions.js"></script>
 	<script src="js/mainEvents.js"></script>

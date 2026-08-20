@@ -6,7 +6,7 @@
 	--color-light-background:#353333;
 	--color-tools:#413F3F;
 	--color-border:rgba(255,255,255,0.12);
-	--color-red:#1479b8;
+	--color-red:#c62828;
 }
 
 * {
@@ -47,13 +47,14 @@ a:visited {
 	color:#FFF;
 }
 
+::selection{
+	background:var(--color-hightlight);
+	color:#fff;
+}
+
 /* ==========================================================
    SCROLLBAR
 ========================================================== */
-
-canvas {
-	touch-action: pan-y;
-}
 
 /* Firefox */
 html {
@@ -204,7 +205,7 @@ html {
    PLAY FLOTANTE
 =========================== */
 
-#scoreFloatingPlay {
+#scoreFloatingStopButton {
 	position:fixed;
 	right:18px;
 	bottom:18px;
@@ -213,6 +214,7 @@ html {
 	height:44px;
 
 	display:none;
+
 	align-items:center;
 	justify-content:center;
 
@@ -233,26 +235,14 @@ html {
 
 	cursor:pointer;
 
-	box-shadow:0 3px 10px rgba(0,0,0,0.5);
+	box-shadow:0 0 10px var(--color-red);
 
 	z-index:9999;
 
 	transition:background .15s ease, transform .15s ease;
 }
 
-#scoreFloatingPlay:hover {
-	transform:scale(1.08);
-}
-
-#scoreFloatingPlay.stop {
-	background:#c62828;
-}
-
-#scoreFloatingPlay.stop:hover {
-	background:#e53935;
-}
-
-#scoreFloatingPlay i {
+#scoreFloatingStopButton i {
 	margin:0;
 	padding:0;
 	line-height:1;
@@ -356,7 +346,7 @@ html {
 
 }
 
-#workspaceContent{
+#workspaceFretboard{
 
 	grid-area:content;
 
@@ -376,6 +366,8 @@ html {
 
 	min-width:0;
 	min-height:0;
+
+	touch-action:pan-y;
 
 	background:var(--color-dark-background);
 
@@ -1456,7 +1448,7 @@ html {
    PANEL IZQUIERDO
 =========================== */
 
-#leftPanel {
+#workspaceProjectsPanel {
 
 	position:absolute;
 
@@ -1477,7 +1469,7 @@ html {
 	overflow-x:hidden;
 	overflow-y:auto;
 
-	background:var(--color-dark-background);
+	background:#000;
 
 	border-top:1px solid var(--color-border);
 	border-right:1px solid var(--color-tools);
@@ -1495,7 +1487,7 @@ html {
 
 }
 
-#appLayout.leftPanelHidden #leftPanel {
+#workspaceProjectsPanel.panelHidden {
 
 	padding-left:0;
 	padding-right:0;
@@ -1511,6 +1503,25 @@ html {
 	pointer-events:none;
 
 }
+
+/*
+#appLayout.workspaceProjectsPanelHidden #workspaceProjectsPanel {
+
+	padding-left:0;
+	padding-right:0;
+
+	border-right:0;
+
+	overflow:hidden;
+
+	opacity:0;
+
+	transform:translateX(-100%);
+
+	pointer-events:none;
+
+}
+*/
 
 #btnToggleLibrary{
 
@@ -1778,44 +1789,57 @@ input[type="range"] {
 	color:var(--color-main-text);
 
 	border:1px solid var(--color-border);
-	border-radius: 6px;
+	border-radius:6px;
 
-	background: var(--color-dark-background);
+	background:var(--color-dark-background);
 
-	cursor: pointer;
+	cursor:pointer;
 
 	transition:
 		background 0.15s,
 		color 0.15s,
 		border-color 0.15s,
-		transform 0.15s;
+		transform 0.15s,
+		box-shadow 0.15s;
 
 }
 
 .toolbarTop-Controls button:disabled,
 #workspaceHeader button:disabled{
-	opacity: 0.45;
-	cursor: not-allowed;
+
+	opacity:0.45;
+	cursor:not-allowed;
+
 }
 
 .toolbarTop-Controls button:not(:disabled):hover,
 #workspaceHeader button:not(:disabled):hover{
 
 	color:#fff;
-	background: var(--color-hightlight);
-	border: 1px solid #000;
+	background:var(--color-hightlight);
+	border:1px solid #000;
+
+	box-shadow:inset 2px 2px 4px rgba(0,0,0,.35);
+
+	transform:translateY(1px);
 
 }
 
 .toolbarTop-Controls button:focus-visible,
 #workspaceHeader button:focus-visible{
-	outline: 2px solid var(--color-main-text);
-	outline-offset: 2px;
+
+	outline:2px solid var(--color-main-text);
+	outline-offset:2px;
+
 }
 
 .toolbarTop-Controls button:active,
 #workspaceHeader button:active{
-	transform: scale(0.96);
+
+	transform:scale(0.96);
+
+	box-shadow:inset 2px 2px 4px rgba(0,0,0,.35);
+
 }
 
 .toolbarTop-Controls button.active,
@@ -1826,20 +1850,25 @@ input[type="range"] {
 	background:var(--color-main-text);
 	color:#000;
 
+	box-shadow:inset 2px 2px 4px rgba(0,0,0,.35);
 }
 
 .toolbarTop-Controls button i,
 #workspaceHeader button i{
-	width: 16px;
 
-	text-align: center;
+	width:16px;
 
-	transition: transform 0.15s;
+	text-align:center;
+
+	transition:transform 0.15s;
+
 }
 
 .toolbarTop-Controls button:hover i,
 #workspaceHeader button:hover i{
-	transform: none;
+
+	transform:none;
+
 }
 
 #btnLessFrets,
@@ -1950,43 +1979,37 @@ input[type="range"] {
 
 }
 
-#metronome_btnPlayStop{
+#btnPlayStopMetronome{
 
 	background:var(--color-main-text) !important;
 	color:#000 !important;
 
 }
 
+#btnPlayStopMetronome:hover{
+	background:var(--color-hightlight) !important;
+	color:#fff !important;
+}
+
 .buttonPlay{
 
 	background:var(--color-hightlight) !important;
-	color:#var(--color-main-text) !important;
+	color:var(--color-main-text) !important;
 	border: 1px solid var(--color-main-text) !important;
 
 }
 
-.buttonPlay:hover{
-
+.buttonPlay:not(:disabled):hover{
 	border: 1px solid #000 !important;
-
-}
-
-#metronome_btnPlayStop:hover{
-	background:var(--color-hightlight) !important;
-	color:#fff !important;
 }
 
 .buttonStop{
 
-	background:var(--color-red) !important;
+	background:red  !important; //var(--color-red) !important;
 	color:#fff !important;
 
 }
 
-
-#player_bufferState{
-	color:var(--color-main-text);
-}
 
 
 /* ===========================
@@ -2146,18 +2169,6 @@ input[type="range"] {
 =========================== */
 
 @media (max-width:1024px){
-
-	#appLayout{
-
-		--left-panel-width:180px;
-
-	}
-
-	#appLayout.leftPanelHidden{
-
-		--left-panel-width:0px;
-
-	}
 
 	#brandLogo{
 
@@ -2338,7 +2349,6 @@ input[type="range"] {
 
 	}
 
-
 	#topControlsContainer.isOpen {
 
 		max-height: 1000px;
@@ -2353,7 +2363,6 @@ input[type="range"] {
 
 	}
 
-
 	#topControls {
 
 		width: 100%;
@@ -2363,7 +2372,6 @@ input[type="range"] {
 		justify-content: center;
 
 	}
-
 
 	#toolbarTop {
 
@@ -2381,7 +2389,6 @@ input[type="range"] {
 		gap: 6px;
 
 	}
-
 
 	#toolbarTop .toolbarTop-Controls {
 
@@ -2414,20 +2421,17 @@ input[type="range"] {
 
 	}
 
-
 	#toolbarTop .toolbarTop-Controls.isHidden {
 
 		display: none;
 
 	}
 
-
 	#toolbarTop .toolbarTop-Controls > span {
 
 		display: none;
 
 	}
-
 
 	#toolbarTop .toolbarTop-Controls .toolRow {
 
@@ -2464,7 +2468,6 @@ input[type="range"] {
 		border:1px solid var(--color-border);
 	}
 
-
 	#toolbarTop .toolbarTop-Controls button,
 	#workspaceHeader button {
 
@@ -2482,14 +2485,12 @@ input[type="range"] {
 
 	}
 
-
 	#toolbarTop .toolbarTop-Controls button span,
 	#workspaceHeader button span {
 
 		display: none;
 
 	}
-
 
 	#toolbarTop .toolbarTop-Controls button i,
 	#workspaceHeader button i {
@@ -2506,7 +2507,6 @@ input[type="range"] {
 		min-height: 30px;
 
 	}
-
 
 
 	/* ==========================
@@ -2546,13 +2546,20 @@ input[type="range"] {
 
 	}
 
-
 	/* ==========================
 	   Panel izquierdo
 	   ========================== */
 
-	#leftPanel{
+	#workspaceProjectsPanel{
+
+		top:0;
+		left:0;
+
+		width:220px;
+		height:100%;
+
 		padding:8px 6px;
+
 	}
 
 
