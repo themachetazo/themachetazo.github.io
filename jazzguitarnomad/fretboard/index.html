@@ -244,11 +244,12 @@
 					</div>
 
 					<div class="toolbarTop-Controls" id="topForm">
-						<span>FORMA</span>
+						<span>TIPO DE PROYECTO</span>
 						<div class="toolRow">
 							<span>Tipo</span>
 							<select id="cmbProjectType">
-							    <option value="sequence" selected>Secuencia</option>
+							    <option value="fretboard" selected>Mástil</option>
+							    <option value="sequence">Secuencia</option>
 							    <option value="chord">Acorde</option>
 							</select>
 						</div>
@@ -608,7 +609,7 @@
 				<button id="btnVertical" class="active" title="Cambiar orientación"><i class="fa-solid fa-arrows-up-down"></i><span>Vertical</span></button>
 				<button id="btnHorizontal" title="Cambiar orientación"><i class="fa-solid fa-arrows-left-right"></i><span>Horizontal</span></button>
 			</div>
-			<div class="workspaceControls">
+			<div class="workspaceControls" id="workspaceMetronomeInfo">
 				<div id="metronome_timeline">
 					<div class="metronome_pulse metronome_beat metronome_bar" data-index="0"></div>
 					<div class="metronome_pulse metronome_beat metronome_bar" data-index="1"></div>
@@ -617,7 +618,7 @@
 				</div>
 			</div>
 			<div class="workspaceControls" id="workspaceTimeInfo">
-				<div id="player_repeatInfo">Compás: <b>1</b>&nbsp;Repetición: <b>1</b>&nbsp;</div>
+				<div id="player_repeatInfo"><!--Repetición: <b>1</b>&nbsp;Compás: <b>1</b>--></div>
 				<div id="metronome_Info">Metrónomo: <b>1 / 1</b></div>
 			</div>
 			<div class="workspaceControls">
