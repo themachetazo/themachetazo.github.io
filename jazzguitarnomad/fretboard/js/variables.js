@@ -182,7 +182,7 @@ let rotated = false;
 let projectBar = 4;
 let projectFigure = 1;
 let scoreScale = "auto";
-let projectType = "sequence";
+let projectType = "fretboard";
 let countBars = 0;
 let repetitionSequence = 2;
 let isFretboardVisible = true;
@@ -276,6 +276,8 @@ const neckImage = new Image();
 	NOTAS
 ==================================================*/
 
+let notesOrder = 0;
+
 let hoverCell = null;
 let hoverNut = null;
 
@@ -331,6 +333,7 @@ const sliderBpm = document.getElementById("sliderBpm");
 const samplerGate = document.getElementById("samplerGate");
 
 const workspaceTimeInfo = document.getElementById("workspaceTimeInfo");
+const workspaceMetronomeInfo = document.getElementById("workspaceMetronomeInfo");
 const player_repeatInfo = document.getElementById("player_repeatInfo");
 const metronome_Info = document.getElementById("metronome_Info");
 

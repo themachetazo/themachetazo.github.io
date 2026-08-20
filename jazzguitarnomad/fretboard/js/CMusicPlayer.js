@@ -95,7 +95,7 @@ class MusicPlayer {
 
 	startWithCountIn(callback) {
 
-		if (this.countInBars <= 0) {
+		if (this.countInBars <= 0 || !this.metronomeOn) {
 
 			callback();
 			return;

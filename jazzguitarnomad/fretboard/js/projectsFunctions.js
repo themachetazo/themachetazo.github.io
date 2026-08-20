@@ -9,10 +9,8 @@ function newProject() {
 
 	if (projectModified) {
 
-		if (!confirm(
-			"¿Crear un proyecto nuevo? Se perderán los cambios no guardados."
-		)) {
-			return;
+		if (!confirm("¿Crear un proyecto nuevo? Se perderán los cambios no guardados.")) {
+			return false;
 		}
 
 	}
@@ -23,17 +21,19 @@ function newProject() {
 
 	// ESTADO
 
-	projectModified = false;
+	projectModified = true;
 
 	// VALORES POR DEFECTO
 
 	setDefaultControlsValues("newProject");
 
-	setMode("note");
+	setMode("view");
 
 	// ACTUALIZAR INTERFAZ
 
 	updateProjectUI();
+
+	return true;
 }
 
 async function loadProject(project) {
@@ -136,7 +136,10 @@ async function loadProject(project) {
 	// --------------------------------
 
 	setDefaultControlsValues("loadProject");
+
 	setOrientation(orientation);
+
+	setProjectControlsType();
 
 	// --------------------------------
 	// DATOS MUSICALES
@@ -158,6 +161,7 @@ async function loadProject(project) {
 	// --------------------------------
 
 	setWorkspaceLayout();
+
 	setPlayerValues();
 
 	// --------------------------------

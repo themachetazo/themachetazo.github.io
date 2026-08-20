@@ -89,17 +89,6 @@ function setDefaultControlsValues(state){
 	if (state === "init"){
 
 		orientation = window.innerWidth <= maxMediaScreenWidth ? "vertical" : "horizontal";
-/*
-		rotation = 0;
-		rotated = false;
-		currentInstrument = "piano";
-		fretNumbers = 1;
-		showFretNumbers = false;
-		bpm = 90;
-		key = "C";
-		scoreStaves = "all";
-		scoreLayout = "vertical";
-*/
 
 	}
 
@@ -111,7 +100,7 @@ function setDefaultControlsValues(state){
 		projectBar = 4;
 		projectFigure = 1;
 		scoreScale = "auto";
-		projectType = "sequence";
+		projectType = "fretboard";
 		countBars = 0;
 		repetitionSequence = 2;
 		isFretboardVisible = true;
@@ -120,6 +109,17 @@ function setDefaultControlsValues(state){
 		swing = false;
 		metronomeOn = true;
 		inlays = true;
+/*
+		rotation = 0;
+		rotated = false;
+		currentInstrument = "piano";
+		fretNumbers = 1;
+		showFretNumbers = false;
+		bpm = 90;
+		key = "C";
+		scoreStaves = "all";
+		scoreLayout = "vertical";
+*/
 
 	}
 
@@ -156,6 +156,7 @@ function setDefaultControlsValues(state){
 	sliderScoreZoom.title = sliderScoreZoom.value + "%";
 
 	cmbProjectType.value = projectType;
+
 	cmbTipoSecuencia.value = tipoSecuencia;
 
 	cmbCountIn.value = countBars;
@@ -196,9 +197,15 @@ function setDefaultControlsValues(state){
 	samplerVolume.title = "100";
 
 	if (state !== "loadProject"){
+
+		notesOrder = 0;
+
 		notes = [];
 		barreNotes = [];
 		nutNotes = Array(stringCount).fill(null);
+
+		NOTAS = [];
+		ACORDES = [];
 
 		sequenceXMLNotes.length = 0;
 		chordsXMLNotes.length = 0;
@@ -223,17 +230,17 @@ function setUserControlsStates(){
 		btnAudio.style.display = "none";
 		btnAudioPopup.style.display = "none";
 
-		if (user === null) {
+		if (params.has("project")) {
 
 			subtituleText.textContent = "Fretboard Viewer";
 
 			titleText.style.display = "none";
 			topTitle.style.display = "none";
 
-			btnEdicion.style.display = "none";
 			btnProyectos.style.display = "none";
-			btnEdicionPopup.style.display = "none";
 			btnProyectosPopup.style.display = "none";
+			btnEdicion.style.display = "none";
+			btnEdicionPopup.style.display = "none";
 
 			btnShowProjectPanel.style.display = "none";
 
@@ -252,11 +259,12 @@ function setUserControlsStates(){
 			topCategory.style.display = "none";
 			topFretboardDownload.style.display = "none";
 			topScoreDownload.style.display = "none";
-			topChords.style.display = "none";
 			topAudio.style.display = "none";
 			topBuffer.style.display = "none";
 
-			setMenu("projects");
+			if (user === null) btnShowProjectPanel.style.display = "none";
+
+			setMenu("edit");
 
 		}
 
@@ -265,11 +273,76 @@ function setUserControlsStates(){
 
 		topTitleViewMode.style.display = "none";
 
-		setMenu("projects");
+		setMenu("edit");
 
 	}
 
+	workspaceTimeInfo.style.display = "none";
+	workspaceMetronomeInfo.style.display = "none";
+
 	updateTopBarMenu();
+
+	setProjectControlsType();
+
+}
+
+function changeProjectType(oldType) {
+
+	setProjectControlsType();
+
+	switch (projectType) {
+
+		case "fretboard":
+
+			break;
+
+		case "sequence":
+
+			cmbChords.disabled = true;
+			btnNewChord.disabled = true;
+			btnDelChord.disabled = true;
+			btnNutMode.disabled = true;
+			chkMetronomeOn.disabled = false;
+
+			break;
+
+		case "chord":
+
+			cmbChords.disabled = false;
+			btnNewChord.disabled = false;
+			btnDelChord.disabled = false;
+			btnNutMode.disabled = false;
+			chkMetronomeOn.disabled = false;
+
+			break;
+
+	}
+
+}
+
+function setProjectControlsType(){
+		
+	if (params.has("project")) {
+
+		btnAudio.style.display = projectType === "fretboard" ? "none" : "";
+		btnShowProjectPanel.style.display = "none";
+
+	}
+
+	btnScore.style.display = projectType === "fretboard" ? "none" : "";
+	btnPlayer.style.display = projectType === "fretboard" ? "none" : "";
+
+	cmbTipoSecuencia.disabled = projectType === "fretboard";
+	chkMetronomeOn.checked = projectType !== "fretboard";
+	chkMetronomeOn.disabled = projectType === "fretboard";
+
+	cmbChords.disabled = cmbProjectType.value === "chord" ? false : true;
+	btnNewChord.disabled = cmbChords.disabled;
+	btnDelChord.disabled = cmbChords.disabled;
+
+	btnPlayStop.style.display = projectType === "fretboard" ? "none" : "";
+	btnFretboardVisible.style.display = projectType === "fretboard" ? "none" : "";
+	btnScoreVisible.style.display = projectType === "fretboard" ? "none" : "";
 
 }
 
@@ -669,7 +742,6 @@ function setMenu(m){
 				topShare,
 				topFretboardDownload,
 				topScoreDownload,
-				topTitle,
 				topTitleViewMode
 			);
 
@@ -683,6 +755,7 @@ function setMenu(m){
 			btnEdicion.classList.add("active");
 
 			showMenuControls(
+				topTitle,
 				topEdit,
 				topUndo,
 				topColor,
@@ -701,8 +774,6 @@ function setMenu(m){
 			btnFretboard.classList.add("active");
 
 			showMenuControls(
-				topTitle,
-				topTitleViewMode,
 				topFretboardScale,
 				topDiapason,
 				topFrets,
@@ -741,7 +812,6 @@ function setMenu(m){
 			btnScore.classList.add("active");
 
 			showMenuControls(
-				topTitle,
 				topTitleViewMode,
 				topTonality,
 				topTempo,
@@ -950,7 +1020,11 @@ function setLayout() {
 
 	}
 
-	updateWorkspace();
+	setWorkspaceLayout();
+
+	if (isFretboardVisible) resizeCanvas();
+
+	if (isScoreVisible) scoreRender();
 
 }
 
@@ -959,16 +1033,6 @@ function updateProjectUI(){
 	setWorkspaceLayout();
 
 	setPlayerValues();
-
-}
-
-function updateWorkspace(){
-
-	setWorkspaceLayout();
-
-	if (isFretboardVisible) resizeCanvas();
-
-	if (isScoreVisible) scoreRender();
 
 }
 
@@ -1027,30 +1091,6 @@ function setWorkspaceLayout(){
 
 }
 
-function resetPlaybackTimeline(){
-
-	buildHtmlDivsTimeline();
-
-	metronome_Info.innerHTML = "Metrónomo: <b>1 / 1</b>";
-
-	player_repeatInfo.innerHTML = "Repetición: <b>1</b>&nbsp;Compás: <b>1</b>";
-
-	countBars = 1;
-	repetitionSequence = 1;
-	firstTick = true;
-
-//	window.scrollTo({top: 0,left: 0,behavior: "smooth"});
-
-}
-
-function resetMetronomeTimeline(){
-
-	buildHtmlDivsTimeline();
-
-	metronome_Info.innerHTML = "Metrónomo: <b>1 / 1</b>";
-
-}
-
 function setPlayStopButton(button, isPlaying, showText = true){
 
 	if (isPlaying) {
@@ -1091,6 +1131,88 @@ function parseBoolean(value, defaultValue = false) {
 	}
 
 	return Boolean(value);
+}
+
+
+// METRONOMO TIMELINE
+
+function buildHtmlDivsTimeline() {
+
+    metronome_timeline.innerHTML = "";
+
+    let indice = 0;
+
+    for (let beat = 1; beat <= metronome.beatsPerBar; beat++) {
+
+        for (let sub = 1; sub <= metronome.subdivision; sub++) {
+
+            const div = document.createElement("div");
+
+            div.className = "metronome_pulse";
+            div.dataset.index = indice++;
+
+            div.classList.add(sub === 1 ? "metronome_beat" : "metronome_sub");
+
+            if (sub === metronome.subdivision && beat < metronome.beatsPerBar) div.classList.add("metronome_bar");
+
+            metronome_timeline.appendChild(div);
+
+        }
+
+    }
+
+}
+
+function updateTimeline(beat,subBeat) {
+
+    const pulses = document.querySelectorAll(".metronome_pulse");
+
+    pulses.forEach(pulse =>
+        pulse.classList.remove("metronome_current")
+    );
+
+    const index = (beat - 1) * metronome.subdivision + (subBeat - 1);
+
+    if (pulses[index]) pulses[index].classList.add("metronome_current");
+
+}
+
+function resetPlaybackTimeline(){
+
+	buildHtmlDivsTimeline();
+
+	metronome_Info.innerHTML = "Metrónomo: <b>1 / 1</b>";
+
+	player_repeatInfo.innerHTML = "Repetición: <b>1</b>&nbsp;Compás: <b>1</b>";
+
+	countBars = 1;
+	repetitionSequence = 1;
+	firstTick = true;
+
+//	window.scrollTo({top: 0,left: 0,behavior: "smooth"});
+
+}
+
+function resetMetronomeTimeline(){
+
+	buildHtmlDivsTimeline();
+
+	metronome_Info.innerHTML = "Metrónomo: <b>1 / 1</b>";
+
+}
+
+function setMetronmeOnPlaying(value){
+
+    player.setMetronomeOn(value);
+
+    if (value){
+	metronome_timeline.style.display = "flex";
+    }else{
+	metronome_timeline.style.display = "none";
+
+	metronome_Info.innerHTML = "";
+    }
+
 }
 
 

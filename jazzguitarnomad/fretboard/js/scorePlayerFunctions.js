@@ -366,11 +366,11 @@ function setPlayerValues(){
 	player.setInstrumentVolume(0);
 	player.setGate(100);
 
+	setMetronmeOnPlaying(parseBoolean(metronomeOn));
+
 	player.setRepeticiones(repetitionSequence);
 	player.setCountInBars(countBars);
 	player.setSwingFeel(swing);
-
-	setMetronmeOnPlaying(metronomeOn);
 
 	resetPlaybackTimeline();
 
@@ -400,6 +400,7 @@ async function playMusic(){
 
 		// Mostrar timeline e información
 
+		workspaceMetronomeInfo.style.display = "flex";
 		workspaceTimeInfo.style.display = "flex";
 
 		// Abrir y cerrar controles
@@ -448,6 +449,7 @@ async function playMusic(){
 
 		// Ocultar timeline e información
 
+		workspaceMetronomeInfo.style.display = "none";
 		workspaceTimeInfo.style.display = "none";
 
 		// Abrir y cerrar controles
@@ -482,8 +484,7 @@ async function metronomePlayStop(){
 
 		resetMetronomeTimeline();
 
-		// Ocultar timeline e información
-
+		workspaceMetronomeInfo.style.display = "none";
 		workspaceTimeInfo.style.display = "none";
 
 	} else {
@@ -499,40 +500,24 @@ async function metronomePlayStop(){
 		setPlayStopButton(btnPlayStopMetronome, true);
 
 		if (!chkMetronomeOn.checked) {
-
-			chkMetronomeOn.checked = true;
-
 			setMetronmeOnPlaying(true);
-
-			workspaceTimeInfo.style.display = "none";
-
-			resetMetronomeTimeline();
-
-		} else {
-
-			workspaceTimeInfo.style.display = "flex";
-
 		}
+
+		resetMetronomeTimeline();
+
+		metronome_timeline.style.display = "flex";
+		player_repeatInfo.style.display = "none";
+
+		workspaceMetronomeInfo.style.display = "flex";
+		workspaceTimeInfo.style.display = "flex";
 
 		metronome.start();
 
 	}
 
+	chkMetronomeOn.disabled = metronome.playing || cmbProjectType.value === "fretboard";
+
 	btnPlayStopMetronome.focus({ focusVisible: true });
-
-}
-
-function setMetronmeOnPlaying(value){
-
-    player.setMetronomeOn(value);
-
-    if (value){
-	metronome_timeline.style.display = "flex";
-    }else{
-	metronome_timeline.style.display = "none";
-
-	metronome_Info.innerHTML = "";
-    }
 
 }
 
@@ -593,54 +578,6 @@ function setInstrument(name) {
     player.instrument = instrument;
 
 }
-
-////////////////////////////////////////////////////////////
-//
-// METRONOMO TIMELINE
-//
-////////////////////////////////////////////////////////////
-
-function buildHtmlDivsTimeline() {
-
-    metronome_timeline.innerHTML = "";
-
-    let indice = 0;
-
-    for (let beat = 1; beat <= metronome.beatsPerBar; beat++) {
-
-        for (let sub = 1; sub <= metronome.subdivision; sub++) {
-
-            const div = document.createElement("div");
-
-            div.className = "metronome_pulse";
-            div.dataset.index = indice++;
-
-            div.classList.add(sub === 1 ? "metronome_beat" : "metronome_sub");
-
-            if (sub === metronome.subdivision && beat < metronome.beatsPerBar) div.classList.add("metronome_bar");
-
-            metronome_timeline.appendChild(div);
-
-        }
-
-    }
-
-}
-
-function updateTimeline(beat,subBeat) {
-
-    const pulses = document.querySelectorAll(".metronome_pulse");
-
-    pulses.forEach(pulse =>
-        pulse.classList.remove("metronome_current")
-    );
-
-    const index = (beat - 1) * metronome.subdivision + (subBeat - 1);
-
-    if (pulses[index]) pulses[index].classList.add("metronome_current");
-
-}
-
 
 ////////////////////////////////////////////////////////////
 //
@@ -1389,8 +1326,6 @@ async function scoreRender() {
 console.log(scoreArray);
 
 	const vexTabText = vexTab_generateVexTab(scoreArray,cmbTonalidad.value,cmbBar.value,cmbFigure.value,cmbProjectType.value);
-
-console.log(vexTabText);
 
 	vexTab_container.classList.remove("layout-left","layout-center");
 

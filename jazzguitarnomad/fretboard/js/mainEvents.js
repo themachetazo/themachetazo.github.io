@@ -38,6 +38,7 @@ window.addEventListener("load", async () => {
 				if (project) {
 
 					renderHTMLProjectsList();
+
 					selectProject(project);
 
 				} else {
@@ -808,7 +809,9 @@ btnShowProjectPanel.addEventListener("click", () => {
 });
 
 btnNewProject.addEventListener("click", () => {
-	newProject();
+
+	if (newProject()) setMenu("edit");
+
 });
 
 btnSaveProject.addEventListener("click", () => {
@@ -1107,16 +1110,21 @@ cmbTonalidad.addEventListener("change", function () {
 
 cmbProjectType.addEventListener("change", function () {
 
-    projectType = cmbProjectType.value;
+	const oldType = projectType;
+	const newType = this.value;
 
-    cmbChords.disabled = cmbProjectType.value === "chord" ? false : true;
-    btnNewChord.disabled = cmbChords.disabled;
-    btnDelChord.disabled = cmbChords.disabled;
+	if (!newProject()) {
 
-    scoreLoadArray(this.value);
-//    loadArrays(tipoSecuencia);
+		this.value = oldType;
 
-    if (isScoreVisible) scoreRender();
+		return;
+
+	}
+
+	projectType = newType;
+	this.value = newType;
+
+	changeProjectType();
 
 });
 
@@ -1331,23 +1339,33 @@ sliderScoreZoom.addEventListener("change", function () {
 
 });
 
-btnScoreVisible.addEventListener("click", () => {
-
-	if (isScoreVisible && !isFretboardVisible) return;
-
-	isScoreVisible = !isScoreVisible;
-
-	updateWorkspace();
-
-});
-
-
 btnFretboardVisible.addEventListener("click", () => {
 
 	if (isFretboardVisible && !isScoreVisible) return;
 
 	isFretboardVisible = !isFretboardVisible;
 
-	updateWorkspace();
+	setWorkspaceLayout();
+
+	if (isFretboardVisible) {
+
+		resizeCanvas();
+
+		scrollToFretboardNut();
+	
+	}
 
 });
+
+btnScoreVisible.addEventListener("click", () => {
+
+	if (isScoreVisible && !isFretboardVisible) return;
+
+	isScoreVisible = !isScoreVisible;
+
+	setWorkspaceLayout();
+
+	if (isScoreVisible) scoreRender();
+
+});
+
