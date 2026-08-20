@@ -1,17 +1,5 @@
 "use strict";
 
-
-/*==================================================
-	PARAMETROS
-==================================================*/
-
-const params = new URLSearchParams(window.location.search);
-
-const user = params.get("user");
-
-let isAdmin = null;
-
-
 /*==================================================
 	REFERENCIAS DOM: CANVAS
 ==================================================*/
@@ -19,6 +7,8 @@ let isAdmin = null;
 const workspace = document.getElementById("workspace");
 const canvas = document.getElementById("workspaceCanvas");
 const ctx = canvas.getContext("2d");
+
+const workspaceFretboard = document.getElementById("workspaceFretboard");
 const workspaceScore = document.getElementById("workspaceScore");
 
 const cursor = document.getElementById("cursorTool");
@@ -28,7 +18,7 @@ const cursor = document.getElementById("cursorTool");
 ==================================================*/
 
 const appLayout = document.getElementById("appLayout");
-const leftPanel = document.getElementById("leftPanel");
+const workspaceProjectsPanel = document.getElementById("workspaceProjectsPanel");
 
 const btnToggleTopControls = document.getElementById("btnToggleTopControls");
 const topControlsContainer = document.getElementById("topControlsContainer");
@@ -158,17 +148,22 @@ const projectCategory = document.getElementById("projectCategory");
 const btnShowProjectPanel = document.getElementById("btnShowProjectPanel");
 const btnToggleLibrary = document.getElementById("btnToggleLibrary");
 
-let xmlVersion = 1;
+
+/*==================================================
+	PARAMETROS
+==================================================*/
+
+const params = new URLSearchParams(window.location.search);
+
+const user = params.get("user");
+
 
 /*==================================================
 	CONFIGURACIÓN GENERAL DE LA APLICACIÓN
 ==================================================*/
 
-let xmlProjectsPath = "projects/";
-
-let xmlProjects = xmlProjectsPath + "default-projects.xml";
-
-btnToggleLibrary.title = "Server: " + xmlProjects;
+let users = [];
+let isAdmin = false;
 
 const stringCount = 6;
 
@@ -181,7 +176,7 @@ let mode = "view";
 let projectTitle = "Sin Título";
 let displayMode = true;
 let fretCount = 10;
-let orientation = "vertical";
+let orientation = "horizontal";
 let rotation = 0; /* vertical: 0 / 180, horizontal: 90 / 270 */
 let rotated = false;
 let projectBar = 4;
@@ -203,6 +198,28 @@ let scoreLayout = "vertical";
 let swing = false;
 let metronomeOn = true;
 let inlays = true;
+
+
+/*==================================================
+	PROYECTOS
+==================================================*/
+
+let projectsLoaded = false;
+
+let projects = [];
+let projectsFileHandle = null;
+
+let currentProjectId = null;
+
+let projectModified = false;
+
+let categories = [];
+
+let xmlProjects = "projects/default-projects.xml";
+const xmlVersion = "1.0";
+
+btnToggleLibrary.title = "Server: " + xmlProjects;
+
 
 /*==================================================
 	GEOMETRÍA Y MEDIDAS DEL DIAPASÓN
@@ -241,41 +258,6 @@ let neckRadius;
 
 
 /*==================================================
-	NOTAS
-==================================================*/
-
-let hoverCell = null;
-let hoverNut = null;
-
-let notes = [];
-let nutNotes = Array(stringCount).fill(null);
-let barreNotes = [];
-
-
-/*==================================================
-	HISTORIAL PARA DESHACER CON CTRL+Z
-==================================================*/
-
-let history = [];
-const maxHistory = 50;
-
-
-/*==================================================
-	PROYECTOS
-==================================================*/
-
-let projectsLoaded = false;
-
-let projects = [];
-let projectsFileHandle = null;
-
-let currentProjectId = null;
-
-let projectModified = false;
-
-let categories = [];
-
-/*==================================================
 	IMÁGENES
 ==================================================*/
 
@@ -291,10 +273,37 @@ const neckImage = new Image();
 
 
 /*==================================================
+	NOTAS
+==================================================*/
+
+let hoverCell = null;
+let hoverNut = null;
+
+let notes = [];
+let nutNotes = Array(stringCount).fill(null); //array con una posición por cada cuerda
+let barreNotes = [];
+
+let NOTAS = [];
+let ACORDES = [];
+
+let sequenceXMLNotes = []; //Notes y nutNotes
+let chordsXMLNotes = []; //Barres de cejillas
+let sequenceToPlay = []; //Secuencia de notas Final a tocar
+let chordsToPlay = []; //Secuencia de acordes Final a tocar
+
+
+/*==================================================
+	HISTORIAL PARA DESHACER CON CTRL+Z
+==================================================*/
+
+let history = [];
+const maxHistory = 50;
+
+/*==================================================
 	REFERENCIAS DOM: PLAYER y PARTITURA
 ==================================================*/
 
-const scoreFloatingPlay = document.getElementById("scoreFloatingPlay");
+const scoreFloatingStopButton = document.getElementById("scoreFloatingStopButton");
 
 const btnLessTempo = document.getElementById("btnLessTempo");
 const btnMoreTempo = document.getElementById("btnMoreTempo");
@@ -326,7 +335,6 @@ const player_repeatInfo = document.getElementById("player_repeatInfo");
 const metronome_Info = document.getElementById("metronome_Info");
 
 const btnPlayStop = document.getElementById("btnPlayStop");
-const btnPlayStop_2 = document.getElementById("btnPlayStop_2");
 const btnResetScorePalyer = document.getElementById("btnResetScorePalyer");
 
 const btnRenderBuffer = document.getElementById("btnRenderBuffer");
@@ -334,21 +342,21 @@ const player_bufferState = document.getElementById("player_bufferState");
 const cmbAudioFormat = document.getElementById("cmbAudioFormat");
 const btnSaveAudio = document.getElementById("btnSaveAudio");
 
-const cmbCountIn = document.getElementById("player_countIn");
+const cmbCountIn = document.getElementById("cmbCountIn");
 
-const player_repeats = document.getElementById("player_repeats");
+const cmbPlayerRepeats = document.getElementById("cmbPlayerRepeats");
 
-const player_swing = document.getElementById("player_swing");
+const chkPlayerSwing = document.getElementById("chkPlayerSwing");
 
 const cmbSamplerInstrument = document.getElementById("cmbSamplerInstrument");
 const sliderSamplerVolume = document.getElementById("samplerVolume");
 
-const metronome_btnPlayStop = document.getElementById("metronome_btnPlayStop");
+const btnPlayStopMetronome = document.getElementById("btnPlayStopMetronome");
 const metronome_timeline = document.getElementById("metronome_timeline");
-const metronome_volumen = document.getElementById("metronome_volumen");
-const metronome_volumen_2 = document.getElementById("metronome_volumen_2");
-const metronome_on = document.getElementById("metronome_on");
-const metronome_subBeatSound = document.getElementById("metronome_subBeatSound");
+const sliderMetronomeVolumen = document.getElementById("sliderMetronomeVolumen");
+const sliderMetronomeVolumen_2 = document.getElementById("sliderMetronomeVolumen_2");
+const chkMetronomeOn = document.getElementById("chkMetronomeOn");
+const chkMetronomeBeatSound = document.getElementById("chkMetronomeBeatSound");
 
 const chkAutoScroll = document.getElementById("chkAutoScroll");
 
@@ -391,8 +399,150 @@ let instrument = null;
 let isPlaying = false;
 let isPlayingBuffer = false;
 
-let NOTAS = [];
-let ACORDES = [];
+
+/*==================================================
+	INSTRUMENTOS
+==================================================*/
+
+const samplesURL = "https://themachetazo.github.io/jazzguitarnomad/samples/";
+
+const instrumentDefs = {
+
+    ////////////////////////////////////////////////////////////
+    // PIANO SALAMANDER
+    ////////////////////////////////////////////////////////////
+
+    piano: {
+
+        urls: {
+
+            A0: "A0.mp3",
+
+            C1: "C1.mp3",
+            "D#1": "Ds1.mp3",
+            "F#1": "Fs1.mp3",
+            A1: "A1.mp3",
+
+            C2: "C2.mp3",
+            "D#2": "Ds2.mp3",
+            "F#2": "Fs2.mp3",
+            A2: "A2.mp3",
+
+            C3: "C3.mp3",
+            "D#3": "Ds3.mp3",
+            "F#3": "Fs3.mp3",
+            A3: "A3.mp3",
+
+            C4: "C4.mp3",
+            "D#4": "Ds4.mp3",
+            "F#4": "Fs4.mp3",
+            A4: "A4.mp3",
+
+            C5: "C5.mp3",
+            "D#5": "Ds5.mp3",
+            "F#5": "Fs5.mp3",
+            A5: "A5.mp3",
+
+            C6: "C6.mp3",
+            "D#6": "Ds6.mp3",
+            "F#6": "Fs6.mp3",
+            A6: "A6.mp3",
+
+            C7: "C7.mp3",
+            "D#7": "Ds7.mp3",
+            "F#7": "Fs7.mp3",
+            A7: "A7.mp3",
+
+            C8: "C8.mp3"
+
+        },
+
+        release: 0.05,
+
+        baseUrl: samplesURL + "piano/"
+
+    },
+
+    ////////////////////////////////////////////////////////////
+    // GUITARRA CLÁSICA
+    ////////////////////////////////////////////////////////////
+
+    cguitar: {
+
+        urls: {
+
+            E2: "E2.mp3",
+            G2: "G2.mp3",
+            A2: "A2.mp3",
+            C3: "C3.mp3",
+            D3: "D3.mp3",
+
+            E3: "E3.mp3",
+            G3: "G3.mp3",
+            A3: "A3.mp3",
+            C4: "C4.mp3",
+            D4: "D4.mp3",
+
+            E4: "E4.mp3",
+            G4: "G4.mp3",
+            A4: "A4.mp3",
+            C5: "C5.mp3",
+            D5: "D5.mp3",
+
+            E5: "E5.mp3",
+            G5: "G5.mp3",
+            A5: "A5.mp3",
+            C6: "C6.mp3",
+
+            E6: "E6.mp3"
+
+        },
+
+        release: 0.10,
+
+        baseUrl: samplesURL + "cguitar/"
+
+    }
+
+};
+
+const fretboardMapNotes = [
+/*
+fretboardMapNotes[0] → 1ª cuerda
+fretboardMapNotes[5] → 6ª cuerda
+// 1ª cuerda, traste 0
+fretboardMapNotes[0][0]; // E
+*/
+
+  // 1ª cuerda (E4)
+  ["E4","F4","F#4","G4","G#4","A4","A#4","B4","C5","C#5","D5","D#5","E5","F5","F#5","G5","G#5","A5","A#5","B5","C6","C#6","D6","D#6","E6"],
+
+  // 2ª cuerda (B3)
+  ["B3","C4","C#4","D4","D#4","E4","F4","F#4","G4","G#4","A4","A#4","B4","C5","C#5","D5","D#5","E5","F5","F#5","G5","G#5","A5","A#5","B5"],
+
+  // 3ª cuerda (G3)
+  ["G3","G#3","A3","A#3","B3","C4","C#4","D4","D#4","E4","F4","F#4","G4","G#4","A4","A#4","B4","C5","C#5","D5","D#5","E5","F5","F#5","G5"],
+
+  // 4ª cuerda (D3)
+  ["D3","D#3","E3","F3","F#3","G3","G#3","A3","A#3","B3","C4","C#4","D4","D#4","E4","F4","F#4","G4","G#4","A4","A#4","B4","C5","C#5","D5"],
+
+  // 5ª cuerda (A2)
+  ["A2","A#2","B2","C3","C#3","D3","D#3","E3","F3","F#3","G3","G#3","A3","A#3","B3","C4","C#4","D4","D#4","E4","F4","F#4","G4","G#4","A4"],
+
+  // 6ª cuerda (E2)
+  ["E2","F2","F#2","G2","G#2","A2","A#2","B2","C3","C#3","D3","D#3","E3","F3","F#3","G3","G#3","A3","A#3","B3","C4","C#4","D4","D#4","E4"]
+];
+
+
+
+
+
+
+
+
+
+
+
 
 const sequenceUp = [
   { string: 5, fret: 0, note: "E2" },
@@ -538,7 +688,8 @@ const sequenceUpDown = [
   { string: 0, fret: 0, note: "E4" }
 ];
 
-const sequenceDownUp = [
+const sequenceDownUp = [];
+/*
   { string: 3, fret: 4, note: "F#3" },
   { string: 1, fret: 6, note: "F4" },
   { string: 0, fret: 5, note: "A4" },
@@ -579,6 +730,7 @@ const sequenceDownUp = [
   { string: 1, fret: 6, note: "F4" },
   { string: 3, fret: 4, note: "F#3" }
 ];
+*/
 
 const chordsUp = [
   { chord: 0, string: 2, fret: 2, note: "A3" },
@@ -624,103 +776,3 @@ const chordsDownUp = [
   { chord: 3, string: 4, fret: 5, note: "D3" },
   { chord: 3, string: 3, fret: 5, note: "G3" }
 ];
-
-const instrumentDefs = {
-
-    ////////////////////////////////////////////////////////////
-    // PIANO SALAMANDER
-    ////////////////////////////////////////////////////////////
-
-    piano: {
-
-        urls: {
-
-            A0: "A0.mp3",
-
-            C1: "C1.mp3",
-            "D#1": "Ds1.mp3",
-            "F#1": "Fs1.mp3",
-            A1: "A1.mp3",
-
-            C2: "C2.mp3",
-            "D#2": "Ds2.mp3",
-            "F#2": "Fs2.mp3",
-            A2: "A2.mp3",
-
-            C3: "C3.mp3",
-            "D#3": "Ds3.mp3",
-            "F#3": "Fs3.mp3",
-            A3: "A3.mp3",
-
-            C4: "C4.mp3",
-            "D#4": "Ds4.mp3",
-            "F#4": "Fs4.mp3",
-            A4: "A4.mp3",
-
-            C5: "C5.mp3",
-            "D#5": "Ds5.mp3",
-            "F#5": "Fs5.mp3",
-            A5: "A5.mp3",
-
-            C6: "C6.mp3",
-            "D#6": "Ds6.mp3",
-            "F#6": "Fs6.mp3",
-            A6: "A6.mp3",
-
-            C7: "C7.mp3",
-            "D#7": "Ds7.mp3",
-            "F#7": "Fs7.mp3",
-            A7: "A7.mp3",
-
-            C8: "C8.mp3"
-
-        },
-
-        release: 0.05,
-
-        baseUrl: "https://themachetazo.github.io/jazzguitarnomad/samples/piano/"
-
-    },
-
-    ////////////////////////////////////////////////////////////
-    // GUITARRA CLÁSICA
-    ////////////////////////////////////////////////////////////
-
-    cguitar: {
-
-        urls: {
-
-            E2: "E2.mp3",
-            G2: "G2.mp3",
-            A2: "A2.mp3",
-            C3: "C3.mp3",
-            D3: "D3.mp3",
-
-            E3: "E3.mp3",
-            G3: "G3.mp3",
-            A3: "A3.mp3",
-            C4: "C4.mp3",
-            D4: "D4.mp3",
-
-            E4: "E4.mp3",
-            G4: "G4.mp3",
-            A4: "A4.mp3",
-            C5: "C5.mp3",
-            D5: "D5.mp3",
-
-            E5: "E5.mp3",
-            G5: "G5.mp3",
-            A5: "A5.mp3",
-            C6: "C6.mp3",
-
-            E6: "E6.mp3"
-
-        },
-
-        release: 0.10,
-
-        baseUrl: "https://themachetazo.github.io/jazzguitarnomad/samples/cguitar/"
-
-    }
-
-};

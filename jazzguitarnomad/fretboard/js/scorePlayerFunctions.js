@@ -5,6 +5,214 @@
 //
 ////////////////////////////////////////////////////////////
 
+//Como leer el array para el sonido
+/*
+const notes = sequenceToPlay.map(item => item.note);
+Resultado:["E4", "F2", "E3", "A4", "F4", "F#3"]
+notes[1] - > "F2"
+*/
+
+//Funcion leer XML y crear array
+function parseXMLToNotesArray(project) {
+
+	sequenceXMLNotes.length = 0;
+	chordsXMLNotes.length = 0;
+
+	// Nut notes (cuerdas al aire)
+	(project.nutNotes || []).forEach(note => {
+
+		const string = parseInt(note.string);
+		const fret = 0;
+
+		sequenceXMLNotes.push({
+			string,
+			fret,
+			note: fretboardMapNotes[string][fret]
+		});
+
+	});
+
+	// Notes normales
+	(project.notes || []).forEach(note => {
+
+		const string = parseInt(note.string);
+		const fret = parseInt(note.fret);
+
+		sequenceXMLNotes.push({
+			string,
+			fret,
+			note: fretboardMapNotes[string][fret]
+		});
+
+	});
+
+	// Barres (cejillas)
+	(project.barres || []).forEach((barre, index) => {
+
+		const fret = parseInt(barre.fret);
+		const startString = parseInt(barre.startString);
+
+		// Añade desde startString hasta la primera cuerda (0)
+		for (let string = startString; string >= 0; string--) {
+
+			chordsXMLNotes.push({
+				chord: index,
+				string,
+				fret,
+				note: fretboardMapNotes[string][fret]
+			});
+
+		}
+
+	});
+
+}
+
+
+//Funcion para organizar cómo se va a tocar la secuencia o acorde
+function organizeSequence(direction, playLast = true) {
+
+	sequenceToPlay.length = 0;
+
+	const sequenceUp = [...sequenceXMLNotes];
+	const sequenceDown = [...sequenceXMLNotes].reverse();
+
+	// Quitamos la primera nota del segundo recorrido si playLast es false
+	// porque esa nota es la repetición de la última del primer recorrido
+	const sequenceDownNoLast = sequenceDown.slice(1);
+	const sequenceUpNoLast = sequenceUp.slice(1);
+
+	switch (direction) {
+
+		case "up":
+			sequenceToPlay = sequenceUp;
+			break;
+
+		case "down":
+			sequenceToPlay = sequenceDown;
+			break;
+
+		case "up-down":
+
+			sequenceToPlay = playLast
+				? [
+					...sequenceUp,
+					...sequenceDown
+				]
+				: [
+					...sequenceUp,
+					...sequenceDownNoLast
+				];
+
+			break;
+
+		case "down-up":
+
+			sequenceToPlay = playLast
+				? [
+					...sequenceDown,
+					...sequenceUp
+				]
+				: [
+					...sequenceDown,
+					...sequenceUpNoLast
+				];
+
+			break;
+
+		default:
+			return;
+
+	}
+
+}
+
+function organizeChords(direction, playLast = true) {
+
+	chordsToPlay.length = 0;
+
+	// Agrupar acordes originales por chord
+	const groupedChords = {};
+
+	chordsXMLNotes.forEach(item => {
+
+		if (!groupedChords[item.chord]) {
+			groupedChords[item.chord] = [];
+		}
+
+		groupedChords[item.chord].push(item);
+
+	});
+
+	// Grupos en orden UP
+	const chordGroupsUp = Object.values(groupedChords);
+
+	// Grupos en orden DOWN
+	const chordGroupsDown = [...chordGroupsUp].reverse();
+
+	let finalGroups = [];
+
+	switch (direction) {
+
+		case "up":
+
+			finalGroups = chordGroupsUp;
+			break;
+
+		case "down":
+
+			finalGroups = chordGroupsDown;
+			break;
+
+		case "up-down":
+
+			finalGroups = playLast
+				? [
+					...chordGroupsUp,
+					...chordGroupsDown
+				]
+				: [
+					...chordGroupsUp,
+					...chordGroupsDown.slice(1)
+				];
+
+			break;
+
+		case "down-up":
+
+			finalGroups = playLast
+				? [
+					...chordGroupsDown,
+					...chordGroupsUp
+				]
+				: [
+					...chordGroupsDown,
+					...chordGroupsUp.slice(1)
+				];
+
+			break;
+
+		default:
+			return;
+
+	}
+
+	// Crear array final con chord secuencial
+	finalGroups.forEach((group, index) => {
+
+		group.forEach(item => {
+
+			chordsToPlay.push({
+				...item,
+				chord: index
+			});
+
+		});
+
+	});
+
+}
+
 /*
 function loadArrays(mode) {
 
@@ -164,7 +372,7 @@ function setPlayerValues(){
 
 	setMetronmeOnPlaying(metronomeOn);
 
-	resetPlaybackUI();
+	resetPlaybackTimeline();
 
 }
 
@@ -177,29 +385,18 @@ async function playMusic(){
 		setControlsEnabled(false);
 
 		btnPlayStop.disabled = false;
-		btnPlayStop_2.disabled = false;
-		scoreFloatingPlay.disabled = false;
+		scoreFloatingStopButton.disabled = false;
 
 		samplerVolume.disabled = false;
 
-		if (metronome_on.checked){
+		if (chkMetronomeOn.checked){
 
-			metronome_volumen.disabled = false;
-			metronome_volumen_2.disabled = false;
+			sliderMetronomeVolumen.disabled = false;
+			sliderMetronomeVolumen_2.disabled = false;
 
 		}
 
 		setPlayStopButton(btnPlayStop, true);
-		setPlayStopButton(btnPlayStop_2, true);
-
-		scoreFloatingPlay.innerHTML =
-			"<i class='fa-solid fa-stop'></i>";
-
-		scoreFloatingPlay.classList.add("stop");
-
-		if (chkAutoScroll.checked) {
-			scoreFloatingPlay.style.display = "flex";
-		}
 
 		// Mostrar timeline e información
 
@@ -207,13 +404,9 @@ async function playMusic(){
 
 		// Abrir y cerrar controles
 
-		topControlsWasOpen =
-			topControlsContainer.classList.contains("isOpen");
-
-		if (topControlsWasOpen) {
-			closeTopControls();
-		}
-
+		topControlsWasOpen = topControlsContainer.classList.contains("isOpen");
+		if (topControlsWasOpen) closeTopControls();
+		
 		await Tone.start();
 
 		Tone.Transport.stop();
@@ -252,13 +445,6 @@ async function playMusic(){
 		setControlsEnabled(true);
 
 		setPlayStopButton(btnPlayStop, false);
-		setPlayStopButton(btnPlayStop_2, false);
-
-		scoreFloatingPlay.innerHTML =
-			"<i class='fa-solid fa-play'></i>";
-
-		scoreFloatingPlay.classList.remove("stop");
-		scoreFloatingPlay.style.display = "none";
 
 		// Ocultar timeline e información
 
@@ -272,7 +458,7 @@ async function playMusic(){
 
 		topControlsWasOpen = false;
 
-		resetPlaybackUI();
+		resetPlaybackTimeline();
 
 	}
 
@@ -292,9 +478,9 @@ async function metronomePlayStop(){
 
 		setControlsEnabled(true);
 
-		setPlayStopButton(metronome_btnPlayStop, false);
+		setPlayStopButton(btnPlayStopMetronome, false);
 
-		resetMetronomeUI();
+		resetMetronomeTimeline();
 
 		// Ocultar timeline e información
 
@@ -304,23 +490,23 @@ async function metronomePlayStop(){
 
 		setControlsEnabled(false);
 
-		metronome_btnPlayStop.disabled = false;
-		metronome_volumen.disabled = false;
+		btnPlayStopMetronome.disabled = false;
+		sliderMetronomeVolumen.disabled = false;
 		sliderBpm.disabled = false;
 		btnLessTempo.disabled = false;
 		btnMoreTempo.disabled = false;
 
-		setPlayStopButton(metronome_btnPlayStop, true);
+		setPlayStopButton(btnPlayStopMetronome, true);
 
-		if (!metronome_on.checked) {
+		if (!chkMetronomeOn.checked) {
 
-			metronome_on.checked = true;
+			chkMetronomeOn.checked = true;
 
 			setMetronmeOnPlaying(true);
 
 			workspaceTimeInfo.style.display = "none";
 
-			resetMetronomeUI();
+			resetMetronomeTimeline();
 
 		} else {
 
@@ -332,52 +518,7 @@ async function metronomePlayStop(){
 
 	}
 
-	metronome_btnPlayStop.focus({ focusVisible: true });
-
-}
-
-function resetPlaybackUI(){
-
-	buildHtmlDivsTimeline();
-
-	metronome_Info.innerHTML = "Metrónomo: <b>1 / 1</b>";
-
-	player_repeatInfo.innerHTML = "Repetición: <b>1</b>&nbsp;Compás: <b>1</b>";
-
-	countBars = 1;
-	repetitionSequence = 1;
-	firstTick = true;
-
-//	window.scrollTo({top: 0,left: 0,behavior: "smooth"});
-
-}
-
-function resetMetronomeUI(){
-
-	buildHtmlDivsTimeline();
-
-	metronome_Info.innerHTML = "Metrónomo: <b>1 / 1</b>";
-
-}
-
-function setPlayStopButton(button, isPlaying, showText = true){
-
-	if (isPlaying) {
-
-		button.innerHTML = showText
-			? "<i class='fa-solid fa-stop'></i><span>Stop</span>"
-			: "<i class='fa-solid fa-stop'></i>";
-
-	} else {
-
-		button.innerHTML = showText
-			? "<i class='fa-solid fa-play'></i><span>Play</span>"
-			: "<i class='fa-solid fa-play'></i>";
-
-	}
-
-	button.classList.toggle("buttonPlay", !isPlaying);
-	button.classList.toggle("buttonStop", isPlaying);
+	btnPlayStopMetronome.focus({ focusVisible: true });
 
 }
 
@@ -734,190 +875,187 @@ function vexTab_calcScale(scoreWidth){
 
 function vexTab_generateVexTab(data,key = "C",time = "4/4",figure = 1,mode = "sequence") {
 
-    figure = parseInt(figure, 10);
+	figure = parseInt(figure,10);
 
-    const [numerator, denominator] = time.split("/").map(Number);
+	const [numerator,denominator] = time.split("/").map(Number);
 
-    const durationMap = {
-        1: ":q",
-        2: ":8",
-        4: ":16"
-    };
+	const durationMap = {
+		1:":q",
+		2:":8",
+		4:":16"
+	};
 
-    const duration = denominator === 8
-        ? ":8"
-        : durationMap[figure];
+	const duration = denominator === 8 ? ":8" : durationMap[figure];
 
-    const notesPerBar =
-        denominator === 8
-            ? numerator
-            : numerator * figure;
+	const notesPerBar = denominator === 8 ? numerator : numerator * figure;
 
-    //----------------------------------------------------------
-    // Preparar notas
-    //----------------------------------------------------------
+	//----------------------------------------------------------
+	// Configuración de notación
+	//----------------------------------------------------------
 
-    const items =
-        mode === "sequence"
-            ? [...data]
-            : vexTab_groupChords(data);
+	let notation = true;
+	let tablature = true;
 
-    vexTab_completeLastBar(items, notesPerBar);
+	if (cmbScoreStaves.value === "notation") {
+		notation = true;
+		tablature = false;
+	}
+	else if (cmbScoreStaves.value === "tablature") {
+		notation = false;
+		tablature = true;
+	}
 
-    const bars = vexTab_splitIntoBars(items, notesPerBar);
+	//----------------------------------------------------------
+	// Preparar notas
+	//----------------------------------------------------------
 
-    const barStrings = bars.map(bar =>
-        vexTab_renderBar(bar, figure, time)
-    );
+	const items = !data || data.length === 0
+		? []
+		: mode === "sequence"
+			? [...data]
+			: vexTab_groupChords(data);
 
-    //----------------------------------------------------------
-    // Compases por sistema
-    //----------------------------------------------------------
+	//----------------------------------------------------------
+	// Escala
+	//----------------------------------------------------------
 
-    let barsPerSystem;
+	let scoreWidth = 1400;
+	let scale = vexTab_calcScale(scoreWidth);
 
-    if (denominator === 4) {
+	//----------------------------------------------------------
+	// Si no hay datos
+	//----------------------------------------------------------
 
-        if ([2, 3, 4].includes(numerator)) {
+	let result = "";
 
-            if (figure === 1)
-                barsPerSystem = 8;
-            else if (figure === 2)
-                barsPerSystem = 4;
-            else if (figure === 4)
-                barsPerSystem = 2;
+	if (items.length === 0) {
 
-        }
-        else if ([5, 7].includes(numerator)) {
+		result += `options scale=${scale} stave-distance=${parseInt(sliderScoreStaveDistance.value,10)}\n`;
+		result += "tab-stems=true tab-stem-direction=up\n";
+		result += `tabstave notation=${notation} tablature=${tablature} key=${key} time=${time} clef=treble\n`;
+		result += `options space=${parseInt(sliderScoreStaveMargin.value,10)}\n`;
 
-            if (figure === 2)
-                barsPerSystem = 2;
-            else if (figure === 4)
-                barsPerSystem = 1;
+		return result;
 
-        }
+	}
 
-    }
-    else if (denominator === 8) {
+	//----------------------------------------------------------
+	// Completar último compás
+	//----------------------------------------------------------
 
-        if ([6, 9].includes(numerator))
-            barsPerSystem = 2;
-        else if (numerator === 12)
-            barsPerSystem = 1;
+	vexTab_completeLastBar(items,notesPerBar);
 
-    }
+	const bars = vexTab_splitIntoBars(items,notesPerBar);
 
-    if (!barsPerSystem) barsPerSystem = 4;
+	const barStrings = bars.map(bar =>
+		vexTab_renderBar(bar,figure,time)
+	);
 
-    const totalFigures = items.length;
+	//----------------------------------------------------------
+	// Compases por sistema
+	//----------------------------------------------------------
 
-    let scale = scoreScale;
+	let barsPerSystem;
 
-    let result = "";
+	if (denominator === 4) {
 
-    //----------------------------------------------------------
-    // UNA SOLA LÍNEA
-    //----------------------------------------------------------
+		if ([2,3,4].includes(numerator)) {
 
-    let scoreWidth = 1400;
+			if (figure === 1) barsPerSystem = 8;
+			else if (figure === 2) barsPerSystem = 4;
+			else if (figure === 4) barsPerSystem = 2;
 
-    if (cmbScoreLayout.value === "horizontal") {
+		}
+		else if ([5,7].includes(numerator)) {
 
-        //----------------------------------------------------------
-        // Ancho total de la partitura horizontal
-        //----------------------------------------------------------
+			if (figure === 2) barsPerSystem = 2;
+			else if (figure === 4) barsPerSystem = 1;
 
-        const calcWidth = vexTab_calcWidth(figure,totalFigures,notesPerBar);
+		}
 
-        scoreWidth = (calcWidth > 1440) ? calcWidth : 1400;
+	}
+	else if (denominator === 8) {
 
-        scale = vexTab_calcScale(scoreWidth);
+		if ([6,9].includes(numerator)) barsPerSystem = 2;
+		else if (numerator === 12) barsPerSystem = 1;
 
-        result += `options width=${parseInt(scoreWidth, 10)} space=40 scale=${scale} stave-distance=${parseInt(sliderScoreStaveDistance.value,10)}\n`;
-        result += "tab-stems=true tab-stem-direction=up\n";
+	}
 
-        if (cmbScoreStaves.value === "notation") {
+	if (!barsPerSystem) barsPerSystem = 4;
 
-            result += `tabstave notation=true tablature=false key=${key} time=${time} clef=treble\n`;
+	//----------------------------------------------------------
+	// Datos generales
+	//----------------------------------------------------------
 
-        }
-        else if (cmbScoreStaves.value === "tablature") {
+	const totalFigures = items.length;
 
-            result += `tabstave notation=false tablature=true key=${key} time=${time} clef=treble\n`;
+	//----------------------------------------------------------
+	// UNA SOLA LÍNEA
+	//----------------------------------------------------------
 
-        }
-        else {
+	if (cmbScoreLayout.value === "horizontal") {
 
-            result += `tabstave notation=true tablature=true key=${key} time=${time} clef=treble\n`;
+		const calcWidth = vexTab_calcWidth(figure,totalFigures,notesPerBar);
 
-        }
+		scoreWidth = calcWidth > 1440 ? calcWidth : 1400;
 
-        result += `notes ${duration} ${barStrings.join(" | ")}`;
+		scale = vexTab_calcScale(scoreWidth);
 
-        if (player_repeats.value > 1){
-		result += ` =:|\n`;
-        }else{
-		result += ` =|=\n`;
-        }
+		result += `options width=${parseInt(scoreWidth,10)} space=40 scale=${scale} stave-distance=${parseInt(sliderScoreStaveDistance.value,10)}\n`;
+		result += "tab-stems=true tab-stem-direction=up\n";
+		result += `tabstave notation=${notation} tablature=${tablature} key=${key} time=${time} clef=treble\n`;
+		result += `notes ${duration} ${barStrings.join(" | ")}`;
 
-        result += `options space=${parseInt(sliderScoreStaveMargin.value,10)}\n`;
-
-    }
-
-    //----------------------------------------------------------
-    // VARIOS SISTEMAS
-    //----------------------------------------------------------
-
-    else {
-
-        scale = vexTab_calcScale(scoreWidth);
-
-        result += `options width=${parseInt(scoreWidth, 10)} space=40 scale=${scale} stave-distance=${parseInt(sliderScoreStaveDistance.value,10)}\n`;
-        result += "tab-stems=true tab-stem-direction=up\n";
-
-        for (let i = 0; i < barStrings.length; i += barsPerSystem) {
-
-            const systemBars = barStrings.slice(i, i + barsPerSystem);
-
-            if (cmbScoreStaves.value === "notation") {
-
-                result += `tabstave notation=true tablature=false key=${key} time=${time} clef=treble\n`;
-
-            }
-            else if (cmbScoreStaves.value === "tablature") {
-
-                result += `tabstave notation=false tablature=true key=${key} time=${time} clef=treble\n`;
-
-            }
-            else {
-
-                result += `tabstave notation=true tablature=true key=${key} time=${time} clef=treble\n`;
-
-            }
-
-            result += `notes ${duration} ${systemBars.join(" | ")}`;
-
-            if (i + barsPerSystem >= barStrings.length){
-
-	        if (player_repeats.value > 1){
+		if (cmbPlayerRepeats.value > 1) {
 			result += ` =:|\n`;
-	        }else{
+		} else {
 			result += ` =|=\n`;
-	        }
+		}
 
-            }else{
+		result += `options space=${parseInt(sliderScoreStaveMargin.value,10)}\n`;
 
-                result += " |\n";
+	}
 
-	    }
+	//----------------------------------------------------------
+	// VARIOS SISTEMAS
+	//----------------------------------------------------------
 
-            result += `options space=${parseInt(sliderScoreStaveMargin.value,10)}\n`;
+	else {
 
-        }
+		scale = vexTab_calcScale(scoreWidth);
 
-    }
+		result += `options width=${parseInt(scoreWidth,10)} space=40 scale=${scale} stave-distance=${parseInt(sliderScoreStaveDistance.value,10)}\n`;
+		result += "tab-stems=true tab-stem-direction=up\n";
 
-    return result;
+		for (let i = 0; i < barStrings.length; i += barsPerSystem) {
+
+			const systemBars = barStrings.slice(i,i + barsPerSystem);
+
+			result += `tabstave notation=${notation} tablature=${tablature} key=${key} time=${time} clef=treble\n`;
+			result += `notes ${duration} ${systemBars.join(" | ")}`;
+
+			if (i + barsPerSystem >= barStrings.length) {
+
+				if (cmbPlayerRepeats.value > 1) {
+					result += ` =:|\n`;
+				} else {
+					result += ` =|=\n`;
+				}
+
+			}
+			else {
+
+				result += " |\n";
+
+			}
+
+			result += `options space=${parseInt(sliderScoreStaveMargin.value,10)}\n`;
+
+		}
+
+	}
+
+	return result;
 
 }
 
@@ -1251,6 +1389,8 @@ async function scoreRender() {
 console.log(scoreArray);
 
 	const vexTabText = vexTab_generateVexTab(scoreArray,cmbTonalidad.value,cmbBar.value,cmbFigure.value,cmbProjectType.value);
+
+console.log(vexTabText);
 
 	vexTab_container.classList.remove("layout-left","layout-center");
 
@@ -1824,52 +1964,31 @@ function scorePaint_highlightStaffNote(group) {
 // CREAR BARRA
 
 function scorePaint_createProgressBar() {
-    if (!scoreSvg) {
-        return;
-    }
 
-    scorePaint_removeProgressBar();
+	if (!scoreSvg) return;
 
-    const scoreGroup =
-        scorePaint_getScoreGroup();
+	scorePaint_removeProgressBar();
 
-    if (!scoreGroup) {
-        console.warn(
-            "No se ha encontrado el grupo de los sistemas"
-        );
+	const scoreGroup = scorePaint_getScoreGroup();
 
-        return;
-    }
+	if (!scoreGroup) {
+		console.warn("No se ha encontrado el grupo de los sistemas");
 
-    scoreProgressBar =
-        document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "line"
-        );
+		return;
+	}
 
-    scoreProgressBar.setAttribute(
-        "stroke",
-        scoreScrollColor
-    );
+	scoreProgressBar = document.createElementNS("http://www.w3.org/2000/svg","line");
 
-    scoreProgressBar.setAttribute(
-        "stroke-width",
-        SCORE_PROGRESS_BAR_WIDTH
-    );
+	scoreProgressBar.setAttribute("stroke", scoreScrollColor);
 
-    scoreProgressBar.setAttribute(
-        "stroke-linecap",
-        "round"
-    );
+	scoreProgressBar.setAttribute("stroke-width", SCORE_PROGRESS_BAR_WIDTH);
 
-    scoreProgressBar.setAttribute(
-        "opacity",
-        "0"
-    );
+	scoreProgressBar.setAttribute("stroke-linecap", "round");
 
-    scoreGroup.appendChild(
-        scoreProgressBar
-    );
+	scoreProgressBar.setAttribute("opacity", "0");
+
+	scoreGroup.appendChild(scoreProgressBar);
+
 }
 
 // CALCULAR POSICIÓN DE LA BARRA

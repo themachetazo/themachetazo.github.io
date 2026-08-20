@@ -23,7 +23,7 @@ function newProject() {
 
 	// ESTADO
 
-	projectModified = true;
+	projectModified = false;
 
 	// VALORES POR DEFECTO
 
@@ -31,32 +31,32 @@ function newProject() {
 
 	setMode("note");
 
-	// DATOS MUSICALES
-
-	loadNotas(tipoSecuencia);
-	scoreLoadArray(tipoSecuencia);
-	// loadArrays(tipoSecuencia);
-
 	// ACTUALIZAR INTERFAZ
 
-	restartProjectValues();
+	updateProjectUI();
 }
 
-function loadProject(project) {
+async function loadProject(project) {
 
 	if (!project) return;
 
+	// --------------------------------
 	// DATOS GENERALES
+	// --------------------------------
 
 	projectTitle = project.title;
 
+	// --------------------------------
 	// CATEGORÍA
+	// --------------------------------
 
 	projectCategory.value = project.category;
 
 	if (projectCategory.value !== project.category && categories.length > 0) projectCategory.value = categories[0].id;
 
+	// --------------------------------
 	// SETTINGS
+	// --------------------------------
 
 	fretCount = Math.max(5, Math.min(24, project.settings?.fretCount ?? 10));
 	displayMode = parseBoolean(project.settings?.displayMode, true);
@@ -86,7 +86,9 @@ function loadProject(project) {
 	isFretboardVisible = parseBoolean(project.settings?.isFretboardVisible, true);
 	isScoreVisible = parseBoolean(project.settings?.isScoreVisible, false);
 
+	// --------------------------------
 	// NOTAS
+	// --------------------------------
 
 	notes = (project.notes || []).map(note => ({
 		string: note.string,
@@ -95,7 +97,9 @@ function loadProject(project) {
 		text: note.text
 	}));
 
+	// --------------------------------
 	// BARRAS
+	// --------------------------------
 
 	barreNotes = (project.barres || []).map(barre => ({
 		fret: barre.fret,
@@ -104,7 +108,9 @@ function loadProject(project) {
 		text: barre.text
 	}));
 
+	// --------------------------------
 	// NUT
+	// --------------------------------
 
 	nutNotes = Array(stringCount).fill(null);
 
@@ -119,36 +125,66 @@ function loadProject(project) {
 
 	});
 
+	// --------------------------------
 	// ESTADO
+	// --------------------------------
 
 	projectModified = false;
 
-	// ACTUALIZAR CONTROLES
+	// --------------------------------
+	// CONTROLES
+	// --------------------------------
 
 	setDefaultControlsValues("loadProject");
 	setOrientation(orientation);
 
+	// --------------------------------
 	// DATOS MUSICALES
+	// --------------------------------
 
 	loadNotas(tipoSecuencia);
 	scoreLoadArray(tipoSecuencia);
-	// loadArrays(tipoSecuencia);
 
-	// ACTUALIZAR INTERFAZ
+	parseXMLToNotesArray(project);
 
-	restartProjectValues();
+	organizeSequence(tipoSecuencia, true);
+	organizeChords(tipoSecuencia, true);
 
-}
+	const hasNotes = projectType === "sequence" ? sequenceToPlay.length > 0 : chordsToPlay.length > 0;
+	btnPlayStop.disabled = !hasNotes;
 
-function restartProjectValues(){
-
-	setFretboardStyle(fretboardStyle);
+	// --------------------------------
+	// LAYOUT
+	// --------------------------------
 
 	setWorkspaceLayout();
-
 	setPlayerValues();
 
-	if (isFretboardVisible) resizeCanvas();
+	// --------------------------------
+	// IMAGEN DEL MÁSTIL
+	// --------------------------------
+
+	neckImageLoaded = false;
+
+	if (fretboardStyle !== "blank") {
+
+		await loadFretboardImage();
+
+	}
+
+	await waitForLayout();
+
+	// --------------------------------
+	// DIBUJADO
+	// --------------------------------
+
+	if (isFretboardVisible) {
+
+		resizeCanvas();
+
+		scrollToFretboardNut();
+	
+	}
 
 	if (isScoreVisible) scoreRender();
 
@@ -174,10 +210,7 @@ async function loadXMLProjectsFile() {
 
 	} catch (error) {
 
-		console.warn(
-			"No se pudo cargar el archivo '" + xmlProjects + "' de proyectos del Servidor.",
-			error
-		);
+		console.warn("Error cargando " + xmlProjects,error);
 
 	}
 
@@ -243,8 +276,7 @@ async function openXMLProjectsFile() {
 		// PARSEAR XML
 		// --------------------------------
 
-		const loadedProjects =
-			parseProjectsXml(xmlText);
+		const loadedProjects = parseProjectsXml(xmlText);
 
 
 		// --------------------------------
@@ -274,7 +306,7 @@ async function openXMLProjectsFile() {
 		// ABRIR PANEL
 		// --------------------------------
 
-		openLeftPanel();
+		openProjectsPanel();
 
 
 		// --------------------------------
@@ -821,39 +853,19 @@ function renderHTMLProjectsList() {
 
 }
 
-function selectProject(project) {
+async function selectProject(project) {
 
 	if (!project) {
 		return;
 	}
 
-
-	// --------------------------------
-	// SELECCIONAR
-	// --------------------------------
-
 	currentProjectId = project.id;
-
-
-	// --------------------------------
-	// ABRIR CATEGORÍA
-	// --------------------------------
 
 	openProjectCategory(project.category);
 
-
-	// --------------------------------
-	// MARCAR EN LA LISTA
-	// --------------------------------
-
 	updateSelectedProject();
 
-
-	// --------------------------------
-	// CARGAR DATOS
-	// --------------------------------
-
-	loadProject(project);
+	await loadProject(project);
 
 }
 

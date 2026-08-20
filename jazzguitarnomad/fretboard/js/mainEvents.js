@@ -8,6 +8,11 @@ window.addEventListener("load", async () => {
 
 	try {
 
+		// USUARIOS ----------------------
+
+//		loadUsersXML();
+
+
 		// MENU ----------------------
 
 		setLoadingProgress(0, "Configurando usuario...");
@@ -79,6 +84,8 @@ window.addEventListener("load", async () => {
 
 		setLoadingProgress(20, "Configurando página...");
 
+		setOrientation(orientation);
+
 		setLayout();
 
 		await waitForLayout();
@@ -114,7 +121,9 @@ window.addEventListener("load", async () => {
 
 		loadNotas(tipoSecuencia);
 		scoreLoadArray(tipoSecuencia);
-		// loadArrays(tipoSecuencia);
+
+		const hasNotes = projectType === "sequence" ? NOTAS.length > 0 : ACORDES.length > 0;
+		btnPlayStop.disabled = !hasNotes;
 
 
 		// IMÁGENES ----------------------
@@ -134,9 +143,7 @@ window.addEventListener("load", async () => {
 
 			resizeCanvas();
 
-			await waitForLayout();
-
-			resizeCanvas();
+			scrollToFretboardNut();
 
 		}
 
@@ -200,7 +207,37 @@ document.addEventListener("click",(e)=>{
 
 });
 
+document.addEventListener("contextmenu", (e) => {
 
+	const isMobile = window.innerWidth <= maxMediaScreenWidth;
+
+	if (!isAdmin) e.preventDefault();
+
+});
+
+/*
+document.addEventListener("selectstart",(e) => {
+
+	if (isAdmin) return;
+
+	if (e.target.matches("input, textarea")) return;
+
+	e.preventDefault();
+
+});
+
+document.addEventListener("mousedown",(e) => {
+
+	if (isAdmin) return;
+
+	if (e.target.matches("input, textarea")) return;
+
+	if (e.detail > 1) {
+		e.preventDefault();
+	}
+
+});
+*/
 
 
 ////////////////////////////////////////////////////////////
@@ -227,7 +264,7 @@ document.addEventListener("metronomeBeat", (e) => {
 		case "restart":
 		case "stop":
 
-			resetMetronomeUI();
+			resetMetronomeTimeline();
 
 			break;
 
@@ -288,7 +325,7 @@ document.addEventListener("playerBeat", (e) => {
 
 			}
 
-			scorePaint_scoreTick();
+			if (isScoreVisible) scorePaint_scoreTick();
 
 			break;
 
@@ -298,45 +335,34 @@ document.addEventListener("playerBeat", (e) => {
 			countBars = 1;
 			firstTick = true;
 
-			scorePaint_stop();
+			if (isScoreVisible) scorePaint_stop();
 
 			break;
 
 		case "stop":
 
-			scorePaint_stop();
+			if (isScoreVisible) scorePaint_stop();
 
-			resetPlaybackUI();
+			resetPlaybackTimeline();
 
 			// Solo ocultar si realmente hemos parado.
 			// Durante el arranque/count-in isPlaying sigue siendo true.
 
-			if (!isPlaying) {
-
-				workspaceTimeInfo.style.display = "none";
-
-			}
+			if (!isPlaying) workspaceTimeInfo.style.display = "none";
 
 			break;
 
 		case "end":
 
-			scorePaint_stop();
+			if (isScoreVisible) scorePaint_stop();
 
-			resetPlaybackUI();
+			resetPlaybackTimeline();
 
 			setControlsEnabled(true);
 
 			isPlaying = false;
 
 			setPlayStopButton(btnPlayStop, false);
-			setPlayStopButton(btnPlayStop_2, false);
-
-			scoreFloatingPlay.innerHTML =
-				"<i class='fa-solid fa-play'></i>";
-
-			scoreFloatingPlay.classList.remove("stop");
-			scoreFloatingPlay.style.display = "none";
 
 			// La reproducción ha terminado realmente
 
@@ -365,29 +391,25 @@ document.addEventListener("playerBeat", (e) => {
 
 
 
-
 //==================================================
 // EVENTOS DIBUJO CANVAS
 //==================================================
 
 canvas.addEventListener("mouseenter", () => {
 
-	if (mode === "view") return;
-
 	if (window.innerWidth <= maxMediaScreenWidth) {
 		cursor.style.display = "none";
 	}else{
 		cursor.style.display = "block";
 	}
+
 });
 
 canvas.addEventListener("mouseleave", () => {
 
-	if (mode === "view") return;
-
 	cursor.style.display = "none";
 
-	if (hoverCell === null && hoverNut === null) {
+	if (mode === "view" || window.innerWidth <= maxMediaScreenWidth || (hoverCell === null && hoverNut === null)) {
 		return;
 	}
 
@@ -400,8 +422,6 @@ canvas.addEventListener("mouseleave", () => {
 });
 
 canvas.addEventListener("mousemove", (e) => {
-
-	if (mode === "view") return;
 
 	if (window.innerWidth <= maxMediaScreenWidth) {
 
@@ -420,6 +440,8 @@ canvas.addEventListener("mousemove", (e) => {
 		return;
 
 	}
+
+	if (mode === "view") return;
 
 	cursor.style.left = e.pageX + "px";
 	cursor.style.top = e.pageY + "px";
@@ -454,6 +476,9 @@ canvas.addEventListener("click", (e) => {
 				text: noteText.value.trim()
 			};
 
+			if (!isMobile) noteText.focus();
+			noteText.value = "";
+
 		} else if (mode === "erase") {
 
 			if (nutNotes[nutString]) {
@@ -468,9 +493,6 @@ canvas.addEventListener("click", (e) => {
 
 		drawFretboard();
 		drawNotes();
-
-		if (!isMobile) noteText.focus();
-		noteText.value = "";
 
 		return;
 
@@ -487,51 +509,59 @@ canvas.addEventListener("click", (e) => {
 	}
 
 	// Modo Cejilla
-	if (mode === "barre") {
+	switch (mode) {
 
-		saveHistory();
-
-		addOrReplaceBarre(
-			cell.string,
-			cell.fret,
-			colorPicker.value,
-			noteText.value.trim().substring(0, 3)
-		);
-
-	} else if (mode === "note") {
-
-		saveHistory();
-
-		addNote(cell);
-
-	} else if (mode === "erase") {
-
-		const noteExists = notes.some(note =>
-			note.string === cell.string &&
-			note.fret === cell.fret
-		);
-
-		const barreExists = barreNotes.some(barre =>
-			barre.fret === cell.fret &&
-			cell.string <= barre.startString
-		);
-
-		if (noteExists || barreExists) {
+		case "barre":
 
 			saveHistory();
 
-			if (noteExists) {
-				eraseNote(cell);
+			addOrReplaceBarre(
+				cell.string,
+				cell.fret,
+				colorPicker.value,
+				noteText.value.trim().substring(0, 3)
+			);
+
+			break;
+
+		case "note":
+
+			saveHistory();
+
+			addNote(cell);
+
+			break;
+
+		case "erase":
+
+			const noteExists = notes.some(note =>
+				note.string === cell.string &&
+				note.fret === cell.fret
+			);
+
+			const barreExists = barreNotes.some(barre =>
+				barre.fret === cell.fret &&
+				cell.string <= barre.startString
+			);
+
+			if (noteExists || barreExists) {
+
+				saveHistory();
+
+				if (noteExists) {
+					eraseNote(cell);
+				}
+
+				if (barreExists) {
+					removeBarreAtCell(
+						cell.string,
+						cell.fret
+					);
+				}
+
 			}
 
-			if (barreExists) {
-				removeBarreAtCell(
-					cell.string,
-					cell.fret
-				);
-			}
-
-		}
+			break;
 
 	}
 
@@ -539,7 +569,7 @@ canvas.addEventListener("click", (e) => {
 	drawFretboard();
 	drawNotes();
 
-	if (!isMobile) noteText.focus();
+	if (!isMobile && mode !== "erase") noteText.focus();
 	noteText.value = "";
 
 });
@@ -759,6 +789,8 @@ btnCopyId.addEventListener("click", () => {
 
 btnOpenProjects.addEventListener("click", async () => {
 
+	openProjectsPanel();
+
 	// Preguntar solo si hay cambios sin guardar
 	if (projectModified) {
 
@@ -768,18 +800,6 @@ btnOpenProjects.addEventListener("click", async () => {
 	}
 
 	await openXMLProjectsFile();
-
-/*
-	if (opened){
-
-		projectModified = false;
-		currentProjectId = null;
-
-		newProject();
-
-		openLeftPanel();
-	}
-*/
 
 });
 
@@ -1112,41 +1132,41 @@ cmbTipoSecuencia.addEventListener("change", function () {
 
 });
 
-metronome_volumen.addEventListener("input", function () {
+sliderMetronomeVolumen.addEventListener("input", function () {
 
-    metronome_volumen.title = this.value + " dB";
+    sliderMetronomeVolumen.title = this.value + " dB";
 
-    metronome_volumen_2.title = this.value + " dB";
-    metronome_volumen_2.value = this.value;
-
-    metronome.setVolume(parseFloat(this.value));
-
-});
-
-metronome_volumen_2.addEventListener("input", function () {
-
-    metronome_volumen_2.title = this.value + " dB";
-
-    metronome_volumen.title = this.value + " dB";
-    metronome_volumen.value = this.value;
+    sliderMetronomeVolumen_2.title = this.value + " dB";
+    sliderMetronomeVolumen_2.value = this.value;
 
     metronome.setVolume(parseFloat(this.value));
 
 });
 
-metronome_btnPlayStop.addEventListener("click", async function () {
+sliderMetronomeVolumen_2.addEventListener("input", function () {
+
+    sliderMetronomeVolumen_2.title = this.value + " dB";
+
+    sliderMetronomeVolumen.title = this.value + " dB";
+    sliderMetronomeVolumen.value = this.value;
+
+    metronome.setVolume(parseFloat(this.value));
+
+});
+
+btnPlayStopMetronome.addEventListener("click", async function () {
 
 	await metronomePlayStop();
 
 });
 
-metronome_on.addEventListener("change", function () {
+chkMetronomeOn.addEventListener("change", function () {
 
 	setMetronmeOnPlaying(this.checked);
 
 });
 
-metronome_subBeatSound.addEventListener("change", function () {
+chkMetronomeBeatSound.addEventListener("change", function () {
 
     metronome.subBeatSound = !metronome.subBeatSound;
 
@@ -1174,15 +1194,15 @@ samplerGate.addEventListener("input", function () {
 
 });
 
-player_swing.addEventListener("change", function () {
+chkPlayerSwing.addEventListener("change", function () {
 
     player.setSwingFeel(this.checked);
 
-    if (this.checked) metronome_subBeatSound.checked = false;
+    if (this.checked) chkMetronomeBeatSound.checked = false;
 
 });
 
-player_repeats.addEventListener("change", function () {
+cmbPlayerRepeats.addEventListener("change", function () {
 
     player.setRepeticiones(this.value);
 
@@ -1204,19 +1224,11 @@ btnPlayStop.addEventListener("click", async function () {
 
 });
 
-btnPlayStop_2.addEventListener("click", async function () {
+scoreFloatingStopButton.addEventListener("click", async function () {
 
 	playMusic();
 
-	btnPlayStop_2.focus({ focusVisible: true });
-
-});
-
-scoreFloatingPlay.addEventListener("click", async function () {
-
-	playMusic();
-
-	scoreFloatingPlay.focus({ focusVisible: true });
+	scoreFloatingStopButton.focus({ focusVisible: true });
 
 });
 
@@ -1291,7 +1303,7 @@ cmbScoreStaves.addEventListener("change", function () {
 
     scorePaint_stop();
 
-    initScorePlayback(scoreSvg);
+    scorePaint_initScorePlayback(scoreSvg);
 
 });
 
@@ -1321,34 +1333,21 @@ sliderScoreZoom.addEventListener("change", function () {
 
 btnScoreVisible.addEventListener("click", () => {
 
-	if (isScoreVisible && !isFretboardVisible) {
-
-		return;
-
-	}
+	if (isScoreVisible && !isFretboardVisible) return;
 
 	isScoreVisible = !isScoreVisible;
 
-	setWorkspaceLayout();
-
-	if (isScoreVisible) scoreRender();
+	updateWorkspace();
 
 });
 
+
 btnFretboardVisible.addEventListener("click", () => {
 
-	if (isFretboardVisible && !isScoreVisible) {
-
-		return;
-
-	}
+	if (isFretboardVisible && !isScoreVisible) return;
 
 	isFretboardVisible = !isFretboardVisible;
 
-	setWorkspaceLayout();
-
-	if (isFretboardVisible) resizeCanvas();
-
-	if (isScoreVisible) scoreRender();
+	updateWorkspace();
 
 });

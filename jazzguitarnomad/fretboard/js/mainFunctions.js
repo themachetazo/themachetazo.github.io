@@ -1,7 +1,60 @@
 
 /*============================
-FREATBOARD FUNCTIONS
+MAIN FUNCTIONS
 ==============================*/
+
+async function loadUsersXML() {
+
+	try {
+
+		const response = await fetch("users.xml");
+
+		if (!response.ok) {
+			throw new Error("No se pudo cargar users.xml");
+		}
+
+		const xmlText = await response.text();
+
+		const parser = new DOMParser();
+		const xml = parser.parseFromString(xmlText, "text/xml");
+
+		const parserError = xml.querySelector("parsererror");
+
+		if (parserError) {
+			throw new Error("Error al interpretar users.xml");
+		}
+
+		users = [...xml.querySelectorAll("user")].map(node => ({
+
+			id: node.getAttribute("id"),
+			username: node.getAttribute("username"),
+			role: node.getAttribute("role"),
+			name: node.getAttribute("name"),
+			surname: node.getAttribute("surname"),
+			pass: node.getAttribute("pass"),
+			email: node.getAttribute("email"),
+			tel: node.getAttribute("tel"),
+			active: node.getAttribute("active") === "true",
+			alta: node.getAttribute("alta"),
+			baja: node.getAttribute("baja")
+
+		}));
+
+//		console.table(users);
+
+		return users;
+
+	} catch (error) {
+
+		console.warn("Error cargando users.xml:", error);
+
+		users = [];
+
+		return users;
+
+	}
+
+}
 
 function setLoadingProgress(percent,text){
 
@@ -35,7 +88,8 @@ function setDefaultControlsValues(state){
 
 	if (state === "init"){
 
-		orientation = "vertical";
+		orientation = window.innerWidth <= maxMediaScreenWidth ? "vertical" : "horizontal";
+/*
 		rotation = 0;
 		rotated = false;
 		currentInstrument = "piano";
@@ -45,6 +99,7 @@ function setDefaultControlsValues(state){
 		key = "C";
 		scoreStaves = "all";
 		scoreLayout = "vertical";
+*/
 
 	}
 
@@ -103,9 +158,9 @@ function setDefaultControlsValues(state){
 	cmbProjectType.value = projectType;
 	cmbTipoSecuencia.value = tipoSecuencia;
 
-	player_countIn.value = countBars;
+	cmbCountIn.value = countBars;
 
-	player_repeats.value = repetitionSequence;
+	cmbPlayerRepeats.value = repetitionSequence;
 
 	cmbSamplerInstrument.value = currentInstrument;
 
@@ -121,18 +176,18 @@ function setDefaultControlsValues(state){
 	cmbScoreStaves.value = scoreStaves;
 	cmbScoreLayout.value = scoreLayout;
 
-	player_swing.checked = swing;
-	if (player_swing.checked) metronome_subBeatSound.checked = false;
+	chkPlayerSwing.checked = swing;
+	if (chkPlayerSwing.checked) chkMetronomeBeatSound.checked = false;
 
-	metronome_on.checked = metronomeOn;
+	chkMetronomeOn.checked = metronomeOn;
 
 	btnFretboardVisible.classList.toggle("active",isFretboardVisible);
 	btnScoreVisible.classList.toggle("active",isScoreVisible);
 
-	metronome_volumen.value = -12;
-	metronome_volumen_2.value = metronome_volumen.value;
-	metronome_volumen.title = metronome_volumen.value + " dB";
-	metronome_volumen_2.title = metronome_volumen.title;
+	sliderMetronomeVolumen.value = -12;
+	sliderMetronomeVolumen_2.value = sliderMetronomeVolumen.value;
+	sliderMetronomeVolumen.title = sliderMetronomeVolumen.value + " dB";
+	sliderMetronomeVolumen_2.title = sliderMetronomeVolumen.title;
 
 	samplerVolume.value = 0;
 	samplerVolume.title = samplerVolume.value + " dB";
@@ -144,6 +199,13 @@ function setDefaultControlsValues(state){
 		notes = [];
 		barreNotes = [];
 		nutNotes = Array(stringCount).fill(null);
+
+		sequenceXMLNotes.length = 0;
+		chordsXMLNotes.length = 0;
+
+		sequenceToPlay.length = 0;
+		chordsToPlay.length = 0;
+
 	}
 
 	history = [];
@@ -175,7 +237,7 @@ function setUserControlsStates(){
 
 			btnShowProjectPanel.style.display = "none";
 
-			closeLeftPanel();
+			closeProjectsPanel();
 
 			setMenu("fretboard");
 
@@ -277,6 +339,7 @@ function updateFretNumberControls() {
 }
 
 function setControlsEnabled(enabled) {
+
     const controls = document.querySelectorAll(
         "input, select, button"
     );
@@ -286,6 +349,9 @@ function setControlsEnabled(enabled) {
     });
 
     btnResetScorePalyer.disabled = false;
+
+    if (!enabled) closeProjectsPanel();
+
 }
 
 function updateFigureOptions() {
@@ -404,29 +470,27 @@ function undo() {
 
 function showProjectPanel(){
 
-	if (appLayout.classList.contains("leftPanelHidden")) {
+	if (workspaceProjectsPanel.classList.contains("panelHidden")) {
 
-		openLeftPanel();
-
-		setWorkspaceLayout();
+		openProjectsPanel();
 
 	}else{
 
-		closeLeftPanel();
+		closeProjectsPanel();
 	}
 }
 
-function openLeftPanel(){
+function openProjectsPanel(){
 
-	appLayout.classList.remove("leftPanelHidden");
+	workspaceProjectsPanel.classList.remove("panelHidden");
 
 	btnShowProjectPanel.classList.add("active");
 
 }
 
-function closeLeftPanel(){
+function closeProjectsPanel(){
 
-	appLayout.classList.add("leftPanelHidden");
+	workspaceProjectsPanel.classList.add("panelHidden");
 
 	btnShowProjectPanel.classList.remove("active");
 
@@ -589,8 +653,7 @@ function setMenu(m){
 		topMetronomeControls,
 		topBuffer,
 		topAudio,
-		topReset,
-		topPlayStop
+		topReset
 	].forEach(control => control.classList.add("isHidden"));
 
 	switch (menuOpen){
@@ -738,7 +801,6 @@ function setMenu(m){
 function setFretboardStyle(style) {
 
 	fretboardStyle = style;
-
 	neckImageLoaded = false;
 
 	if (fretboardStyle !== "blank") {
@@ -793,17 +855,6 @@ function setOrientation(o){
 
 	updateOrientationButtons();
 
-	scrollToFretboardNut();
-
-}
-
-function updateOrientationButtons(){
-
-	btnVertical.classList.toggle("active",orientation === "vertical");
-	btnHorizontal.classList.toggle("active",orientation === "horizontal");
-
-	btnRotate.classList.toggle("active",rotated);
-
 }
 
 function rotateFretboard(){
@@ -835,59 +886,42 @@ function rotateFretboard(){
 
 }
 
+function updateOrientationButtons(){
+
+	btnVertical.classList.toggle("active",orientation === "vertical");
+	btnHorizontal.classList.toggle("active",orientation === "horizontal");
+
+	btnRotate.classList.toggle("active",rotated);
+
+}
+
 function scrollToFretboardNut(){
 
 	requestAnimationFrame(() => {
 
-		if (!workspaceContent) {
-			return;
-		}
+		if (!workspaceFretboard) return;
 
 		switch (rotation){
 
-			//------------------------------------------------
-			// Vertical - cejuela arriba
-			//------------------------------------------------
-
 			case 0:
-
-				workspaceContent.scrollTop = 0;
+				workspaceFretboard.scrollTop = 0;
 
 				break;
-
-
-			//------------------------------------------------
-			// Vertical - cejuela abajo
-			//------------------------------------------------
 
 			case 180:
-
-				workspaceContent.scrollTop = workspaceContent.scrollHeight;
+				workspaceFretboard.scrollTop = workspaceFretboard.scrollHeight;
 
 				break;
-
-
-			//------------------------------------------------
-			// Horizontal - cejuela izquierda
-			//------------------------------------------------
 
 			case 270:
-
-				workspaceContent.scrollLeft = 0;
+				workspaceFretboard.scrollLeft = 0;
 
 				break;
-
-
-			//------------------------------------------------
-			// Horizontal - cejuela derecha
-			//------------------------------------------------
 
 			case 90:
-
-				workspaceContent.scrollLeft = workspaceContent.scrollWidth;
+				workspaceFretboard.scrollLeft = workspaceFretboard.scrollWidth;
 
 				break;
-
 		}
 
 	});
@@ -904,10 +938,9 @@ function setLayout() {
 
 		cursor.style.display = "none";
 
-		closeLeftPanel();
+		closeProjectsPanel();
 
 		closeTopControls();
-
 
 	} else {
 
@@ -915,37 +948,31 @@ function setLayout() {
 
 		openTopControls();
 
-		setOrientation("horizontal");
-
 	}
+
+	updateWorkspace();
+
+}
+
+function updateProjectUI(){
 
 	setWorkspaceLayout();
 
+	setPlayerValues();
+
+}
+
+function updateWorkspace(){
+
+	setWorkspaceLayout();
+
+	if (isFretboardVisible) resizeCanvas();
+
+	if (isScoreVisible) scoreRender();
 
 }
 
 function setWorkspaceLayout(){
-
-/*
-	//------------------------------------------------
-	// Móvil + vertical + panel de proyectos abierto
-	//------------------------------------------------
-
-	const isMobileProjectPanel =
-		window.innerWidth <= maxMediaScreenWidth &&
-		orientation === "vertical" &&
-		!appLayout.classList.contains("leftPanelHidden");
-
-	if (isMobileProjectPanel) {
-
-		if (isFretboardVisible && isScoreVisible) {
-
-			isScoreVisible = false;
-
-		}
-
-	}
-*/
 
 	//------------------------------------------------
 	// Nunca permitir que ambos estén ocultos
@@ -961,7 +988,7 @@ function setWorkspaceLayout(){
 	// Mostrar / ocultar
 	//------------------------------------------------
 
-	workspaceContent.style.display = isFretboardVisible ? "" : "none";
+	workspaceFretboard.style.display = isFretboardVisible ? "" : "none";
 
 	workspaceScore.style.display = isScoreVisible ? "" : "none";
 
@@ -998,12 +1025,54 @@ function setWorkspaceLayout(){
 
 	btnScoreVisible.classList.toggle("active",isScoreVisible);
 
-	//------------------------------------------------
-	// Renderizar partitura
-	//------------------------------------------------
+}
 
-//	if (isScoreVisible) scoreRender();
+function resetPlaybackTimeline(){
 
+	buildHtmlDivsTimeline();
+
+	metronome_Info.innerHTML = "Metrónomo: <b>1 / 1</b>";
+
+	player_repeatInfo.innerHTML = "Repetición: <b>1</b>&nbsp;Compás: <b>1</b>";
+
+	countBars = 1;
+	repetitionSequence = 1;
+	firstTick = true;
+
+//	window.scrollTo({top: 0,left: 0,behavior: "smooth"});
+
+}
+
+function resetMetronomeTimeline(){
+
+	buildHtmlDivsTimeline();
+
+	metronome_Info.innerHTML = "Metrónomo: <b>1 / 1</b>";
+
+}
+
+function setPlayStopButton(button, isPlaying, showText = true){
+
+	if (isPlaying) {
+
+		button.innerHTML = showText
+			? "<i class='fa-solid fa-stop'></i><span>Stop</span>"
+			: "<i class='fa-solid fa-stop'></i>";
+
+		if (chkAutoScroll.checked) scoreFloatingStopButton.style.display = "flex";
+
+	} else {
+
+		button.innerHTML = showText
+			? "<i class='fa-solid fa-play'></i><span>Play</span>"
+			: "<i class='fa-solid fa-play'></i>";
+
+
+		scoreFloatingStopButton.style.display = "none";
+	}
+
+	button.classList.toggle("buttonPlay", !isPlaying);
+	button.classList.toggle("buttonStop", isPlaying);
 
 }
 
@@ -1022,4 +1091,56 @@ function parseBoolean(value, defaultValue = false) {
 	}
 
 	return Boolean(value);
+}
+
+
+//==================================================
+// CLIPBOARD
+//==================================================
+
+async function copyCanvasToClipboard() {
+
+    try {
+
+        const blob = await new Promise(resolve =>
+            canvas.toBlob(resolve, "image/png")
+        );
+
+        await navigator.clipboard.write([
+            new ClipboardItem({
+                "image/png": blob
+            })
+        ]);
+
+        alert("Imagen copiada al portapapeles.");
+
+    }
+    catch (err) {
+
+        console.error(err);
+
+        alert("No ha sido posible copiar la imagen.");
+
+    }
+
+}
+
+function downloadCanvas() {
+
+    const link = document.createElement("a");
+
+    link.download = "fretboard.png";
+
+    link.href = canvas.toDataURL("image/png");
+
+    link.click();
+
+}
+
+function clipboardWriteText(txt){
+
+	navigator.clipboard.writeText(txt);
+
+	alert(txt + " copiado en el portapapeles.");
+
 }

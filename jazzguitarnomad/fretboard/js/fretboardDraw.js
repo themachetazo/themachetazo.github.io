@@ -172,17 +172,7 @@ function resizeCanvas() {
 
 	drawFretboard();
 
-	if (typeof drawNotes === "function") {
-
-		drawNotes();
-
-	}
-
-	if (typeof updateLeftPanelVisibility === "function") {
-
-		updateLeftPanelVisibility();
-
-	}
+	drawNotes();
 
 }
 
