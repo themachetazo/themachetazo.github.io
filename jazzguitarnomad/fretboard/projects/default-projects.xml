@@ -35,16 +35,18 @@
 			<metronomeOn>true</metronomeOn>
 		</settings>
 		<notes>
-			<note string="5" fret="1" color="#0080ff" text=""/>
-			<note string="3" fret="2" color="#0080ff" text=""/>
-			<note string="0" fret="5" color="#0080ff" text=""/>
-			<note string="1" fret="6" color="#0080ff" text=""/>
-			<note string="3" fret="4" color="#0080ff" text=""/>
+			<note string="5" fret="1" color="#0080ff" text="" order="1"/>
+			<note string="3" fret="2" color="#0080ff" text="" order="2"/>
+			<note string="0" fret="5" color="#0080ff" text="" order="3"/>
+			<note string="1" fret="6" color="#0080ff" text="" order="4"/>
+			<note string="3" fret="4" color="#0080ff" text="" order="6"/>
 		</notes>
 		<barres>
+			<barre fret="9" startString="2" color="#ffffff" text="" order="1"/>
+			<barre fret="10" startString="5" color="#ffffff" text="" order="2"/>
 		</barres>
 		<nutNotes>
-			<nutNote string="1" color="#0080ff" text=""/>
+			<nutNote string="0" color="#0080ff" text="" order="5"/>
 		</nutNotes>
 	</project>
 
@@ -76,10 +78,10 @@
 			<metronomeOn>false</metronomeOn>
 		</settings>
 		<notes>
-			<note string="2" fret="4" color="#ff0000" text=""/>
-			<note string="3" fret="3" color="#ff0000" text=""/>
-			<note string="0" fret="7" color="#ff0000" text=""/>
-			<note string="5" fret="1" color="#ff0000" text=""/>
+			<note string="2" fret="4" color="#ff0000" text="" order="1"/>
+			<note string="3" fret="3" color="#ff0000" text="" order="2"/>
+			<note string="0" fret="7" color="#ff0000" text="" order="3"/>
+			<note string="5" fret="1" color="#ff0000" text="" order="4"/>
 		</notes>
 		<barres>
 		</barres>
@@ -87,7 +89,7 @@
 		</nutNotes>
 	</project>
 
-	<project id="b568f802474943669bb094652803af3f" title="asas" category="1">
+	<project id="b568f802474943669bb094652803af3f" title="asas" category="5">
 		<settings>
 			<orientation>vertical</orientation>
 			<fretboardStyle>maple</fretboardStyle>
@@ -99,7 +101,7 @@
 			<projectFigure>4</projectFigure>
 			<scoreScale>auto</scoreScale>
 			<projectType>sequence</projectType>
-			<tipoSecuencia>up-down</tipoSecuencia>
+			<tipoSecuencia>up</tipoSecuencia>
 			<countBars>1</countBars>
 			<repetitionSequence>1</repetitionSequence>
 			<isFretboardVisible>true</isFretboardVisible>
@@ -115,8 +117,8 @@
 			<metronomeOn>false</metronomeOn>
 		</settings>
 		<notes>
-			<note string="5" fret="2" color="#ffffff" text=""/>
-			<note string="4" fret="2" color="#ffffff" text=""/>
+			<note string="5" fret="2" color="#ffffff" text="" order="1"/>
+			<note string="4" fret="2" color="#ffffff" text="" order="2"/>
 		</notes>
 		<barres>
 		</barres>
@@ -152,9 +154,9 @@
 			<metronomeOn>false</metronomeOn>
 		</settings>
 		<notes>
-			<note string="2" fret="1" color="#ffffff" text=""/>
-			<note string="2" fret="2" color="#ffffff" text=""/>
-			<note string="4" fret="2" color="#ffffff" text=""/>
+			<note string="2" fret="1" color="#ffffff" text="" order="1"/>
+			<note string="2" fret="2" color="#ffffff" text="" order="2"/>
+			<note string="4" fret="2" color="#ffffff" text="" order="3"/>
 		</notes>
 		<barres>
 		</barres>
@@ -190,9 +192,9 @@
 			<metronomeOn>false</metronomeOn>
 		</settings>
 		<notes>
-			<note string="5" fret="1" color="#ffffff" text=""/>
-			<note string="4" fret="1" color="#ffffff" text=""/>
-			<note string="3" fret="1" color="#ffffff" text=""/>
+			<note string="5" fret="1" color="#ffffff" text="" order="1"/>
+			<note string="4" fret="1" color="#ffffff" text="" order="2"/>
+			<note string="3" fret="1" color="#ffffff" text="" order="3"/>
 		</notes>
 		<barres>
 		</barres>
@@ -228,13 +230,13 @@
 			<metronomeOn>false</metronomeOn>
 		</settings>
 		<notes>
-			<note string="5" fret="2" color="#0080ff" text=""/>
-			<note string="3" fret="1" color="#0080ff" text=""/>
+			<note string="5" fret="2" color="#0080ff" text="" order="1"/>
+			<note string="3" fret="1" color="#0080ff" text="" order="3"/>
 		</notes>
 		<barres>
 		</barres>
 		<nutNotes>
-			<nutNote string="0" color="#0080ff" text=""/>
+			<nutNote string="0" color="#0080ff" text="" order="2"/>
 		</nutNotes>
 	</project>
 
