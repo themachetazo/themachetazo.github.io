@@ -50,6 +50,44 @@
 		</nutNotes>
 	</project>
 
+	<project id="7ceffc21d4d946cea21cee52e1376a32" title="Fretboard only" category="1">
+		<settings>
+			<orientation>horizontal</orientation>
+			<fretboardStyle>maple</fretboardStyle>
+			<fretCount>24</fretCount>
+			<displayMode>true</displayMode>
+			<inlays>true</inlays>
+			<rotated>flase</rotated>
+			<projectBar>4</projectBar>
+			<projectFigure>2</projectFigure>
+			<scoreScale>30</scoreScale>
+			<projectType>fretboard</projectType>
+			<tipoSecuencia>up</tipoSecuencia>
+			<countBars>0</countBars>
+			<repetitionSequence>2</repetitionSequence>
+			<isFretboardVisible>true</isFretboardVisible>
+			<isScoreVisible>false</isScoreVisible>
+			<currentInstrument>piano</currentInstrument>
+			<fretNumbers>1</fretNumbers>
+			<showFretNumbers>true</showFretNumbers>
+			<bpm>90</bpm>
+			<key>C</key>
+			<scoreStaves>all</scoreStaves>
+			<scoreLayout>vertical</scoreLayout>
+			<swing>false</swing>
+			<metronomeOn>true</metronomeOn>
+		</settings>
+		<notes>
+			<note string="5" fret="1" color="#0080ff" text="" order="1"/>
+		</notes>
+		<barres>
+			<barre fret="3" startString="3" color="#ffffff" text="" order="2"/>
+		</barres>
+		<nutNotes>
+			<nutNote string="4" color="#ff0000" text="" order="3"/>
+		</nutNotes>
+	</project>
+
 	<project id="104681fbcc784302894e0e159141a418" title="TRITONE" category="3">
 		<settings>
 			<orientation>horizontal</orientation>
@@ -63,7 +101,7 @@
 			<scoreScale>auto</scoreScale>
 			<projectType>sequence</projectType>
 			<tipoSecuencia>up</tipoSecuencia>
-			<countBars>1</countBars>
+			<countBars>0</countBars>
 			<repetitionSequence>1</repetitionSequence>
 			<isFretboardVisible>true</isFretboardVisible>
 			<isScoreVisible>true</isScoreVisible>
