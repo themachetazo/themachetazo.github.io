@@ -403,6 +403,9 @@ function setUserControlsStates(){
 			btnEdicion.style.display = "none";
 			btnEdicionPopup.style.display = "none";
 
+			chkScoreTitle.disabled = true;
+			chkScoreTitleViewMode.disabled = true;
+
 			setMenu("fretboard");
 
 		}else{
@@ -417,9 +420,6 @@ function setUserControlsStates(){
 			topBuffer.style.display = "none";
 
 //			topFretboardDownload.style.display //funcion setMenu
-			
-			chkScoreTitle.disabled = true;
-			chkScoreTitleViewMode.disabled = true;
 
 			setMenu("edit");
 
