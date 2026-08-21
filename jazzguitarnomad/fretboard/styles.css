@@ -1012,6 +1012,11 @@ html {
 
 }
 
+#mainMenu button:focus-visible {
+	outline: 2px solid var(--color-main-text);
+	outline-offset: 2px;
+}
+
 .menuButton{
 
     flex:0 0 auto;
@@ -1110,9 +1115,46 @@ html {
 
 }
 
-#mainMenu button:focus-visible {
-	outline: 2px solid var(--color-main-text);
-	outline-offset: 2px;
+
+/* DISABLED */
+
+.menuButton:disabled{
+
+    color:var(--color-main-text);
+
+    background:transparent;
+
+    cursor:not-allowed;
+
+    opacity:.6;
+
+    transition:none;
+
+}
+
+.menuButton:disabled:hover{
+
+    color:var(--color-main-text);
+
+    background:transparent;
+
+}
+
+.menuButton:disabled::after,
+.menuButton.active:disabled::after{
+
+    transform:scaleX(0);
+
+    transition:none;
+
+}
+
+.menuButton:disabled i{
+
+    transform:none;
+
+    transition:none;
+
 }
 
 #topBarActions{
@@ -1191,6 +1233,36 @@ html {
 
 	background:var(--color-tools);
 	color:#fff;
+
+}
+
+#menuPopup button:disabled{
+
+	background:none;
+
+	color:inherit;
+
+	cursor:not-allowed;
+
+	opacity:.6;
+
+	transition:none;
+
+}
+
+#menuPopup button:disabled:hover{
+
+	background:none;
+
+	color:inherit;
+
+}
+
+#menuPopup button:disabled i{
+
+	opacity:1;
+
+	transform:none;
 
 }
 
@@ -1784,7 +1856,6 @@ input[type="range"] {
 .toolbarTop-Controls button:disabled,
 #workspaceHeader button:disabled,
 .projectPanelHeader button:disabled{
-
 	opacity:0.45;
 	cursor:not-allowed;
 
