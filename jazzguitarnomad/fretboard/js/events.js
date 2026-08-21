@@ -19,6 +19,8 @@ window.addEventListener("load", async () => {
 		user = params.get("user");
 		projectParam = params.get("project");
 
+		currentProjectId = projectParam;
+
 		await loadXML("user",xmlUsers);
 
 		setUserControlsStates();

@@ -28,7 +28,6 @@ async function loadXML(type,file) {
 
 			case "user":
 
-				user = "";
 				users = parseUsersXml(xml);
 
 				break;
@@ -72,7 +71,7 @@ async function loadXML(type,file) {
 
 function parseUsersXml(xml) {
 
-	return [...xml.querySelectorAll("user")].map(node => ({
+	const u = [...xml.querySelectorAll("user")].map(node => ({
 
 		id: node.getAttribute("id"),
 		username: node.getAttribute("username"),
@@ -87,6 +86,10 @@ function parseUsersXml(xml) {
 		baja: node.getAttribute("baja")
 
 	}));
+
+//	console.table(u);
+
+	return u;
 
 }
 
