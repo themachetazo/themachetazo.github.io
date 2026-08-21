@@ -520,17 +520,17 @@ titleText.addEventListener("input", () => {
 
 });
 
-showTitle.addEventListener("change", () => {
+chkShowTitle.addEventListener("change", () => {
 
-	showTitleViewMode.checked = showTitle.checked;
+	chkShowTitleViewMode.checked = chkShowTitle.checked;
 
 	if (isFretboardVisible) resizeCanvas();
 
 });
 
-showTitleViewMode.addEventListener("change", () => {
+chkShowTitleViewMode.addEventListener("change", () => {
 
-	showTitle.checked = showTitleViewMode.checked;
+	chkShowTitle.checked = chkShowTitleViewMode.checked;
 
 	if (isFretboardVisible) resizeCanvas();
 

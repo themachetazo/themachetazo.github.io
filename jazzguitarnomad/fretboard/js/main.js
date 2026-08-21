@@ -76,12 +76,6 @@ async function initializeApp() {
 		loadNotas(tipoSecuencia);
 		scoreLoadArray(tipoSecuencia);
 
-		const hasNotes = projectType === "sequence"
-			? NOTAS.length > 0
-			: ACORDES.length > 0;
-
-		btnPlayStop.disabled = !hasNotes;
-
 
 		// DIBUJADO ----------------------
 
@@ -219,8 +213,6 @@ function parseUsersXml(xml) {
 
 	}));
 
-//	console.table(u);
-
 	return u;
 
 }
@@ -267,9 +259,9 @@ function setDefaultControlsValues(state){
 	titleText.value = projectTitle;
 	workspaceTitleText.textContent = projectTitle === "" ? "Sin Título" : projectTitle;
 
-	showTitle.checked = false;
+	chkShowTitle.checked = false;
 	chkScoreTitle.checked = false;
-	showTitleViewMode.checked = false;
+	chkShowTitleViewMode.checked = false;
 	chkScoreTitleViewMode.checked = false;
 
 	numFrets.value = fretCount;
@@ -373,12 +365,15 @@ function setUserControlsStates(){
 
 			if (!currentUser.active){
 				alert("El usuario '" + user + "' no está activo.");
+				user = null;
 			}else{
+				isUserActive = true;
 				xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + user + ".xml";
 			}
 
 		}else{
 			alert("El usuario '" + user + "' no existe.");
+			user = null;
 		}
 	}
 
@@ -403,6 +398,11 @@ function setUserControlsStates(){
 			btnEdicion.style.display = "none";
 			btnEdicionPopup.style.display = "none";
 
+			if (!isUserActive) {
+				btnPlayStop.style.display = "none";
+				topFretboardDownload.style.display = "none";
+			}
+
 			setMenu("fretboard");
 
 		}else{
@@ -412,9 +412,9 @@ function setUserControlsStates(){
 			topTitleViewMode.style.display = "none";
 			topLibrary.style.display = "none";
 			topCategory.style.display = "none";
-			topScoreDownload.style.display = "none";
 			topAudio.style.display = "none";
 			topBuffer.style.display = "none";
+			topScoreDownload.style.display = "none";
 
 //			topFretboardDownload.style.display //funcion setMenu
 
@@ -425,6 +425,8 @@ function setUserControlsStates(){
 		btnToggleLibrary.style.display = "none";
 
 	} else {
+
+		isUserActive = true;
 
 		topTitleViewMode.style.display = "none";
 
@@ -492,18 +494,32 @@ function setProjectControlsStates() {
 
 function setProjectControlsType(){
 
-	btnScore.style.display = projectType === "fretboard" ? "none" : "";
-	btnPlayer.style.display = projectType === "fretboard" ? "none" : "";
-
 	cmbTipoSecuencia.disabled = projectType === "fretboard";
 	chkMetronomeOn.checked = projectType !== "fretboard";
 	chkMetronomeOn.disabled = projectType === "fretboard";
 
 	topChords.style.display = cmbProjectType.value !== "chord" ? "none" : "flex";
 
-	btnPlayStop.style.display = projectType === "fretboard" ? "none" : "";
-	btnFretboardVisible.style.display = projectType === "fretboard" ? "none" : "";
-	btnScoreVisible.style.display = projectType === "fretboard" ? "none" : "";
+	btnScore.disabled = projectType === "fretboard";
+	btnScorePopup.disabled = projectType === "fretboard";
+	btnPlayer.disabled = projectType === "fretboard";
+	btnPlayerPopup.disabled = projectType === "fretboard";
+
+	btnPlayStop.disabled = projectType === "fretboard";
+	btnFretboardVisible.disabled = projectType === "fretboard";
+	btnScoreVisible.disabled = projectType === "fretboard";
+
+	if (subtituleText.textContent === "Fretboard Viewer") {
+
+		btnScore.disabled = false;
+		btnScorePopup.disabled = false;
+		btnPlayer.disabled = false;
+		btnPlayerPopup.disabled = false;
+
+		btnPlayStop.disabled = false;
+		btnFretboardVisible.disabled = false;
+		btnScoreVisible.disabled = false;
+	}
 
 }
 
@@ -966,6 +982,7 @@ function setMenu(m){
 			btnFretboard.classList.add("active");
 
 			showMenuControls(
+				topTitleViewMode,
 				topFretboardScale,
 				topDiapason,
 				topFrets,

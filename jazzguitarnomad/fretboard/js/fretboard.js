@@ -55,7 +55,7 @@ function resizeCanvas() {
 	// Título
 	//------------------------------------------------
 
-	if (showTitle.checked) {
+	if (chkShowTitle.checked) {
 
 		topMargin = 42;
 
@@ -133,7 +133,7 @@ function resizeCanvas() {
 	// Título + números superiores
 	//------------------------------------------------
 
-	if (showTitle.checked && showFretNumbers && (rotation === 0 || rotation === 90)) {
+	if (chkShowTitle.checked && showFretNumbers && (rotation === 0 || rotation === 90)) {
 
 		topMargin = 68;
 
@@ -341,7 +341,7 @@ function drawFretboard() {
 	// Título
 	//------------------------------------------------
 
-	if (showTitle.checked){
+	if (chkShowTitle.checked){
 
 		let title = titleText.value.trim() || "Sin Título";
 

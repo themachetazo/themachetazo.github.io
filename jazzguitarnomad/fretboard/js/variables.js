@@ -52,7 +52,11 @@ const colorPreview = document.getElementById("colorPreview");
 
 const noteText = document.getElementById("noteText");
 const titleText = document.getElementById("titleText");
-const showTitle = document.getElementById("showTitle");
+const chkTitle = document.getElementById("chkTitle");
+const chkTitleViewMode = document.getElementById("chkTitleViewMode");
+const chkScoreTitle = document.getElementById("chkScoreTitle");
+const chkScoreTitleViewMode = document.getElementById("chkScoreTitleViewMode");
+
 const workspaceTitleText = document.getElementById("workspaceTitleText");
 
 const numFrets = document.getElementById("numFrets");
@@ -218,7 +222,6 @@ const cmbScoreStaves = document.getElementById("cmbScoreStaves");
 const cmbScoreLayout = document.getElementById("cmbScoreLayout");
 const sliderScoreStaveDistance = document.getElementById("sliderScoreStaveDistance");
 const sliderScoreStaveMargin = document.getElementById("sliderScoreStaveMargin");
-const chkScoreTitle = document.getElementById("chkScoreTitle");
 const btnScoreVisible = document.getElementById("btnScoreVisible");
 
 
@@ -228,13 +231,13 @@ const btnScoreVisible = document.getElementById("btnScoreVisible");
 
 let params;
 
+let lib = null;
+
 let users = [];
 let user;
 let xmlUsers = "users.xml";
-
 let isAdmin = false;
-
-let lib = null;
+let isUserActive = false;
 
 let projectsLoaded = false;
 
