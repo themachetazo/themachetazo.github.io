@@ -398,7 +398,7 @@ function setUserControlsStates(){
 			btnEdicion.style.display = "none";
 			btnEdicionPopup.style.display = "none";
 
-			if (!isUserActive) {
+			if (user === null) {
 				btnPlayStop.style.display = "none";
 				topFretboardDownload.style.display = "none";
 			}
