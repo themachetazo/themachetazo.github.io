@@ -51,9 +51,9 @@ async function loadProject(project) {
 	scoreStaves = project.settings?.scoreStaves ?? "all";
 	scoreLayout = project.settings?.scoreLayout ?? "vertical";
 	swing = parseBoolean(project.settings?.swing, false);
-	metronomeOn = parseBoolean(project.settings?.metronomeOn, true);
 	isFretboardVisible = parseBoolean(project.settings?.isFretboardVisible, true);
 	isScoreVisible = parseBoolean(project.settings?.isScoreVisible, false);
+	metronomeOn = parseBoolean(project.settings?.metronomeOn, true);
 
 	// --------------------------------
 	// NOTAS

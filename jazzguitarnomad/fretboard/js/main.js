@@ -264,6 +264,7 @@ function setDefaultControlsValues(state){
 	if (chkPlayerSwing.checked) chkMetronomeBeatSound.checked = false;
 
 	chkMetronomeOn.checked = metronomeOn;
+	setMetronmeOnPlaying(metronomeOn);
 
 	btnFretboardVisible.classList.toggle("active",isFretboardVisible);
 	btnScoreVisible.classList.toggle("active",isScoreVisible);
