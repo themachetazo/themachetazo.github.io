@@ -28,7 +28,6 @@ async function loadXML(type,file) {
 
 			case "user":
 
-				isAdmin = false;
 				user = "";
 				users = parseUsersXml(xml);
 
