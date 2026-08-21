@@ -403,9 +403,6 @@ function setUserControlsStates(){
 			btnEdicion.style.display = "none";
 			btnEdicionPopup.style.display = "none";
 
-			chkScoreTitle.disabled = true;
-			chkScoreTitleViewMode.disabled = true;
-
 			setMenu("fretboard");
 
 		}else{
