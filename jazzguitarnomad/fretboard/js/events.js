@@ -488,7 +488,7 @@ cmbDiapason.addEventListener("change", () => {
 
 btnToggleLibrary.addEventListener("click", () => {
 
-	if (text.includes("Server: ")) window.open(xmlProjects, "_blank");
+	if (btnToggleLibrary.title.includes("Server: ")) window.open(xmlProjects, "_blank");
 
 });
 
