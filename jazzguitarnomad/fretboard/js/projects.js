@@ -126,7 +126,7 @@ async function loadProject(project) {
 	btnPlayStop.disabled = !hasNotes;
 
 	// --------------------------------
-	// LAYOUT
+	// ACTUALIZAR INTERFAZ
 	// --------------------------------
 
 	setWorkspaceLayout();
@@ -189,7 +189,9 @@ function newProject() {
 
 	// ACTUALIZAR INTERFAZ
 
-	updateProjectUI();
+	setWorkspaceLayout();
+
+	setPlayerValues();
 
 	return true;
 }
@@ -200,10 +202,7 @@ async function openXMLProjectsFile() {
 
 		if (!window.showOpenFilePicker) {
 
-			alert(
-				"Tu navegador no permite editar directamente el XML. " +
-				"Al guardar se descargará " + xmlProjects
-			);
+			alert("Tu navegador no permite editar directamente el XML. Al guardar se descargará " + xmlProjects);
 
 			return false;
 		}
@@ -218,11 +217,7 @@ async function openXMLProjectsFile() {
 
 				types: [{
 					description: "Proyectos de Fretboard",
-
-					accept: {
-						"application/xml": [".xml"]
-					}
-
+					accept: {"application/xml": [".xml"]}
 				}],
 
 				multiple: false
@@ -238,7 +233,7 @@ async function openXMLProjectsFile() {
 
 		xmlProjects = fileHandle.name;
 
-		btnToggleLibrary.title = "Local: " + fileHandle.name;
+		btnToggleLibrary.title = projectsName + ". Local: " + fileHandle.name;
 
 
 		// --------------------------------
@@ -330,6 +325,8 @@ async function openXMLProjectsFile() {
 }
 
 function parseProjectsXml(xml) {
+
+	projectsName = xml.documentElement.getAttribute("name");
 
 	categories = [];
 
@@ -546,7 +543,7 @@ function projectsToXml() {
 	const lines = [];
 
 	lines.push('<?xml version="1.0" encoding="UTF-8"?>');
-	lines.push('<fretboardProjects version="' + xmlVersion + '">');
+	lines.push('<projects version="' + xmlVersion + '" name="' + projectsName + '">');
 	lines.push("");
 
 	// Categorías
@@ -571,7 +568,7 @@ function projectsToXml() {
 
 	});
 
-	lines.push("</fretboardProjects>");
+	lines.push("</projects>");
 
 	return lines.join("\n");
 

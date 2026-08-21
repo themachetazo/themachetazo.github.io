@@ -1,137 +1,10 @@
 "use strict";
 
 //==================================================
-// INICIALIZACION
-//==================================================
-
-window.addEventListener("load", async () => {
-
-	try {
-
-		// MENU ----------------------
-
-		setLoadingProgress(0, "Configurando usuario...");
-
-		params = new URLSearchParams(window.location.search);
-
-		isAdmin = params.has("admin");
-
-		user = params.get("user");
-		projectParam = params.get("project");
-
-		currentProjectId = projectParam;
-
-		await loadXML("user",xmlUsers);
-
-		setUserControlsStates();
-
-
-		// PROJECTS ----------------------
-
-		setLoadingProgress(10, "Cargando proyectos...");
-
-		await loadXML("project",xmlProjects);
-
-		setProjectControlsStates();
-
-
-		// LAYOUT ----------------------
-
-		setLoadingProgress(20, "Configurando página...");
-
-		setOrientation(orientation);
-
-		setLayout();
-
-		await waitForLayout();
-
-
-		// PLAYER ----------------------
-
-		setLoadingProgress(30, "Cargando metrónomo...");
-
-		metronome = new Metronome();
-
-
-		setLoadingProgress(40, "Cargando instrumentos...");
-
-		instruments = {
-			piano: createSampler("piano"),
-			cguitar: createSampler("cguitar")
-		};
-
-
-		setLoadingProgress(50, "Cargando reproductor...");
-
-		instrument = instruments[currentInstrument];
-
-		player = new MusicPlayer(instrument, metronome);
-
-		setPlayerValues();
-
-
-		// NOTAS ----------------------
-
-		setLoadingProgress(60, "Configurando notas...");
-
-		loadNotas(tipoSecuencia);
-		scoreLoadArray(tipoSecuencia);
-
-		const hasNotes = projectType === "sequence" ? NOTAS.length > 0 : ACORDES.length > 0;
-		btnPlayStop.disabled = !hasNotes;
-
-
-		// IMÁGENES ----------------------
-
-		setLoadingProgress(70, "Cargando imágenes...");
-
-		await loadFretboardImage();
-
-		await waitForLayout();
-
-
-		// DIBUJADO ----------------------
-
-		setLoadingProgress(80, "Dibujando notas...");
-
-		if (isFretboardVisible) {
-
-			resizeCanvas();
-
-			scrollToFretboardNut();
-
-		}
-
-
-		// SCORE ----------------------
-
-		setLoadingProgress(90, "Cargando partitura...");
-
-		if (isScoreVisible) scoreRender();
-
-
-		// FIN ----------------------
-
-		setLoadingProgress(100, "Carga completada");
-
-		hideLoadingScreen();
-
-
-	} catch (error) {
-
-		console.error("Error durante la carga:", error);
-
-		setErrorLoadingProgress(error);
-
-	}
-
-});
-
-
-//==================================================
 // DOCUMENT EVENTS
 //==================================================
 
+window.addEventListener("load",initializeApp);
 
 window.addEventListener("resize", () => {
 
@@ -615,15 +488,7 @@ cmbDiapason.addEventListener("change", () => {
 
 btnToggleLibrary.addEventListener("click", () => {
 
-	const prefix = "Server: ";
-
-	if (btnToggleLibrary.title.startsWith(prefix)) {
-
-		const path = btnToggleLibrary.title.substring(prefix.length);
-
-		window.open(path, "_blank");
-
-	}
+	if (text.includes("Server: ")) window.open(xmlProjects, "_blank");
 
 });
 

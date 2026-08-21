@@ -74,34 +74,33 @@ function organizeSequence(direction, playLast = true) {
 
 	sequenceToPlay.length = 0;
 
-	const sequenceUp = [...sequenceXMLNotes];
-	const sequenceDown = [...sequenceXMLNotes].reverse();
+	const sequenceXMLUp = [...sequenceXMLNotes];
+	const sequenceXMLDown = [...sequenceXMLNotes].reverse();
 
-	// Quitamos la primera nota del segundo recorrido si playLast es false
-	// porque esa nota es la repetición de la última del primer recorrido
-	const sequenceDownNoLast = sequenceDown.slice(1);
-	const sequenceUpNoLast = sequenceUp.slice(1);
+	// Quitamos la primera nota del segundo recorrido si playLast es false porque esa nota es la repetición de la última del primer recorrido
+	const sequenceXMLDownNoLast = sequenceXMLDown.slice(1);
+	const sequenceXMLUpNoLast = sequenceXMLUp.slice(1);
 
 	switch (direction) {
 
 		case "up":
-			sequenceToPlay = sequenceUp;
+			sequenceToPlay = sequenceXMLUp;
 			break;
 
 		case "down":
-			sequenceToPlay = sequenceDown;
+			sequenceToPlay = sequenceXMLDown;
 			break;
 
 		case "up-down":
 
 			sequenceToPlay = playLast
 				? [
-					...sequenceUp,
-					...sequenceDown
+					...sequenceXMLUp,
+					...sequenceXMLDown
 				]
 				: [
-					...sequenceUp,
-					...sequenceDownNoLast
+					...sequenceXMLUp,
+					...sequenceXMLDownNoLast
 				];
 
 			break;
@@ -110,12 +109,12 @@ function organizeSequence(direction, playLast = true) {
 
 			sequenceToPlay = playLast
 				? [
-					...sequenceDown,
-					...sequenceUp
+					...sequenceXMLDown,
+					...sequenceXMLUp
 				]
 				: [
-					...sequenceDown,
-					...sequenceUpNoLast
+					...sequenceXMLDown,
+					...sequenceXMLUpNoLast
 				];
 
 			break;
@@ -347,13 +346,6 @@ function scoreLoadArray(mode){
 
 }
 
-
-////////////////////////////////////////////////////////////
-//
-// PROYECTO
-//
-////////////////////////////////////////////////////////////
-
 function setPlayerValues(){
 
 	metronome.setBpm(parseFloat(bpm));
@@ -406,6 +398,7 @@ async function playMusic(){
 		// Abrir y cerrar controles
 
 		topControlsWasOpen = topControlsContainer.classList.contains("isOpen");
+
 		if (topControlsWasOpen) closeTopControls();
 		
 		await Tone.start();

@@ -234,7 +234,7 @@ let xmlUsers = "users.xml";
 
 let isAdmin = false;
 
-let projectParam;
+let lib = null;
 
 let projectsLoaded = false;
 
@@ -250,7 +250,7 @@ let categories = [];
 let xmlProjects = "projects/default.xml";
 const xmlVersion = "1.0";
 
-
+let projectsName = "";
 
 /*==================================================
 	CONFIGURACIÓN GENERAL DE LA APLICACIÓN
