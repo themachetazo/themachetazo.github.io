@@ -212,7 +212,7 @@ function parseUsersXml(xml) {
 		pass: node.getAttribute("pass"),
 		email: node.getAttribute("email"),
 		tel: node.getAttribute("tel"),
-		active: node.getAttribute("active"),
+		active: node.getAttribute("active") === "true",
 		permit: node.getAttribute("permit"),
 		alta: node.getAttribute("alta"),
 		baja: node.getAttribute("baja")
@@ -371,7 +371,7 @@ function setUserControlsStates(){
 
 		if (currentUser) {
 
-			if (parseBoolean(currentUser.active)){
+			if (!currentUser.active){
 				alert("El usuario '" + user + "' no está activo.");
 			}else{
 				xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + user + ".xml";
