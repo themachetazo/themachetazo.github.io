@@ -113,7 +113,7 @@
 					<div class="toolbarTop-Controls" id="topCategory">
 						<span>CATEGORÍAS</span>
 						<div class="toolRow">
-							<select id="projectCategory"></select>
+							<select id="cmbProjectCategory"></select>
 						</div>
 						<div class="toolRow">
 							<button id="btnNewCategory" title="Nueva categoría"><i class="fa-solid fa-folder-plus"></i><span></span></button>
@@ -272,11 +272,8 @@
 							    <option value="2">2</option>
 							    <option value="3">3</option>
 							    <option value="4">4</option>
+							    <option value="5">5</option>
 							</select>
-						</div>
-						<div class="toolRow">
-							<button id="btnNewChord" title="Nuevo acorde" disabled><i class="fa-solid fa-plus-circle"></i><span></span></button>
-							<button id="btnDelChord" title="Borrar acorde" disabled><i class="fa-solid fa-circle-minus"></i><span></span></button>
 						</div>
 					</div>
 
@@ -398,7 +395,7 @@
 						<div class="toolRow">
 							<span>Cuenta atrás</span>
 							<select id="cmbCountIn">
-								<option value="0">No</option>
+								<option value="0" selected>No</option>
 								<option value="1">1 compás</option>
 								<option value="2">2 compases</option>
 							</select>
@@ -609,7 +606,7 @@
 				<button id="btnVertical" class="active" title="Cambiar orientación"><i class="fa-solid fa-arrows-up-down"></i><span>Vertical</span></button>
 				<button id="btnHorizontal" title="Cambiar orientación"><i class="fa-solid fa-arrows-left-right"></i><span>Horizontal</span></button>
 			</div>
-			<div class="workspaceControls" id="workspaceMetronomeInfo">
+			<div class="workspaceControls" id="workspaceMetronome">
 				<div id="metronome_timeline">
 					<div class="metronome_pulse metronome_beat metronome_bar" data-index="0"></div>
 					<div class="metronome_pulse metronome_beat metronome_bar" data-index="1"></div>
@@ -748,11 +745,11 @@
 	<script src="js/CMusicPlayer.js"></script> <!--player-->
 
 	<script src="js/variables.js"></script>
-	<script src="js/fretboardDraw.js"></script>
-	<script src="js/projectsFunctions.js"></script>
-	<script src="js/mainFunctions.js"></script>
-	<script src="js/scorePlayerFunctions.js"></script>
-	<script src="js/mainEvents.js"></script>
+	<script src="js/fretboard.js"></script>
+	<script src="js/projects.js"></script>
+	<script src="js/main.js"></script>
+	<script src="js/scorePlayer.js"></script>
+	<script src="js/events.js"></script>
 
 
 </body>
