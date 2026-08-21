@@ -1,19 +1,6 @@
 "use strict";
 
 /*==================================================
-	REFERENCIAS DOM: CANVAS
-==================================================*/
-
-const workspace = document.getElementById("workspace");
-const canvas = document.getElementById("workspaceCanvas");
-const ctx = canvas.getContext("2d");
-
-const workspaceFretboard = document.getElementById("workspaceFretboard");
-const workspaceScore = document.getElementById("workspaceScore");
-
-const cursor = document.getElementById("cursorTool");
-
-/*==================================================
 	REFERENCIAS DOM: PANELES Y DISEÑO RESPONSIVE
 ==================================================*/
 
@@ -144,26 +131,130 @@ const btnCopyId = document.getElementById("btnCopyId");
 const chordProjectList = document.getElementById("chordProjectList");
 const scaleProjectList = document.getElementById("scaleProjectList");
 const otherProjectList = document.getElementById("otherProjectList");
-const projectCategory = document.getElementById("projectCategory");
+const cmbProjectCategory = document.getElementById("cmbProjectCategory");
 const btnShowProjectPanel = document.getElementById("btnShowProjectPanel");
 const btnToggleLibrary = document.getElementById("btnToggleLibrary");
 
 
 /*==================================================
-	PARAMETROS
+	REFERENCIAS DOM: CANVAS
 ==================================================*/
 
-const params = new URLSearchParams(window.location.search);
+const workspace = document.getElementById("workspace");
+const canvas = document.getElementById("workspaceCanvas");
+const ctx = canvas.getContext("2d");
 
-const user = params.get("user");
+const workspaceFretboard = document.getElementById("workspaceFretboard");
+const workspaceScore = document.getElementById("workspaceScore");
+
+const cursor = document.getElementById("cursorTool");
+
+
+/*==================================================
+	REFERENCIAS DOM: PLAYER y PARTITURA
+==================================================*/
+
+const scoreFloatingStopButton = document.getElementById("scoreFloatingStopButton");
+
+const btnLessTempo = document.getElementById("btnLessTempo");
+const btnMoreTempo = document.getElementById("btnMoreTempo");
+const numBpm = document.getElementById("numBpm");
+const btnTime4 = document.getElementById("btnTime4");
+const btnTime3 = document.getElementById("btnTime3");
+
+const btnScoreDownloadImage = document.getElementById("btnScoreDownloadImage");
+const cmbChords = document.getElementById("cmbChords");
+
+const cmbNoteNames = document.getElementById("cmbNoteNames");
+const chkNoteNames = document.getElementById("chkNoteNames");
+
+const cmbProjectType = document.getElementById("cmbProjectType");
+
+const cmbBar = document.getElementById("cmbBar");
+const cmbFigure = document.getElementById("cmbFigure");
+const cmbTonalidad = document.getElementById("cmbTonalidad");
+const cmbTipoSecuencia = document.getElementById("cmbTipoSecuencia");
+
+const sliderBpm = document.getElementById("sliderBpm");
+
+const samplerGate = document.getElementById("samplerGate");
+
+const workspaceTimeInfo = document.getElementById("workspaceTimeInfo");
+const workspaceMetronome = document.getElementById("workspaceMetronome");
+const player_repeatInfo = document.getElementById("player_repeatInfo");
+const metronome_Info = document.getElementById("metronome_Info");
+
+const btnPlayStop = document.getElementById("btnPlayStop");
+const btnResetScorePalyer = document.getElementById("btnResetScorePalyer");
+
+const btnRenderBuffer = document.getElementById("btnRenderBuffer");
+const player_bufferState = document.getElementById("player_bufferState");
+const cmbAudioFormat = document.getElementById("cmbAudioFormat");
+const btnSaveAudio = document.getElementById("btnSaveAudio");
+
+const cmbCountIn = document.getElementById("cmbCountIn");
+
+const cmbPlayerRepeats = document.getElementById("cmbPlayerRepeats");
+
+const chkPlayerSwing = document.getElementById("chkPlayerSwing");
+
+const cmbSamplerInstrument = document.getElementById("cmbSamplerInstrument");
+const sliderSamplerVolume = document.getElementById("samplerVolume");
+
+const btnPlayStopMetronome = document.getElementById("btnPlayStopMetronome");
+const metronome_timeline = document.getElementById("metronome_timeline");
+const sliderMetronomeVolumen = document.getElementById("sliderMetronomeVolumen");
+const sliderMetronomeVolumen_2 = document.getElementById("sliderMetronomeVolumen_2");
+const chkMetronomeOn = document.getElementById("chkMetronomeOn");
+const chkMetronomeBeatSound = document.getElementById("chkMetronomeBeatSound");
+
+const chkAutoScroll = document.getElementById("chkAutoScroll");
+
+const vexTab_container = document.querySelector(".vextab-auto");
+
+const cmbScoreScale = document.getElementById("cmbScoreScale");
+const sliderScoreZoom = document.getElementById("sliderScoreZoom");
+const cmbScoreStaves = document.getElementById("cmbScoreStaves");
+const cmbScoreLayout = document.getElementById("cmbScoreLayout");
+const sliderScoreStaveDistance = document.getElementById("sliderScoreStaveDistance");
+const sliderScoreStaveMargin = document.getElementById("sliderScoreStaveMargin");
+const chkScoreTitle = document.getElementById("chkScoreTitle");
+const btnScoreVisible = document.getElementById("btnScoreVisible");
+
+
+/*==================================================
+	PARAMETROS, USUARIOS Y PROYECTOS
+==================================================*/
+
+let params;
+
+let users = [];
+let user;
+let xmlUsers = "users.xml";
+
+let isAdmin = false;
+
+let projectParam;
+
+let projectsLoaded = false;
+
+let projects = [];
+let projectsFileHandle = null;
+
+let currentProjectId = null;
+
+let projectModified = false;
+
+let categories = [];
+
+let xmlProjects = "projects/default.xml";
+const xmlVersion = "1.0";
+
 
 
 /*==================================================
 	CONFIGURACIÓN GENERAL DE LA APLICACIÓN
 ==================================================*/
-
-let users = [];
-let isAdmin = false;
 
 const stringCount = 6;
 
@@ -198,27 +289,6 @@ let scoreLayout = "vertical";
 let swing = false;
 let metronomeOn = true;
 let inlays = true;
-
-
-/*==================================================
-	PROYECTOS
-==================================================*/
-
-let projectsLoaded = false;
-
-let projects = [];
-let projectsFileHandle = null;
-
-let currentProjectId = null;
-
-let projectModified = false;
-
-let categories = [];
-
-let xmlProjects = "projects/default-projects.xml";
-const xmlVersion = "1.0";
-
-btnToggleLibrary.title = "Server: " + xmlProjects;
 
 
 /*==================================================
@@ -293,82 +363,18 @@ let chordsXMLNotes = []; //Barres de cejillas
 let sequenceToPlay = []; //Secuencia de notas Final a tocar
 let chordsToPlay = []; //Secuencia de acordes Final a tocar
 
-
-/*==================================================
-	HISTORIAL PARA DESHACER CON CTRL+Z
-==================================================*/
-
 let history = [];
 const maxHistory = 50;
 
 /*==================================================
-	REFERENCIAS DOM: PLAYER y PARTITURA
+	PLAYER y SCORE
 ==================================================*/
-
-const scoreFloatingStopButton = document.getElementById("scoreFloatingStopButton");
-
-const btnLessTempo = document.getElementById("btnLessTempo");
-const btnMoreTempo = document.getElementById("btnMoreTempo");
-const numBpm = document.getElementById("numBpm");
-const btnTime4 = document.getElementById("btnTime4");
-const btnTime3 = document.getElementById("btnTime3");
-
-const btnScoreDownloadImage = document.getElementById("btnScoreDownloadImage");
-const cmbChords = document.getElementById("cmbChords");
-const btnNewChord = document.getElementById("btnNewChord");
-const btnDelChord = document.getElementById("btnDelChord");
-
-const cmbNoteNames = document.getElementById("cmbNoteNames");
-const chkNoteNames = document.getElementById("chkNoteNames");
-
-const cmbProjectType = document.getElementById("cmbProjectType");
-
-const cmbBar = document.getElementById("cmbBar");
-const cmbFigure = document.getElementById("cmbFigure");
-const cmbTonalidad = document.getElementById("cmbTonalidad");
-const cmbTipoSecuencia = document.getElementById("cmbTipoSecuencia");
-
-const sliderBpm = document.getElementById("sliderBpm");
-
-const samplerGate = document.getElementById("samplerGate");
-
-const workspaceTimeInfo = document.getElementById("workspaceTimeInfo");
-const workspaceMetronomeInfo = document.getElementById("workspaceMetronomeInfo");
-const player_repeatInfo = document.getElementById("player_repeatInfo");
-const metronome_Info = document.getElementById("metronome_Info");
-
-const btnPlayStop = document.getElementById("btnPlayStop");
-const btnResetScorePalyer = document.getElementById("btnResetScorePalyer");
-
-const btnRenderBuffer = document.getElementById("btnRenderBuffer");
-const player_bufferState = document.getElementById("player_bufferState");
-const cmbAudioFormat = document.getElementById("cmbAudioFormat");
-const btnSaveAudio = document.getElementById("btnSaveAudio");
-
-const cmbCountIn = document.getElementById("cmbCountIn");
-
-const cmbPlayerRepeats = document.getElementById("cmbPlayerRepeats");
-
-const chkPlayerSwing = document.getElementById("chkPlayerSwing");
-
-const cmbSamplerInstrument = document.getElementById("cmbSamplerInstrument");
-const sliderSamplerVolume = document.getElementById("samplerVolume");
-
-const btnPlayStopMetronome = document.getElementById("btnPlayStopMetronome");
-const metronome_timeline = document.getElementById("metronome_timeline");
-const sliderMetronomeVolumen = document.getElementById("sliderMetronomeVolumen");
-const sliderMetronomeVolumen_2 = document.getElementById("sliderMetronomeVolumen_2");
-const chkMetronomeOn = document.getElementById("chkMetronomeOn");
-const chkMetronomeBeatSound = document.getElementById("chkMetronomeBeatSound");
-
-const chkAutoScroll = document.getElementById("chkAutoScroll");
-
-const vexTab_container = document.querySelector(".vextab-auto");
 
 const EVENT_X_TOLERANCE = 12;
 const SCORE_SYSTEM_Y_TOLERANCE = 150;
 const SCORE_PROGRESS_BAR_WIDTH = 2;
 const SCORE_PROGRESS_BAR_MARGIN = 8;
+
 let scoreSystems = [];
 let scoreEvents = [];
 let scoreEventIndex = 0;
@@ -378,15 +384,6 @@ let scoreProgressBar = null;
 let scoreCurrentSystem = -1;
 const scoreNoteColor = "blue";
 const scoreScrollColor = "green";
-
-const cmbScoreScale = document.getElementById("cmbScoreScale");
-const sliderScoreZoom = document.getElementById("sliderScoreZoom");
-const cmbScoreStaves = document.getElementById("cmbScoreStaves");
-const cmbScoreLayout = document.getElementById("cmbScoreLayout");
-const sliderScoreStaveDistance = document.getElementById("sliderScoreStaveDistance");
-const sliderScoreStaveMargin = document.getElementById("sliderScoreStaveMargin");
-const chkScoreTitle = document.getElementById("chkScoreTitle");
-const btnScoreVisible = document.getElementById("btnScoreVisible");
 
 let scoreArray = [];
 let scoreFooter = "www.jazzguitarnomad.com";
