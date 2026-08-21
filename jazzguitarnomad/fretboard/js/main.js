@@ -315,7 +315,7 @@ function setProjectControlsStates() {
 
 	if (projectsLoaded && projectParam !== null) {
 
-		const project = projects.find(project => project.id === projectId);
+		const project = projects.find(project => project.id === currentProjectId);
 
 		if (project) {
 
@@ -327,7 +327,7 @@ function setProjectControlsStates() {
 
 		}else{
 
-			alert("No se encontró el proyecto '" + projectId + "' en la biblioteca.");
+			alert("No se encontró el proyecto '" + currentProjectId + "' en la biblioteca.");
 
 		}
 
