@@ -1,7 +1,7 @@
 
 :root{
 	--color-main-text:#d5d5d5;
-	--color-hightlight:#1268A8; /*64B5F6;FCD22D;*/
+	--color-hightlight:#1268A8;
 	--color-dark-background:#262626;
 	--color-light-background:#353333;
 	--color-tools:#413F3F;
@@ -2047,7 +2047,7 @@ input[type="range"] {
 .buttonPlay{
 
 	background:var(--color-hightlight) !important;
-	color:var(--color-main-text) !important;
+	color:var(--color-main-text);
 	border: 1px solid var(--color-main-text) !important;
 
 }
@@ -2058,7 +2058,7 @@ input[type="range"] {
 
 .buttonStop{
 
-	background:red  !important; //var(--color-red) !important;
+	background:var(--color-red) !important;
 	color:#fff !important;
 
 }
