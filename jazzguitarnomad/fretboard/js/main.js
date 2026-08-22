@@ -213,6 +213,8 @@ function setUserControlsStates(){
 			btnEdicion.style.display = "none";
 			btnEdicionPopup.style.display = "none";
 
+			btnToggleLibrary.style.display = "none";
+
 			setMenu("fretboard");
 
 		}else{
@@ -231,8 +233,6 @@ function setUserControlsStates(){
 			setMenu("edit");
 
 		}
-
-		btnToggleLibrary.style.display = "none";
 
 	} else {
 
