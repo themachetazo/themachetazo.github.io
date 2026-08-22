@@ -13,9 +13,9 @@ async function initializeApp() {
 
 		getURLParams();
 
-		setAppMode();
-
 		await loadXML("user",xmlUsers);
+
+		setAppMode();
 
 		setUserControlsStates();
 
