@@ -132,7 +132,6 @@ const btnShare = document.getElementById("btnShare");
 const btnCopyCanvas = document.getElementById("btnCopyCanvas");
 const btnDownloadCanvas = document.getElementById("btnDownloadCanvas");
 const topFretboardDownload = document.getElementById("topFretboardDownload");
-const btnCopyId = document.getElementById("btnCopyId");
 const chordProjectList = document.getElementById("chordProjectList");
 const scaleProjectList = document.getElementById("scaleProjectList");
 const otherProjectList = document.getElementById("otherProjectList");

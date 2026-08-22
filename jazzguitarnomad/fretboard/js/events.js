@@ -601,19 +601,11 @@ btnShare.addEventListener("click", () => {
 	
 	if(currentProjectId !== null) {
 
-		const shareUrl = `${location.origin}${location.pathname}?project=${currentProjectId}`;
+		const lib = xmlProjects.substring(xmlProjects.lastIndexOf("/") + 1);
+
+		const shareUrl = `${location.origin}${location.pathname}?lib=${lib}&project=${currentProjectId}`;
 
 		clipboardWriteText(shareUrl);
-
-	}
-
-});
-
-btnCopyId.addEventListener("click", () => {
-	
-	if(currentProjectId !== null) {
-
-		clipboardWriteText(currentProjectId);
 
 	}
 

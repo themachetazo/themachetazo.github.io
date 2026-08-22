@@ -217,8 +217,6 @@ function setUserControlsStates(){
 
 		}else{
 
-			btnCopyId.style.display = "none";
-
 			topTitleViewMode.style.display = "none";
 			topLibrary.style.display = "none";
 			topCategory.style.display = "none";
