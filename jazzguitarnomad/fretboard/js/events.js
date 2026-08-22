@@ -8,9 +8,35 @@ window.addEventListener("load",initializeApp);
 
 window.addEventListener("resize", () => {
 
-    updateTopBarMenu();
+	const isMobile = window.innerWidth <= maxMediaScreenWidth;
 
-    if (!isPlaying && isScoreVisible) scoreRender();
+	if (!isMobile) {
+
+		updateTopBarMenu();
+
+	}
+
+	if (!isPlaying && isFretboardVisible) resizeCanvas();
+
+	if (!isPlaying && isScoreVisible) scoreRender();
+
+});
+
+window.addEventListener("orientationchange", () => {
+
+	const newRotated = screen.orientation.angle;
+
+	if (newRotated !== screenRotated) {
+
+		screenRotated = newRotated;
+
+		requestAnimationFrame(() => {
+
+			updateTopBarMenu();
+
+		});
+
+	}
 
 });
 
@@ -37,8 +63,6 @@ document.addEventListener("click",(e)=>{
 
 document.addEventListener("contextmenu", (e) => {
 
-	const isMobile = window.innerWidth <= maxMediaScreenWidth;
-
 	if (!isAdmin) e.preventDefault();
 
 });
@@ -46,7 +70,7 @@ document.addEventListener("contextmenu", (e) => {
 /*
 document.addEventListener("selectstart",(e) => {
 
-	if (isAdmin) return;
+	if (!isAdmin) return;
 
 	if (e.target.matches("input, textarea")) return;
 
@@ -56,7 +80,7 @@ document.addEventListener("selectstart",(e) => {
 
 document.addEventListener("mousedown",(e) => {
 
-	if (isAdmin) return;
+	if (!isAdmin) return;
 
 	if (e.target.matches("input, textarea")) return;
 
@@ -237,7 +261,7 @@ canvas.addEventListener("mouseleave", () => {
 
 	cursor.style.display = "none";
 
-	if (mode === "view" || window.innerWidth <= maxMediaScreenWidth || (hoverCell === null && hoverNut === null)) {
+	if (editMode === "view" || window.innerWidth <= maxMediaScreenWidth || (hoverCell === null && hoverNut === null)) {
 		return;
 	}
 
@@ -269,7 +293,7 @@ canvas.addEventListener("mousemove", (e) => {
 
 	}
 
-	if (mode === "view") return;
+	if (editMode === "view") return;
 
 	cursor.style.left = e.pageX + "px";
 	cursor.style.top = e.pageY + "px";
@@ -281,7 +305,7 @@ canvas.addEventListener("mousemove", (e) => {
 
 canvas.addEventListener("click", (e) => {
 
-	if (mode === "view") return;
+	if (editMode === "view") return;
 
 	projectModified = true;
 
@@ -295,7 +319,7 @@ canvas.addEventListener("click", (e) => {
 	// Zona de la cejuela física
 	if (nutString !== null) {
 
-		if (mode === "note") {
+		if (editMode === "note") {
 
 			saveHistory();
 
@@ -307,7 +331,7 @@ canvas.addEventListener("click", (e) => {
 			if (!isMobile) noteText.focus();
 			noteText.value = "";
 
-		} else if (mode === "erase") {
+		} else if (editMode === "erase") {
 
 			if (nutNotes[nutString]) {
 
@@ -337,7 +361,7 @@ canvas.addEventListener("click", (e) => {
 	}
 
 	// Modo Cejilla
-	switch (mode) {
+	switch (editMode) {
 
 		case "barre":
 
@@ -397,7 +421,7 @@ canvas.addEventListener("click", (e) => {
 	drawFretboard();
 	drawNotes();
 
-	if (!isMobile && mode !== "erase") noteText.focus();
+	if (!isMobile && editMode !== "erase") noteText.focus();
 	noteText.value = "";
 
 });
@@ -636,11 +660,11 @@ btnDelProject.addEventListener("click", () => {
 });
 
 btnEdit.addEventListener("click", () => {
-	setMode("note");
+	setEditMode("note");
 });
 
 btnErase.addEventListener("click", () => {
-	setMode("erase");
+	setEditMode("erase");
 });
 
 btnUndo.addEventListener("click", () => {
@@ -649,35 +673,15 @@ btnUndo.addEventListener("click", () => {
 
 btnNutMode.addEventListener("click", () => {
 
-	if (mode === "barre") {
+	if (editMode === "barre") {
 
-		setMode("note");
+		setEditMode("note");
 
 	} else {
 
-		setMode("barre");
+		setEditMode("barre");
 
 	}
-
-});
-
-btnVertical.addEventListener("click", () => {
-
-	setOrientation("vertical");
-
-	if (isFretboardVisible) resizeCanvas();
-
-	if (isScoreVisible) scoreRender();
-
-});
-
-btnHorizontal.addEventListener("click", () => {
-
-	setOrientation("horizontal");
-
-	if (isFretboardVisible) resizeCanvas();
-
-	if (isScoreVisible) scoreRender();
 
 });
 
@@ -1168,6 +1172,7 @@ btnFretboardVisible.addEventListener("click", () => {
 	
 	}
 
+	if (isScoreVisible) scoreRender();
 });
 
 btnScoreVisible.addEventListener("click", () => {
@@ -1177,6 +1182,26 @@ btnScoreVisible.addEventListener("click", () => {
 	isScoreVisible = !isScoreVisible;
 
 	setWorkspaceLayout();
+
+	if (isScoreVisible) scoreRender();
+
+});
+
+btnVertical.addEventListener("click", () => {
+
+	setOrientation("vertical");
+
+	if (isFretboardVisible) resizeCanvas();
+
+	if (isScoreVisible) scoreRender();
+
+});
+
+btnHorizontal.addEventListener("click", () => {
+
+	setOrientation("horizontal");
+
+	if (isFretboardVisible) resizeCanvas();
 
 	if (isScoreVisible) scoreRender();
 

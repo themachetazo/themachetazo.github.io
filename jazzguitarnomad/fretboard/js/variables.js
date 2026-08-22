@@ -17,6 +17,7 @@ const loadingSpinner = document.getElementById("loadingSpinner");
 
 const subtituleText = document.getElementById("subtituleText");
 
+
 /*==================================================
 	REFERENCIAS DOM: MENU
 ==================================================*/
@@ -226,10 +227,10 @@ const btnScoreVisible = document.getElementById("btnScoreVisible");
 
 
 /*==================================================
-	PARAMETROS, USUARIOS Y PROYECTOS
+	USUARIOS Y PROYECTOS
 ==================================================*/
 
-let params;
+let appMode = "Designer";
 
 let lib = null;
 
@@ -262,10 +263,11 @@ let projectsName = "";
 const stringCount = 6;
 
 const maxMediaScreenWidth = 768;
+let screenRotated = screen.orientation.angle;
 
 let menuOpen = "";
 
-let mode = "view";
+let editMode = "view";
 
 let projectTitle = "Sin Título";
 let displayMode = true;

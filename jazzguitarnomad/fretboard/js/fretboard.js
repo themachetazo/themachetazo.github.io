@@ -2906,7 +2906,7 @@ function removeBarreAtCell(string, fret) {
 
 function updateHoverCell(e) {
 
-	if (window.innerWidth <= maxMediaScreenWidth || (mode !== "note" && mode !== "barre")) {
+	if (window.innerWidth <= maxMediaScreenWidth || (editMode !== "note" && editMode !== "barre")) {
 
 		if (hoverCell !== null) {
 
@@ -2952,7 +2952,7 @@ function updateHoverNut(e) {
 
 	if (
 		window.innerWidth <= maxMediaScreenWidth ||
-		(mode !== "note" && mode !== "barre")
+		(editMode !== "note" && editMode !== "barre")
 	) {
 
 		if (hoverNut !== null) {

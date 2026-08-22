@@ -1936,8 +1936,7 @@ function scorePaint_getProgressBarBounds(event) {
         return null;
     }
 
-    const mode =
-        scorePaint_getScoreDisplayMode();
+    const mode = scorePaint_getScoreDisplayMode();
 
     const systemElements = [];
 

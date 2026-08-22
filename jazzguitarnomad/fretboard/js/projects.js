@@ -185,7 +185,7 @@ function newProject() {
 
 	setDefaultControlsValues("newProject");
 
-	setMode("view");
+	setEditMode("view");
 
 	// ACTUALIZAR INTERFAZ
 

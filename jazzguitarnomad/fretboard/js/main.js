@@ -13,6 +13,8 @@ async function initializeApp() {
 
 		getURLParams();
 
+		setAppMode();
+
 		await loadXML("user",xmlUsers);
 
 		setUserControlsStates();
@@ -37,65 +39,79 @@ async function initializeApp() {
 
 		await waitForLayout();
 
-
 		// IMÁGENES ----------------------
 
-		setLoadingProgress(30, "Cargando imágenes...");
+		if (!(appMode === "Viewer" && projectType !== "score")){
 
-		await loadFretboardImage();
+			setLoadingProgress(30, "Cargando imágenes...");
 
-		await waitForLayout();
+			await loadFretboardImage();
 
-
-		// PLAYER ----------------------
-
-		setLoadingProgress(40, "Cargando instrumentos...");
-
-		instruments = {
-			piano: createSampler("piano"),
-			cguitar: createSampler("cguitar")
-		};
-
-		setLoadingProgress(50, "Configurando metrónomo...");
-
-		metronome = new Metronome();
-
-		setLoadingProgress(60, "Configurando reproductor...");
-
-		instrument = instruments[currentInstrument];
-
-		player = new MusicPlayer(instrument,metronome);
-
-		setPlayerValues();
-
-
-		// NOTAS ----------------------
-
-		setLoadingProgress(70, "Cargando notas...");
-
-		loadNotas(tipoSecuencia);
-		scoreLoadArray(tipoSecuencia);
-
-
-		// DIBUJADO ----------------------
-
-		setLoadingProgress(80, "Renderizando mástil...");
-
-		if (isFretboardVisible) {
-
-			resizeCanvas();
-
-			scrollToFretboardNut();
+			await waitForLayout();
 
 		}
 
+		// PLAYER ----------------------
+
+		if (!(appMode === "Viewer" && projectType !== "fretboard")){
+
+			setLoadingProgress(40, "Cargando instrumentos...");
+
+			instruments = {
+				piano: createSampler("piano"),
+				cguitar: createSampler("cguitar")
+			};
+
+			setLoadingProgress(50, "Configurando metrónomo...");
+
+			metronome = new Metronome();
+
+			setLoadingProgress(60, "Configurando reproductor...");
+
+			instrument = instruments[currentInstrument];
+
+			player = new MusicPlayer(instrument,metronome);
+
+			setPlayerValues();
+
+		}
+
+		// NOTAS ----------------------
+
+		if (!(appMode === "Viewer" && projectType !== "fretboard")){
+
+			setLoadingProgress(70, "Cargando notas...");
+
+			loadNotas(tipoSecuencia);
+			scoreLoadArray(tipoSecuencia);
+
+		}
+
+		// DIBUJADO ----------------------
+
+		if (!(appMode === "Viewer" && projectType !== "score")){
+
+			setLoadingProgress(80, "Renderizando mástil...");
+
+			if (isFretboardVisible) {
+
+				resizeCanvas();
+
+				scrollToFretboardNut();
+
+			}
+		
+		}
 
 		// SCORE ----------------------
 
-		setLoadingProgress(90, "Renderizando partitura...");
+		if (!(appMode === "Viewer" && projectType !== "fretboard")){
 
-		if (isScoreVisible) scoreRender();
+			setLoadingProgress(90, "Renderizando partitura...");
 
+			if (isScoreVisible) scoreRender();
+
+		}
 
 		// FIN ----------------------
 
@@ -116,7 +132,12 @@ async function initializeApp() {
 
 function getURLParams(){
 
-	params = new URLSearchParams(window.location.search);
+/*
+	const url = window.location.href;
+	const path = window.location.pathname;
+	const urlOriging = window.location.origin + window.location.pathname;
+*/
+	const params = new URLSearchParams(window.location.search);
 
 	user = params.get("user");
 
@@ -125,6 +146,190 @@ function getURLParams(){
 	lib = params.get("lib");
 
 	currentProjectId = params.get("project");
+
+}
+
+function setAppMode(){
+
+	isUserActive = false;
+
+	appMode = "Designer";
+
+	if (!isAdmin) {
+
+		if (user !== null){
+
+			const currentUser = users.find(item => item.username === user);
+
+			if (currentUser) {
+
+				if (!currentUser.active){
+					alert("El usuario '" + user + "' no está activo.");
+					user = null;
+				}else{
+					isUserActive = true;
+				}
+
+			}else{
+				alert("El usuario '" + user + "' no existe.");
+				user = null;
+			}
+		}
+
+		if (user === null && currentProjectId !== null) {
+
+			appMode = "Viewer";
+		}
+
+	}else{
+		user = "admin";
+		isUserActive = true;
+	}
+
+	subtituleText.textContent = "Fretboard " + appMode;
+
+}
+
+function setUserControlsStates(){
+
+	if (!isAdmin && isUserActive) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + user + ".xml";
+
+	if (lib !== null) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + lib + ".xml";
+
+	if (!isAdmin) {
+
+		btnProyectos.style.display = "none";
+		btnProyectosPopup.style.display = "none";
+		btnAudio.style.display = "none";
+		btnAudioPopup.style.display = "none";
+
+		btnShowProjectPanel.style.display = "none";
+
+		if (appMode === "Viewer"){
+
+			titleText.style.display = "none";
+			topTitle.style.display = "none";
+
+			btnEdicion.style.display = "none";
+			btnEdicionPopup.style.display = "none";
+
+			setMenu("fretboard");
+
+		}else{
+
+			btnCopyId.style.display = "none";
+
+			topTitleViewMode.style.display = "none";
+			topLibrary.style.display = "none";
+			topCategory.style.display = "none";
+			topAudio.style.display = "none";
+			topBuffer.style.display = "none";
+			topScoreDownload.style.display = "none";
+
+//			topFretboardDownload.style.display //funcion setMenu
+
+			setMenu("edit");
+
+		}
+
+		btnToggleLibrary.style.display = "none";
+
+	} else {
+
+		isUserActive = true;
+
+		topTitleViewMode.style.display = "none";
+
+		setMenu("edit");
+
+	}
+
+	cursor.innerHTML = "";
+
+	workspaceTimeInfo.style.display = "none";
+
+	updateTopBarMenu();
+
+	setProjectControlsType();
+
+}
+
+function setProjectControlsStates() {
+
+	if (projectsName !== ""){
+		btnToggleLibrary.title = projectsName
+	}else{
+		btnToggleLibrary.title = "Sin nombre";
+	}
+	btnToggleLibrary.title = btnToggleLibrary.title + ". Server: " + xmlProjects.substring(xmlProjects.indexOf("/") + 1);
+
+	if (!projectsLoaded){
+
+		btnToggleLibrary.disabled = true;
+		cmbProjectCategory.disabled = true;
+		btnNewCategory.disabled = true;
+		btnDelCategory.disabled = true;
+
+	}
+
+	if (projectsLoaded && currentProjectId !== null) {
+
+		const project = projects.find(project => project.id === currentProjectId);
+
+		if (project) {
+
+			btnToggleLibrary.disabled = false;
+
+			renderHTMLProjectsList();
+
+			selectProject(project);
+
+			return;
+
+		}else{
+
+			alert("No se encontró el proyecto '" + currentProjectId + "'");
+
+		}
+
+	}
+
+	currentProjectId = generateProjectId();
+
+	setDefaultControlsValues("init");
+
+	renderHTMLProjectsList();
+
+}
+
+function setProjectControlsType(){
+
+	cmbTipoSecuencia.disabled = projectType === "fretboard";
+	chkMetronomeOn.checked = projectType !== "fretboard";
+	chkMetronomeOn.disabled = projectType === "fretboard";
+
+	topChords.style.display = cmbProjectType.value !== "chord" ? "none" : "flex";
+
+	btnScore.disabled = projectType === "fretboard";
+	btnScorePopup.disabled = projectType === "fretboard";
+	btnPlayer.disabled = projectType === "fretboard";
+	btnPlayerPopup.disabled = projectType === "fretboard";
+
+	btnPlayStop.disabled = projectType === "fretboard";
+	btnFretboardVisible.disabled = projectType === "fretboard";
+	btnScoreVisible.disabled = projectType === "fretboard";
+
+	if (appMode === "Viewer" && projectType !== "fretboard"){
+
+		btnScore.disabled = false;
+		btnScorePopup.disabled = false;
+		btnPlayer.disabled = false;
+		btnPlayerPopup.disabled = false;
+
+		btnPlayStop.disabled = false;
+		btnFretboardVisible.disabled = false;
+		btnScoreVisible.disabled = false;
+	}
 
 }
 
@@ -200,17 +405,19 @@ function parseUsersXml(xml) {
 
 		id: node.getAttribute("id"),
 		username: node.getAttribute("username"),
-		role: node.getAttribute("role"),
 		name: node.getAttribute("name"),
+		permits: node.getAttribute("permits"),
+		active: node.getAttribute("active") === "true",
+		alta: node.getAttribute("alta"),
+		avatar: node.getAttribute("avatar")
+/*
+		baja: node.getAttribute("baja"),
+		role: node.getAttribute("role"),
 		surname: node.getAttribute("surname"),
 		pass: node.getAttribute("pass"),
 		email: node.getAttribute("email"),
-		tel: node.getAttribute("tel"),
-		active: node.getAttribute("active") === "true",
-		permit: node.getAttribute("permit"),
-		alta: node.getAttribute("alta"),
-		baja: node.getAttribute("baja")
-
+		tel: node.getAttribute("tel")
+*/
 	}));
 
 	return u;
@@ -352,174 +559,6 @@ function setDefaultControlsValues(state){
 	}
 
 	history = [];
-
-}
-
-function setUserControlsStates(){
-
-	if (!isAdmin && user !== null){
-
-		const currentUser = users.find(item => item.username === user);
-
-		if (currentUser) {
-
-			if (!currentUser.active){
-				alert("El usuario '" + user + "' no está activo.");
-				user = null;
-			}else{
-				isUserActive = true;
-				xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + user + ".xml";
-			}
-
-		}else{
-			alert("El usuario '" + user + "' no existe.");
-			user = null;
-		}
-	}
-
-	if (lib !== null) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + lib + ".xml";
-
-	if (!isAdmin) {
-
-		btnProyectos.style.display = "none";
-		btnProyectosPopup.style.display = "none";
-		btnAudio.style.display = "none";
-		btnAudioPopup.style.display = "none";
-
-		btnShowProjectPanel.style.display = "none";
-
-		if (user === null && currentProjectId !== null) {
-
-			subtituleText.textContent = "Fretboard Viewer";
-
-			titleText.style.display = "none";
-			topTitle.style.display = "none";
-
-			btnEdicion.style.display = "none";
-			btnEdicionPopup.style.display = "none";
-
-			if (user === null) {
-				btnPlayStop.style.display = "none";
-				topFretboardDownload.style.display = "none";
-			}
-
-			setMenu("fretboard");
-
-		}else{
-
-			btnCopyId.style.display = "none";
-
-			topTitleViewMode.style.display = "none";
-			topLibrary.style.display = "none";
-			topCategory.style.display = "none";
-			topAudio.style.display = "none";
-			topBuffer.style.display = "none";
-			topScoreDownload.style.display = "none";
-
-//			topFretboardDownload.style.display //funcion setMenu
-
-			setMenu("edit");
-
-		}
-
-		btnToggleLibrary.style.display = "none";
-
-	} else {
-
-		isUserActive = true;
-
-		topTitleViewMode.style.display = "none";
-
-		setMenu("edit");
-
-	}
-
-	cursor.innerHTML = "";
-
-	workspaceTimeInfo.style.display = "none";
-
-	updateTopBarMenu();
-
-	setProjectControlsType();
-
-}
-
-function setProjectControlsStates() {
-
-	if (projectsName !== ""){
-		btnToggleLibrary.title = projectsName
-	}else{
-		btnToggleLibrary.title = "Sin nombre";
-	}
-	btnToggleLibrary.title = btnToggleLibrary.title + ". Server: " + xmlProjects.substring(xmlProjects.indexOf("/") + 1);
-
-	if (!projectsLoaded){
-
-		btnToggleLibrary.disabled = true;
-		cmbProjectCategory.disabled = true;
-		btnNewCategory.disabled = true;
-		btnDelCategory.disabled = true;
-
-	}
-
-	if (projectsLoaded && currentProjectId !== null) {
-
-		const project = projects.find(project => project.id === currentProjectId);
-
-		if (project) {
-
-			btnToggleLibrary.disabled = false;
-
-			renderHTMLProjectsList();
-
-			selectProject(project);
-
-			return;
-
-		}else{
-
-			alert("No se encontró el proyecto '" + currentProjectId + "'");
-
-		}
-
-	}
-
-	currentProjectId = generateProjectId();
-
-	setDefaultControlsValues("init");
-
-	renderHTMLProjectsList();
-
-}
-
-function setProjectControlsType(){
-
-	cmbTipoSecuencia.disabled = projectType === "fretboard";
-	chkMetronomeOn.checked = projectType !== "fretboard";
-	chkMetronomeOn.disabled = projectType === "fretboard";
-
-	topChords.style.display = cmbProjectType.value !== "chord" ? "none" : "flex";
-
-	btnScore.disabled = projectType === "fretboard";
-	btnScorePopup.disabled = projectType === "fretboard";
-	btnPlayer.disabled = projectType === "fretboard";
-	btnPlayerPopup.disabled = projectType === "fretboard";
-
-	btnPlayStop.disabled = projectType === "fretboard";
-	btnFretboardVisible.disabled = projectType === "fretboard";
-	btnScoreVisible.disabled = projectType === "fretboard";
-
-	if (subtituleText.textContent === "Fretboard Viewer") {
-
-		btnScore.disabled = false;
-		btnScorePopup.disabled = false;
-		btnPlayer.disabled = false;
-		btnPlayerPopup.disabled = false;
-
-		btnPlayStop.disabled = false;
-		btnFretboardVisible.disabled = false;
-		btnScoreVisible.disabled = false;
-	}
 
 }
 
@@ -801,15 +840,15 @@ function closeTopControls() {
 
 }
 
-function setMode(newMode) {
+function setEditMode(newMode) {
 
-	if (mode === newMode) {
+	if (editMode === newMode) {
 
 		newMode = "view";
 
 	}
 
-	mode = newMode;
+	editMode = newMode;
 
 	btnEdit.classList.toggle("active",newMode === "note");
 
@@ -1033,7 +1072,7 @@ function setMenu(m){
 			);
 
 			menuSelectorText.textContent = "PARTITURA";
-			menuSelectorIcon.className = "fa-solid fa-file-lines";
+			menuSelectorIcon.className = "fa-solid fa-music";
 
 			topTitleViewModeScore.style.display = "flex";
 			topTitleViewModeFretboard.style.display = "none";
