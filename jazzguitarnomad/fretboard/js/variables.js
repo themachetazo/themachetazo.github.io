@@ -1,14 +1,10 @@
 "use strict";
 
 /*==================================================
-	REFERENCIAS DOM: PANELES Y DISEÑO RESPONSIVE
+	REFERENCIAS DOM: LAYOUT, LOADING
 ==================================================*/
 
 const appLayout = document.getElementById("appLayout");
-const workspaceProjectsPanel = document.getElementById("workspaceProjectsPanel");
-
-const btnToggleTopControls = document.getElementById("btnToggleTopControls");
-const topControlsContainer = document.getElementById("topControlsContainer");
 
 const loadingScreen = document.getElementById("loadingScreen");
 const loadingText = document.getElementById("loadingText");
@@ -23,6 +19,9 @@ const subtituleText = document.getElementById("subtituleText");
 ==================================================*/
 
 const mainMenu = document.getElementById("mainMenu");
+
+const btnToggleTopControls = document.getElementById("btnToggleTopControls");
+const topControlsContainer = document.getElementById("topControlsContainer");
 
 const btnProyectos = document.getElementById("btnProyectos");
 const btnEdicion = document.getElementById("btnEdicion");
@@ -138,7 +137,8 @@ const otherProjectList = document.getElementById("otherProjectList");
 const cmbProjectCategory = document.getElementById("cmbProjectCategory");
 const btnShowProjectPanel = document.getElementById("btnShowProjectPanel");
 const btnToggleLibrary = document.getElementById("btnToggleLibrary");
-
+const projectPanelInfo = document.getElementById("projectPanelInfo");
+const workspaceProjectsPanel = document.getElementById("workspaceProjectsPanel");
 
 /*==================================================
 	REFERENCIAS DOM: CANVAS
@@ -253,9 +253,10 @@ let projectModified = false;
 let categories = [];
 
 let xmlProjects = "projects/default.xml";
-const xmlVersion = "1.0";
+let xmlVersion = "1.0";
 
-let projectsName = "";
+let projectsName = "Sin nombre";
+let projectsDesc = "Librería de proyectos.";
 
 /*==================================================
 	CONFIGURACIÓN GENERAL DE LA APLICACIÓN

@@ -171,25 +171,18 @@ function newProject() {
 
 	}
 
-	// NUEVO ID
-
 	currentProjectId = generateProjectId();
-
-	// ESTADO
 
 	projectModified = false;
 
-	// VALORES POR DEFECTO
+	projectsName = "Sin nombre";
+	projectsDesc = "Librería de proyectos.";
 
 	setDefaultControlsValues("newProject");
 
 	setEditMode("view");
 
-	// ACTUALIZAR INTERFAZ
-
 	setWorkspaceLayout();
-
-	// ACTUALIZAR PLAYER
 
 	setPlayerValues();
 
@@ -265,8 +258,7 @@ async function openXMLProjectsFile() {
 		// ACTUALIZAR INFORMACIÓN
 		// --------------------------------
 
-		btnToggleLibrary.title = projectsName + ". Local: " + fileHandle.name;
-
+		setProjectInfoLabel("Local",fileHandle.name);
 
 		// --------------------------------
 		// ESTADO INICIAL
@@ -341,7 +333,9 @@ async function openXMLProjectsFile() {
 
 function parseProjectsXml(xml) {
 
-	projectsName = xml.querySelector("projects")?.getAttribute("name") || "";
+	projectsName = xml.querySelector("projects")?.getAttribute("name") || "Sin nombre";
+	xmlVersion = xml.querySelector("projects")?.getAttribute("version") || "1.0";
+	projectsDesc = xml.querySelector("projects")?.getAttribute("desc") || "Librería de proyectos.";
 
 	categories = [];
 
@@ -557,8 +551,10 @@ function projectsToXml() {
 
 	const lines = [];
 
+	xmlVersion = (parseFloat(xmlVersion) + 0.1).toFixed(1);
+
 	lines.push('<?xml version="1.0" encoding="UTF-8"?>');
-	lines.push('<projects version="' + xmlVersion + '" name="' + projectsName + '">');
+	lines.push('<projects version="' + xmlVersion + '" name="' + projectsName + ' desc="' + projectsDesc + '">');
 	lines.push("");
 
 	// Categorías

@@ -510,10 +510,12 @@ cmbDiapason.addEventListener("change", () => {
 	setFretboardStyle(cmbDiapason.value);
 });
 
+btnShowProjectPanel.addEventListener("click", () => {
+	showProjectPanel();
+});
+
 btnToggleLibrary.addEventListener("click", () => {
-
-	if (btnToggleLibrary.title.includes("Server: ")) window.open(xmlProjects, "_blank");
-
+	showProjectPanel();
 });
 
 btnToggleTopControls.addEventListener("click", () => {
@@ -625,10 +627,6 @@ btnOpenProjects.addEventListener("click", async () => {
 
 	await openXMLProjectsFile();
 
-});
-
-btnShowProjectPanel.addEventListener("click", () => {
-	showProjectPanel();
 });
 
 btnNewProject.addEventListener("click", () => {

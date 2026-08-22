@@ -37,7 +37,6 @@ async function initializeApp() {
 
 		setLayout();
 
-		await waitForLayout();
 
 
 		// IMÁGENES ----------------------
@@ -47,8 +46,6 @@ async function initializeApp() {
 			setLoadingProgress(30, "Cargando imágenes...");
 
 			await loadFretboardImage();
-
-			await waitForLayout();
 
 			console.log("Imágenes cargadas");
 
@@ -97,11 +94,15 @@ async function initializeApp() {
 		}
 
 
-		// DIBUJADO ----------------------
+		// MÁSTIL ----------------------
 
 		if (!(appMode === "Viewer" && projectType === "score")){
 
 			setLoadingProgress(80, "Renderizando mástil...");
+
+			resizeCanvas();
+
+			await waitForLayout();
 
 			resizeCanvas();
 
@@ -128,6 +129,7 @@ async function initializeApp() {
 
 		}
 
+
 		// FIN ----------------------
 
 		setLoadingProgress(100, "Carga completada");
@@ -145,13 +147,36 @@ async function initializeApp() {
 
 }
 
+async function waitForLayout() {
+
+	let previousWidth = 0;
+	let stableFrames = 0;
+
+	while (stableFrames < 2) {
+
+		await new Promise(resolve =>
+			requestAnimationFrame(resolve)
+		);
+
+		const width = workspaceFretboard.clientWidth;
+
+		if (width > 0 && width === previousWidth) {
+
+			stableFrames++;
+
+		} else {
+
+			stableFrames = 0;
+			previousWidth = width;
+
+		}
+
+	}
+
+}
+
 function getURLParams(){
 
-/*
-	const url = window.location.href;
-	const path = window.location.pathname;
-	const urlOriging = window.location.origin + window.location.pathname;
-*/
 	const params = new URLSearchParams(window.location.search);
 
 	user = params.get("user");
@@ -203,13 +228,13 @@ function setAppMode(){
 
 	subtituleText.textContent = "Fretboard " + appMode;
 
-}
-
-function setUserControlsStates(){
-
 	if (!isAdmin && isUserActive) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + user + ".xml";
 
 	if (lib !== null) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + lib + ".xml";
+
+}
+
+function setUserControlsStates(){
 
 	if (!isAdmin) {
 
@@ -267,18 +292,30 @@ function setUserControlsStates(){
 
 }
 
+function setProjectInfoLabel(type,fileName){
+
+	const appUrl = window.location.href.substring(0,window.location.href.lastIndexOf("/") + 1);
+
+	let txtInfo = "<b>" + projectsName + "</b><br><i>versión=" + xmlVersion + " " + type + "=";
+
+	if (type === "Server"){
+		txtInfo = txtInfo + "<a href='" + appUrl + xmlProjects + "' target='_blank'>" + fileName + "</a>";
+	}else{
+		txtInfo = txtInfo + fileName;
+	}
+	
+	txtInfo = txtInfo + "</i><br>" + projectsDesc;
+
+	projectPanelInfo.innerHTML = txtInfo;
+
+}
+
 function setProjectControlsStates() {
 
-	if (projectsName !== ""){
-		btnToggleLibrary.title = projectsName
-	}else{
-		btnToggleLibrary.title = "Sin nombre";
-	}
-	btnToggleLibrary.title = btnToggleLibrary.title + ". Server: " + xmlProjects.substring(xmlProjects.indexOf("/") + 1);
+	setProjectInfoLabel("Server", xmlProjects.substring(xmlProjects.indexOf("/") + 1));
 
 	if (!projectsLoaded){
 
-		btnToggleLibrary.disabled = true;
 		cmbProjectCategory.disabled = true;
 		btnNewCategory.disabled = true;
 		btnDelCategory.disabled = true;
@@ -290,8 +327,6 @@ function setProjectControlsStates() {
 		const project = projects.find(project => project.id === currentProjectId);
 
 		if (project) {
-
-			btnToggleLibrary.disabled = false;
 
 			renderHTMLProjectsList();
 
@@ -1297,10 +1332,6 @@ function setLayout() {
 	}
 
 	setWorkspaceLayout();
-
-	if (isFretboardVisible) resizeCanvas();
-
-	if (isScoreVisible) scoreRender();
 
 }
 

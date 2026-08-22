@@ -35,13 +35,6 @@ function loadFretboardImage() {
 
 }
 
-async function waitForLayout() {
-
-	await new Promise(resolve => requestAnimationFrame(resolve));
-	await new Promise(resolve => requestAnimationFrame(resolve));
-
-}
-
 function resizeCanvas() {
 
 	const isHorizontal = rotation === 90 || rotation === 270;
