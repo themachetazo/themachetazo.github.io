@@ -226,7 +226,7 @@ function setUserControlsStates(){
 			topBuffer.style.display = "none";
 			topScoreDownload.style.display = "none";
 
-//			topFretboardDownload.style.display //funcion setMenu
+//			topFretboardDownload.style.display y topScoreDownload.style.display en funcion setMenu
 
 			setMenu("edit");
 
@@ -1081,6 +1081,8 @@ function setMenu(m){
 				topScoreScale,
 				topScoreMargin
 			);
+
+			if (!isAdmin) topScoreDownload.classList.remove("isHidden");
 
 			menuSelectorText.textContent = "PARTITURA";
 			menuSelectorIcon.className = "fa-solid fa-music";
