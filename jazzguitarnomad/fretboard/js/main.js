@@ -43,12 +43,14 @@ async function initializeApp() {
 		// IMÁGENES ----------------------
 
 		if (!(appMode === "Viewer" && projectType === "score")){
-console.log("Imágenes cargadas");
+
 			setLoadingProgress(30, "Cargando imágenes...");
 
 			await loadFretboardImage();
 
 			await waitForLayout();
+
+			console.log("Imágenes cargadas");
 
 		}
 
@@ -76,6 +78,8 @@ console.log("Imágenes cargadas");
 
 			setPlayerValues();
 
+			console.log("Player cargado");
+
 		}
 
 
@@ -87,6 +91,8 @@ console.log("Imágenes cargadas");
 
 			loadNotas(tipoSecuencia);
 			scoreLoadArray(tipoSecuencia);
+
+			console.log("Notas cargadas");
 
 		}
 
@@ -103,6 +109,8 @@ console.log("Imágenes cargadas");
 
 				scrollToFretboardNut();
 
+				console.log("Mástil renderizado");
+
 			}
 		
 		}
@@ -114,7 +122,13 @@ console.log("Imágenes cargadas");
 
 			setLoadingProgress(90, "Renderizando partitura...");
 
-			if (isScoreVisible) scoreRender();
+			if (isScoreVisible) {
+
+				scoreRender();
+
+				console.log("Partitura renderizada");
+
+			}
 
 		}
 
