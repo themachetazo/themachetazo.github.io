@@ -236,7 +236,7 @@ function setUserControlsStates(){
 
 	} else {
 
-		isUserActive = true;
+		document.documentElement.style.setProperty("--color-hightlight", adminColorHightlight);
 
 		topTitleViewMode.style.display = "none";
 
