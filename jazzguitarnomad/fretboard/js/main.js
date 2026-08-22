@@ -322,6 +322,7 @@ function setProjectControlsType(){
 	btnFretboardVisible.disabled = projectType === "fretboard";
 	btnScoreVisible.disabled = projectType === "fretboard";
 
+/*
 	if (appMode !== "Viewer" && projectType !== "fretboard"){
 
 		btnScore.disabled = false;
@@ -333,7 +334,7 @@ function setProjectControlsType(){
 		btnFretboardVisible.disabled = false;
 		btnScoreVisible.disabled = false;
 	}
-
+*/
 }
 
 async function loadXML(type,file) {
