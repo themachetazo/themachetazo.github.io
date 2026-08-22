@@ -103,15 +103,11 @@ async function initializeApp() {
 
 			setLoadingProgress(80, "Renderizando mástil...");
 
-			if (isFretboardVisible) {
+			resizeCanvas();
 
-				resizeCanvas();
+			scrollToFretboardNut();
 
-				scrollToFretboardNut();
-
-				console.log("Mástil renderizado");
-
-			}
+			console.log("Mástil renderizado");
 		
 		}
 
