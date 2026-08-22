@@ -319,7 +319,7 @@ function setProjectControlsType(){
 	btnFretboardVisible.disabled = projectType === "fretboard";
 	btnScoreVisible.disabled = projectType === "fretboard";
 
-	if (appMode === "Viewer" && projectType !== "fretboard"){
+	if (appMode !== "Viewer" && projectType !== "fretboard"){
 
 		btnScore.disabled = false;
 		btnScorePopup.disabled = false;
