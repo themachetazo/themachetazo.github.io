@@ -233,8 +233,6 @@ async function openXMLProjectsFile() {
 
 		xmlProjects = fileHandle.name;
 
-		btnToggleLibrary.title = projectsName + ". Local: " + fileHandle.name;
-
 
 		// --------------------------------
 		// LEER ARCHIVO
@@ -249,7 +247,9 @@ async function openXMLProjectsFile() {
 		// PARSEAR XML
 		// --------------------------------
 
-		const loadedProjects = parseProjectsXml(xmlText);
+		const xml = parseXML(xmlText);
+
+		const loadedProjects = parseProjectsXml(xml);
 
 
 		// --------------------------------
@@ -257,6 +257,15 @@ async function openXMLProjectsFile() {
 		// --------------------------------
 
 		projects = loadedProjects;
+
+		projectsLoaded = true;
+
+
+		// --------------------------------
+		// ACTUALIZAR INFORMACIÓN
+		// --------------------------------
+
+		btnToggleLibrary.title = projectsName + ". Local: " + fileHandle.name;
 
 
 		// --------------------------------
@@ -305,6 +314,7 @@ async function openXMLProjectsFile() {
 	} catch (error) {
 
 		// Cancelar selector de archivos
+
 		if (error.name === "AbortError") {
 
 			return false;
@@ -318,6 +328,9 @@ async function openXMLProjectsFile() {
 		);
 
 
+		projects = [];
+		projectsLoaded = false;
+
 		return false;
 
 	}
@@ -326,7 +339,7 @@ async function openXMLProjectsFile() {
 
 function parseProjectsXml(xml) {
 
-	projectsName = xml.documentElement.getAttribute("name");
+	projectsName = xml.querySelector("projects")?.getAttribute("name") || "";
 
 	categories = [];
 

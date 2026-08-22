@@ -345,14 +345,9 @@ async function loadXML(type,file) {
 
 		const xmlText = await response.text();
 
-		const parser = new DOMParser();
-		const xml = parser.parseFromString(xmlText,"application/xml");
+		const xml = parseXML(xmlText);
 
-		const parserError = xml.querySelector("parsererror");
-
-		if (parserError) {
-			throw new Error("El archivo XML no tiene un formato válido.");
-		}
+		if (!xml) return false;
 
 		switch (type) {
 
@@ -396,6 +391,22 @@ async function loadXML(type,file) {
 		return false;
 
 	}
+
+}
+
+function parseXML(xmlText) {
+
+	const parser = new DOMParser();
+
+	const xml = parser.parseFromString(xmlText,"application/xml");
+
+	const parserError = xml.querySelector("parsererror");
+
+	if (parserError) {
+		throw new Error("El archivo XML no tiene un formato válido.");
+	}
+
+	return xml;
 
 }
 
