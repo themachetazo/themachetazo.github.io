@@ -39,6 +39,7 @@ async function initializeApp() {
 
 		await waitForLayout();
 
+
 		// IMÁGENES ----------------------
 
 		if (!(appMode === "Viewer" && projectType === "score")){
@@ -50,6 +51,7 @@ async function initializeApp() {
 			await waitForLayout();
 
 		}
+
 
 		// PLAYER ----------------------
 
@@ -76,6 +78,7 @@ async function initializeApp() {
 
 		}
 
+
 		// NOTAS ----------------------
 
 		if (!(appMode === "Viewer" && projectType === "fretboard")){
@@ -86,6 +89,7 @@ async function initializeApp() {
 			scoreLoadArray(tipoSecuencia);
 
 		}
+
 
 		// DIBUJADO ----------------------
 
@@ -102,6 +106,7 @@ async function initializeApp() {
 			}
 		
 		}
+
 
 		// SCORE ----------------------
 

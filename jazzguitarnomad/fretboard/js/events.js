@@ -826,7 +826,7 @@ sliderBpm.addEventListener("input", function () {
 
 	numBpm.value = parseInt(this.value);
 
-	metronome.setBpm(parseFloat(numBpm.value));
+	metronome.setBpm(numBpm.value);
 
 	player.setGate(samplerGate.value);
 
@@ -844,7 +844,7 @@ numBpm.addEventListener("change", () => {
 	sliderBpm.value = parseInt(numBpm.value);
 	sliderBpm.title = numBpm.value;
 
-	metronome.setBpm(parseFloat(numBpm.value));
+	metronome.setBpm(numBpm.value);
 
 	player.setGate(samplerGate.value);
 
@@ -861,7 +861,7 @@ btnLessTempo.addEventListener("click", () => {
 	sliderBpm.value = parseInt(numBpm.value);
 	sliderBpm.title = numBpm.value;
 
-	metronome.setBpm(parseFloat(numBpm.value));
+	metronome.setBpm(numBpm.value);
 
 	player.setGate(samplerGate.value);
 
@@ -878,7 +878,7 @@ btnMoreTempo.addEventListener("click", () => {
 	sliderBpm.value = parseInt(numBpm.value);
 	sliderBpm.title = numBpm.value;
 
-	metronome.setBpm(parseFloat(numBpm.value));
+	metronome.setBpm(numBpm.value);
 
 	player.setGate(samplerGate.value);
 

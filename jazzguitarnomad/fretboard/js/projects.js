@@ -131,8 +131,6 @@ async function loadProject(project) {
 
 	setWorkspaceLayout();
 
-	setPlayerValues();
-
 	// --------------------------------
 	// IMAGEN DEL MÁSTIL
 	// --------------------------------
@@ -190,6 +188,8 @@ function newProject() {
 	// ACTUALIZAR INTERFAZ
 
 	setWorkspaceLayout();
+
+	// ACTUALIZAR PLAYER
 
 	setPlayerValues();
 
@@ -298,6 +298,8 @@ async function openXMLProjectsFile() {
 		if (projects.length > 0) {
 
 			selectProject(projects[0]);
+
+			setPlayerValues();
 
 		} else {
 
@@ -788,6 +790,8 @@ function renderHTMLProjectsList() {
 			openButton.addEventListener("click", () => {
 
 				selectProject(project);
+
+				setPlayerValues();
 
 			});
 

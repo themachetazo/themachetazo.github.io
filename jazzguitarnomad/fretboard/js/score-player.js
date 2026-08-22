@@ -348,7 +348,7 @@ function scoreLoadArray(mode){
 
 function setPlayerValues(){
 
-	metronome.setBpm(parseFloat(bpm));
+	metronome.setBpm(bpm);
 	metronome.setVolume(-12);
 	metronome.setMeter(projectBar);
 	metronome.setSubdivision(projectFigure);
