@@ -595,6 +595,19 @@ html {
 	margin-top: 0;
 }
 
+#projectPanelInfo {
+
+	display:block;
+
+	border-radius:2px;
+
+	padding:6px;
+
+	line-height:1.4;
+
+	overflow-wrap:break-word;
+}
+
 .projectPanelHeader {
 	display: flex;
 	align-items: center;
