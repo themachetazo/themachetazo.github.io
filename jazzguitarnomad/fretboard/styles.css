@@ -110,11 +110,15 @@ html {
 
 	background:var(--color-dark-background);
 
-/*	opacity:0.95;*/
-
 	z-index:99999;
 
-	transition:opacity .35s ease;
+	opacity:1;
+
+	visibility:visible;
+
+	transition:
+		opacity .55s ease,
+		visibility 0s linear 0s;
 
 }
 
@@ -122,7 +126,13 @@ html {
 
 	opacity:0;
 
+	visibility:hidden;
+
 	pointer-events:none;
+
+	transition:
+		opacity .55s ease,
+		visibility 0s linear .55s;
 
 }
 
