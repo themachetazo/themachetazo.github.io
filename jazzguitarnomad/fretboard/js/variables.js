@@ -237,8 +237,10 @@ let lib = null;
 let users = [];
 let user;
 let xmlUsers = "users.xml";
-let isAdmin = false;
 let isUserActive = false;
+
+let isAdmin = false;
+let adminColorHightlight = "#16A34A";
 
 let projectsLoaded = false;
 
