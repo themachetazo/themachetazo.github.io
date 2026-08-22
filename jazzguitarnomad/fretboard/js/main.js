@@ -203,8 +203,6 @@ function setUserControlsStates(){
 		btnAudio.style.display = "none";
 		btnAudioPopup.style.display = "none";
 
-		btnShowProjectPanel.style.display = "none";
-
 		if (appMode === "Viewer"){
 
 			titleText.style.display = "none";
@@ -213,7 +211,7 @@ function setUserControlsStates(){
 			btnEdicion.style.display = "none";
 			btnEdicionPopup.style.display = "none";
 
-			btnToggleLibrary.style.display = "none";
+			btnShowProjectPanel.style.display = "none";
 
 			setMenu("fretboard");
 
@@ -233,6 +231,8 @@ function setUserControlsStates(){
 			setMenu("edit");
 
 		}
+
+		btnToggleLibrary.style.display = "none";
 
 	} else {
 
