@@ -43,7 +43,7 @@ async function initializeApp() {
 		// IMÁGENES ----------------------
 
 		if (!(appMode === "Viewer" && projectType === "score")){
-
+console.log("Imágenes cargadas");
 			setLoadingProgress(30, "Cargando imágenes...");
 
 			await loadFretboardImage();
