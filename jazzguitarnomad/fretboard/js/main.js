@@ -102,10 +102,21 @@ async function initializeApp() {
 
 			resizeCanvas();
 
-			await waitForLayout();
+			await new Promise(resolve =>
+				requestAnimationFrame(() => {
+
+					requestAnimationFrame(resolve);
+
+				})
+			);
 
 			resizeCanvas();
 
+/*
+			await waitForLayout();
+
+			resizeCanvas();
+*/
 			scrollToFretboardNut();
 
 			console.log("Mástil renderizado");
