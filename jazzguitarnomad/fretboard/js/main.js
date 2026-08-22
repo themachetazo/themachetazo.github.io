@@ -41,7 +41,7 @@ async function initializeApp() {
 
 		// IMÁGENES ----------------------
 
-		if (!(appMode === "Viewer" && projectType !== "score")){
+		if (!(appMode === "Viewer" && projectType === "score")){
 
 			setLoadingProgress(30, "Cargando imágenes...");
 
@@ -53,7 +53,7 @@ async function initializeApp() {
 
 		// PLAYER ----------------------
 
-		if (!(appMode === "Viewer" && projectType !== "fretboard")){
+		if (!(appMode === "Viewer" && projectType === "fretboard")){
 
 			setLoadingProgress(40, "Cargando instrumentos...");
 
@@ -78,7 +78,7 @@ async function initializeApp() {
 
 		// NOTAS ----------------------
 
-		if (!(appMode === "Viewer" && projectType !== "fretboard")){
+		if (!(appMode === "Viewer" && projectType === "fretboard")){
 
 			setLoadingProgress(70, "Cargando notas...");
 
@@ -89,7 +89,7 @@ async function initializeApp() {
 
 		// DIBUJADO ----------------------
 
-		if (!(appMode === "Viewer" && projectType !== "score")){
+		if (!(appMode === "Viewer" && projectType === "score")){
 
 			setLoadingProgress(80, "Renderizando mástil...");
 
@@ -105,7 +105,7 @@ async function initializeApp() {
 
 		// SCORE ----------------------
 
-		if (!(appMode === "Viewer" && projectType !== "fretboard")){
+		if (!(appMode === "Viewer" && projectType === "fretboard")){
 
 			setLoadingProgress(90, "Renderizando partitura...");
 
