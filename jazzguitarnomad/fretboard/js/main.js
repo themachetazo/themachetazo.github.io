@@ -322,19 +322,18 @@ function setProjectControlsType(){
 	btnFretboardVisible.disabled = projectType === "fretboard";
 	btnScoreVisible.disabled = projectType === "fretboard";
 
-/*
-	if (appMode !== "Viewer" && projectType !== "fretboard"){
+	if (appMode === "Viewer" && projectType === "fretboard"){
 
-		btnScore.disabled = false;
-		btnScorePopup.disabled = false;
-		btnPlayer.disabled = false;
-		btnPlayerPopup.disabled = false;
+		btnScore.disabled = true;
+		btnScorePopup.disabled = true;
+		btnPlayer.disabled = true;
+		btnPlayerPopup.disabled = true;
 
-		btnPlayStop.disabled = false;
-		btnFretboardVisible.disabled = false;
-		btnScoreVisible.disabled = false;
+		btnPlayStop.disabled = true;
+		btnFretboardVisible.disabled = true;
+		btnScoreVisible.disabled = true;
 	}
-*/
+
 }
 
 async function loadXML(type,file) {
