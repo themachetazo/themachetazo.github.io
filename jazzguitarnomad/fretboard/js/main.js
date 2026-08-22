@@ -1523,7 +1523,7 @@ function hideLoadingScreen() {
 
 		loadingScreen.classList.add("isHidden");
 
-		setTimeout(() => {loadingScreen.remove();}, 350);
+		setTimeout(() => {loadingScreen.remove();}, 550);
 
 	}, 500);
 
