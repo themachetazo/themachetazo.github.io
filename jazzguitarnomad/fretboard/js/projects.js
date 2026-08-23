@@ -117,13 +117,12 @@ async function loadProject(project) {
 	loadNotas(tipoSecuencia);
 	scoreLoadArray(tipoSecuencia);
 
+/*
 	parseXMLToNotesArray(project);
 
 	organizeSequence(tipoSecuencia, true);
 	organizeChords(tipoSecuencia, true);
-
-	const hasNotes = projectType === "sequence" ? sequenceToPlay.length > 0 : chordsToPlay.length > 0;
-	btnPlayStop.disabled = !hasNotes;
+*/
 
 	// --------------------------------
 	// ACTUALIZAR INTERFAZ
@@ -142,8 +141,6 @@ async function loadProject(project) {
 		await loadFretboardImage();
 
 	}
-
-	await waitForLayout();
 
 	// --------------------------------
 	// DIBUJADO
@@ -182,7 +179,13 @@ function newProject() {
 
 	setEditMode("view");
 
+	setProjectControlsType();
+
 	setWorkspaceLayout();
+
+	if (isFretboardVisible) resizeCanvas();
+
+	if (isScoreVisible) scoreRender();
 
 	setPlayerValues();
 
@@ -260,20 +263,12 @@ async function openXMLProjectsFile() {
 
 		setProjectInfoLabel("Local",fileHandle.name);
 
-		// --------------------------------
-		// ESTADO INICIAL
-		// --------------------------------
-
-		projectModified = false;
-
-		currentProjectId = null;
-
 
 		// --------------------------------
 		// RENDERIZAR LISTA
 		// --------------------------------
 
-		renderHTMLProjectsList();
+		renderProjectsLibrary();
 
 
 		// --------------------------------
@@ -315,12 +310,7 @@ async function openXMLProjectsFile() {
 
 		}
 
-
-		console.error(
-			"Error al abrir la biblioteca de proyectos:",
-			error
-		);
-
+		console.error("Error al abrir la biblioteca de proyectos:",error);
 
 		projects = [];
 		projectsLoaded = false;
@@ -475,12 +465,12 @@ function getCurrentProject() {
 
 		settings: {
 			orientation: orientation,
-			diapason: cmbDiapason.value,
+			fretboardStyle: cmbDiapason.value,
 			fretCount: numberFrets.value,
 			displayMode: displayMode,
 			inlays: chkInlays.checked,
 			rotated: rotated,
-			projectBar: cmbBar.value,
+			bar: cmbBar.value,
 			scoreScale: scoreScale,
 			tipoSecuencia: cmbTipoSecuencia.value,
 			countBars: cmbCountIn.value,
@@ -489,6 +479,7 @@ function getCurrentProject() {
 			isScoreVisible: isScoreVisible,
 			currentInstrument: cmbSamplerInstrument.value,
 			fretCount: sliderFrets.value,
+			fretNumbers: numFrets.value,
 			showFretNumbers: showNumber.checked,
 			bpm: sliderBpm.value,
 			key: cmbTonalidad.value,
@@ -531,22 +522,6 @@ function getCurrentProject() {
 
 }
 
-async function selectProject(project) {
-
-	if (!project) {
-		return;
-	}
-
-	currentProjectId = project.id;
-
-	openProjectCategory(project.category);
-
-	updateSelectedProject();
-
-	await loadProject(project);
-
-}
-
 function projectsToXml() {
 
 	const lines = [];
@@ -554,7 +529,7 @@ function projectsToXml() {
 	xmlVersion = (parseFloat(xmlVersion) + 0.1).toFixed(1);
 
 	lines.push('<?xml version="1.0" encoding="UTF-8"?>');
-	lines.push('<projects version="' + xmlVersion + '" name="' + projectsName + ' desc="' + projectsDesc + '">');
+	lines.push('<projects version="' + xmlVersion + '" name="' + projectsName + '" desc="' + projectsDesc + '" projectType="' + cmbProjectType.value + '">');
 	lines.push("");
 
 	// Categorías
@@ -593,7 +568,7 @@ function projectToXml(project, indent = "\t") {
 		`${indent}<project ` +
 		`id="${project.id}" ` +
 		`title="${escapeXml(project.title)}" ` +
-		`category="${escapeXml(project.category)}">` +
+		`category="${escapeXml(project.category)}" ` +
 		`projectType="${escapeXml(project.projectType)}">`
 	);
 
@@ -675,13 +650,12 @@ function projectToXml(project, indent = "\t") {
 
 }
 
-function renderHTMLProjectsList() {
+function renderProjectsLibrary() {
 
 	// Eliminar todas las categorías actuales excepto la cabecera
 	projectPanel
 		.querySelectorAll(".projectCategory")
 		.forEach(category => category.remove());
-
 
 	getSortedCategories().forEach(category => {
 
@@ -705,20 +679,16 @@ function renderHTMLProjectsList() {
 		categoryButton.dataset.projectCategory = category.id;
 		categoryButton.setAttribute("aria-expanded", "false");
 
-
 		const title = document.createElement("span");
 
 		title.textContent = category.name;
-
 
 		const icon = document.createElement("i");
 
 		icon.className = "fa-solid fa-chevron-down";
 
-
 		categoryButton.appendChild(title);
 		categoryButton.appendChild(icon);
-
 
 		// --------------------------------
 		// LISTA DE PROYECTOS
@@ -729,12 +699,10 @@ function renderHTMLProjectsList() {
 		list.className = "projectCategoryList";
 		list.id = `projectList_${category.id}`;
 
-
 		categoryContainer.appendChild(categoryButton);
 		categoryContainer.appendChild(list);
 
 		projectPanel.appendChild(categoryContainer);
-
 
 		// --------------------------------
 		// PROYECTOS DE LA CATEGORÍA
@@ -746,19 +714,15 @@ function renderHTMLProjectsList() {
 				a.title.localeCompare(
 					b.title,
 					"es",
-					{
-						sensitivity: "base"
-					}
+					{sensitivity: "base"}
 				)
 			);
-
 
 		categoryProjects.forEach(project => {
 
 			const item = document.createElement("li");
 
 			item.className = "projectItem";
-
 
 			// --------------------------------
 			// BOTÓN ABRIR PROYECTO
@@ -772,20 +736,23 @@ function renderHTMLProjectsList() {
 
 			openButton.title = `Abrir: ${project.title}`;
 
-
 			const titleSpan = document.createElement("span");
 
 			titleSpan.className = "projectTitle";
 			titleSpan.textContent = project.title;
 
-
 			openButton.appendChild(titleSpan);
 
+			const currentProject = projects.find(item => item.id === project.id);
 
 			// Al pulsar, seleccionamos explícitamente
 			openButton.addEventListener("click", () => {
 
-				selectProject(project);
+				const currentProject = projects.find(item => item.id === openButton.dataset.projectId);
+
+				if (!currentProject) return;
+
+				selectProject(currentProject);
 
 				setPlayerValues();
 
@@ -807,23 +774,23 @@ function renderHTMLProjectsList() {
 				deleteButton.className = "projectDeleteButton";
 				deleteButton.title = "Eliminar proyecto";
 
-				deleteButton.innerHTML =
-					'<i class="fa-solid fa-trash"></i>';
-
+				deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
 
 				deleteButton.addEventListener("click", e => {
 
 					e.stopPropagation();
 
-					deleteProject(project.id);
+					const currentProject = projects.find(item => item.id === openButton.dataset.projectId);
+
+					if (!currentProject) return;
+
+					deleteProject(currentProject.id);
 
 				});
 
 
 				item.appendChild(deleteButton);
-
 			}
-
 
 			list.appendChild(item);
 
@@ -847,16 +814,33 @@ function renderHTMLProjectsList() {
 
 }
 
-function saveCurrentProject() {
-
-	const project = getCurrentProject();
+async function selectProject(project) {
 
 	if (!project) {
 		return;
 	}
 
-	// Si ya existe un título igual, se reemplaza.
-	const existingIndex = projects.findIndex(existing => existing.id === project.id);
+	currentProjectId = project.id;
+
+	openProjectCategory(project.category);
+
+	updateSelectedProject();
+
+	await loadProject(project);
+
+}
+
+async function saveCurrentProject() {
+
+	const project = getCurrentProject();
+
+	if (!project) {
+		return false;
+	}
+
+	const existingIndex = projects.findIndex(
+		existing => existing.id === project.id
+	);
 
 	if (existingIndex >= 0) {
 
@@ -868,11 +852,21 @@ function saveCurrentProject() {
 
 	}
 
-	projectModified = false;
+	const saved = await saveProjectsFile();
 
-	renderHTMLProjectsList();
+	if (saved) {
 
-	saveProjectsFile();
+		projectModified = false;
+
+		renderProjectsLibrary();
+
+		openProjectCategory(project.category);
+
+		alert("Proyecto guardado correctamente.");
+
+	}
+
+	return saved;
 
 }
 
@@ -880,17 +874,18 @@ async function saveProjectsFile() {
 
 	const xmlText = projectsToXml();
 
-	// Chrome / Edge: guarda en el archivo que el usuario eligió.
+	// Chrome / Edge: guardar en el archivo elegido.
 	if (projectsFileHandle) {
 
 		try {
 
-			const writable = await projectsFileHandle.createWritable();
+			const writable =
+				await projectsFileHandle.createWritable();
 
 			await writable.write(xmlText);
 			await writable.close();
 
-			return;
+			return true;
 
 		} catch (error) {
 
@@ -903,12 +898,25 @@ async function saveProjectsFile() {
 
 	}
 
-	// Alternativa compatible: descarga el archivo de la variable: xmlProjects
-	const blob = new Blob([xmlText], {
-		type: "application/xml;charset=utf-8"
-	});
+	// Alternativa: descargar el archivo.
+	try {
 
-	downloadBlob(blob, xmlProjects);
+		const blob = new Blob(
+			[xmlText],
+			{type:"application/xml;charset=utf-8"}
+		);
+
+		downloadBlob(blob,xmlProjects);
+
+		return true;
+
+	} catch (error) {
+
+		console.error("No se pudo descargar el archivo XML.",error);
+
+		return false;
+
+	}
 
 }
 
@@ -943,14 +951,14 @@ async function deleteProject(id) {
 	// Eliminar del array
 	projects = projects.filter(p => p.id !== id);
 
-	// Actualizar la lista
-	renderHTMLProjectsList();
-
 	// Guardar el XML
 	saveProjectsFile();
 
 	// Crear un proyecto nuevo
 	newProject();
+
+	// Actualizar la lista
+	renderProjectsLibrary();
 
 }
 
@@ -978,14 +986,10 @@ function generateCategoryId() {
 
 function updateSelectedProject() {
 
-	document
-		.querySelectorAll(".projectOpenButton")
+	document.querySelectorAll(".projectOpenButton")
 		.forEach(button => {
 
-			button.classList.toggle(
-				"active",
-				button.dataset.projectId === currentProjectId
-			);
+			button.classList.toggle("active",button.dataset.projectId === currentProjectId);
 
 		});
 
@@ -993,9 +997,7 @@ function updateSelectedProject() {
 
 function setupProjectCategories() {
 
-	const categoryButtons = document.querySelectorAll(
-		".projectCategoryButton"
-	);
+	const categoryButtons = document.querySelectorAll(".projectCategoryButton");
 
 	categoryButtons.forEach(button => {
 
@@ -1098,7 +1100,8 @@ function addCategory() {
 	categories.push(category);
 
 	refreshCategoryList();
-	renderHTMLProjectsList();
+
+	renderProjectsLibrary();
 
 	cmbProjectCategory.value = category.id;
 
@@ -1168,7 +1171,7 @@ function deleteCategory() {
 
 	refreshCategoryList();
 
-	renderHTMLProjectsList();
+	renderProjectsLibrary();
 
 	if (categories.length > 0) {
 		cmbProjectCategory.value = categories[0].id;

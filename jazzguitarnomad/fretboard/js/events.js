@@ -10,11 +10,7 @@ window.addEventListener("resize", () => {
 
 	const isMobile = window.innerWidth <= maxMediaScreenWidth;
 
-	if (!isMobile) {
-
-		updateTopBarMenu();
-
-	}
+	if (!isMobile) updateTopBarMenu();
 
 	if (!isPlaying && isFretboardVisible) resizeCanvas();
 
@@ -518,25 +514,9 @@ btnToggleLibrary.addEventListener("click", () => {
 	showProjectPanel();
 });
 
-btnToggleTopControls.addEventListener("click", () => {
-
-	const isOpen = topControlsContainer.classList.contains("isOpen");
-
-	if (isOpen) {
-
-		closeTopControls();
-
-	} else {
-
-		openTopControls();
-
-	}
-
-});
-
 titleText.addEventListener("input", () => {
 
-    projectTitle = titleText.value.trim() || "Sin Título";
+    projectTitle = titleText.value.trim() || "Proyecto nuevo sin título";
 
     workspaceTitleText.textContent = projectTitle;
 
@@ -548,17 +528,7 @@ titleText.addEventListener("input", () => {
 
 chkShowTitle.addEventListener("change", () => {
 
-	chkShowTitleViewMode.checked = chkShowTitle.checked;
-
-	if (isFretboardVisible) resizeCanvas();
-
-});
-
-chkShowTitleViewMode.addEventListener("change", () => {
-
-	chkShowTitle.checked = chkShowTitleViewMode.checked;
-
-	if (isFretboardVisible) resizeCanvas();
+    if (isFretboardVisible) resizeCanvas();
 
 });
 
@@ -641,8 +611,8 @@ btnNewProject.addEventListener("click", () => {
 
 });
 
-btnSaveProject.addEventListener("click", () => {
-	saveCurrentProject();
+btnSaveProject.addEventListener("click", async () => {
+	await saveCurrentProject();
 });
 
 btnDelProject.addEventListener("click", () => {

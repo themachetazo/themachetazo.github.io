@@ -15,7 +15,7 @@ async function initializeApp() {
 
 		await loadXML("user",xmlUsers);
 
-		setAppMode();
+		setUserAppMode();
 
 		setUserControlsStates();
 
@@ -48,6 +48,8 @@ async function initializeApp() {
 			await loadFretboardImage();
 
 			console.log("Imágenes cargadas");
+
+			resizeCanvas();
 
 		}
 
@@ -102,21 +104,6 @@ async function initializeApp() {
 
 			resizeCanvas();
 
-			await new Promise(resolve =>
-				requestAnimationFrame(() => {
-
-					requestAnimationFrame(resolve);
-
-				})
-			);
-
-			resizeCanvas();
-
-/*
-			await waitForLayout();
-
-			resizeCanvas();
-*/
 			scrollToFretboardNut();
 
 			console.log("Mástil renderizado");
@@ -158,41 +145,13 @@ async function initializeApp() {
 
 }
 
-async function waitForLayout() {
-
-	let previousWidth = 0;
-	let stableFrames = 0;
-
-	while (stableFrames < 2) {
-
-		await new Promise(resolve =>
-			requestAnimationFrame(resolve)
-		);
-
-		const width = workspaceFretboard.clientWidth;
-
-		if (width > 0 && width === previousWidth) {
-
-			stableFrames++;
-
-		} else {
-
-			stableFrames = 0;
-			previousWidth = width;
-
-		}
-
-	}
-
-}
-
 function getURLParams(){
 
 	const params = new URLSearchParams(window.location.search);
 
 	user = params.get("user");
 
-	isAdmin = params.has("admin");
+	isAdmin = params.has("admin") || user === "admin";
 
 	lib = params.get("lib");
 
@@ -200,7 +159,7 @@ function getURLParams(){
 
 }
 
-function setAppMode(){
+function setUserAppMode(){
 
 	isUserActive = false;
 
@@ -214,15 +173,17 @@ function setAppMode(){
 
 			if (currentUser) {
 
+				userName = currentUser.name;
+
 				if (!currentUser.active){
-					alert("El usuario '" + user + "' no está activo.");
+					console.warn("El usuario '" + user + "' con nombre '" + userName +"' no está activo.");
 					user = null;
 				}else{
 					isUserActive = true;
 				}
 
 			}else{
-				alert("El usuario '" + user + "' no existe.");
+				console.warn("El usuario '" + user + "' no existe.");
 				user = null;
 			}
 		}
@@ -254,10 +215,10 @@ function setUserControlsStates(){
 		btnAudio.style.display = "none";
 		btnAudioPopup.style.display = "none";
 
-		if (appMode === "Viewer"){
+		topScoreDownload.style.display = "none";
+		topTitle.style.display = "none";
 
-			titleText.style.display = "none";
-			topTitle.style.display = "none";
+		if (appMode === "Viewer"){
 
 			btnEdicion.style.display = "none";
 			btnEdicionPopup.style.display = "none";
@@ -268,28 +229,29 @@ function setUserControlsStates(){
 
 		}else{
 
-			topTitleViewMode.style.display = "none";
-			topLibrary.style.display = "none";
-			topCategory.style.display = "none";
-			topAudio.style.display = "none";
-			topBuffer.style.display = "none";
-			topScoreDownload.style.display = "none";
-
-//			topFretboardDownload.style.display y topScoreDownload.style.display en funcion setMenu
-
 			setMenu("edit");
 
+			topLibrary.style.display = "none";
+			topCategory.style.display = "none";
+
+			topFretboardDownload.classList.remove("isHidden");
 		}
 
-		btnToggleLibrary.style.display = "none";
+		btnUser.classList.remove("admin");
+		btnUser.classList.add("user");
+		btnUser.querySelector("i").className = user === null ? "fa-solid fa-user-lock" : "fa-solid fa-user-tie";
+		txtUserTitle.textContent = user === null ? "Invitado" : userName;
 
 	} else {
-
-		document.documentElement.style.setProperty("--color-hightlight", adminColorHightlight);
 
 		topTitleViewMode.style.display = "none";
 
 		setMenu("edit");
+
+		btnUser.classList.remove("user");
+		btnUser.classList.add("admin");
+		btnUser.querySelector("i").className = "fa-solid fa-user-shield";
+		txtUserTitle.textContent = "Admin";
 
 	}
 
@@ -300,24 +262,6 @@ function setUserControlsStates(){
 	updateTopBarMenu();
 
 	setProjectControlsType();
-
-}
-
-function setProjectInfoLabel(type,fileName){
-
-	const appUrl = window.location.href.substring(0,window.location.href.lastIndexOf("/") + 1);
-
-	let txtInfo = "<b>" + projectsName + "</b><br><i>versión=" + xmlVersion + " " + type + "=";
-
-	if (type === "Server"){
-		txtInfo = txtInfo + "<a href='" + appUrl + xmlProjects + "' target='_blank'>" + fileName + "</a>";
-	}else{
-		txtInfo = txtInfo + fileName;
-	}
-	
-	txtInfo = txtInfo + "</i><br>" + projectsDesc;
-
-	projectPanelInfo.innerHTML = txtInfo;
 
 }
 
@@ -339,7 +283,7 @@ function setProjectControlsStates() {
 
 		if (project) {
 
-			renderHTMLProjectsList();
+			renderProjectsLibrary();
 
 			selectProject(project);
 
@@ -357,14 +301,13 @@ function setProjectControlsStates() {
 
 	setDefaultControlsValues("init");
 
-	renderHTMLProjectsList();
+	renderProjectsLibrary();
 
 }
 
 function setProjectControlsType(){
 
 	cmbTipoSecuencia.disabled = projectType === "fretboard";
-	chkMetronomeOn.checked = projectType !== "fretboard";
 	chkMetronomeOn.disabled = projectType === "fretboard";
 
 	topChords.style.display = cmbProjectType.value !== "chord" ? "none" : "flex";
@@ -373,6 +316,8 @@ function setProjectControlsType(){
 	btnScorePopup.disabled = projectType === "fretboard";
 	btnPlayer.disabled = projectType === "fretboard";
 	btnPlayerPopup.disabled = projectType === "fretboard";
+	btnAudio.disabled = projectType === "fretboard";
+	btnAudioPopup.disabled = projectType === "fretboard";
 
 	btnPlayStop.disabled = projectType === "fretboard";
 	btnFretboardVisible.disabled = projectType === "fretboard";
@@ -384,11 +329,33 @@ function setProjectControlsType(){
 		btnScorePopup.disabled = true;
 		btnPlayer.disabled = true;
 		btnPlayerPopup.disabled = true;
+		btnAudio.disabled = true;
+		btnAudioPopup.disabled = true;
 
 		btnPlayStop.disabled = true;
 		btnFretboardVisible.disabled = true;
 		btnScoreVisible.disabled = true;
 	}
+
+}
+
+function setProjectInfoLabel(type,fileName){
+
+	const appUrl = window.location.href.substring(0,window.location.href.lastIndexOf("/") + 1);
+
+	let txtInfo = "<b>" + projectsName + "</b><br>" + projectsDesc + "<br><i>";
+
+	if (isAdmin){
+		if (type === "Server"){
+			txtInfo = txtInfo + "<a href='" + appUrl + xmlProjects + "' target='_blank'>" + fileName + "</a>";
+		}else{
+			txtInfo = txtInfo + fileName;
+		}
+	}
+
+	txtInfo = txtInfo + "</i>";
+
+	projectPanelInfo.innerHTML = txtInfo;
 
 }
 
@@ -510,7 +477,7 @@ function setDefaultControlsValues(state){
 		projectBar = 4;
 		projectFigure = 1;
 		scoreScale = "auto";
-		projectType = "fretboard";
+		projectType = "sequence";
 		countBars = 0;
 		repetitionSequence = 2;
 		isFretboardVisible = true;
@@ -519,26 +486,27 @@ function setDefaultControlsValues(state){
 		swing = false;
 		metronomeOn = true;
 		inlays = true;
-/*
-		rotation = 0;
-		rotated = false;
-		currentInstrument = "piano";
 		fretNumbers = 1;
-		showFretNumbers = false;
 		bpm = 90;
 		key = "C";
 		scoreStaves = "all";
+
+/*
+		rotation = 0;
+		rotated = false;
+		fretboardStyle = "maple";
+		showFretNumbers = false;
 		scoreLayout = "vertical";
+		currentInstrument = "piano";
 */
 
 	}
 
 	titleText.value = projectTitle;
-	workspaceTitleText.textContent = projectTitle === "" ? "Sin Título" : projectTitle;
+	workspaceTitleText.textContent = projectTitle === "" ? "Proyecto nuevo sin título" : projectTitle;
 
 	chkShowTitle.checked = false;
 	chkScoreTitle.checked = false;
-	chkShowTitleViewMode.checked = false;
 	chkScoreTitleViewMode.checked = false;
 
 	numFrets.value = fretCount;
@@ -667,7 +635,7 @@ function updateTopBarMenu() {
 
 	const brandWidth = brand.offsetWidth;
 
-	const toggleWidth = btnToggleTopControls.offsetWidth;
+	const toggleWidth = btnUser.offsetWidth;
 
 
 	// Mostrar temporalmente el menú para poder medirlo
@@ -888,42 +856,22 @@ function openTopControls(){
 
 	topControlsContainer.classList.add("isOpen");
 
-	btnToggleTopControls.setAttribute(
-		"aria-expanded",
-		"true"
-	);
-
-	btnToggleTopControls.title = "Ocultar controles";
-
 }
 
 function closeTopControls() {
 
 	topControlsContainer.classList.remove("isOpen");
 
-	btnToggleTopControls.setAttribute(
-		"aria-expanded",
-		"false"
-	);
-
-	btnToggleTopControls.title = "Mostrar controles";
-
 }
 
 function setEditMode(newMode) {
 
-	if (editMode === newMode) {
-
-		newMode = "view";
-
-	}
+	if (editMode === newMode) newMode = "view";
 
 	editMode = newMode;
 
 	btnEdit.classList.toggle("active",newMode === "note");
-
 	btnErase.classList.toggle("active",newMode === "erase");
-
 	btnNutMode.classList.toggle("active",newMode === "barre");
 
 	btnNutMode.setAttribute("aria-pressed",String(newMode === "barre"));
@@ -940,7 +888,7 @@ function setEditMode(newMode) {
 
 			cursor.innerHTML = '<i class="fa-solid fa-pencil"></i>';
 
-			if (window.innerWidth <= maxMediaScreenWidth) {
+			if (window.innerWidth > maxMediaScreenWidth) {
 				noteText.value = "";
 				noteText.focus();
 			}
@@ -1057,10 +1005,8 @@ function setMenu(m){
 				topShare,
 				topFretboardDownload,
 				topScoreDownload,
-				topTitleViewMode
+				topTitle
 			);
-
-			if (!isAdmin) topFretboardDownload.classList.add("isHidden");
 
 			menuSelectorText.textContent = "PROYECTOS";
 			menuSelectorIcon.className = "fa-solid fa-folder";
@@ -1072,7 +1018,6 @@ function setMenu(m){
 			btnEdicion.classList.add("active");
 
 			showMenuControls(
-				topTitle,
 				topEdit,
 				topUndo,
 				topColor,
@@ -1091,7 +1036,6 @@ function setMenu(m){
 			btnFretboard.classList.add("active");
 
 			showMenuControls(
-				topTitleViewMode,
 				topFretboardScale,
 				topDiapason,
 				topFrets,
@@ -1099,13 +1043,8 @@ function setMenu(m){
 				topOrientation
 			);
 
-			if (!isAdmin) topFretboardDownload.classList.remove("isHidden");
-
 			menuSelectorText.textContent = "MÁSTIL";
 			menuSelectorIcon.className = "fa-solid fa-guitar";
-
-			topTitleViewModeScore.style.display = "none";
-			topTitleViewModeFretboard.style.display = "flex";
 
 			break;
 
@@ -1146,9 +1085,6 @@ function setMenu(m){
 			menuSelectorText.textContent = "PARTITURA";
 			menuSelectorIcon.className = "fa-solid fa-music";
 
-			topTitleViewModeScore.style.display = "flex";
-			topTitleViewModeFretboard.style.display = "none";
-
 			break;
 
 		case "metronome":
@@ -1185,7 +1121,6 @@ function setMenu(m){
 	// En móvil, cerrar el menú desplegable al seleccionar una opción
 	menuPopup.classList.remove("isOpen");
 
-	// Mostrar automáticamente los controles
 	openTopControls();
 
 }

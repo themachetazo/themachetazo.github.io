@@ -20,8 +20,10 @@ const subtituleText = document.getElementById("subtituleText");
 
 const mainMenu = document.getElementById("mainMenu");
 
-const btnToggleTopControls = document.getElementById("btnToggleTopControls");
 const topControlsContainer = document.getElementById("topControlsContainer");
+
+const btnUser = document.getElementById("btnUser");
+const txtUserTitle = document.getElementById("txtUserTitle");
 
 const btnProyectos = document.getElementById("btnProyectos");
 const btnEdicion = document.getElementById("btnEdicion");
@@ -104,8 +106,6 @@ const topAudio = document.getElementById("topAudio");
 const topScoreDownload = document.getElementById("topScoreDownload");
 const topChords = document.getElementById("topChords");
 const topTitleViewMode = document.getElementById("topTitleViewMode");
-const topTitleViewModeFretboard = document.getElementById("topTitleViewModeFretboard");
-const topTitleViewModeScore = document.getElementById("topTitleViewModeScore");
 
 /*==================================================
 	REFERENCIAS DOM: BARRA DE HERRAMIENTAS
@@ -235,11 +235,11 @@ let lib = null;
 
 let users = [];
 let user;
+let userName;
 let xmlUsers = "users.xml";
 let isUserActive = false;
 
 let isAdmin = false;
-let adminColorHightlight = "#16A34A";
 
 let projectsLoaded = false;
 
@@ -271,7 +271,7 @@ let menuOpen = "";
 
 let editMode = "view";
 
-let projectTitle = "Sin Título";
+let projectTitle = "Proyecto nuevo sin título";
 let displayMode = true;
 let fretCount = 10;
 let orientation = "horizontal";
@@ -280,7 +280,7 @@ let rotated = false;
 let projectBar = 4;
 let projectFigure = 1;
 let scoreScale = "auto";
-let projectType = "fretboard";
+let projectType = "sequence";
 let countBars = 0;
 let repetitionSequence = 2;
 let isFretboardVisible = true;
