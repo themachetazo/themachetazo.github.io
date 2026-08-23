@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Fretboard Builder</title>
+	<title>Fretboard</title>
 
 	<link rel="icon" href="img/fretboard.ico" type="image/x-icon">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -15,7 +15,7 @@
 
 	<div id="loadingScreen">
 		<img id="spinnerLogo" src="img/logo.png" alt="Jazz Guitar Nomad">
-		<h1>JAZZ GUITAR NOMAD</h1>
+		<h1>Jazz Guitar Nomad</h1>
 		<h2>Fretboard Builder</h2>
 		<div id="loadingSpinner"></div>
 		<div id="loadingText"></div>
@@ -38,7 +38,7 @@
 			<div id="brand">
 				<a href="#"><img id="brandLogo" src="img/logo.png" alt="Jazz Guitar Nomad"></a>
 				<div id="brandName">
-					<span class="brandTitle"><a href="#">JAZZ GUITAR NOMAD</a></span>
+					<span class="brandTitle"><a href="#">Jazz Guitar Nomad</a></span>
 					<span id="subtituleText" class="brandSubtitle">Fretboard Builder</span>
 				</div>
 			</div>
@@ -65,7 +65,7 @@
 
 				<div id="menuPopup">
 					<button type="button" id="btnProyectosPopup" data-menu="projects"><i class="fa-solid fa-folder"></i>PROYECTOS</button>
-					<button type="button" id="btnEdicionPopup" data-menu="edit"><i class="fa-solid fa-pen"></i>EDITAR</button>
+					<button type="button" id="btnEdicionPopup" data-menu="edit"><i class="fa-solid fa-pen"></i>EDICIÓN</button>
 					<button type="button" id="btnFretboardPopup" data-menu="fretboard"><i class="fa-solid fa-guitar"></i>MÁSTIL</button>
 					<button type="button" id="btnScorePopup" data-menu="score"><i class="fa-solid fa-music"></i>PARTITURA</button>
 					<button type="button" id="btnPlayerPopup" data-menu="player"><i class="fa-solid fa-radio"></i>PLAYER</button>
@@ -73,13 +73,7 @@
 					<button type="button" id="btnAudioPopup" data-menu="audio"><i class="fa-solid fa-file-audio"></i>AUDIO</button>
 				</div>
 
-				<button type="button" id="btnToggleTopControls" class="topBarSelector" title="Mostrar controles" aria-label="Mostrar controles" aria-expanded="false">
-					<div class="menuSelectorTop">
-						<i class="fa-solid fa-gear fa-fw"></i>
-						<i class="fa-solid fa-angle-down menuArrow"></i>
-					</div>
-					<span>CONTROLES</span>
-				</button>
+				<button type="button" id="btnUser" class="user"><i class="fa-solid fa-user-shield"></i><span id="txtUserTitle">Usuario</span></button>
 
 			</div>
 
@@ -142,15 +136,8 @@
 					</div>
 
 					<div class="toolbarTop-Controls" id="topTitleViewMode">
-						<span>ENCABEZADO</span>
-						<div class="toolRow" id="topTitleViewModeFretboard">
-							<label class="lblToggle" title="Mostrar título en mástil">
-								<span class="lblToggleText">Título</span>
-								<input id="chkShowTitleViewMode" type="checkbox">
-								<span class="lblToggleSpan"></span>
-							</label>
-						</div>
-						<div class="toolRow" id="topTitleViewModeScore">
+						<span>ENCABEZADO/PIE</span>
+						<div class="toolRow">
 							<label class="lblToggle" title="Mostrar Encabezado/Pie de partitura">
 								<span class="lblToggleText">Título/Pie</span>
 								<input id="chkScoreTitleViewMode" type="checkbox">
@@ -164,8 +151,8 @@
 						<div class="toolRow">
 							<span>Tipo</span>
 							<select id="cmbProjectType">
-							    <option value="fretboard" selected>Mástil</option>
-							    <option value="sequence">Secuencia</option>
+							    <option value="fretboard">Mástil</option>
+							    <option value="sequence" selected>Secuencia</option>
 							    <option value="chord">Acorde</option>
 							</select>
 						</div>
@@ -560,13 +547,6 @@
 
 					<!-- PANEL METRONOME -->
 
-					<div class="toolbarTop-Controls" id="topMetronomePlay">
-						<span>METRÓNOMO</span>
-						<div class="toolRow">
-							<button type="button" id="btnPlayStopMetronome" title="Iniciar"><i class="fa-solid fa-play"></i><span>Iniciar</span></button>
-						</div>
-					</div>
-
 					<div class="toolbarTop-Controls" id="topMetronomeControls">
 						<span>CONTROLES</span>
 						<div class="toolRow">
@@ -587,6 +567,13 @@
 						</div>
 					</div>
 
+					<div class="toolbarTop-Controls" id="topMetronomePlay">
+						<span>METRÓNOMO</span>
+						<div class="toolRow">
+							<button type="button" id="btnPlayStopMetronome" title="Iniciar"><i class="fa-solid fa-play"></i><span>Iniciar</span></button>
+						</div>
+					</div>
+
 
 				</div> <!-- Fin toolbarTop -->
 			</div> <!-- Fin topControls -->
@@ -596,11 +583,11 @@
 
 		<!-- CONTROLES WORKSPACE -->
 
-		<div id="workspaceHeader">
+		<aside id="workspaceHeader">
 
 			<div class="workspaceControls" id="workspaceControls">
 				<button type="button" id="btnPlayStop" class="buttonPlay" title="Reproducir" disabled><i class="fa-solid fa-play"></i><span>Play</span></button>
-				<button type="button" id="btnShowProjectPanel" title="Ver biblioteca"><i class="fa-solid fa-folder-tree"></i><span>Proyectos</span></button>
+				<button type="button" id="btnShowProjectPanel" title="Ver biblioteca"><i class="fa-solid fa-folder-tree"></i><span>Biblioteca</span></button>
 				<button type="button" id="btnFretboardVisible" title="Ver partitura"><i class="fa-solid fa-guitar"></i><span>Fretboard</span></button>
 				<button type="button" id="btnScoreVisible" title="Ver partitura"><i class="fa-solid fa-file-lines"></i><span>Partitura</span></button>
 				<button type="button" id="btnVertical" class="active" title="Cambiar orientación"><i class="fa-solid fa-arrows-up-down"></i><span>Vertical</span></button>
@@ -622,7 +609,7 @@
 				<div id="workspaceTitleText">Sin Título</div>
 			</div>
 
-		</div> <!-- Fin Controles Workspace -->
+		</aside> <!-- Fin Controles Workspace -->
 
 
 
@@ -635,7 +622,7 @@
 				<!-- Lista preparada para los proyectos -->
 				<div id="projectPanel">
 					<div class="projectPanelHeader">
-						<span id="projectPanelHeaderTitle">PROYECTOS</span>
+						<span id="projectPanelHeaderTitle">BIBLIOTECA</span>
 						<button type="button" id="btnToggleLibrary" title="Ocultar biblioteca"><i class="fa-solid fa-eye"></i></button>
 					</div>
 
@@ -693,7 +680,7 @@
 
 		<div class="footerDivs">
 			<a href="#">
-				<strong>JAZZ GUITAR NOMAD</strong>
+				<strong>Jazz Guitar Nomad</strong>
 				<br><br>
 				<img id="footerBrandLogo" src="img/logo.png" alt="Jazz Guitar Nomad">
 			</a>

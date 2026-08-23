@@ -34,6 +34,7 @@ body {
 
 	font-family: "Segoe UI", Arial, sans-serif;
 	font-size: 12px;
+
 	background:#000;
 	color:var(--color-main-text);
 }
@@ -141,6 +142,15 @@ html {
 	width:48px;
 	height:48px;
 
+	min-width:48px;
+	min-height:48px;
+
+	flex:0 0 48px;
+
+	aspect-ratio:1 / 1;
+
+	box-sizing:border-box;
+
 	border:4px solid #555;
 	border-top-color:var(--color-main-text);
 
@@ -152,7 +162,9 @@ html {
 
 @keyframes loadingSpin{
 
-	to{transform:rotate(360deg);}
+	to{
+		transform:rotate(360deg);
+	}
 
 }
 
@@ -590,9 +602,21 @@ html {
 #projectPanel {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 6px;
 
 	margin-top: 0;
+}
+
+.projectPanelHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	padding: 0;
+}
+
+#projectPanelHeaderTitle{
+	font-weight:700;
 }
 
 #projectPanelInfo {
@@ -601,25 +625,15 @@ html {
 
 	border-radius:2px;
 
-	padding:6px;
+	padding-bottom: 4px;
 
 	line-height:1.4;
 
 	overflow-wrap:break-word;
 }
 
-.projectPanelHeader {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-
-	padding-bottom: 8px;
-
-	border-bottom: 1px solid var(--color-border);
-}
-
-#projectPanelHeaderTitle{
-	font-weight:700;
+#projectPanelInfo a{
+	text-decoration:underline;
 }
 
 .projectOpenButton {
@@ -632,7 +646,7 @@ html {
 	min-width: 0;
 	min-height: 34px;
 
-	padding: 2px 8px;
+	padding: 0;
 
 	border: 0;
 	border-radius: 4px;
@@ -960,7 +974,7 @@ html {
 
     min-height:60px;
 
-    padding:0 18px;
+    padding:0 8px;
 
     background:#000;
 
@@ -1011,7 +1025,7 @@ html {
 
 .brandTitle {
 
-	font-size: 17px;
+	font-size: 16px;
 	font-weight:700;
 
 }
@@ -1407,32 +1421,50 @@ html {
 
 }
 
-#btnToggleTopControls{
+#btnUser{
 
-    grid-area:topToggle;
-    border: 1px solid var(--color-border);
+	width:auto;
+	height:48px;
+
+	padding:2px 2px;
+
+	display:flex;
+	flex-direction:column;
+	align-items:center;
+	justify-content:center;
+
+	gap:2px;
+
+	border:none;
+	background:transparent;
+
+	color:var(--color-main-text);
+
+	cursor:default;
+
+}
+
+#btnUser i{
+
+	font-size:20px;
+	line-height:20px;
+	color:var(--color-main-text);
+
+	padding-bottom:5px;
 
 }
 
-#btnToggleTopControls:hover{
-	color:#fff;
-}
+#btnUser.admin i, #btnUser.user i{ }
 
-#btnToggleTopControls:focus-visible {
-	outline: 2px solid var(--color-hightlight);
-	outline-offset: 2px;
-}
+#txtUserTitle{
 
-#btnToggleTopControls[aria-expanded="true"]{
-	background:var(--color-tools);
-	border: 1px solid var(--color-border);
-}
+	font-size:11px;
+	line-height:10px;
 
-#btnToggleTopControls[aria-expanded="true"] .menuArrow{
-
-	transform:rotate(180deg);
+	white-space:nowrap;
 
 }
+
 
 
 /* ===========================
@@ -1447,7 +1479,7 @@ html {
 
 	max-height:0;
 
-	padding:0 14px;
+	padding:0 10px;
 
 	background:var(--color-tools);
 
@@ -1558,12 +1590,12 @@ html {
 	top:0;
 	left:0;
 
-	width:250px;
+	width:300px;
 	height:100%;
 
 	z-index:100;
 
-	padding:12px 8px;
+	padding:8px 8px;
 
 	display:flex;
 	flex-direction:column;
@@ -1771,22 +1803,8 @@ html {
 .toolbarTop-Controls select:not(:disabled):hover{
 
 	cursor:pointer;
-/*
-	box-shadow:
-		0 0 8px var(--color-hightlight),
-		0 0 16px rgba(252, 210, 45, 0.45);
-*/
-}
-
-/*
-.toolbarTop-Controls input:not(:disabled):hover,
-.toolbarTop-Controls input[type="range"]::-webkit-slider-thumb,
-.toolbarTop-Controls input[type="range"]::-webkit-slider-runnable-track {
-
-	cursor: pointer;
 
 }
-*/
 
 .toolbarTop-Controls select:focus-visible {
 	outline: 2px solid var(--color-main-text);
@@ -2254,7 +2272,7 @@ input[type="range"] {
 	}
 
 	.brandTitle{
-		font-size:10px;
+		font-size:12px;
 	}
 
 	.brandSubtitle{
@@ -2531,17 +2549,23 @@ input[type="range"] {
 	}
 
 	#toolbarTop input[type="range"] {
-		width: 100px;
+		max-width: 80px;
 	}
 
-	#toolbarTop input,
 	#toolbarTop select {
 
-		max-width: 180px;
-
+		max-width: 120px;
 		min-width: 0;
 
 		border:1px solid var(--color-border);
+	}
+
+	#toolbarTop input[type="number"]{
+		max-width: 40px;
+	}
+
+	#toolbarTop #noteText{
+		max-width: 40px;
 	}
 
 	#toolbarTop .toolbarTop-Controls button,
@@ -2653,16 +2677,91 @@ input[type="range"] {
 	}
 
 
+	#btnLessFrets,
+	#btnMoreFrets,
+	#btnLessNumberFrets,
+	#btnMoreNumberFrets,
+	#btnLessTempo,
+	#btnMoreTempo{
+		display:none;
+	}
+
 	/* ==========================
 	   Loading
 	   ========================== */
 
-	#loadingScreen, #loadingText{
-		font-size: 10px;
+
+	#loadingScreen{
+
+		gap:8px;
+
+		padding:10px;
+
+	}
+
+	#spinnerLogo{
+
+		width:60px;
+		height:auto;
+
+	}
+
+	#loadingScreen h1{
+
+		font-size:18px;
+		margin:0;
+
+	}
+
+	#loadingScreen h2{
+
+		font-size:13px;
+		margin:0;
+
+	}
+
+	#loadingSpinner{
+
+		width:36px;
+		height:36px;
+
+		min-width:36px;
+		min-height:36px;
+
+		flex:0 0 36px;
+
+		border-width:3px;
+
+	}
+
+	#loadingText{
+
+		min-height:18px;
+
+		font-size:11px;
+
 	}
 
 	#loadingProgress{
+
 		width:200px;
+		height:6px;
+
+	}
+
+
+	#btnUser i{
+
+		font-size:16px;
+		line-height:16px;
+
+	}
+
+	#txtUserTitle{
+
+		font-size:9px;
+		line-height:9px;
+
 	}
 
 }
@@ -2682,6 +2781,7 @@ input[type="range"] {
 		gap:25px;
 
 		padding:25px 20px;
+		padding-bottom:60px;
 
 		font-size: 10px;
 
