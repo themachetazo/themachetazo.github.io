@@ -268,7 +268,6 @@ function setUserControlsStates(){
 
 function setMenu(m){
 
-/*
 	// Si se pulsa el mismo menú, alternar abrir/cerrar
 	if (menuOpen === m) {
 
@@ -287,7 +286,6 @@ function setMenu(m){
 		return;
 
 	}
-*/
 
 	menuOpen = m;
 
