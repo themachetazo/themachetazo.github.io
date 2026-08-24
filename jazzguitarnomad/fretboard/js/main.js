@@ -15,7 +15,7 @@ async function initializeApp() {
 
 		await loadXML("user",xmlUsers);
 
-		setUserAppMode();
+		setUserStates();
 
 		setUserControlsStates();
 
@@ -159,7 +159,9 @@ function getURLParams(){
 
 }
 
-function setUserAppMode(){
+function setUserStates(){
+
+	isMobile = window.innerWidth <= maxMediaScreenWidth;
 
 	isUserActive = false;
 
@@ -217,24 +219,23 @@ function setUserControlsStates(){
 
 		topScoreDownload.style.display = "none";
 		topTitle.style.display = "none";
+		topCategory.style.display = "none";
 
 		if (appMode === "Viewer"){
+
+			setMenu("fretboard");
 
 			btnEdicion.style.display = "none";
 			btnEdicionPopup.style.display = "none";
 
 			btnShowProjectPanel.style.display = "none";
 
-			setMenu("fretboard");
-
 		}else{
 
 			setMenu("edit");
 
-			topLibrary.style.display = "none";
-			topCategory.style.display = "none";
-
 			topFretboardDownload.classList.remove("isHidden");
+
 		}
 
 		btnUser.classList.remove("admin");
@@ -244,9 +245,9 @@ function setUserControlsStates(){
 
 	} else {
 
-		topTitleViewMode.style.display = "none";
+		setMenu("projects");
 
-		setMenu("edit");
+		topTitleViewMode.style.display = "none";
 
 		btnUser.classList.remove("user");
 		btnUser.classList.add("admin");
@@ -262,6 +263,209 @@ function setUserControlsStates(){
 	updateTopBarMenu();
 
 	setProjectControlsType();
+
+}
+
+function setMenu(m){
+
+/*
+	// Si se pulsa el mismo menú, alternar abrir/cerrar
+	if (menuOpen === m) {
+
+		if (topControlsContainer.classList.contains("isOpen")) {
+
+			closeTopControls();
+
+		} else {
+
+			openTopControls();
+
+		}
+
+		menuPopup.classList.remove("isOpen");
+
+		return;
+
+	}
+*/
+
+	menuOpen = m;
+
+	btnProyectos.classList.remove("active");
+	btnEdicion.classList.remove("active");
+	btnFretboard.classList.remove("active");
+	btnPlayer.classList.remove("active");
+	btnScore.classList.remove("active");
+	btnMetronome.classList.remove("active");
+	btnAudio.classList.remove("active");
+
+	[
+		topProject,
+		topCategory,
+		topLibrary,
+		topTitle,
+		topTitleViewMode,
+		topShare,
+		topEdit,
+		topUndo,
+		topChords,
+		topColor,
+		topNoteNames,
+		topFrets,
+		topNumbers,
+		topOrientation,
+		topFretboardScale,
+		topDiapason,
+		topInstrument,
+		topTempo,
+		topTonality,
+		topTimeSignature,
+		topForm,
+		topScoreStaves,
+		topScoreScale,
+		topScoreMargin,
+		topScoreDownload,
+		topFretboardDownload,
+		topVolumen,
+		topRepeats,
+		topArticulation,
+		topMetronomePlay,
+		topMetronomeControls,
+		topBuffer,
+		topAudio,
+		topReset
+	].forEach(control => control.classList.add("isHidden"));
+
+	switch (menuOpen){
+
+		case "projects":
+
+			btnProyectos.classList.add("active");
+
+			showMenuControls(
+				topProject,
+				topForm,
+				topCategory,
+				topLibrary,
+				topShare,
+				topFretboardDownload,
+				topScoreDownload,
+				topTitle
+			);
+
+			menuSelectorText.textContent = "PROYECTOS";
+			menuSelectorIcon.className = "fa-solid fa-folder";
+
+			break;
+
+		case "edit":
+
+			btnEdicion.classList.add("active");
+
+			showMenuControls(
+				topEdit,
+				topUndo,
+				topColor,
+				topChords,
+				topNoteNames
+			);
+
+			menuSelectorText.textContent = "EDICIÓN";
+			menuSelectorIcon.className = "fa-solid fa-pen";
+
+			break;
+
+		case "fretboard":
+
+			btnFretboard.classList.add("active");
+
+			showMenuControls(
+				topFretboardScale,
+				topDiapason,
+				topFrets,
+				topNumbers,
+				topOrientation
+			);
+
+			menuSelectorText.textContent = "MÁSTIL";
+			menuSelectorIcon.className = "fa-solid fa-guitar";
+
+			break;
+
+		case "player":
+
+			btnPlayer.classList.add("active");
+
+			showMenuControls(
+				topRepeats,
+				topTempo,
+				topInstrument,
+				topArticulation,
+				topVolumen,
+				topReset
+			);
+
+			menuSelectorText.textContent = "PLAYER";
+			menuSelectorIcon.className = "fa-solid fa-radio";
+
+			break;
+
+		case "score":
+
+			btnScore.classList.add("active");
+
+			showMenuControls(
+				topTitleViewMode,
+				topTonality,
+				topTempo,
+				topTimeSignature,
+				topScoreStaves,
+				topScoreScale,
+				topScoreMargin
+			);
+
+			if (!isAdmin) topScoreDownload.classList.remove("isHidden");
+
+			menuSelectorText.textContent = "PARTITURA";
+			menuSelectorIcon.className = "fa-solid fa-music";
+
+			break;
+
+		case "metronome":
+
+			btnMetronome.classList.add("active");
+
+			showMenuControls(
+				topMetronomePlay,
+				topTempo,
+				topMetronomeControls,
+				topTimeSignature
+			);
+
+			menuSelectorText.textContent = "METRÓNOMO";
+			menuSelectorIcon.className = "fa-solid fa-stopwatch";
+
+			break;
+
+		case "audio":
+
+			btnAudio.classList.add("active");
+
+			showMenuControls(
+				topBuffer,
+				topAudio
+			);
+
+			menuSelectorText.textContent = "AUDIO";
+			menuSelectorIcon.className = "fa-solid fa-file-audio";
+
+			break;
+	}
+
+	// En móvil, cerrar el menú desplegable al seleccionar una opción
+	menuPopup.classList.remove("isOpen");
+
+	openTopControls();
 
 }
 
@@ -302,6 +506,8 @@ function setProjectControlsStates() {
 	setDefaultControlsValues("init");
 
 	renderProjectsLibrary();
+	
+	if (!isMobile && appMode !== "Viewer") openProjectsPanel();
 
 }
 
@@ -850,6 +1056,8 @@ function closeProjectsPanel(){
 
 	btnShowProjectPanel.classList.remove("active");
 
+	menuSelectorText.textContent = "MENÚ";
+	menuSelectorIcon.className = "fa-solid fa-gear fa-fw";
 }
 
 function openTopControls(){
@@ -921,207 +1129,6 @@ function setEditMode(newMode) {
 function showMenuControls(...controls){
 
 	controls.forEach(control => control.classList.remove("isHidden"));
-
-}
-
-function setMenu(m){
-
-	// Si se pulsa el mismo menú, alternar abrir/cerrar
-	if (menuOpen === m) {
-
-		if (topControlsContainer.classList.contains("isOpen")) {
-
-			closeTopControls();
-
-		} else {
-
-			openTopControls();
-
-		}
-
-		menuPopup.classList.remove("isOpen");
-
-		return;
-
-	}
-
-	menuOpen = m;
-
-	btnProyectos.classList.remove("active");
-	btnEdicion.classList.remove("active");
-	btnFretboard.classList.remove("active");
-	btnPlayer.classList.remove("active");
-	btnScore.classList.remove("active");
-	btnMetronome.classList.remove("active");
-	btnAudio.classList.remove("active");
-
-	[
-		topProject,
-		topCategory,
-		topLibrary,
-		topTitle,
-		topTitleViewMode,
-		topShare,
-		topEdit,
-		topUndo,
-		topChords,
-		topColor,
-		topNoteNames,
-		topFrets,
-		topNumbers,
-		topOrientation,
-		topFretboardScale,
-		topDiapason,
-		topInstrument,
-		topTempo,
-		topTonality,
-		topTimeSignature,
-		topForm,
-		topScoreStaves,
-		topScoreScale,
-		topScoreMargin,
-		topScoreDownload,
-		topFretboardDownload,
-		topVolumen,
-		topRepeats,
-		topArticulation,
-		topMetronomePlay,
-		topMetronomeControls,
-		topBuffer,
-		topAudio,
-		topReset
-	].forEach(control => control.classList.add("isHidden"));
-
-	switch (menuOpen){
-
-		case "projects":
-
-			btnProyectos.classList.add("active");
-
-			showMenuControls(
-				topProject,
-				topCategory,
-				topLibrary,
-				topShare,
-				topFretboardDownload,
-				topScoreDownload,
-				topTitle
-			);
-
-			menuSelectorText.textContent = "PROYECTOS";
-			menuSelectorIcon.className = "fa-solid fa-folder";
-
-			break;
-
-		case "edit":
-
-			btnEdicion.classList.add("active");
-
-			showMenuControls(
-				topEdit,
-				topUndo,
-				topColor,
-				topForm,
-				topChords,
-				topNoteNames
-			);
-
-			menuSelectorText.textContent = "EDICIÓN";
-			menuSelectorIcon.className = "fa-solid fa-pen";
-
-			break;
-
-		case "fretboard":
-
-			btnFretboard.classList.add("active");
-
-			showMenuControls(
-				topFretboardScale,
-				topDiapason,
-				topFrets,
-				topNumbers,
-				topOrientation
-			);
-
-			menuSelectorText.textContent = "MÁSTIL";
-			menuSelectorIcon.className = "fa-solid fa-guitar";
-
-			break;
-
-		case "player":
-
-			btnPlayer.classList.add("active");
-
-			showMenuControls(
-				topRepeats,
-				topTempo,
-				topInstrument,
-				topArticulation,
-				topVolumen,
-				topReset
-			);
-
-			menuSelectorText.textContent = "PLAYER";
-			menuSelectorIcon.className = "fa-solid fa-radio";
-
-			break;
-
-		case "score":
-
-			btnScore.classList.add("active");
-
-			showMenuControls(
-				topTitleViewMode,
-				topTonality,
-				topTempo,
-				topTimeSignature,
-				topScoreStaves,
-				topScoreScale,
-				topScoreMargin
-			);
-
-			if (!isAdmin) topScoreDownload.classList.remove("isHidden");
-
-			menuSelectorText.textContent = "PARTITURA";
-			menuSelectorIcon.className = "fa-solid fa-music";
-
-			break;
-
-		case "metronome":
-
-			btnMetronome.classList.add("active");
-
-			showMenuControls(
-				topMetronomePlay,
-				topTempo,
-				topMetronomeControls,
-				topTimeSignature
-			);
-
-			menuSelectorText.textContent = "METRÓNOMO";
-			menuSelectorIcon.className = "fa-solid fa-stopwatch";
-
-			break;
-
-		case "audio":
-
-			btnAudio.classList.add("active");
-
-			showMenuControls(
-				topBuffer,
-				topAudio
-			);
-
-			menuSelectorText.textContent = "AUDIO";
-			menuSelectorIcon.className = "fa-solid fa-file-audio";
-
-			break;
-	}
-
-	// En móvil, cerrar el menú desplegable al seleccionar una opción
-	menuPopup.classList.remove("isOpen");
-
-	openTopControls();
 
 }
 
@@ -1258,8 +1265,6 @@ function scrollToFretboardNut(){
 function setLayout() {
 
 	cursor.style.color = colorPicker.value;
-
-	const isMobile = window.innerWidth <= maxMediaScreenWidth;
 
 	if (isMobile) {
 

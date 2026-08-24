@@ -8,7 +8,7 @@ window.addEventListener("load",initializeApp);
 
 window.addEventListener("resize", () => {
 
-	const isMobile = window.innerWidth <= maxMediaScreenWidth;
+	isMobile = window.innerWidth <= maxMediaScreenWidth;
 
 	if (!isMobile) updateTopBarMenu();
 
@@ -305,8 +305,6 @@ canvas.addEventListener("click", (e) => {
 
 	projectModified = true;
 
-	const isMobile = window.innerWidth <= maxMediaScreenWidth;
-
 	const nutString = getNutStringFromMouse(
 		e.offsetX,
 		e.offsetY
@@ -484,9 +482,18 @@ btnAudio.addEventListener("click", () => {
 	setMenu("audio");
 });
 
-btnMenuSelector.addEventListener("click",()=>{
+btnMenuSelector.addEventListener("click", () => {
+
+	if (topControlsContainer.classList.contains("isOpen")) {
+
+		closeTopControls();
+
+	}
 
 	menuPopup.classList.toggle("isOpen");
+
+	menuSelectorText.textContent = "MENÚ";
+	menuSelectorIcon.className = "fa-solid fa-gear fa-fw";
 
 });
 
@@ -497,7 +504,6 @@ menuPopup.querySelectorAll("button").forEach(button=>{
 		setMenu(button.dataset.menu);
 
 		menuPopup.classList.remove("isOpen");
-
 	});
 
 });

@@ -44,6 +44,10 @@ const btnAudioPopup = document.getElementById("btnAudioPopup");
 const btnMenuSelector = document.getElementById("btnMenuSelector");
 const menuPopup = document.getElementById("menuPopup");
 
+const menuSelectorText = document.getElementById("menuSelectorText");
+const menuSelectorIcon = document.getElementById("menuSelectorIcon");
+
+
 /*==================================================
 	REFERENCIAS DOM: CONTROLES DEL DIAPASÓN
 ==================================================*/
@@ -228,6 +232,8 @@ const btnScoreVisible = document.getElementById("btnScoreVisible");
 /*==================================================
 	USUARIOS Y PROYECTOS
 ==================================================*/
+
+let isMobile = false;
 
 let appMode = "Designer";
 
