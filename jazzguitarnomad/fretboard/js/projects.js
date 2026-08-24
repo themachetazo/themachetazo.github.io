@@ -183,6 +183,8 @@ function newProject() {
 
 	setWorkspaceLayout();
 
+	renderProjectsLibrary();
+
 	if (isFretboardVisible) resizeCanvas();
 
 	if (isScoreVisible) scoreRender();
@@ -285,8 +287,6 @@ async function openXMLProjectsFile() {
 		if (projects.length > 0) {
 
 			selectProject(projects[0]);
-
-			setPlayerValues();
 
 		} else {
 
@@ -748,13 +748,17 @@ function renderProjectsLibrary() {
 			// Al pulsar, seleccionamos explícitamente
 			openButton.addEventListener("click", () => {
 
-				const currentProject = projects.find(item => item.id === openButton.dataset.projectId);
-
 				if (!currentProject) return;
 
-				selectProject(currentProject);
+				if (projectModified) {
 
-				setPlayerValues();
+					if (!confirm("Hay cambios sin guardar. ¿Quieres abrir el proyecto?")) {
+						return false;
+					}
+
+				}
+
+				selectProject(currentProject);
 
 			});
 
@@ -779,8 +783,6 @@ function renderProjectsLibrary() {
 				deleteButton.addEventListener("click", e => {
 
 					e.stopPropagation();
-
-					const currentProject = projects.find(item => item.id === openButton.dataset.projectId);
 
 					if (!currentProject) return;
 
@@ -816,9 +818,7 @@ function renderProjectsLibrary() {
 
 async function selectProject(project) {
 
-	if (!project) {
-		return;
-	}
+	if (!project) return;
 
 	currentProjectId = project.id;
 
@@ -827,6 +827,10 @@ async function selectProject(project) {
 	updateSelectedProject();
 
 	await loadProject(project);
+
+	setEditMode("view");
+
+	setPlayerValues();
 
 }
 
