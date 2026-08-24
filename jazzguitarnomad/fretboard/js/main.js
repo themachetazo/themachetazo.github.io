@@ -550,13 +550,12 @@ function setProjectInfoLabel(type,fileName){
 	let txtInfo = "<b>" + projectsName + "</b><br>" + projectsDesc + "<br><i>";
 
 	if (isAdmin){
-//		if (type === "Server"){
-			txtInfo = txtInfo + "<a href='" + appUrl + "projects/" + xmlProjects + "' target='_blank'>" + fileName + "</a>";
-/*
+		if (type === "Server"){
+			txtInfo = txtInfo + "<a href='" + appUrl + xmlProjects + "' target='_blank'>" + fileName + "</a>";
 		}else{
-			txtInfo = txtInfo + fileName;
+			txtInfo = txtInfo + "<a href='" + appUrl + "projects/" + xmlProjects + "' target='_blank'>" + fileName + "</a>";
+//			txtInfo = txtInfo + fileName;
 		}
-*/
 	}
 
 	txtInfo = txtInfo + "</i>";
