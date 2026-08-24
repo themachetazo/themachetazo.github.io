@@ -57,10 +57,10 @@
 
 				<button type="button" id="btnMenuSelector" class="topBarSelector">
 					<div class="menuSelectorTop">
-						<i id="menuSelectorIcon" class="fa-solid fa-pen fa-fw"></i>
+						<i id="menuSelectorIcon" class="fa-solid fa-gear fa-fw"></i>
 						<i class="fa-solid fa-angle-down menuArrow"></i>
 					</div>
-					<span id="menuSelectorText">EDICIÓN</span>
+					<span id="menuSelectorText">MENÚ</span>
 				</button>
 
 				<div id="menuPopup">
@@ -105,6 +105,27 @@
 						</div>
 					</div>
 
+					<div class="toolbarTop-Controls" id="topForm">
+						<span>TIPO</span>
+						<div class="toolRow">
+							<span>Tipo</span>
+							<select id="cmbProjectType">
+							    <option value="fretboard">Mástil</option>
+							    <option value="sequence" selected>Secuencia</option>
+							    <option value="chord">Acorde</option>
+							</select>
+						</div>
+						<div class="toolRow">
+							<span>Dirección</span>
+							<select id="cmbTipoSecuencia">
+							    <option value="up">UP</option>
+							    <option value="down">DOWN</option>
+							    <option value="up-down">UP-DOWN</option>
+							    <option value="down-up">DOWN-UP</option>
+							</select>
+						</div>
+					</div>
+
 					<div class="toolbarTop-Controls" id="topCategory">
 						<span>CATEGORÍAS</span>
 						<div class="toolRow">
@@ -143,27 +164,6 @@
 								<input id="chkScoreTitleViewMode" type="checkbox">
 								<span class="lblToggleSpan"></span>
 							</label>
-						</div>
-					</div>
-
-					<div class="toolbarTop-Controls" id="topForm">
-						<span>TIPO DE PROYECTO</span>
-						<div class="toolRow">
-							<span>Tipo</span>
-							<select id="cmbProjectType">
-							    <option value="fretboard">Mástil</option>
-							    <option value="sequence" selected>Secuencia</option>
-							    <option value="chord">Acorde</option>
-							</select>
-						</div>
-						<div class="toolRow">
-							<span>Dirección</span>
-							<select id="cmbTipoSecuencia">
-							    <option value="up">UP</option>
-							    <option value="down">DOWN</option>
-							    <option value="up-down">UP-DOWN</option>
-							    <option value="down-up">DOWN-UP</option>
-							</select>
 						</div>
 					</div>
 
@@ -623,7 +623,7 @@
 				<div id="projectPanel">
 					<div class="projectPanelHeader">
 						<span id="projectPanelHeaderTitle">BIBLIOTECA</span>
-						<button type="button" id="btnToggleLibrary" title="Ocultar biblioteca"><i class="fa-solid fa-eye"></i></button>
+						<button type="button" id="btnToggleLibrary" title="Ocultar biblioteca"><i class="fa-solid fa-folder-tree"></i></button>
 					</div>
 
 					<div id="projectPanelInfo"><b>Sin nombre</b><br><i>versión=1.0 Server=<a href="#">default.xml</a></i><br>Librería de proyectos.</div>
@@ -707,7 +707,7 @@
 			<span><i class="fa-solid fa-location-dot"></i>Madrid, España</span>
 		</div>
 
-		<div class="copyRights">
+		<div class="footerCopyRights">
 			<br>
 			<span>© 2026 Jazz Guitar Nomad. Todos los derechos reservados.</span>
 			<br>
