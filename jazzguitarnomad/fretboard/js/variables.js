@@ -80,7 +80,6 @@ const chkInlays = document.getElementById("chkInlays");
 
 const btnFretboardVisible = document.getElementById("btnFretboardVisible");
 
-let topControlsWasOpen = true;
 
 /*==================================================
 	REFERENCIAS DOM: GRUPOS DE HERRAMIENTAS
@@ -303,6 +302,8 @@ let swing = false;
 let metronomeOn = true;
 let inlays = true;
 
+let topControlsWasOpen = true;
+let libraryWasOpen = true;
 
 /*==================================================
 	GEOMETRÍA Y MEDIDAS DEL DIAPASÓN
