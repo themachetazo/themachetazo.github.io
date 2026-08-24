@@ -351,7 +351,7 @@ function setMenu(m){
 				topTitle
 			);
 
-			menuSelectorText.textContent = "PROYECTOS";
+			menuSelectorText.textContent = "PROYECTO";
 			menuSelectorIcon.className = "fa-solid fa-folder";
 
 			break;
