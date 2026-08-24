@@ -364,8 +364,7 @@ function setMenu(m){
 				topEdit,
 				topUndo,
 				topColor,
-				topChords,
-				topNoteNames
+				topChords
 			);
 
 			menuSelectorText.textContent = "EDICIÓN";
@@ -382,7 +381,8 @@ function setMenu(m){
 				topDiapason,
 				topFrets,
 				topNumbers,
-				topOrientation
+				topOrientation,
+				topNoteNames
 			);
 
 			menuSelectorText.textContent = "MÁSTIL";
