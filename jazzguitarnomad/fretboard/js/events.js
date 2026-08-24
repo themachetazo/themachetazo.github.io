@@ -38,6 +38,8 @@ window.addEventListener("orientationchange", () => {
 
 document.addEventListener("keydown",(e)=>{
 
+	if (editMode === "view") return;
+
 	const isUndoShortcut = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z";
 
 	if (!isUndoShortcut) return;
@@ -245,7 +247,7 @@ document.addEventListener("playerBeat", (e) => {
 
 canvas.addEventListener("mouseenter", () => {
 
-	if (window.innerWidth <= maxMediaScreenWidth) {
+	if (isMobile) {
 		cursor.style.display = "none";
 	}else{
 		cursor.style.display = "block";
@@ -257,7 +259,7 @@ canvas.addEventListener("mouseleave", () => {
 
 	cursor.style.display = "none";
 
-	if (editMode === "view" || window.innerWidth <= maxMediaScreenWidth || (hoverCell === null && hoverNut === null)) {
+	if (editMode === "view" || (isMobile) || (hoverCell === null && hoverNut === null)) {
 		return;
 	}
 
@@ -271,7 +273,7 @@ canvas.addEventListener("mouseleave", () => {
 
 canvas.addEventListener("mousemove", (e) => {
 
-	if (window.innerWidth <= maxMediaScreenWidth) {
+	if (isMobile) {
 
 		cursor.style.display = "none";
 
@@ -304,6 +306,8 @@ canvas.addEventListener("click", (e) => {
 	if (editMode === "view") return;
 
 	projectModified = true;
+
+	btnPlayStop.disabled = false;
 
 	const nutString = getNutStringFromMouse(
 		e.offsetX,

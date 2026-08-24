@@ -752,7 +752,7 @@ function renderProjectsLibrary() {
 
 				if (projectModified) {
 
-					if (!confirm("Hay cambios sin guardar. ¿Quieres abrir el proyecto?")) {
+					if (!confirm("Hay cambios sin guardar que se perderán. ¿Deseas abrir el proyecto?")) {
 						return false;
 					}
 

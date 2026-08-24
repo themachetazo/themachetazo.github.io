@@ -789,6 +789,9 @@ function setDefaultControlsValues(state){
 		notes = [];
 		barreNotes = [];
 		nutNotes = Array(stringCount).fill(null);
+
+		btnPlayStop.disabled = true;
+
 /*
 		NOTAS = [];
 		ACORDES = [];
