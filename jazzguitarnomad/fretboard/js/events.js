@@ -680,6 +680,8 @@ btnDisplay.addEventListener("click", () => {
     numberFrets.disabled = Boolean(displayMode);
     btnMoreNumberFrets.disabled = Boolean(displayMode);
 
+    chkNoteNames.checked = false;
+
     drawFretboard();
     drawNotes();
 
