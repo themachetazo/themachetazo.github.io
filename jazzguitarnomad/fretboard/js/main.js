@@ -219,7 +219,7 @@ function setUserControlsStates(){
 		topTitle.style.display = "none";
 		topCategory.style.display = "none";
 
-		if (appMode === "Guest"){
+		if (appMode === "Guest" || !isUserActive){
 
 			setMenu("fretboard");
 
@@ -236,6 +236,8 @@ function setUserControlsStates(){
 			setMenu("edit");
 
 		}
+
+		if (!isUserActive) btnPlayStop.disabled = true;
 
 		btnUser.classList.remove("admin");
 		btnUser.classList.add("user");
