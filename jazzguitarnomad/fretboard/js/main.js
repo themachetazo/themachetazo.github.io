@@ -245,7 +245,7 @@ function setUserControlsStates(){
 
 			btnUser.querySelector("i").className = "fa-solid fa-user-tie";
 
-			txtUserTitle.textContent = userName;
+			txtUserTitle.textContent = user === null ? "Invitado" : userName;
 
 		}
 
