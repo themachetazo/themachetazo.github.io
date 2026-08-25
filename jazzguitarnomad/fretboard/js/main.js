@@ -547,12 +547,6 @@ function setProjectsControlsStates() {
 
 	}else{
 
-		currentProjectId = generateProjectId();
-
-		setDefaultControlsValues("init");
-
-		renderProjectsLibrary();
-
 		projectsNameText.disabled = true;
 		projectsDescText.disabled = true;
 		btnSaveProject.disabled = true;
