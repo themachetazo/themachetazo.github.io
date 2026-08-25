@@ -202,7 +202,7 @@ function setUserStates(){
 
 	subtituleText.textContent = "Fretboard " + appMode;
 
-	if (user !== null) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + user + ".xml";
+	if (!isAdmin && user !== null) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + user + ".xml";
 
 	if (lib !== null) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + lib + ".xml";
 
@@ -539,9 +539,6 @@ function setProjectsControlsStates() {
 				selectProject(firstProject);
 
 			}
-		}else{
-			
-//			newProject();
 
 		}
 
