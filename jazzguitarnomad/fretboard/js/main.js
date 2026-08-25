@@ -1566,7 +1566,9 @@ function downloadCanvas() {
 
     const link = document.createElement("a");
 
-    link.download = "fretboard.png";
+    const titulo = workspaceTitleText.value;
+
+    link.download = titulo + ".png";
 
     link.href = canvas.toDataURL("image/png");
 
