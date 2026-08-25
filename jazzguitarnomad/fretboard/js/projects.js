@@ -1107,15 +1107,11 @@ function addCategory() {
 
 	const name = prompt("Nombre de la nueva categoría:");
 
-	if (!name) {
-		return;
-	}
+	if (!name) return;
 
 	const trimmedName = name.trim();
 
-	if (trimmedName === "") {
-		return;
-	}
+	if (trimmedName === "") return;
 
 	const exists = categories.some(category =>
 		category.name.toLowerCase() === trimmedName.toLowerCase()
@@ -1129,9 +1125,13 @@ function addCategory() {
 
 	}
 
+	if (!newProject()) return;
+
+	const categoryId = generateCategoryId(); //categories.length > 0 ? categories.length + 1 : 1;
+
 	const category = {
 
-		id: generateCategoryId(),
+		id: categoryId, 
 		name: trimmedName
 
 	};
