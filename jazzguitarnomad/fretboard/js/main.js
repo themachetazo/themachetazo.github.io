@@ -226,9 +226,7 @@ function setUserControlsStates(){
 		btnUser.classList.remove("admin");
 		btnUser.classList.add("user");
 
-		txtUserTitle.textContent = "Invitado";
-
-		if (appMode === "Guest" || !isUserActive){
+		if (appMode === "Guest"){
 
 			setMenu("fretboard");
 
@@ -238,6 +236,8 @@ function setUserControlsStates(){
 			btnShowProjectPanel.style.display = "none";
 
 			btnUser.querySelector("i").className = "fa-solid fa-user-lock";
+
+			txtUserTitle.textContent = "Invitado";
 
 		}else{
 
@@ -251,21 +251,36 @@ function setUserControlsStates(){
 				btnEdicion.style.display = "";
 				btnEdicionPopup.style.display = "";
 
+				btnUser.querySelector("i").className = "fa-solid fa-user-tie";
+
+				txtUserTitle.textContent = "Invitado";
+
 			}else{
 
 				setMenu("fretboard");
 
 				txtUserTitle.textContent = userName;
 
-			}
+				if (!isUserActive){
+					btnUser.querySelector("i").className = "fa-solid fa-user-lock";
+				}else{
+					btnUser.querySelector("i").className = "fa-solid fa-user-tie";
+				}
 
-			btnUser.querySelector("i").className = "fa-solid fa-user-tie";
+			}
 
 		}
 
 		if (!isUserActive){
 
 			setControlsEnabled(false);
+
+			topFretboardDownload.style.display = "none";
+			topScoreDownload.style.display = "none";
+
+			btnShowProjectPanel.style.display = "none";
+
+			btnUser.querySelector("i").className = "fa-solid fa-user-lock";
 
 			btnMetronome.style.display = "none";
 
