@@ -569,6 +569,10 @@ function setProjectsControlsStates() {
 
 	}else{
 
+		currentProjectId = generateProjectId();
+
+		setDefaultControlsValues("init");
+
 		projectsNameText.disabled = true;
 		projectsDescText.disabled = true;
 		btnSaveProject.disabled = true;
