@@ -541,7 +541,7 @@ function setProjectsControlsStates() {
 			}
 		}else{
 			
-			newProject();
+//			newProject();
 
 		}
 
