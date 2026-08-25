@@ -609,7 +609,7 @@ btnShare.addEventListener("click", () => {
 	
 	if(currentProjectId !== null) {
 
-		const lib = xmlProjects.substring(xmlProjects.lastIndexOf("/") + 1);
+		const lib = xmlProjects.substring(xmlProjects.lastIndexOf("/") + 1).replace(/\.xml$/, "");
 
 		const shareUrl = `${location.origin}${location.pathname}?lib=${lib}&project=${currentProjectId}`;
 
