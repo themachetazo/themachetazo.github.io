@@ -163,7 +163,7 @@ function setUserStates(){
 
 	isMobile = window.innerWidth <= maxMediaScreenWidth;
 
-	isUserActive = false;
+	isUserActive = true;
 
 	appMode = "Designer";
 
@@ -172,6 +172,8 @@ function setUserStates(){
 		if (user !== null){
 
 			const currentUser = users.find(item => item.username === user);
+
+			isUserActive = false;
 
 			if (currentUser) {
 
@@ -196,7 +198,6 @@ function setUserStates(){
 
 	}else{
 		user = "admin";
-		isUserActive = true;
 	}
 
 	subtituleText.textContent = "Fretboard " + appMode;
@@ -237,12 +238,36 @@ function setUserControlsStates(){
 
 		}
 
-		if (!isUserActive) btnPlayStop.disabled = true;
+		if (!isUserActive){
+
+			setControlsEnabled(false);
+
+			btnMetronome.style.display = "none";
+
+			btnPlayStop.disabled = true;
+
+			btnFretboard.disabled = false;
+			btnScore.disabled = false;
+			btnPlayer.disabled = false;
+			btnFretboardPopup.disabled = false;
+			btnScorePopup.disabled = false;
+			btnPlayerPopup.disabled = false;
+		}
 
 		btnUser.classList.remove("admin");
 		btnUser.classList.add("user");
 		btnUser.querySelector("i").className = user === null ? "fa-solid fa-user-lock" : "fa-solid fa-user-tie";
-		txtUserTitle.textContent = user === null ? "Invitado" : userName;
+
+		if (user === null & appMode !== "Guest"){
+			txtUserTitle.textContent = "Invitado";
+		}else{
+			if (!isUserActive){
+				txtUserTitle.textContent = "Desactivo";
+			}else{
+				txtUserTitle.textContent = userName;
+			}
+		}
+
 
 	} else {
 
@@ -335,7 +360,6 @@ function setMenu(m){
 		topMetronomeControls,
 		topBuffer,
 		topAudio,
-		topReset,
 		topProjectInfo
 	].forEach(control => control.classList.add("isHidden"));
 
@@ -404,8 +428,7 @@ function setMenu(m){
 				topTempo,
 				topInstrument,
 				topArticulation,
-				topVolumen,
-				topReset
+				topVolumen
 			);
 
 			menuSelectorText.textContent = "PLAYER";
@@ -487,6 +510,7 @@ function setProjectsControlsStates() {
 
 			selectProject(project);
 
+
 		}else{
 
 			alert("No se encontró el proyecto '" + currentProjectId + "'");
@@ -501,13 +525,20 @@ function setProjectsControlsStates() {
 
 	}else if (projectsLoaded){
 
-		const firstProject = getFirstProject();
+		if (user === null || isUserActive){
 
-		if (firstProject) {
+			const firstProject = getFirstProject();
 
-			renderProjectsLibrary();
+			if (firstProject) {
 
-			selectProject(firstProject);
+				renderProjectsLibrary();
+
+				selectProject(firstProject);
+
+			}
+		}else{
+			
+			newProject();
 
 		}
 
@@ -538,9 +569,10 @@ function setProjectControlsType(){
 	btnAudio.disabled = projectType === "fretboard";
 	btnAudioPopup.disabled = projectType === "fretboard";
 
-	btnPlayStop.disabled = projectType === "fretboard";
 	btnFretboardVisible.disabled = projectType === "fretboard";
 	btnScoreVisible.disabled = projectType === "fretboard";
+
+	if (isUserActive) btnPlayStop.disabled = projectType === "fretboard";
 
 	if (appMode === "Guest" && projectType === "fretboard"){
 
@@ -921,8 +953,6 @@ function setControlsEnabled(enabled) {
     controls.forEach(control => {
         control.disabled = !enabled;
     });
-
-    btnResetScorePalyer.disabled = false;
 
 }
 

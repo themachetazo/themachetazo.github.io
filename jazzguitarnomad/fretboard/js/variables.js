@@ -197,7 +197,6 @@ const player_repeatInfo = document.getElementById("player_repeatInfo");
 const metronome_Info = document.getElementById("metronome_Info");
 
 const btnPlayStop = document.getElementById("btnPlayStop");
-const btnResetScorePalyer = document.getElementById("btnResetScorePalyer");
 
 const btnRenderBuffer = document.getElementById("btnRenderBuffer");
 const player_bufferState = document.getElementById("player_bufferState");
@@ -247,7 +246,7 @@ let users = [];
 let user;
 let userName;
 let xmlUsers = "users.xml";
-let isUserActive = false;
+let isUserActive = true;
 
 let isAdmin = false;
 

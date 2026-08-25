@@ -1046,12 +1046,6 @@ scoreFloatingStopButton.addEventListener("click", async function () {
 
 });
 
-btnResetScorePalyer.addEventListener("click", async function () {
-
-    resetScorePlayer();
-
-});
-
 btnRenderBuffer.addEventListener("click", async function () {
 
     setControlsEnabled(false);
