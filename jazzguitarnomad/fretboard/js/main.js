@@ -217,6 +217,9 @@ function setUserControlsStates(){
 		btnAudio.style.display = "none";
 		btnAudioPopup.style.display = "none";
 
+		btnEdicion.style.display = "none";
+		btnEdicionPopup.style.display = "none";
+
 		topTitle.style.display = "none";
 		topCategory.style.display = "none";
 
@@ -226,9 +229,6 @@ function setUserControlsStates(){
 		if (appMode === "Guest" || !isUserActive){
 
 			setMenu("fretboard");
-
-			btnEdicion.style.display = "none";
-			btnEdicionPopup.style.display = "none";
 
 			topFretboardDownload.style.display = "none";
 			topScoreDownload.style.display = "none";
@@ -241,18 +241,26 @@ function setUserControlsStates(){
 
 		}else{
 
-			setMenu("edit");
+			if (user === null) {
+
+				setMenu("edit");
+
+				btnShowProjectPanel.style.display = "none";
+				workspaceTitleText.style.display = "none";
+
+				btnEdicion.style.display = "";
+				btnEdicionPopup.style.display = "";
+
+			}else{
+
+				setMenu("fretboard");
+
+			}
 
 			btnUser.querySelector("i").className = "fa-solid fa-user-tie";
 
 			txtUserTitle.textContent = user === null ? "Invitado" : userName;
 
-			if (user === null) {
-
-				btnShowProjectPanel.style.display = "none";
-				workspaceTitleText.style.display = "none";
-
-			}
 		}
 
 		if (!isUserActive){
