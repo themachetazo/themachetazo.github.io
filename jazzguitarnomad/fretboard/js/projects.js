@@ -540,7 +540,7 @@ function projectsToXml() {
 	xmlVersion = (parseFloat(xmlVersion) + 0.1).toFixed(1);
 
 	lines.push('<?xml version="1.0" encoding="UTF-8"?>');
-	lines.push('<projects version="' + xmlVersion + '" name="' + projectsName + '" desc="' + projectsDesc + '" projectType="' + cmbProjectType.value + '">');
+	lines.push('<projects version="' + xmlVersion + '" name="' + projectsName + '" desc="' + projectsDesc + '>');
 	lines.push("");
 
 	// Categorías
