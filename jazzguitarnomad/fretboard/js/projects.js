@@ -18,7 +18,6 @@ async function loadProject(project) {
 	projectTitle = project.title ?? "";
 
 	cmbProjectCategory.value = project.category ?? 1;
-
 	if (cmbProjectCategory.value !== project.category && categories.length > 0) cmbProjectCategory.value = categories[0].id;
 
 	projectType = project.projectType ?? "sequence";
@@ -172,8 +171,8 @@ function newProject() {
 
 	projectModified = false;
 
-	projectsName = "Sin nombre";
-	projectsDesc = "Librería de proyectos.";
+	projectsName = "Sin Nombre";
+	projectsDesc = "Descripción";
 
 	setDefaultControlsValues("newProject");
 
@@ -185,11 +184,11 @@ function newProject() {
 
 	renderProjectsLibrary();
 
+	setPlayerValues();
+
 	if (isFretboardVisible) resizeCanvas();
 
 	if (isScoreVisible) scoreRender();
-
-	setPlayerValues();
 
 	return true;
 }
@@ -263,14 +262,9 @@ async function openXMLProjectsFile() {
 		// ACTUALIZAR INFORMACIÓN
 		// --------------------------------
 
-		setProjectInfoLabel("Local",fileHandle.name);
+		xmlType = "Local";
 
-
-		// --------------------------------
-		// RENDERIZAR LISTA
-		// --------------------------------
-
-		renderProjectsLibrary();
+		setProjectsInfoLabel(fileHandle.name);
 
 
 		// --------------------------------
@@ -281,21 +275,34 @@ async function openXMLProjectsFile() {
 
 
 		// --------------------------------
+		// RENDERIZAR LISTA
+		// --------------------------------
+
+		renderProjectsLibrary();
+
+		// --------------------------------
 		// ABRIR PRIMER PROYECTO
 		// --------------------------------
 
 		if (projects.length > 0) {
 
-			selectProject(projects[0]);
+			const firstProject = getFirstProject();
+
+			if (firstProject) {
+
+				selectProject(firstProject);
+
+			} else {
+
+				newProject();
+
+			}
 
 		} else {
-
-			// Si el XML está vacío crear un proyecto nuevo.
 
 			newProject();
 
 		}
-
 
 		return true;
 
@@ -323,9 +330,13 @@ async function openXMLProjectsFile() {
 
 function parseProjectsXml(xml) {
 
-	projectsName = xml.querySelector("projects")?.getAttribute("name") || "Sin nombre";
 	xmlVersion = xml.querySelector("projects")?.getAttribute("version") || "1.0";
-	projectsDesc = xml.querySelector("projects")?.getAttribute("desc") || "Librería de proyectos.";
+
+	projectsName = xml.querySelector("projects")?.getAttribute("name") || "Sin Nombre";
+	projectsNameText.value = projectsName;
+
+	projectsDesc = xml.querySelector("projects")?.getAttribute("desc") || "Descripción";
+	projectsDescText.value = projectsDesc;
 
 	categories = [];
 
@@ -733,8 +744,18 @@ function renderProjectsLibrary() {
 			openButton.type = "button";
 			openButton.className = "projectOpenButton";
 			openButton.dataset.projectId = project.id;
-
 			openButton.title = `Abrir: ${project.title}`;
+
+/*
+			//Permisos
+			openButton.disabled = true;
+
+			const iLocker = document.createElement("i");
+
+			iLocker.className = "fa-solid fa-lock";
+
+			openButton.appendChild(iLocker);
+*/
 
 			const titleSpan = document.createElement("span");
 
@@ -761,7 +782,6 @@ function renderProjectsLibrary() {
 				selectProject(currentProject);
 
 			});
-
 
 			item.appendChild(openButton);
 
@@ -816,6 +836,23 @@ function renderProjectsLibrary() {
 
 }
 
+function getFirstProject() {
+
+	if (!projects || projects.length === 0) return null;
+
+	const firstCategory = getSortedCategories()
+		.find(category =>
+			projects.some(project => project.category === category.id)
+		);
+
+	if (!firstCategory) {
+		return null;
+	}
+
+	return projects.find(project => project.category === firstCategory.id) || null;
+
+}
+
 async function selectProject(project) {
 
 	if (!project) return;
@@ -866,6 +903,8 @@ async function saveCurrentProject() {
 
 		openProjectCategory(project.category);
 
+		setProjectsInfoLabel(xmlProjects.substring(xmlProjects.indexOf("/") + 1));
+
 		alert("Proyecto guardado correctamente.");
 
 	}
@@ -883,8 +922,7 @@ async function saveProjectsFile() {
 
 		try {
 
-			const writable =
-				await projectsFileHandle.createWritable();
+			const writable = await projectsFileHandle.createWritable();
 
 			await writable.write(xmlText);
 			await writable.close();
@@ -893,10 +931,7 @@ async function saveProjectsFile() {
 
 		} catch (error) {
 
-			console.warn(
-				"No se pudo escribir el XML elegido. Se descargará una copia.",
-				error
-			);
+			console.warn("No se pudo escribir el XML elegido. Se descargará una copia.",error);
 
 		}
 

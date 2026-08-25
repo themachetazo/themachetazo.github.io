@@ -195,8 +195,7 @@ document.addEventListener("playerBeat", (e) => {
 
 			resetPlaybackTimeline();
 
-			// Solo ocultar si realmente hemos parado.
-			// Durante el arranque/count-in isPlaying sigue siendo true.
+			// Solo ocultar si realmente hemos parado. Durante el arranque/count-in isPlaying sigue siendo true.
 
 			if (!isPlaying) workspaceTimeInfo.style.display = "none";
 
@@ -225,6 +224,10 @@ document.addEventListener("playerBeat", (e) => {
 			}
 
 			topControlsWasOpen = false;
+		
+			if (appMode !== "Viewer" && !libraryWasOpen) openProjectsPanel();
+
+			libraryWasOpen = false;
 
 			break;
 
@@ -426,8 +429,21 @@ canvas.addEventListener("click", (e) => {
 
 
 //==================================================
-// EVENTOS FRETBOARD
+// EVENTOS APP
 //==================================================
+
+
+cmbProjectCategory.addEventListener("change",(e)=>{
+	projectModified = true;
+});
+
+btnNewCategory.addEventListener("click", () => {
+alert(1);
+});
+
+btnDelCategory.addEventListener("click", () => {
+alert(1);
+});
 
 cmbNoteNames.addEventListener("change",(e)=>{
 alert(1);
@@ -524,6 +540,16 @@ btnToggleLibrary.addEventListener("click", () => {
 	showProjectPanel();
 });
 
+projectsNameText.addEventListener("input", () => {
+	projectModified = true;
+	projectsName = projectsNameText.value.trim() || "Sin Nombre";
+});
+
+projectsDescText.addEventListener("input", () => {
+	projectModified = true;
+	projectsDesc = projectsDescText.value.trim() || "Descripción";
+});
+
 titleText.addEventListener("input", () => {
 
     projectTitle = titleText.value.trim() || "Proyecto nuevo sin título";
@@ -605,20 +631,19 @@ btnOpenProjects.addEventListener("click", async () => {
 		}
 	}
 
-	await openXMLProjectsFile();
+	if (await openXMLProjectsFile()){
+
+		projectsNameText.disabled = false;
+		projectsDescText.disabled = false;
+		btnSaveProject.disabled = false;
+		btnDelProject.disabled = false;
+
+	}
 
 });
 
 btnNewProject.addEventListener("click", () => {
-
-	if (newProject()) {
-
-		setMenu("edit");
-
-		titleText.focus({ focusVisible: true });
-		
-	}
-
+	newProject();
 });
 
 btnSaveProject.addEventListener("click", async () => {

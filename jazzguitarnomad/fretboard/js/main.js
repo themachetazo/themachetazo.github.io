@@ -26,7 +26,7 @@ async function initializeApp() {
 
 		await loadXML("project",xmlProjects);
 
-		setProjectControlsStates();
+		setProjectsControlsStates();
 
 
 		// LAYOUT ----------------------
@@ -217,6 +217,7 @@ function setUserControlsStates(){
 		btnAudio.style.display = "none";
 		btnAudioPopup.style.display = "none";
 
+		topFretboardDownload.style.display = "none";
 		topScoreDownload.style.display = "none";
 		topTitle.style.display = "none";
 		topCategory.style.display = "none";
@@ -233,8 +234,6 @@ function setUserControlsStates(){
 		}else{
 
 			setMenu("edit");
-
-			topFretboardDownload.classList.remove("isHidden");
 
 		}
 
@@ -264,12 +263,17 @@ function setUserControlsStates(){
 
 	setProjectControlsType();
 
+	if (isMobile){
+		menuSelectorText.textContent = "MENÚ";
+		menuSelectorIcon.className = "fa-solid fa-gear fa-fw";
+	}
+
 }
 
 function setMenu(m){
 
-	// Si se pulsa el mismo menú, alternar abrir/cerrar
-	if (menuOpen === m) {
+	// alternar abrir-cerrar si se pulsa el mismo menú y no es movil
+	if (!isMobile && menuOpen === m) {
 
 		if (topControlsContainer.classList.contains("isOpen")) {
 
@@ -280,8 +284,6 @@ function setMenu(m){
 			openTopControls();
 
 		}
-
-		menuPopup.classList.remove("isOpen");
 
 		return;
 
@@ -331,7 +333,8 @@ function setMenu(m){
 		topMetronomeControls,
 		topBuffer,
 		topAudio,
-		topReset
+		topReset,
+		topProjectInfo
 	].forEach(control => control.classList.add("isHidden"));
 
 	switch (menuOpen){
@@ -342,12 +345,11 @@ function setMenu(m){
 
 			showMenuControls(
 				topProject,
+				topProjectInfo,
 				topForm,
 				topCategory,
 				topLibrary,
 				topShare,
-				topFretboardDownload,
-				topScoreDownload,
 				topTitle
 			);
 
@@ -382,7 +384,8 @@ function setMenu(m){
 				topFrets,
 				topNumbers,
 				topOrientation,
-				topNoteNames
+				topNoteNames,
+				topFretboardDownload
 			);
 
 			menuSelectorText.textContent = "MÁSTIL";
@@ -419,7 +422,8 @@ function setMenu(m){
 				topTimeSignature,
 				topScoreStaves,
 				topScoreScale,
-				topScoreMargin
+				topScoreMargin,
+				topScoreDownload
 			);
 
 			if (!isAdmin) topScoreDownload.classList.remove("isHidden");
@@ -467,17 +471,9 @@ function setMenu(m){
 
 }
 
-function setProjectControlsStates() {
+function setProjectsControlsStates() {
 
-	setProjectInfoLabel("Server", xmlProjects.substring(xmlProjects.indexOf("/") + 1));
-
-	if (!projectsLoaded){
-
-		cmbProjectCategory.disabled = true;
-		btnNewCategory.disabled = true;
-		btnDelCategory.disabled = true;
-
-	}
+	setProjectsInfoLabel(xmlProjects.substring(xmlProjects.indexOf("/") + 1));
 
 	if (projectsLoaded && currentProjectId !== null) {
 
@@ -489,22 +485,39 @@ function setProjectControlsStates() {
 
 			selectProject(project);
 
-			return;
-
 		}else{
 
 			alert("No se encontró el proyecto '" + currentProjectId + "'");
 
+			currentProjectId = generateProjectId();
+
+			setDefaultControlsValues("init");
+
+			renderProjectsLibrary();
+
 		}
+
+	}else if (projectsLoaded){
+
+		const firstProject = getFirstProject();
+
+		if (firstProject) {
+
+			renderProjectsLibrary();
+
+			selectProject(firstProject);
+
+		}
+
+	}else{
+
+		projectsNameText.disabled = true;
+		projectsDescText.disabled = true;
+		btnSaveProject.disabled = true;
+		btnDelProject.disabled = true;
 
 	}
 
-	currentProjectId = generateProjectId();
-
-	setDefaultControlsValues("init");
-
-	renderProjectsLibrary();
-	
 	if (!isMobile && appMode !== "Viewer") openProjectsPanel();
 
 }
@@ -543,22 +556,17 @@ function setProjectControlsType(){
 
 }
 
-function setProjectInfoLabel(type,fileName){
+function setProjectsInfoLabel(fileName){
 
 	const appUrl = window.location.href.substring(0,window.location.href.lastIndexOf("/") + 1);
 
-	let txtInfo = "<b>" + projectsName + "</b><br>" + projectsDesc + "<br><i>";
-
+	let txtInfo = "";
 	if (isAdmin){
-		if (type === "Server"){
-			txtInfo = txtInfo + "<a href='" + appUrl + xmlProjects + "' target='_blank'>" + fileName + "</a>";
-		}else{
-			txtInfo = txtInfo + "<a href='" + appUrl + "projects/" + xmlProjects + "' target='_blank'>" + fileName + "</a>";
-//			txtInfo = txtInfo + fileName;
-		}
+		txtInfo = txtInfo + "<i><a href='" + appUrl;
+		if (xmlType !== "Server") txtInfo = txtInfo + "projects/";
+		txtInfo = txtInfo + xmlProjects + "' target='_blank'>" + fileName + "</a></i><br>";
 	}
-
-	txtInfo = txtInfo + "</i>";
+	txtInfo = txtInfo + "<b>" + projectsName + "</b><br>" + projectsDesc + "<br>";
 
 	projectPanelInfo.innerHTML = txtInfo;
 
@@ -914,8 +922,6 @@ function setControlsEnabled(enabled) {
 
     btnResetScorePalyer.disabled = false;
 
-    if (!enabled) closeProjectsPanel();
-
 }
 
 function updateFigureOptions() {
@@ -1050,6 +1056,7 @@ function openProjectsPanel(){
 
 	btnShowProjectPanel.classList.add("active");
 
+	btnShowProjectPanel.title = "Ocultar biblioteca";
 }
 
 function closeProjectsPanel(){
@@ -1058,8 +1065,8 @@ function closeProjectsPanel(){
 
 	btnShowProjectPanel.classList.remove("active");
 
-	menuSelectorText.textContent = "MENÚ";
-	menuSelectorIcon.className = "fa-solid fa-gear fa-fw";
+	btnShowProjectPanel.title = "Ver biblioteca";
+
 }
 
 function openTopControls(){

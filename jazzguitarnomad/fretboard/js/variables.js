@@ -109,6 +109,7 @@ const topAudio = document.getElementById("topAudio");
 const topScoreDownload = document.getElementById("topScoreDownload");
 const topChords = document.getElementById("topChords");
 const topTitleViewMode = document.getElementById("topTitleViewMode");
+const topProjectInfo = document.getElementById("topProjectInfo");
 
 /*==================================================
 	REFERENCIAS DOM: BARRA DE HERRAMIENTAS
@@ -138,9 +139,13 @@ const chordProjectList = document.getElementById("chordProjectList");
 const scaleProjectList = document.getElementById("scaleProjectList");
 const otherProjectList = document.getElementById("otherProjectList");
 const cmbProjectCategory = document.getElementById("cmbProjectCategory");
+const btnNewCategory = document.getElementById("btnNewCategory");
+const btnDelCategory = document.getElementById("btnDelCategory");
 const btnShowProjectPanel = document.getElementById("btnShowProjectPanel");
 const btnToggleLibrary = document.getElementById("btnToggleLibrary");
 const projectPanelInfo = document.getElementById("projectPanelInfo");
+const projectsNameText = document.getElementById("projectsNameText");
+const projectsDescText = document.getElementById("projectsDescText");
 const workspaceProjectsPanel = document.getElementById("workspaceProjectsPanel");
 
 /*==================================================
@@ -259,9 +264,10 @@ let categories = [];
 
 let xmlProjects = "projects/default.xml";
 let xmlVersion = "1.0";
+let xmlType = "Server";
 
-let projectsName = "Sin nombre";
-let projectsDesc = "Librería de proyectos.";
+let projectsName = "Sin Nombre";
+let projectsDesc = "Descripción";
 
 /*==================================================
 	CONFIGURACIÓN GENERAL DE LA APLICACIÓN
@@ -303,7 +309,7 @@ let metronomeOn = true;
 let inlays = true;
 
 let topControlsWasOpen = true;
-let libraryWasOpen = true;
+let libraryWasClosed = false;
 
 /*==================================================
 	GEOMETRÍA Y MEDIDAS DEL DIAPASÓN

@@ -398,9 +398,11 @@ async function playMusic(){
 		// Abrir y cerrar controles
 
 		topControlsWasOpen = topControlsContainer.classList.contains("isOpen");
+		closeTopControls();
 
-		if (topControlsWasOpen) closeTopControls();
-		
+		libraryWasClosed = workspaceProjectsPanel.classList.contains("panelHidden");
+		closeProjectsPanel();
+
 		await Tone.start();
 
 		Tone.Transport.stop();
@@ -444,17 +446,17 @@ async function playMusic(){
 
 		if (!chkMetronomeOn.checked) workspaceMetronome.style.display = "none";
 
+		resetPlaybackTimeline();
+
 		workspaceTimeInfo.style.display = "none";
 
 		// Abrir y cerrar controles
 
-		if (topControlsWasOpen) {
-			openTopControls();
-		}
-
+		if (topControlsWasOpen) openTopControls();
 		topControlsWasOpen = false;
 
-		resetPlaybackTimeline();
+		if (!libraryWasClosed && appMode !== "Viewer") openProjectsPanel();
+		libraryWasClosed = false;
 
 	}
 
