@@ -202,7 +202,7 @@ function setUserStates(){
 
 	subtituleText.textContent = "Fretboard " + appMode;
 
-	if (!isAdmin && isUserActive) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + user + ".xml";
+	if (user !== null) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + user + ".xml";
 
 	if (lib !== null) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + lib + ".xml";
 
