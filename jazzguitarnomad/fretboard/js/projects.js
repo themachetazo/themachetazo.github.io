@@ -945,7 +945,7 @@ async function saveProjectsFile() {
 			{type:"application/xml;charset=utf-8"}
 		);
 
-		downloadBlob(blob,xmlProjects);
+		downloadBlob(blob,xmlProjects.substring(xmlProjects.lastIndexOf("/") + 1));
 
 		return true;
 
