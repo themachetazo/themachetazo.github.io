@@ -187,6 +187,7 @@ function setUserStates(){
 
 			}else{
 				alert("El usuario '" + user + "' no existe.");
+				isUserActive = true;
 				user = null;
 			}
 		}
@@ -275,13 +276,6 @@ function setUserControlsStates(){
 
 			setControlsEnabled(false);
 
-			topFretboardDownload.style.display = "none";
-			topScoreDownload.style.display = "none";
-
-			btnUser.querySelector("i").className = "fa-solid fa-user-lock";
-
-			btnPlayStop.disabled = true;
-
 			btnFretboard.disabled = false;
 			btnScore.disabled = false;
 			btnPlayer.disabled = false;
@@ -289,8 +283,19 @@ function setUserControlsStates(){
 			btnScorePopup.disabled = false;
 			btnPlayerPopup.disabled = false;
 
+			btnShowProjectPanel.disabled = false;
+			btnToggleLibrary.disabled = false;
+
+			topFretboardDownload.style.display = "none";
+			topScoreDownload.style.display = "none";
+
+			btnUser.querySelector("i").className = "fa-solid fa-user-lock";
+
+			btnPlayStop.disabled = true;
+
 			btnMetronome.style.display = "none";
 			btnMetronomePopup.style.display = "none";
+
 		}
 
 	} else {
