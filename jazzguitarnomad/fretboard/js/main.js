@@ -178,14 +178,14 @@ function setUserStates(){
 				userName = currentUser.name;
 
 				if (!currentUser.active){
-					alert("El usuario '" + user + "' con nombre '" + userName +"' no está activo.");
+					showAlert("El usuario '" + user + "' con nombre '" + userName +"' no está activo.", "error");
 					isUserActive = false;
 				}else{
 					isUserActive = true;
 				}
 
 			}else{
-				alert("El usuario '" + user + "' no existe.");
+				showAlert("El usuario '" + user + "' no existe.", "error");
 				isUserActive = true;
 				user = null;
 			}
@@ -541,7 +541,7 @@ function setProjectsControlsStates() {
 
 		}else{
 
-			alert("No se encontró el proyecto '" + currentProjectId + "'");
+			showAlert("No se encontró el proyecto '" + currentProjectId + "'", "error");
 
 			currentProjectId = generateProjectId();
 
@@ -1549,14 +1549,14 @@ async function copyCanvasToClipboard() {
             })
         ]);
 
-        //alert("Imagen copiada al portapapeles.");
+        showAlert("Imagen copiada al portapapeles.", "success");
 
     }
     catch (err) {
 
         console.error(err);
 
-        alert("No ha sido posible copiar la imagen.");
+        showAlert("No ha sido posible copiar la imagen.", "error");
 
     }
 
@@ -1601,5 +1601,53 @@ function setErrorLoadingProgress(err){
 	loadingText.innerHTML = "<i class='fa-solid fa-circle-exclamation'></i> Error " + loadingText.textContent + "<br><br><span>" + err + "</span>";
 	loadingText.classList.add("error");
 	loadingSpinner.style.display = "none";
+
+}
+
+function showAlert(message, type = "success", duration = 2000) {
+
+	// Cancelar desaparición anterior
+
+	clearTimeout(alertTimeout);
+
+	// Mensaje
+
+	alertMessage.textContent = message;
+
+	// Tipo
+
+	appAlert.classList.remove("success", "error");
+
+	if (type === "success") {
+
+		appAlert.classList.add("success");
+
+		alertIcon.className = "fa-solid fa-circle-check";
+
+	}  else if (type === "error") {
+
+		appAlert.classList.add("error");
+
+		alertIcon.className = "fa-solid fa-circle-xmark";
+
+	} else {
+
+		appAlert.classList.add("info");
+
+		alertIcon.className = "fa-solid fa-circle-info";
+
+	}
+
+	// Mostrar
+
+	appAlert.classList.add("show");
+
+	// Ocultar después del tiempo indicado
+
+	alertTimeout = setTimeout(() => {
+
+		appAlert.classList.remove("show");
+
+	}, duration);
 
 }

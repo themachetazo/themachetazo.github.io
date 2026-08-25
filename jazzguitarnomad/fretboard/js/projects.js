@@ -230,6 +230,8 @@ function newProject() {
 
 	if (isScoreVisible) scoreRender();
 
+	showAlert("Nuevo proyecto creado.", "info");
+
 	return true;
 }
 
@@ -953,7 +955,7 @@ async function saveCurrentProject() {
 
 		setProjectsInfoLabel(xmlProjects.substring(xmlProjects.indexOf("/") + 1));
 
-		alert("Proyecto guardado correctamente.");
+		showAlert("Proyecto guardado correctamente.", "success");
 
 	}
 

@@ -13,6 +13,12 @@ const loadingSpinner = document.getElementById("loadingSpinner");
 
 const subtituleText = document.getElementById("subtituleText");
 
+const appAlert = document.getElementById("appAlert");
+const alertIcon = document.getElementById("alertIcon");
+const alertMessage = document.getElementById("alertMessage");
+
+let alertTimeout;
+
 
 /*==================================================
 	REFERENCIAS DOM: MENU

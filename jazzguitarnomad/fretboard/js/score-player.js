@@ -1224,14 +1224,14 @@ async function svg_scoreToClipboard(canvas) {
             })
         ]);
 
-        alert("Imagen  de la partitura copiada al portapapeles.");
+        showAlert("Imagen  de la partitura copiada al portapapeles.", "success");
 
     }
     catch (err) {
 
         console.error(err);
 
-        alert("No ha sido posible copiar la imagen de la partitura.");
+        showAlert("No ha sido posible copiar la imagen de la partitura.", "error");
 
     }
 
@@ -1275,7 +1275,7 @@ async function svg_scoreToFile(svgElement, fileName = "partitura.svg") {
 
         console.error(err);
 
-        alert("No ha sido posible guardar el archivo SVG de la partitura.");
+        showAlert("No ha sido posible guardar el archivo SVG de la partitura.", "error");
 
     }
 
@@ -1302,7 +1302,7 @@ async function svg_scoreToPNG(canvas, fileName = "partitura.png") {
 
         console.error(err);
 
-        alert("No ha sido posible guardar el archivo de imagen de la partitura.");
+        showAlert("No ha sido posible guardar el archivo de imagen de la partitura.", "error");
 
     }
 

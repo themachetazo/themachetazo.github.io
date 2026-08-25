@@ -614,7 +614,7 @@ btnCreate.addEventListener("click", () => {
 
 	if (created){
 	
-		alert("Biblioteca '" + libraryNameText.value + "' creada.");
+		showAlert("Biblioteca '" + libraryNameText.value + "' creada.", "success");
 
 		libraryNameText.value = libraryNameOld;
 		libraryDescText.value = libraryDescOld;
@@ -643,6 +643,7 @@ btnShare.addEventListener("click", () => {
 
 		navigator.clipboard.writeText(shareUrl);
 
+		showAlert("URL de la Biblioteca copiada al portapapeles.", "success");
 	}
 
 });
