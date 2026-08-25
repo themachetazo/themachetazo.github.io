@@ -420,7 +420,8 @@ function setMenu(m){
 			showMenuControls(
 				topEdit,
 				topUndo,
-				topColor
+				topColor,
+				topNoteNames
 			);
 
 			menuSelectorText.textContent = "EDICIÓN";
@@ -438,7 +439,6 @@ function setMenu(m){
 				topFrets,
 				topNumbers,
 				topOrientation,
-				topNoteNames,
 				topFretboardDownload
 			);
 
