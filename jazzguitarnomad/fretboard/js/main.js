@@ -226,6 +226,8 @@ function setUserControlsStates(){
 		btnUser.classList.remove("admin");
 		btnUser.classList.add("user");
 
+		txtUserTitle.textContent = "Invitado";
+
 		if (appMode === "Guest" || !isUserActive){
 
 			setMenu("fretboard");
@@ -236,8 +238,6 @@ function setUserControlsStates(){
 			btnShowProjectPanel.style.display = "none";
 
 			btnUser.querySelector("i").className = "fa-solid fa-user-lock";
-
-			txtUserTitle.textContent = "Invitado";
 
 		}else{
 
@@ -255,11 +255,11 @@ function setUserControlsStates(){
 
 				setMenu("fretboard");
 
+				txtUserTitle.textContent = userName;
+
 			}
 
 			btnUser.querySelector("i").className = "fa-solid fa-user-tie";
-
-			txtUserTitle.textContent = user === null ? "Invitado" : userName;
 
 		}
 
