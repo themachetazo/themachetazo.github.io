@@ -402,6 +402,7 @@ function setMenu(m){
 				topLibraryInfo,
 				topForm,
 				topCategory,
+				topChords,
 				topLibrary,
 				topShare,
 				topTitle
@@ -588,7 +589,7 @@ function setProjectControlsType(){
 	cmbTipoSecuencia.disabled = projectType === "fretboard";
 	chkMetronomeOn.disabled = projectType === "fretboard";
 
-	topChords.style.display = cmbProjectType.value !== "chord" ? "none" : "flex";
+	cmbChords.disabled = cmbProjectType.value !== "chord" ? "none" : "flex";
 
 	btnScore.disabled = projectType === "fretboard";
 	btnScorePopup.disabled = projectType === "fretboard";
@@ -881,19 +882,19 @@ function changeProjectType(oldType) {
 
 		case "fretboard":
 
-			topChords.style.display = "none";
+			cmbChords.disabled = true;
 			break;
 
 		case "sequence":
 
-			topChords.style.display = "none";
+			cmbChords.disabled = true;
 			btnNutMode.disabled = true;
 
 			break;
 
 		case "chord":
 
-			topChords.style.display = "flex";
+			cmbChords.disabled = false;
 			btnNutMode.disabled = false;
 
 			break;
