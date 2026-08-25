@@ -178,14 +178,14 @@ function setUserStates(){
 				userName = currentUser.name;
 
 				if (!currentUser.active){
-					console.warn("El usuario '" + user + "' con nombre '" + userName +"' no está activo.");
+					alert("El usuario '" + user + "' con nombre '" + userName +"' no está activo.");
 					user = null;
 				}else{
 					isUserActive = true;
 				}
 
 			}else{
-				console.warn("El usuario '" + user + "' no existe.");
+				alert("El usuario '" + user + "' no existe.");
 				user = null;
 			}
 		}
