@@ -699,18 +699,12 @@ function parseUsersXml(xml) {
 		id: node.getAttribute("id"),
 		username: node.getAttribute("username"),
 		name: node.getAttribute("name"),
+		email: node.getAttribute("email"),
+		pass: node.getAttribute("pass"),
 		permits: node.getAttribute("permits"),
 		active: node.getAttribute("active") === "true",
 		alta: node.getAttribute("alta"),
 		avatar: node.getAttribute("avatar")
-/*
-		baja: node.getAttribute("baja"),
-		role: node.getAttribute("role"),
-		surname: node.getAttribute("surname"),
-		pass: node.getAttribute("pass"),
-		email: node.getAttribute("email"),
-		tel: node.getAttribute("tel")
-*/
 	}));
 
 	return u;
