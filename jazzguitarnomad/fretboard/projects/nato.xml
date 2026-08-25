@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<projects version="2.0" name="p" desc="pro">
+<projects version="2.4" name="Sin nombre" desc="Librería...">
 
 	<categories>
 		<category id="1">Acordes</category>
@@ -33,18 +33,18 @@
 			<metronomeOn>true</metronomeOn>
 		</settings>
 		<notes>
-			<note string="5" fret="1" color="#0080ff" text="" order="1"/>
-			<note string="3" fret="2" color="#0080ff" text="" order="2"/>
-			<note string="0" fret="5" color="#0080ff" text="" order="3"/>
-			<note string="1" fret="6" color="#0080ff" text="" order="4"/>
-			<note string="3" fret="4" color="#0080ff" text="" order="6"/>
+			<note string="5" fret="1" color="#0080ff" text=""/>
+			<note string="3" fret="2" color="#0080ff" text=""/>
+			<note string="0" fret="5" color="#0080ff" text=""/>
+			<note string="1" fret="6" color="#0080ff" text=""/>
+			<note string="3" fret="4" color="#0080ff" text=""/>
 		</notes>
 		<barres>
-			<barre fret="9" startString="2" color="#ffffff" text="" order="1"/>
-			<barre fret="10" startString="5" color="#ffffff" text="" order="2"/>
+			<barre fret="9" startString="2" color="#ffffff" text=""/>
+			<barre fret="10" startString="5" color="#ffffff" text=""/>
 		</barres>
 		<nutNotes>
-			<nutNote string="0" color="#0080ff" text="" order="5"/>
+			<nutNote string="0" color="#0080ff" text=""/>
 		</nutNotes>
 	</project>
 
@@ -74,13 +74,13 @@
 			<metronomeOn>true</metronomeOn>
 		</settings>
 		<notes>
-			<note string="5" fret="1" color="#0080ff" text="" order="1"/>
+			<note string="5" fret="1" color="#0080ff" text=""/>
 		</notes>
 		<barres>
-			<barre fret="3" startString="3" color="#ffffff" text="" order="2"/>
+			<barre fret="3" startString="3" color="#ffffff" text=""/>
 		</barres>
 		<nutNotes>
-			<nutNote string="4" color="#ff0000" text="" order="3"/>
+			<nutNote string="4" color="#ff0000" text=""/>
 		</nutNotes>
 	</project>
 
@@ -110,10 +110,10 @@
 			<metronomeOn>false</metronomeOn>
 		</settings>
 		<notes>
-			<note string="2" fret="4" color="#ff0000" text="" order="1"/>
-			<note string="3" fret="3" color="#ff0000" text="" order="2"/>
-			<note string="0" fret="7" color="#ff0000" text="" order="3"/>
-			<note string="5" fret="1" color="#ff0000" text="" order="4"/>
+			<note string="2" fret="4" color="#ff0000" text=""/>
+			<note string="3" fret="3" color="#ff0000" text=""/>
+			<note string="0" fret="7" color="#ff0000" text=""/>
+			<note string="5" fret="1" color="#ff0000" text=""/>
 		</notes>
 		<barres>
 		</barres>
@@ -147,8 +147,8 @@
 			<metronomeOn>false</metronomeOn>
 		</settings>
 		<notes>
-			<note string="5" fret="2" color="#ffffff" text="" order="1"/>
-			<note string="4" fret="2" color="#ffffff" text="" order="2"/>
+			<note string="5" fret="2" color="#ffffff" text=""/>
+			<note string="4" fret="2" color="#ffffff" text=""/>
 		</notes>
 		<barres>
 		</barres>
@@ -182,45 +182,9 @@
 			<metronomeOn>false</metronomeOn>
 		</settings>
 		<notes>
-			<note string="2" fret="1" color="#ffffff" text="" order="1"/>
-			<note string="2" fret="2" color="#ffffff" text="" order="2"/>
-			<note string="4" fret="2" color="#ffffff" text="" order="3"/>
-		</notes>
-		<barres>
-		</barres>
-		<nutNotes>
-		</nutNotes>
-	</project>
-
-	<project id="9dd221539719417b867622b730105c65" title="h" category="1" projectType="sequence">
-		<settings>
-			<orientation>vertical</orientation>
-			<fretboardStyle>rosewood</fretboardStyle>
-			<fretCount>10</fretCount>
-			<displayMode>scale</displayMode>
-			<inlays>true</inlays>
-			<rotated>false</rotated>
-			<bar>4/4</bar>
-			<scoreScale>auto</scoreScale>
-			<tipoSecuencia>up</tipoSecuencia>
-			<countBars>1</countBars>
-			<repetitionSequence>1</repetitionSequence>
-			<isFretboardVisible>true</isFretboardVisible>
-			<isScoreVisible>true</isScoreVisible>
-			<currentInstrument>piano</currentInstrument>
-			<fretNumbers>1</fretNumbers>
-			<showFretNumbers>false</showFretNumbers>
-			<bpm>90</bpm>
-			<key>C</key>
-			<scoreStaves>all</scoreStaves>
-			<scoreLayout>vertical</scoreLayout>
-			<swing>false</swing>
-			<metronomeOn>false</metronomeOn>
-		</settings>
-		<notes>
-			<note string="5" fret="1" color="#ffffff" text="" order="1"/>
-			<note string="4" fret="1" color="#ffffff" text="" order="2"/>
-			<note string="3" fret="1" color="#ffffff" text="" order="3"/>
+			<note string="2" fret="1" color="#ffffff" text=""/>
+			<note string="2" fret="2" color="#ffffff" text=""/>
+			<note string="4" fret="2" color="#ffffff" text=""/>
 		</notes>
 		<barres>
 		</barres>
@@ -254,13 +218,13 @@
 			<metronomeOn>false</metronomeOn>
 		</settings>
 		<notes>
-			<note string="5" fret="2" color="#0080ff" text="" order="1"/>
-			<note string="3" fret="1" color="#0080ff" text="" order="3"/>
+			<note string="5" fret="2" color="#0080ff" text=""/>
+			<note string="3" fret="1" color="#0080ff" text=""/>
 		</notes>
 		<barres>
 		</barres>
 		<nutNotes>
-			<nutNote string="0" color="#0080ff" text="" order="2"/>
+			<nutNote string="0" color="#0080ff" text=""/>
 		</nutNotes>
 	</project>
 
