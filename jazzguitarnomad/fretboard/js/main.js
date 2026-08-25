@@ -33,6 +33,8 @@ async function initializeApp() {
 
 		setLoadingProgress(20, "Configurando página...");
 
+		orientation = window.innerWidth <= maxMediaScreenWidth ? "vertical" : "horizontal";
+
 		setOrientation(orientation);
 
 		setLayout();
@@ -278,11 +280,7 @@ function setUserControlsStates(){
 			topFretboardDownload.style.display = "none";
 			topScoreDownload.style.display = "none";
 
-			btnShowProjectPanel.style.display = "none";
-
 			btnUser.querySelector("i").className = "fa-solid fa-user-lock";
-
-			btnMetronome.style.display = "none";
 
 			btnPlayStop.disabled = true;
 
@@ -293,6 +291,8 @@ function setUserControlsStates(){
 			btnScorePopup.disabled = false;
 			btnPlayerPopup.disabled = false;
 
+			btnMetronome.style.display = "none";
+			btnMetronomePopup.style.display = "none";
 		}
 
 	} else {
@@ -726,12 +726,6 @@ function parseUsersXml(xml) {
 }
 
 function setDefaultControlsValues(state){
-
-	if (state === "init"){
-
-		orientation = window.innerWidth <= maxMediaScreenWidth ? "vertical" : "horizontal";
-
-	}
 
 	if (state !== "loadProject"){
 
