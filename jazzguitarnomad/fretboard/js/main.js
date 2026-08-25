@@ -33,8 +33,6 @@ async function initializeApp() {
 
 		setLoadingProgress(20, "Configurando página...");
 
-		orientation = window.innerWidth <= maxMediaScreenWidth ? "vertical" : "horizontal";
-
 		setOrientation(orientation);
 
 		setLayout();
@@ -726,6 +724,12 @@ function parseUsersXml(xml) {
 }
 
 function setDefaultControlsValues(state){
+
+	if (state === "init"){
+
+		orientation = window.innerWidth <= maxMediaScreenWidth ? "vertical" : "horizontal";
+
+	}
 
 	if (state !== "loadProject"){
 
