@@ -225,7 +225,7 @@ document.addEventListener("playerBeat", (e) => {
 
 			topControlsWasOpen = false;
 		
-			if (appMode !== "Viewer" && !libraryWasOpen) openProjectsPanel();
+			if (appMode !== "Guest" && !libraryWasOpen) openProjectsPanel();
 
 			libraryWasOpen = false;
 

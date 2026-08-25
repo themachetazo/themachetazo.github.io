@@ -455,7 +455,7 @@ async function playMusic(){
 		if (topControlsWasOpen) openTopControls();
 		topControlsWasOpen = false;
 
-		if (!libraryWasClosed && appMode !== "Viewer") openProjectsPanel();
+		if (!libraryWasClosed && appMode !== "Guest") openProjectsPanel();
 		libraryWasClosed = false;
 
 	}

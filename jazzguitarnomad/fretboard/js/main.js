@@ -41,7 +41,7 @@ async function initializeApp() {
 
 		// IMÁGENES ----------------------
 
-		if (!(appMode === "Viewer" && projectType === "score")){
+		if (!(appMode === "Guest" && projectType === "score")){
 
 			setLoadingProgress(30, "Cargando imágenes...");
 
@@ -56,7 +56,7 @@ async function initializeApp() {
 
 		// PLAYER ----------------------
 
-		if (!(appMode === "Viewer" && projectType === "fretboard")){
+		if (!(appMode === "Guest" && projectType === "fretboard")){
 
 			setLoadingProgress(40, "Cargando instrumentos...");
 
@@ -84,7 +84,7 @@ async function initializeApp() {
 
 		// NOTAS ----------------------
 
-		if (!(appMode === "Viewer" && projectType === "fretboard")){
+		if (!(appMode === "Guest" && projectType === "fretboard")){
 
 			setLoadingProgress(70, "Cargando notas...");
 
@@ -98,7 +98,7 @@ async function initializeApp() {
 
 		// MÁSTIL ----------------------
 
-		if (!(appMode === "Viewer" && projectType === "score")){
+		if (!(appMode === "Guest" && projectType === "score")){
 
 			setLoadingProgress(80, "Renderizando mástil...");
 
@@ -113,7 +113,7 @@ async function initializeApp() {
 
 		// SCORE ----------------------
 
-		if (!(appMode === "Viewer" && projectType === "fretboard")){
+		if (!(appMode === "Guest" && projectType === "fretboard")){
 
 			setLoadingProgress(90, "Renderizando partitura...");
 
@@ -192,7 +192,7 @@ function setUserStates(){
 
 		if (user === null && currentProjectId !== null) {
 
-			appMode = "Viewer";
+			appMode = "Guest";
 		}
 
 	}else{
@@ -222,7 +222,7 @@ function setUserControlsStates(){
 		topTitle.style.display = "none";
 		topCategory.style.display = "none";
 
-		if (appMode === "Viewer"){
+		if (appMode === "Guest"){
 
 			setMenu("fretboard");
 
@@ -518,7 +518,7 @@ function setProjectsControlsStates() {
 
 	}
 
-	if (!isMobile && appMode !== "Viewer") openProjectsPanel();
+	if (!isMobile && appMode !== "Guest") openProjectsPanel();
 
 }
 
@@ -540,7 +540,7 @@ function setProjectControlsType(){
 	btnFretboardVisible.disabled = projectType === "fretboard";
 	btnScoreVisible.disabled = projectType === "fretboard";
 
-	if (appMode === "Viewer" && projectType === "fretboard"){
+	if (appMode === "Guest" && projectType === "fretboard"){
 
 		btnScore.disabled = true;
 		btnScorePopup.disabled = true;
