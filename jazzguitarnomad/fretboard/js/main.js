@@ -172,15 +172,14 @@ function setUserStates(){
 		if (user !== null){
 
 			const currentUser = users.find(item => item.username === user);
-
-			isUserActive = false;
-
+	
 			if (currentUser) {
 
 				userName = currentUser.name;
 
 				if (!currentUser.active){
 					alert("El usuario '" + user + "' con nombre '" + userName +"' no está activo.");
+					isUserActive = false;
 				}else{
 					isUserActive = true;
 				}
@@ -205,7 +204,7 @@ function setUserStates(){
 
 	if (!isAdmin && user !== null) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + user + ".xml";
 
-	if (lib !== null) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + lib + ".xml";
+	if (lib !== null && isUserActive) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + lib + ".xml";
 
 }
 
