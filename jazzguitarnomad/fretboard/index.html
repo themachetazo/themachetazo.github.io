@@ -90,26 +90,46 @@
 					<div class="toolbarTop-Controls" id="topLibrary">
 						<span>BIBLIOTECA</span>
 						<div class="toolRow">
+							<button type="button" id="btnCreate" title="Crear biblioteca"><i class="fa-solid fa-file-circle-plus"></i><span>Crear</span></button>
 							<button type="button" id="btnOpenProjects" title="Abrir biblioteca de proyectos"><i class="fa-solid fa-folder-open"></i><span>Abrir</span></button>
 						</div>
 					</div>
 
-					<div class="toolbarTop-Controls" id="topProjectInfo">
+					<div class="toolbarTop-Controls" id="topLibraryInfo">
 						<span>INFORMACIÓN</span>
 						<div class="toolRow">
-							<input id="projectsNameText" type="text" maxlength="60" placeholder="Sin Nombre">
+							<input id="libraryNameText" type="text" maxlength="60" placeholder="Sin Nombre">
 						</div>
 						<div class="toolRow">
-							<input id="projectsDescText" type="text" maxlength="60" placeholder="Descripción">
+							<input id="libraryDescText" type="text" maxlength="60" placeholder="Descripción">
 						</div>
 					</div>
 
 					<div class="toolbarTop-Controls" id="topProject">
-						<span>EDICIÓN</span>
+						<span>EDITAR PROYECTO</span>
 						<div class="toolRow">
 							<button type="button" id="btnNewProject" title="Nuevo proyecto"><i class="fa-solid fa-file"></i><span>Nuevo</span></button>
 							<button type="button" id="btnSaveProject" title="Guardar proyecto"><i class="fa-solid fa-floppy-disk"></i><span>Guardar</span></button>
 							<button type="button" id="btnDelProject" title="Eliminar proyecto"><i class="fa-solid fa-trash-can"></i><span>Eliminar</span></button>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topTitle">
+						<span>TÍTULO</span>
+						<div class="toolRow">
+							<input id="titleText" type="text" maxlength="60" placeholder="Sin Título">
+						</div>
+						<div class="toolRow">
+							<label class="lblToggle" title="Mostrar título en mástil">
+								<span class="lblToggleText">Mástil</span>
+								<input id="chkShowTitle" type="checkbox">
+								<span class="lblToggleSpan"></span>
+							</label>
+							<label class="lblToggle" title="Mostrar Encabezado/Pie de partitura">
+								<span class="lblToggleText">Partitura</span>
+								<input id="chkScoreTitle" type="checkbox">
+								<span class="lblToggleSpan"></span>
+							</label>
 						</div>
 					</div>
 
@@ -142,25 +162,6 @@
 							    <option value="up-down">UP-DOWN</option>
 							    <option value="down-up">DOWN-UP</option>
 							</select>
-						</div>
-					</div>
-
-					<div class="toolbarTop-Controls" id="topTitle">
-						<span>TÍTULO DEL PROYECTO</span>
-						<div class="toolRow">
-							<input id="titleText" type="text" maxlength="60" placeholder="Sin Título">
-						</div>
-						<div class="toolRow">
-							<label class="lblToggle" title="Mostrar título en mástil">
-								<span class="lblToggleText">Mástil</span>
-								<input id="chkShowTitle" type="checkbox">
-								<span class="lblToggleSpan"></span>
-							</label>
-							<label class="lblToggle" title="Mostrar Encabezado/Pie de partitura">
-								<span class="lblToggleText">Partitura</span>
-								<input id="chkScoreTitle" type="checkbox">
-								<span class="lblToggleSpan"></span>
-							</label>
 						</div>
 					</div>
 
@@ -587,7 +588,7 @@
 				<div id="metronome_Info">Metrónomo: <b>1 / 1</b></div>
 			</div>
 			<div class="workspaceControls">
-				<div id="workspaceTitleText">Sin Título</div>
+				<div id="workspaceTitleText">Proyecto nuevo sin título</div>
 			</div>
 
 		</aside> <!-- Fin Controles Workspace -->
