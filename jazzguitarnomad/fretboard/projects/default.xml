@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<projects version="2.4" name="prueba" desc="proyecto defecto">
+<projects version="2.5" name="prueba" desc="proyecto defecto">
 
 	<categories>
 		<category id="1">Acordes</category>
@@ -51,14 +51,14 @@
 
 	<project id="7ceffc21d4d946cea21cee52e1376a32" title="Fretboard only" category="8490599914173192039" projectType="fretboard">
 		<settings>
-			<orientation>horizontal</orientation>
+			<orientation>vertical</orientation>
 			<fretboardStyle>maple</fretboardStyle>
 			<fretCount>24</fretCount>
 			<displayMode>true</displayMode>
 			<inlays>true</inlays>
 			<rotated>false</rotated>
 			<bar>4/4</bar>
-			<scoreScale>0.3</scoreScale>
+			<scoreScale>0.003</scoreScale>
 			<tipoSecuencia>up</tipoSecuencia>
 			<countBars>0</countBars>
 			<repetitionSequence>2</repetitionSequence>

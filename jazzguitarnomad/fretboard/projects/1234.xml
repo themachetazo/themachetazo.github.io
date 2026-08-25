@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<projects version="2.6" name="No" desc="Po">
+<projects version="3.3" name="Sin Nombre" desc="Descripción">
 
 	<categories>
 		<category id="1">Acordes</category>
 		<category id="2">Escalas</category>
-		<category id="3">Otros</category>
+		<category id="7081420737957732950">Sastre</category>
 	</categories>
 
 	<project id="7ceffc21d4d946cea22cee52e1376a55" title="Adios" category="2" projectType="sequence">
@@ -84,78 +84,6 @@
 		</nutNotes>
 	</project>
 
-	<project id="104681fbcc784302894e0e159141a418" title="TRITONE" category="3" projectType="sequence">
-		<settings>
-			<orientation>horizontal</orientation>
-			<fretboardStyle>rosewood</fretboardStyle>
-			<fretCount>7</fretCount>
-			<displayMode>true</displayMode>
-			<inlays>false</inlays>
-			<rotated>false</rotated>
-			<bar>5/4</bar>
-			<scoreScale>auto</scoreScale>
-			<tipoSecuencia>up</tipoSecuencia>
-			<countBars>0</countBars>
-			<repetitionSequence>1</repetitionSequence>
-			<isFretboardVisible>true</isFretboardVisible>
-			<isScoreVisible>true</isScoreVisible>
-			<currentInstrument>piano</currentInstrument>
-			<fretNumbers>1</fretNumbers>
-			<showFretNumbers>false</showFretNumbers>
-			<bpm>90</bpm>
-			<key>C</key>
-			<scoreStaves>all</scoreStaves>
-			<scoreLayout>vertical</scoreLayout>
-			<swing>false</swing>
-			<metronomeOn>false</metronomeOn>
-		</settings>
-		<notes>
-			<note string="2" fret="4" color="#ff0000" text=""/>
-			<note string="3" fret="3" color="#ff0000" text=""/>
-			<note string="0" fret="7" color="#ff0000" text=""/>
-			<note string="5" fret="1" color="#ff0000" text=""/>
-		</notes>
-		<barres>
-		</barres>
-		<nutNotes>
-		</nutNotes>
-	</project>
-
-	<project id="b568f802474943669bb094652803af3f" title="asas" category="3" projectType="sequence">
-		<settings>
-			<orientation>vertical</orientation>
-			<fretboardStyle>maple</fretboardStyle>
-			<fretCount>10</fretCount>
-			<displayMode>scale</displayMode>
-			<inlays>true</inlays>
-			<rotated>false</rotated>
-			<bar>6/8</bar>
-			<scoreScale>auto</scoreScale>
-			<tipoSecuencia>up</tipoSecuencia>
-			<countBars>1</countBars>
-			<repetitionSequence>1</repetitionSequence>
-			<isFretboardVisible>true</isFretboardVisible>
-			<isScoreVisible>true</isScoreVisible>
-			<currentInstrument>piano</currentInstrument>
-			<fretNumbers>1</fretNumbers>
-			<showFretNumbers>false</showFretNumbers>
-			<bpm>90</bpm>
-			<key>C</key>
-			<scoreStaves>all</scoreStaves>
-			<scoreLayout>vertical</scoreLayout>
-			<swing>false</swing>
-			<metronomeOn>false</metronomeOn>
-		</settings>
-		<notes>
-			<note string="5" fret="2" color="#ffffff" text=""/>
-			<note string="4" fret="2" color="#ffffff" text=""/>
-		</notes>
-		<barres>
-		</barres>
-		<nutNotes>
-		</nutNotes>
-	</project>
-
 	<project id="95b496fc57e74a639c53e1745e0b2d13" title="asafasfasfsfasfsfsffa dg  alfhFH GLDHG DSL" category="2" projectType="sequence">
 		<settings>
 			<orientation>vertical</orientation>
@@ -228,39 +156,42 @@
 		</nutNotes>
 	</project>
 
-	<project id="3580043a7bef4124a7f80b5ab13cdf74" title="woh" category="3" projectType="sequence">
+	<project id="f3bb8c39e216492b87c38b63673724a5" title="desastre" category="7081420737957732950" projectType="sequence">
 		<settings>
 			<orientation>vertical</orientation>
-			<fretboardStyle>maple</fretboardStyle>
-			<fretCount>16</fretCount>
-			<displayMode>scale</displayMode>
+			<fretboardStyle>blank</fretboardStyle>
+			<fretCount>4</fretCount>
+			<displayMode>true</displayMode>
 			<inlays>true</inlays>
 			<rotated>false</rotated>
-			<bar>12/8</bar>
+			<bar>4/4</bar>
 			<scoreScale>auto</scoreScale>
 			<tipoSecuencia>up</tipoSecuencia>
-			<countBars>1</countBars>
-			<repetitionSequence>1</repetitionSequence>
+			<countBars>0</countBars>
+			<repetitionSequence>2</repetitionSequence>
 			<isFretboardVisible>true</isFretboardVisible>
-			<isScoreVisible>true</isScoreVisible>
+			<isScoreVisible>false</isScoreVisible>
 			<currentInstrument>piano</currentInstrument>
-			<fretNumbers>1</fretNumbers>
-			<showFretNumbers>false</showFretNumbers>
+			<fretNumbers>4</fretNumbers>
+			<showFretNumbers>true</showFretNumbers>
 			<bpm>90</bpm>
 			<key>C</key>
 			<scoreStaves>all</scoreStaves>
 			<scoreLayout>vertical</scoreLayout>
 			<swing>false</swing>
-			<metronomeOn>false</metronomeOn>
+			<metronomeOn>true</metronomeOn>
 		</settings>
 		<notes>
-			<note string="5" fret="2" color="#0080ff" text=""/>
-			<note string="3" fret="1" color="#0080ff" text=""/>
+			<note string="4" fret="1" color="#ffcc00" text=""/>
+			<note string="3" fret="1" color="#ffcc00" text=""/>
+			<note string="2" fret="2" color="#ffcc00" text=""/>
+			<note string="1" fret="2" color="#ffcc00" text=""/>
+			<note string="0" fret="3" color="#ffcc00" text=""/>
+			<note string="5" fret="3" color="#ffcc00" text=""/>
 		</notes>
 		<barres>
 		</barres>
 		<nutNotes>
-			<nutNote string="0" color="#0080ff" text=""/>
 		</nutNotes>
 	</project>
 
