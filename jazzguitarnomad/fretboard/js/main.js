@@ -217,8 +217,6 @@ function setUserControlsStates(){
 		btnAudio.style.display = "none";
 		btnAudioPopup.style.display = "none";
 
-		topFretboardDownload.style.display = "none";
-		topScoreDownload.style.display = "none";
 		topTitle.style.display = "none";
 		topCategory.style.display = "none";
 
@@ -228,6 +226,9 @@ function setUserControlsStates(){
 
 			btnEdicion.style.display = "none";
 			btnEdicionPopup.style.display = "none";
+
+			topFretboardDownload.style.display = "none";
+			topScoreDownload.style.display = "none";
 
 			btnShowProjectPanel.style.display = "none";
 
@@ -1493,7 +1494,7 @@ async function copyCanvasToClipboard() {
             })
         ]);
 
-        alert("Imagen copiada al portapapeles.");
+        //alert("Imagen copiada al portapapeles.");
 
     }
     catch (err) {
@@ -1515,14 +1516,6 @@ function downloadCanvas() {
     link.href = canvas.toDataURL("image/png");
 
     link.click();
-
-}
-
-function clipboardWriteText(txt){
-
-	navigator.clipboard.writeText(txt);
-
-	alert(txt + " copiado en el portapapeles.");
 
 }
 

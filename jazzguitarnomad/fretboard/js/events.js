@@ -433,18 +433,6 @@ canvas.addEventListener("click", (e) => {
 //==================================================
 
 
-cmbProjectCategory.addEventListener("change",(e)=>{
-	projectModified = true;
-});
-
-btnNewCategory.addEventListener("click", () => {
-alert(1);
-});
-
-btnDelCategory.addEventListener("click", () => {
-alert(1);
-});
-
 cmbNoteNames.addEventListener("change",(e)=>{
 alert(1);
 });
@@ -464,6 +452,10 @@ colorPicker.addEventListener("change", () => {
     colorPreview.style.backgroundColor = colorPicker.value;
     cursor.style.color = colorPicker.value;
 
+});
+
+cmbProjectCategory.addEventListener("change",(e)=>{
+	projectModified = true;
 });
 
 btnNewCategory.addEventListener("click", () => {
@@ -613,7 +605,7 @@ btnShare.addEventListener("click", () => {
 
 		const shareUrl = `${location.origin}${location.pathname}?lib=${lib}&project=${currentProjectId}`;
 
-		clipboardWriteText(shareUrl);
+		navigator.clipboard.writeText(shareUrl);
 
 	}
 

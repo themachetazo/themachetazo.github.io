@@ -746,16 +746,16 @@ function renderProjectsLibrary() {
 			openButton.dataset.projectId = project.id;
 			openButton.title = `Abrir: ${project.title}`;
 
-/*
-			//Permisos
-			openButton.disabled = true;
+			if (!isUserActive){
 
-			const iLocker = document.createElement("i");
+				openButton.disabled = true;
 
-			iLocker.className = "fa-solid fa-lock";
+				const iLocker = document.createElement("i");
 
-			openButton.appendChild(iLocker);
-*/
+				iLocker.className = "fa-solid fa-lock";
+
+				openButton.appendChild(iLocker);
+			}
 
 			const titleSpan = document.createElement("span");
 
