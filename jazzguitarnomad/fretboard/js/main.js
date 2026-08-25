@@ -220,6 +220,9 @@ function setUserControlsStates(){
 		topTitle.style.display = "none";
 		topCategory.style.display = "none";
 
+		btnUser.classList.remove("admin");
+		btnUser.classList.add("user");
+
 		if (appMode === "Guest" || !isUserActive){
 
 			setMenu("fretboard");
@@ -232,9 +235,17 @@ function setUserControlsStates(){
 
 			btnShowProjectPanel.style.display = "none";
 
+			btnUser.querySelector("i").className = "fa-solid fa-user-lock";
+
+			txtUserTitle.textContent = "Invitado";
+
 		}else{
 
 			setMenu("edit");
+
+			btnUser.querySelector("i").className = "fa-solid fa-user-tie";
+
+			txtUserTitle.textContent = userName;
 
 		}
 
@@ -252,22 +263,8 @@ function setUserControlsStates(){
 			btnFretboardPopup.disabled = false;
 			btnScorePopup.disabled = false;
 			btnPlayerPopup.disabled = false;
+
 		}
-
-		btnUser.classList.remove("admin");
-		btnUser.classList.add("user");
-		btnUser.querySelector("i").className = user === null ? "fa-solid fa-user-lock" : "fa-solid fa-user-tie";
-
-		if (user === null & appMode !== "Guest"){
-			txtUserTitle.textContent = "Invitado";
-		}else{
-			if (!isUserActive){
-				txtUserTitle.textContent = "Desactivo";
-			}else{
-				txtUserTitle.textContent = userName;
-			}
-		}
-
 
 	} else {
 
