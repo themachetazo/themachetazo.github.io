@@ -87,12 +87,20 @@
 			<div id="topControls">
 				<div id="toolbarTop">
 
-					<!-- PANEL PROYECTOS -->
-
 					<div class="toolbarTop-Controls" id="topLibrary">
 						<span>BIBLIOTECA</span>
 						<div class="toolRow">
 							<button type="button" id="btnOpenProjects" title="Abrir biblioteca de proyectos"><i class="fa-solid fa-folder-open"></i><span>Abrir</span></button>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topProjectInfo">
+						<span>INFORMACIÓN</span>
+						<div class="toolRow">
+							<input id="projectsNameText" type="text" maxlength="60" placeholder="Sin Nombre">
+						</div>
+						<div class="toolRow">
+							<input id="projectsDescText" type="text" maxlength="60" placeholder="Descripción">
 						</div>
 					</div>
 
@@ -102,6 +110,17 @@
 							<button type="button" id="btnNewProject" title="Nuevo proyecto"><i class="fa-solid fa-file"></i><span>Nuevo</span></button>
 							<button type="button" id="btnSaveProject" title="Guardar proyecto"><i class="fa-solid fa-floppy-disk"></i><span>Guardar</span></button>
 							<button type="button" id="btnDelProject" title="Eliminar proyecto"><i class="fa-solid fa-trash-can"></i><span>Eliminar</span></button>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topCategory">
+						<span>CATEGORÍAS</span>
+						<div class="toolRow">
+							<select id="cmbProjectCategory"></select>
+						</div>
+						<div class="toolRow">
+							<button type="button" id="btnNewCategory" title="Nueva categoría"><i class="fa-solid fa-folder-plus"></i><span></span></button>
+							<button type="button" id="btnDelCategory" title="Borrar categoría"><i class="fa-solid fa-folder-minus"></i><span></span></button>
 						</div>
 					</div>
 
@@ -126,19 +145,8 @@
 						</div>
 					</div>
 
-					<div class="toolbarTop-Controls" id="topCategory">
-						<span>CATEGORÍAS</span>
-						<div class="toolRow">
-							<select id="cmbProjectCategory"></select>
-						</div>
-						<div class="toolRow">
-							<button type="button" id="btnNewCategory" title="Nueva categoría"><i class="fa-solid fa-folder-plus"></i><span></span></button>
-							<button type="button" id="btnDelCategory" title="Borrar categoría"><i class="fa-solid fa-folder-minus"></i><span></span></button>
-						</div>
-					</div>
-
 					<div class="toolbarTop-Controls" id="topTitle">
-						<span>TÍTULO</span>
+						<span>TÍTULO DEL PROYECTO</span>
 						<div class="toolRow">
 							<input id="titleText" type="text" maxlength="60" placeholder="Sin Título">
 						</div>
@@ -173,26 +181,6 @@
 							<button type="button" id="btnShare" title="Compartir proyecto"><i class="fa-solid fa-link"></i><span>Compartir</span></button>
 						</div>
 					</div>
-
-					<div class="toolbarTop-Controls" id="topFretboardDownload">
-						<span>MÁSTIL</span>
-						<div class="toolRow">
-							<button type="button" id="btnCopyCanvas" title="Copiar imagen al portapapeles"><i class="fa-solid fa-copy"></i><span>Copiar</span></button>
-						</div>
-						<div class="toolRow">
-							<button type="button" id="btnDownloadCanvas" title="Guardar imagen"><i class="fa-solid fa-download"></i><span>Descargar</span></button>
-						</div>
-					</div>
-
-					<div class="toolbarTop-Controls" id="topScoreDownload">
-						<span>PARTITURA</span>
-						<div class="toolRow">
-							<button type="button" id="btnScoreDownloadImage" title="Descargar PNG y SVG"><i class="fa-solid fa-image"></i><span>PNG/SVG</span></button>
-						</div>
-					</div>
-
-
-					<!-- PANEL EDITAR -->
 
 					<div class="toolbarTop-Controls" id="topEdit">
 						<span>ESCRIBIR</span>
@@ -264,9 +252,6 @@
 						</div>
 					</div>
 
-
-					<!-- PANEL CONFIG -->
-
 					<div class="toolbarTop-Controls" id="topDiapason">
 						<span>DIAPASÓN</span>
 						<div class="toolRow">
@@ -326,7 +311,15 @@
 						</label>
 					</div>
 
-					<!-- PANEL PLAYER -->
+					<div class="toolbarTop-Controls" id="topFretboardDownload">
+						<span>DESCARGAR</span>
+						<div class="toolRow">
+							<button type="button" id="btnCopyCanvas" title="Copiar imagen al portapapeles"><i class="fa-solid fa-copy"></i><span>Copiar</span></button>
+						</div>
+						<div class="toolRow">
+							<button type="button" id="btnDownloadCanvas" title="Guardar imagen"><i class="fa-solid fa-download"></i><span>Descargar</span></button>
+						</div>
+					</div>
 
 					<div class="toolbarTop-Controls" id="topInstrument">
 						<span>INSTRUMENTO</span>
@@ -421,10 +414,6 @@
 						</div>
 					</div>
 
-
-
-					<!-- PANEL AUDIO -->
-
 					<div class="toolbarTop-Controls" id="topBuffer">
 						<span>BUFFER</span>
 						<div class="toolRow">
@@ -447,9 +436,6 @@
 							<button type="button" id="btnSaveAudio" title="Guardar Audio"><i class="fa-solid fa-floppy-disk"></i><span>Guardar</span></button>
 						</div>
 					</div>
-
-
-					<!-- PANEL PARTITURA -->
 
 					<div class="toolbarTop-Controls" id="topTimeSignature">
 						<span>COMPÁS</span>
@@ -531,7 +517,7 @@
 					</div>
 
 					<div class="toolbarTop-Controls" id="topScoreMargin">
-						<span>MARGENES</span>
+						<span>MÁRGENES</span>
 						<div class="toolRow">
 							<span>Margen</span>
 							<input type="range" id="sliderScoreStaveMargin" title="70" value="70" min="20" max="120" step="10">
@@ -542,8 +528,12 @@
 						</div>
 					</div>
 
-
-					<!-- PANEL METRONOME -->
+					<div class="toolbarTop-Controls" id="topScoreDownload">
+						<span>DESCARGAR</span>
+						<div class="toolRow">
+							<button id="btnScoreDownloadImage" title="Descargar PNG y SVG"><i class="fa-solid fa-image"></i><span>PNG/SVG</span></button>
+						</div>
+					</div>
 
 					<div class="toolbarTop-Controls" id="topMetronomeControls">
 						<span>CONTROLES</span>
@@ -624,7 +614,7 @@
 						<button type="button" id="btnToggleLibrary" title="Ocultar biblioteca"><i class="fa-solid fa-folder-tree"></i></button>
 					</div>
 
-					<div id="projectPanelInfo"><b>Sin nombre</b><br><i>versión=1.0 Server=<a href="#">default.xml</a></i><br>Librería de proyectos.</div>
+					<div id="projectPanelInfo"><i>versión=1.0 Server=<a href="#">default.xml</a></i><br><b>Sin nombre</b><br>Descripción</div>
 
 	<!--
 					<div class="projectCategory">
@@ -634,12 +624,8 @@
 						</button>
 						<ul class="projectCategoryList" id="projectCategoryList">
 							<li class="projectItem">
-								<button type="button" class="projectOpenButton" data-project-id="b568f802474943669bb094652803af3f" title="Abrir: Título">
-									<span class="projectTitle">Título</span>
-								</button>
-								<button type="button" class="projectDeleteButton" title="Eliminar proyecto">
-									<i class="fa-solid fa-trash"></i>
-								</button>
+								<button type="button" class="projectOpenButton" data-project-id="b568f802474943669bb094652803af3f" title="Abrir: Título"><span class="projectTitle">Título</span></button>
+								<button type="button" class="projectDeleteButton" title="Eliminar proyecto"><i class="fa-solid fa-trash"></i></button>
 							</li>
 						</ul>
 					</div>
