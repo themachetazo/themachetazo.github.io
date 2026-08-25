@@ -782,6 +782,7 @@ function setDefaultControlsValues(state){
 
 	btnDisplay.classList.toggle("active", displayMode);
 	chkInlays.disabled = displayMode === false;
+	chkInlays.disabled = !isUserActive;
 	chkInlays.checked = displayMode ? inlays : false;
 
 	cmbDiapason.value = fretboardStyle;
