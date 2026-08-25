@@ -247,7 +247,12 @@ function setUserControlsStates(){
 
 			txtUserTitle.textContent = user === null ? "Invitado" : userName;
 
-			if (user === null) btnShowProjectPanel.style.display = "none";
+			if (user === null) {
+
+				btnShowProjectPanel.style.display = "none";
+				workspaceTitleText.style.display = "none";
+
+			}
 		}
 
 		if (!isUserActive){
@@ -523,7 +528,7 @@ function setProjectsControlsStates() {
 
 	}else if (projectsLoaded){
 
-		if (user === null || isUserActive){
+		if (user !== null){
 
 			const firstProject = getFirstProject();
 
