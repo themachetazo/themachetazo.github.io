@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projects version="3.1" name="sergio" desc="Descripción">
+
+	<categories>
+		<category id="14556739265056908397">s</category>
+		<category id="14521328009588929603">a</category>
+		<category id="825758035729316968">25-08-2026</category>
+	</categories>
+
+	<project id="3ae244351eec49c7b398aa70f958ad45" title="rosewood" category="14556739265056908397" projectType="sequence">
+		<settings>
+			<orientation>horizontal</orientation>
+			<fretboardStyle>rosewood</fretboardStyle>
+			<fretCount>10</fretCount>
+			<displayMode>true</displayMode>
+			<inlays>true</inlays>
+			<rotated>false</rotated>
+			<bar>4/4</bar>
+			<scoreScale>auto</scoreScale>
+			<tipoSecuencia>up</tipoSecuencia>
+			<countBars>0</countBars>
+			<repetitionSequence>2</repetitionSequence>
+			<isFretboardVisible>true</isFretboardVisible>
+			<isScoreVisible>false</isScoreVisible>
+			<currentInstrument>piano</currentInstrument>
+			<fretNumbers>10</fretNumbers>
+			<showFretNumbers>true</showFretNumbers>
+			<bpm>90</bpm>
+			<key>C</key>
+			<scoreStaves>all</scoreStaves>
+			<scoreLayout>vertical</scoreLayout>
+			<swing>false</swing>
+			<metronomeOn>true</metronomeOn>
+		</settings>
+		<notes>
+		</notes>
+		<barres>
+		</barres>
+		<nutNotes>
+		</nutNotes>
+	</project>
+
+	<project id="7a7923eeed2945539176ddb8d5480115" title="blank" category="14556739265056908397" projectType="sequence">
+		<settings>
+			<orientation>horizontal</orientation>
+			<fretboardStyle>blank</fretboardStyle>
+			<fretCount>10</fretCount>
+			<displayMode>true</displayMode>
+			<inlays>true</inlays>
+			<rotated>false</rotated>
+			<bar>4/4</bar>
+			<scoreScale>auto</scoreScale>
+			<tipoSecuencia>up</tipoSecuencia>
+			<countBars>0</countBars>
+			<repetitionSequence>2</repetitionSequence>
+			<isFretboardVisible>true</isFretboardVisible>
+			<isScoreVisible>false</isScoreVisible>
+			<currentInstrument>piano</currentInstrument>
+			<fretNumbers>10</fretNumbers>
+			<showFretNumbers>true</showFretNumbers>
+			<bpm>90</bpm>
+			<key>C</key>
+			<scoreStaves>all</scoreStaves>
+			<scoreLayout>vertical</scoreLayout>
+			<swing>false</swing>
+			<metronomeOn>true</metronomeOn>
+		</settings>
+		<notes>
+		</notes>
+		<barres>
+		</barres>
+		<nutNotes>
+		</nutNotes>
+	</project>
+
+	<project id="bcb3424e56ca4071b760a0af6bc92523" title="maple" category="14556739265056908397" projectType="sequence">
+		<settings>
+			<orientation>horizontal</orientation>
+			<fretboardStyle>maple</fretboardStyle>
+			<fretCount>10</fretCount>
+			<displayMode>true</displayMode>
+			<inlays>true</inlays>
+			<rotated>false</rotated>
+			<bar>4/4</bar>
+			<scoreScale>auto</scoreScale>
+			<tipoSecuencia>up</tipoSecuencia>
+			<countBars>0</countBars>
+			<repetitionSequence>2</repetitionSequence>
+			<isFretboardVisible>true</isFretboardVisible>
+			<isScoreVisible>false</isScoreVisible>
+			<currentInstrument>piano</currentInstrument>
+			<fretNumbers>10</fretNumbers>
+			<showFretNumbers>true</showFretNumbers>
+			<bpm>90</bpm>
+			<key>C</key>
+			<scoreStaves>all</scoreStaves>
+			<scoreLayout>vertical</scoreLayout>
+			<swing>false</swing>
+			<metronomeOn>true</metronomeOn>
+		</settings>
+		<notes>
+		</notes>
+		<barres>
+		</barres>
+		<nutNotes>
+		</nutNotes>
+	</project>
+
+	<project id="86a499e45d44403ca66f9bdaef54986f" title="a" category="14521328009588929603" projectType="sequence">
+		<settings>
+			<orientation>vertical</orientation>
+			<fretboardStyle>blank</fretboardStyle>
+			<fretCount>4</fretCount>
+			<displayMode>false</displayMode>
+			<inlays>false</inlays>
+			<rotated>false</rotated>
+			<bar>4/4</bar>
+			<scoreScale>auto</scoreScale>
+			<tipoSecuencia>up</tipoSecuencia>
+			<countBars>0</countBars>
+			<repetitionSequence>2</repetitionSequence>
+			<isFretboardVisible>true</isFretboardVisible>
+			<isScoreVisible>false</isScoreVisible>
+			<currentInstrument>piano</currentInstrument>
+			<fretNumbers>4</fretNumbers>
+			<showFretNumbers>false</showFretNumbers>
+			<bpm>90</bpm>
+			<key>C</key>
+			<scoreStaves>all</scoreStaves>
+			<scoreLayout>vertical</scoreLayout>
+			<swing>false</swing>
+			<metronomeOn>true</metronomeOn>
+		</settings>
+		<notes>
+		</notes>
+		<barres>
+		</barres>
+		<nutNotes>
+		</nutNotes>
+	</project>
+
+	<project id="928e9ea8f490420fb301956e1b21600a" title="drop2" category="825758035729316968" projectType="sequence">
+		<settings>
+			<orientation>horizontal</orientation>
+			<fretboardStyle>maple</fretboardStyle>
+			<fretCount>10</fretCount>
+			<displayMode>true</displayMode>
+			<inlays>true</inlays>
+			<rotated>false</rotated>
+			<bar>4/4</bar>
+			<scoreScale>auto</scoreScale>
+			<tipoSecuencia>up</tipoSecuencia>
+			<countBars>0</countBars>
+			<repetitionSequence>2</repetitionSequence>
+			<isFretboardVisible>true</isFretboardVisible>
+			<isScoreVisible>true</isScoreVisible>
+			<currentInstrument>piano</currentInstrument>
+			<fretNumbers>10</fretNumbers>
+			<showFretNumbers>true</showFretNumbers>
+			<bpm>90</bpm>
+			<key>C</key>
+			<scoreStaves>all</scoreStaves>
+			<scoreLayout>vertical</scoreLayout>
+			<swing>false</swing>
+			<metronomeOn>true</metronomeOn>
+		</settings>
+		<notes>
+		</notes>
+		<barres>
+		</barres>
+		<nutNotes>
+		</nutNotes>
+	</project>
+
+</projects>
