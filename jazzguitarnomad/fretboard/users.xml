@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <users>
-	<user id="1" username="1234" name="soy1234" pass="1234" active="true" permits="" alta="20/08/2026" avatar="" />
-	<user id="2" username="nato" name="soynato" pass="1234" active="true" permits="" alta="20/08/2026" avatar="" />
-	<user id="3" username="usr" name="soyusr" pass="1234" active="false" permits="" alta="20/08/2026" avatar="" />
+	<user id="1" username="1234" name="soy1234" email="e@e.es" pass="1234" active="true" permits="" alta="20/08/2026" avatar="" />
+	<user id="2" username="nato" name="soynato" email="e@e.es" pass="1234" active="true" permits="" alta="20/08/2026" avatar="" />
+	<user id="3" username="usr" name="soyusr" email="e@e.es" pass="1234" active="false" permits="" alta="20/08/2026" avatar="" />
 </users>
