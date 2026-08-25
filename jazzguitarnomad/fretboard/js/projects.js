@@ -880,7 +880,9 @@ function renderProjectsLibrary() {
 
 function getFirstProject() {
 
-	if (!projects || projects.length === 0) return null;
+	if (!projects || projects.length === 0) {
+		return null;
+	}
 
 	const firstCategory = getSortedCategories()
 		.find(category =>
@@ -891,7 +893,13 @@ function getFirstProject() {
 		return null;
 	}
 
-	return projects.find(project => project.category === firstCategory.id) || null;
+	return projects
+		.filter(project => project.category === firstCategory.id)
+		.sort((a, b) =>
+			a.title.localeCompare(b.title, undefined, {
+				sensitivity: "base"
+			})
+		)[0] || null;
 
 }
 
