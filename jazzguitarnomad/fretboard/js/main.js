@@ -419,8 +419,7 @@ function setMenu(m){
 			showMenuControls(
 				topEdit,
 				topUndo,
-				topColor,
-				topChords
+				topColor
 			);
 
 			menuSelectorText.textContent = "EDICIÓN";
