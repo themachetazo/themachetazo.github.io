@@ -963,11 +963,18 @@ cmbProjectType.addEventListener("change", function () {
 	const oldType = projectType;
 	const newType = this.value;
 
-	if (!newProject()) {
+	if (
+		(oldType === "chord" && newType !== "chord") ||
+		(oldType !== "chord" && newType === "chord")
+	) {
 
-		this.value = oldType;
+		if (!newProject()) {
 
-		return;
+			this.value = oldType;
+
+			return;
+
+		}
 
 	}
 
