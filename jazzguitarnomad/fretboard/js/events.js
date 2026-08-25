@@ -532,16 +532,6 @@ btnToggleLibrary.addEventListener("click", () => {
 	showProjectPanel();
 });
 
-projectsNameText.addEventListener("input", () => {
-	projectModified = true;
-	projectsName = projectsNameText.value.trim() || "Sin Nombre";
-});
-
-projectsDescText.addEventListener("input", () => {
-	projectModified = true;
-	projectsDesc = projectsDescText.value.trim() || "Descripción";
-});
-
 titleText.addEventListener("input", () => {
 
     projectTitle = titleText.value.trim() || "Proyecto nuevo sin título";
@@ -597,6 +587,52 @@ btnDownloadCanvas.addEventListener("click", () => {
 
 });
 
+btnCreate.addEventListener("click", () => {
+
+	libraryNameText.disabled = false;
+	libraryDescText.disabled = false;
+	
+	if (libraryNameText.value.trim() === "") {
+
+		alert("Intruduce un nombre y descripción para la biblioteca.");
+
+		libraryNameText.focus();
+
+		return;
+
+	} else {
+
+		if (!confirm("¿Quieres crear la biblioteca con nombre '" + libraryNameText.value + "' y descripción '" + libraryDescText.value +"'?")) {
+
+			return;
+
+		}
+
+	}
+
+	const created = createLibrary();
+
+	if (created){
+	
+		alert("Biblioteca '" + libraryNameText.value + "' creada.");
+
+		libraryNameText.value = libraryNameOld;
+		libraryDescText.value = libraryDescOld;
+
+	}
+
+});
+
+libraryNameText.addEventListener("input", () => {
+	projectModified = true;
+	libraryName = libraryNameText.value.trim() || "Sin Nombre";
+});
+
+libraryDescText.addEventListener("input", () => {
+	projectModified = true;
+	libraryDesc = libraryDescText.value.trim() || "Descripción";
+});
+
 btnShare.addEventListener("click", () => {
 	
 	if(currentProjectId !== null) {
@@ -625,8 +661,8 @@ btnOpenProjects.addEventListener("click", async () => {
 
 	if (await openXMLProjectsFile()){
 
-		projectsNameText.disabled = false;
-		projectsDescText.disabled = false;
+		libraryNameText.disabled = false;
+		libraryDescText.disabled = false;
 		btnSaveProject.disabled = false;
 		btnDelProject.disabled = false;
 
@@ -639,6 +675,14 @@ btnNewProject.addEventListener("click", () => {
 });
 
 btnSaveProject.addEventListener("click", async () => {
+
+	if (cmbProjectCategory.options.length === 0){
+
+		alert("Debes añadir una categoría al proyecto.");
+
+		return;
+	}
+
 	await saveCurrentProject();
 });
 

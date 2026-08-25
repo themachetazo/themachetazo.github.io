@@ -109,7 +109,8 @@ const topAudio = document.getElementById("topAudio");
 const topScoreDownload = document.getElementById("topScoreDownload");
 const topChords = document.getElementById("topChords");
 const topTitleViewMode = document.getElementById("topTitleViewMode");
-const topProjectInfo = document.getElementById("topProjectInfo");
+const topLibraryInfo = document.getElementById("topLibraryInfo");
+
 
 /*==================================================
 	REFERENCIAS DOM: BARRA DE HERRAMIENTAS
@@ -127,6 +128,7 @@ const btnRotate = document.getElementById("btnRotate");
 	REFERENCIAS DOM: PROYECTOS
 ==================================================*/
 
+const btnCreate = document.getElementById("btnCreate");
 const btnNewProject = document.getElementById("btnNewProject");
 const btnSaveProject = document.getElementById("btnSaveProject");
 const btnDelProject = document.getElementById("btnDelProject");
@@ -144,8 +146,8 @@ const btnDelCategory = document.getElementById("btnDelCategory");
 const btnShowProjectPanel = document.getElementById("btnShowProjectPanel");
 const btnToggleLibrary = document.getElementById("btnToggleLibrary");
 const projectPanelInfo = document.getElementById("projectPanelInfo");
-const projectsNameText = document.getElementById("projectsNameText");
-const projectsDescText = document.getElementById("projectsDescText");
+const libraryNameText = document.getElementById("libraryNameText");
+const libraryDescText = document.getElementById("libraryDescText");
 const workspaceProjectsPanel = document.getElementById("workspaceProjectsPanel");
 
 /*==================================================
@@ -265,8 +267,10 @@ let xmlProjects = "projects/default.xml";
 let xmlVersion = "1.0";
 let xmlType = "Server";
 
-let projectsName = "Sin Nombre";
-let projectsDesc = "Descripción";
+let libraryName = "Sin Nombre";
+let libraryDesc = "Descripción";
+let libraryNameOld = "Sin Nombre";
+let libraryDescOld = "Descripción";
 
 /*==================================================
 	CONFIGURACIÓN GENERAL DE LA APLICACIÓN

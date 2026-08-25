@@ -388,7 +388,7 @@ function setMenu(m){
 		topMetronomeControls,
 		topBuffer,
 		topAudio,
-		topProjectInfo
+		topLibraryInfo
 	].forEach(control => control.classList.add("isHidden"));
 
 	switch (menuOpen){
@@ -399,7 +399,7 @@ function setMenu(m){
 
 			showMenuControls(
 				topProject,
-				topProjectInfo,
+				topLibraryInfo,
 				topForm,
 				topCategory,
 				topLibrary,
@@ -573,8 +573,8 @@ function setProjectsControlsStates() {
 
 		setDefaultControlsValues("init");
 
-		projectsNameText.disabled = true;
-		projectsDescText.disabled = true;
+		libraryNameText.disabled = true;
+		libraryDescText.disabled = true;
 		btnSaveProject.disabled = true;
 		btnDelProject.disabled = true;
 
@@ -629,7 +629,7 @@ function setProjectsInfoLabel(fileName){
 		if (xmlType !== "Server") txtInfo = txtInfo + "projects/";
 		txtInfo = txtInfo + xmlProjects + "' target='_blank'>" + fileName + "</a></i><br>";
 	}
-	txtInfo = txtInfo + "<b>" + projectsName + "</b><br>" + projectsDesc + "<br>";
+	txtInfo = txtInfo + "<b>" + libraryName + "</b><br>" + libraryDesc + "<br>";
 
 	projectPanelInfo.innerHTML = txtInfo;
 
