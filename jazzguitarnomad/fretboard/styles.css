@@ -1927,7 +1927,8 @@ input[type="range"] {
 
 #numFrets,
 #numberFrets,
-#numTempo {
+#numTempo,
+#numBpm {
 	width: 40px;
 	text-align: center;
 }
@@ -2074,11 +2075,11 @@ input[type="range"] {
 #btnNewChord,
 #btnDelChord{
 
-	width: 30px;
 	height: 30px;
+	width: 30px;
 
-	min-width:30px;
-	min-height:30px;
+	min-height: 30px;
+	min-width: 30px;
 
 	padding: 0;
 	gap:0;
