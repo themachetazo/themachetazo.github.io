@@ -239,8 +239,6 @@ function configureUserControls(){
 			topFretboardDownload.style.display = "none";
 			topScoreDownload.style.display = "none";
 
-			workspaceTitleText.style.display = "none";
-
 			btnShowProjectPanel.style.display = "none";
 
 			btnUser.querySelector("i").className = "fa-solid fa-user-lock";
@@ -253,8 +251,6 @@ function configureUserControls(){
 				setMenu("edit");
 
 				btnShowProjectPanel.style.display = "none";
-
-				workspaceTitleText.style.display = "none";
 
 				btnUser.querySelector("i").className = "fa-solid fa-user-tie";
 				txtUserTitle.textContent = "Invitado";
@@ -587,13 +583,11 @@ async function initializeProjects() {
 
         }
 
-    }
+    }else if (user !== null && isUserActive) {
 
-    // --------------------------------
-    // ABRIR PRIMER PROYECTO
-    // --------------------------------
-
-    else if (user !== null && isUserActive) {
+        // --------------------------------
+        // ABRIR PRIMER PROYECTO
+        // --------------------------------
 
         const firstProject = getFirstProject();
 
@@ -607,13 +601,12 @@ async function initializeProjects() {
 
         }
 
-    }
+    } else {
 
-    // --------------------------------
-    // DISEÑADOR SIN USUARIO
-    // --------------------------------
+        // --------------------------------
+        // DISEÑADOR SIN USUARIO
+        // --------------------------------
 
-    else {
 
         initializeEmptyProject();
 
