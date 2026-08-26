@@ -568,7 +568,7 @@ async function initializeProjects() {
     // --------------------------------
 
     if (currentProjectId !== null) {
-alert(currentProjectId);
+
         const project = projects.find(project => project.id === currentProjectId);
 
         if (project) {
@@ -606,7 +606,6 @@ alert(currentProjectId);
         // --------------------------------
         // DISEÑADOR SIN USUARIO
         // --------------------------------
-
 
         initializeEmptyProject();
 
