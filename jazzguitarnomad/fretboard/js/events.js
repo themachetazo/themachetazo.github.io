@@ -666,7 +666,17 @@ btnOpenProjects.addEventListener("click", async () => {
 });
 
 btnNewProject.addEventListener("click", () => {
-	newProject();
+
+	if (newProject()){
+
+		setPlayerValues();
+
+		if (isFretboardVisible) resizeCanvas();
+
+		if (isScoreVisible) scoreRender();
+
+	}
+
 });
 
 btnSaveProject.addEventListener("click", async () => {
@@ -981,6 +991,7 @@ cmbProjectType.addEventListener("change", function () {
 
 		resetComboChords();
 
+		if (newType === "fretboard") isScoreVisible = false;
 	}
 
 	aSequence = buildOrderedSequence();

@@ -56,6 +56,8 @@ async function loadProject(project) {
 	// DATOS GENERALES
 	// --------------------------------
 
+	projectModified = false;
+
 	currentProjectId = project.id ?? "";
 
 	projectTitle = project.title ?? "";
@@ -143,30 +145,10 @@ async function loadProject(project) {
 	});
 
 	// --------------------------------
-	// ORDEN
+	// ARRAYS MUSICALES
 	// --------------------------------
 
 	noteOrder = getMaxOrder();
-
-	// --------------------------------
-	// ESTADO
-	// --------------------------------
-
-	projectModified = false;
-
-	// --------------------------------
-	// CONTROLES
-	// --------------------------------
-
-	resetControlsValues("loadProject");
-
-	setOrientation(orientation);
-
-	changeProjectType(projectType);
-
-	// --------------------------------
-	// DATOS MUSICALES
-	// --------------------------------
 
 	aSequence = buildOrderedSequence();
 
@@ -175,28 +157,10 @@ async function loadProject(project) {
 	loadArrayNotas();
 
 	// --------------------------------
-	// ACTUALIZAR INTERFAZ
+	// CONFIGURACION APP
 	// --------------------------------
 
-	setWorkspaceLayout();
-
-	// --------------------------------
-	// IMAGEN DEL MÁSTIL
-	// --------------------------------
-
-	neckImageLoaded = false;
-
-	if (fretboardStyle !== "blank") {
-
-		await loadFretboardImage();
-
-	}
-
-	// --------------------------------
-	// MODO DE EDICIÓN
-	// --------------------------------
-
-	setEditMode("view");
+	resetControlsValues("loadProject");
 
 }
 
@@ -215,20 +179,6 @@ function newProject() {
 	projectModified = false;
 
 	resetControlsValues("newProject");
-
-	setEditMode("view");
-
-	setProjectControlsType();
-
-	setWorkspaceLayout();
-
-	renderProjectsLibrary();
-
-	setPlayerValues();
-
-	if (isFretboardVisible) resizeCanvas();
-
-	if (isScoreVisible) scoreRender();
 
 	showAlert("Nuevo proyecto creado.", "info");
 
@@ -847,6 +797,12 @@ function renderProjectsLibrary() {
 				}
 
 				await selectProject(currentProject);
+
+/*
+				neckImageLoaded = false;
+
+				if (fretboardStyle !== "blank") await loadFretboardImage();
+*/
 
 				setPlayerValues();
 

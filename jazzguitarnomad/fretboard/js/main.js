@@ -16,9 +16,11 @@ async function initializeApp() {
 
 		await loadXML("user",xmlUsers);
 
-		setUserStates();
+		setUserState();
 
-		setUserInitControlsStates();
+		configureUserControls();
+
+		setEditMode("view");
 
 
 		// PROJECTS ----------------------
@@ -26,6 +28,8 @@ async function initializeApp() {
 		setLoadingProgress(10, "Cargando proyectos...");
 
 		await loadXML("project",xmlProjects);
+
+		setProjectsInfoLabel(xmlProjects.substring(xmlProjects.indexOf("/") + 1));
 
 		await initializeProjects();
 
@@ -37,7 +41,6 @@ async function initializeApp() {
 		setOrientation(orientation);
 
 		setLayout();
-
 
 
 		// IMÁGENES ----------------------
@@ -163,7 +166,7 @@ function getURLParams(){
 
 }
 
-function setUserStates(){
+function setUserState(){
 
 	isMobile = window.innerWidth <= maxMediaScreenWidth;
 
@@ -212,7 +215,7 @@ function setUserStates(){
 
 }
 
-function setUserInitControlsStates(){
+function configureUserControls(){
 
 	if (!isAdmin) {
 
@@ -229,8 +232,6 @@ function setUserInitControlsStates(){
 
 		btnUser.classList.remove("admin");
 		btnUser.classList.add("user");
-
-//		topScoreDownload.classList.remove("isHidden");
 
 		if (appMode === "Guest"){
 
@@ -341,8 +342,6 @@ function setUserInitControlsStates(){
 	workspaceTimeInfo.style.display = "none";
 
 	updateTopBarMenu();
-
-	setProjectControlsType();
 
 	if (isMobile){
 		menuSelectorText.textContent = "MENÚ";
@@ -550,8 +549,6 @@ function setMenu(m){
 
 async function initializeProjects() {
 
-    setProjectsInfoLabel(xmlProjects.substring(xmlProjects.indexOf("/") + 1));
-
     // --------------------------------
     // NO HAY BIBLIOTECA
     // --------------------------------
@@ -649,7 +646,7 @@ function initializeEmptyProject() {
 
 }
 
-function setProjectControlsType(){
+function setProjectControlsDisabled(){
 
 	cmbTipoSecuencia.disabled = projectType === "fretboard";
 	chkMetronomeOn.disabled = projectType === "fretboard";
@@ -947,13 +944,21 @@ function resetControlsValues(state){
 
 	}
 
+	changeProjectType(projectType);
+
+	setEditMode("view");
+
+	setOrientation(orientation);
+
+	setWorkspaceLayout();
+
 	history = [];
 
 }
 
 function changeProjectType(oldType) {
 
-	setProjectControlsType();
+	setProjectControlsDisabled();
 
 	switch (projectType) {
 
