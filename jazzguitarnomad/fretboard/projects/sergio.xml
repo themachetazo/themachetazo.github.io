@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<projects version="3.1" name="sergio" desc="Descripción">
+<projects version="3.2" name="sergio" desc="Esto es una librería dedicada al alumno Sergio Hacha. Los contenidos son privados y con alegría.">
 
 	<categories>
 		<category id="14556739265056908397">s</category>
@@ -167,6 +167,42 @@
 		<notes>
 		</notes>
 		<barres>
+		</barres>
+		<nutNotes>
+		</nutNotes>
+	</project>
+
+	<project id="a11af1098c864f7b981d9d5a6f6b9b20" title="Acordes" category="825758035729316968" projectType="chord">
+		<settings>
+			<orientation>vertical</orientation>
+			<fretboardStyle>blank</fretboardStyle>
+			<fretCount>10</fretCount>
+			<displayMode>true</displayMode>
+			<inlays>true</inlays>
+			<rotated>false</rotated>
+			<bar>4/4</bar>
+			<scoreScale>auto</scoreScale>
+			<tipoSecuencia>up</tipoSecuencia>
+			<countBars>0</countBars>
+			<repetitionSequence>2</repetitionSequence>
+			<isFretboardVisible>true</isFretboardVisible>
+			<isScoreVisible>false</isScoreVisible>
+			<currentInstrument>piano</currentInstrument>
+			<fretNumbers>10</fretNumbers>
+			<showFretNumbers>false</showFretNumbers>
+			<bpm>90</bpm>
+			<key>C</key>
+			<scoreStaves>all</scoreStaves>
+			<scoreLayout>vertical</scoreLayout>
+			<swing>false</swing>
+			<metronomeOn>true</metronomeOn>
+		</settings>
+		<notes>
+		</notes>
+		<barres>
+			<barre fret="1" startString="5" color="#ffffff" text=""/>
+			<barre fret="2" startString="4" color="#ffffff" text=""/>
+			<barre fret="3" startString="3" color="#ffffff" text=""/>
 		</barres>
 		<nutNotes>
 		</nutNotes>

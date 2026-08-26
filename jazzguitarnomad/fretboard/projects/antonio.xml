@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projects version="1.3" name="Sin Nombre" desc="Descripción">
+
+	<categories>
+		<category id="3098203970884099697">primera</category>
+	</categories>
+
+	<project id="46922487099b4b6f9c264245413428e1" title="gilipollas" category="3098203970884099697" projectType="sequence">
+		<settings>
+			<orientation>horizontal</orientation>
+			<fretboardStyle>maple</fretboardStyle>
+			<fretCount>10</fretCount>
+			<displayMode>true</displayMode>
+			<inlays>true</inlays>
+			<rotated>false</rotated>
+			<bar>4/4</bar>
+			<scoreScale>auto</scoreScale>
+			<tipoSecuencia>up</tipoSecuencia>
+			<countBars>0</countBars>
+			<repetitionSequence>2</repetitionSequence>
+			<isFretboardVisible>true</isFretboardVisible>
+			<isScoreVisible>false</isScoreVisible>
+			<currentInstrument>piano</currentInstrument>
+			<fretNumbers>10</fretNumbers>
+			<showFretNumbers>false</showFretNumbers>
+			<bpm>90</bpm>
+			<key>C</key>
+			<scoreStaves>all</scoreStaves>
+			<scoreLayout>vertical</scoreLayout>
+			<swing>false</swing>
+			<metronomeOn>true</metronomeOn>
+		</settings>
+		<notes>
+			<note string="4" fret="7" color="#ffffff" text=""/>
+		</notes>
+		<barres>
+		</barres>
+		<nutNotes>
+		</nutNotes>
+	</project>
+
+	<project id="1853abf2a76543a09110a6720569ac50" title="soplagaitas" category="3098203970884099697" projectType="sequence">
+		<settings>
+			<orientation>horizontal</orientation>
+			<fretboardStyle>blank</fretboardStyle>
+			<fretCount>10</fretCount>
+			<displayMode>true</displayMode>
+			<inlays>true</inlays>
+			<rotated>false</rotated>
+			<bar>4/4</bar>
+			<scoreScale>auto</scoreScale>
+			<tipoSecuencia>up</tipoSecuencia>
+			<countBars>0</countBars>
+			<repetitionSequence>2</repetitionSequence>
+			<isFretboardVisible>true</isFretboardVisible>
+			<isScoreVisible>true</isScoreVisible>
+			<currentInstrument>piano</currentInstrument>
+			<fretNumbers>10</fretNumbers>
+			<showFretNumbers>true</showFretNumbers>
+			<bpm>90</bpm>
+			<key>C</key>
+			<scoreStaves>all</scoreStaves>
+			<scoreLayout>vertical</scoreLayout>
+			<swing>false</swing>
+			<metronomeOn>true</metronomeOn>
+		</settings>
+		<notes>
+			<note string="5" fret="4" color="#ff8800" text=""/>
+			<note string="2" fret="9" color="#ff8800" text=""/>
+		</notes>
+		<barres>
+		</barres>
+		<nutNotes>
+		</nutNotes>
+	</project>
+
+</projects>
