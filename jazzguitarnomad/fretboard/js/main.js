@@ -1,3 +1,4 @@
+"use strict";
 
 /*============================
 MAIN FUNCTIONS
@@ -909,6 +910,11 @@ function changeProjectType(oldType) {
 		case "fretboard":
 
 			cmbChords.disabled = true;
+
+			isScoreVisible = false;
+
+			setWorkspaceLayout();
+
 			break;
 
 		case "sequence":
