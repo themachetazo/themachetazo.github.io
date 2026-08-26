@@ -166,7 +166,7 @@ async function loadProject(project) {
 
 function newProject() {
 
-	if (projectModified) {
+	if (projectModified && isAdmin) {
 
 		if (!confirm("¿Crear un proyecto nuevo? Se perderán los cambios no guardados.")) {
 			return false;
@@ -257,7 +257,7 @@ async function openXMLProjectsFile() {
 
 		xmlType = "Local";
 
-		setProjectsInfoLabel(fileHandle.name);
+		setLibraryInfo(fileHandle.name);
 
 
 		// --------------------------------
@@ -934,7 +934,7 @@ async function saveCurrentProject() {
 
 		openProjectCategory(project.category);
 
-		setProjectsInfoLabel(xmlProjects.substring(xmlProjects.indexOf("/") + 1));
+		setLibraryInfo(xmlProjects.substring(xmlProjects.indexOf("/") + 1));
 
 		showAlert("Proyecto guardado correctamente.", "success");
 
