@@ -21,11 +21,7 @@ function loadFretboardImage() {
 
 			neckImageLoaded = false;
 
-			reject(
-				new Error(
-					`No se pudo cargar la imagen del diapasón: ${neckImage.src}`
-				)
-			);
+			reject(new Error(`No se pudo cargar la imagen del diapasón: ${neckImage.src}`));
 
 		};
 
@@ -2483,7 +2479,19 @@ function drawRealisticNut() {
 			const height = nutThickness;
 
 			ctx.beginPath();
-			ctx.roundRect(x, y, width, height, nutRadius);
+
+			ctx.moveTo(x + nutRadius, y);
+			ctx.lineTo(x + width - nutRadius, y);
+			ctx.quadraticCurveTo(x + width, y, x + width, y + nutRadius);
+			ctx.lineTo(x + width, y + height - nutRadius);
+			ctx.quadraticCurveTo(x + width, y + height, x + width - nutRadius, y + height);
+			ctx.lineTo(x + nutRadius, y + height);
+			ctx.quadraticCurveTo(x, y + height, x, y + height - nutRadius);
+			ctx.lineTo(x, y + nutRadius);
+			ctx.quadraticCurveTo(x, y, x + nutRadius, y);
+
+			ctx.closePath();
+
 			ctx.fillStyle = nutFill;
 			ctx.fill();
 
@@ -2505,7 +2513,6 @@ function drawRealisticNut() {
 				ctx.beginPath();
 				ctx.moveTo(stringX, y + nutThickness * 0.18);
 				ctx.lineTo(stringX, y + nutThickness * 0.82);
-
 				ctx.strokeStyle = slotColor;
 				ctx.lineWidth = Math.max(0.7, 1 + s * 0.14);
 				ctx.stroke();
@@ -2519,7 +2526,7 @@ function drawRealisticNut() {
 		// Horizontal (cejuela izquierda)
 		//------------------------------------------------
 
-		case 270: { 
+		case 270: {
 
 			const x = boardleft - nutThickness / 2;
 			const y = boardtop - nutRadius;
@@ -2527,7 +2534,19 @@ function drawRealisticNut() {
 			const height = boardHeight + nutRadius * 2;
 
 			ctx.beginPath();
-			ctx.roundRect(x, y, width, height, nutRadius);
+
+			ctx.moveTo(x + nutRadius, y);
+			ctx.lineTo(x + width - nutRadius, y);
+			ctx.quadraticCurveTo(x + width, y, x + width, y + nutRadius);
+			ctx.lineTo(x + width, y + height - nutRadius);
+			ctx.quadraticCurveTo(x + width, y + height, x + width - nutRadius, y + height);
+			ctx.lineTo(x + nutRadius, y + height);
+			ctx.quadraticCurveTo(x, y + height, x, y + height - nutRadius);
+			ctx.lineTo(x, y + nutRadius);
+			ctx.quadraticCurveTo(x, y, x + nutRadius, y);
+
+			ctx.closePath();
+
 			ctx.fillStyle = nutFill;
 			ctx.fill();
 
@@ -2547,7 +2566,6 @@ function drawRealisticNut() {
 				ctx.beginPath();
 				ctx.moveTo(x + nutThickness * 0.18, stringY);
 				ctx.lineTo(x + nutThickness * 0.82, stringY);
-
 				ctx.strokeStyle = slotColor;
 				ctx.lineWidth = Math.max(0.7, 1 + s * 0.14);
 				ctx.stroke();
@@ -2569,7 +2587,19 @@ function drawRealisticNut() {
 			const height = nutThickness;
 
 			ctx.beginPath();
-			ctx.roundRect(x, y, width, height, nutRadius);
+
+			ctx.moveTo(x + nutRadius, y);
+			ctx.lineTo(x + width - nutRadius, y);
+			ctx.quadraticCurveTo(x + width, y, x + width, y + nutRadius);
+			ctx.lineTo(x + width, y + height - nutRadius);
+			ctx.quadraticCurveTo(x + width, y + height, x + width - nutRadius, y + height);
+			ctx.lineTo(x + nutRadius, y + height);
+			ctx.quadraticCurveTo(x, y + height, x, y + height - nutRadius);
+			ctx.lineTo(x, y + nutRadius);
+			ctx.quadraticCurveTo(x, y, x + nutRadius, y);
+
+			ctx.closePath();
+
 			ctx.fillStyle = nutFill;
 			ctx.fill();
 
@@ -2590,7 +2620,6 @@ function drawRealisticNut() {
 				ctx.beginPath();
 				ctx.moveTo(stringX, y + nutThickness * 0.18);
 				ctx.lineTo(stringX, y + nutThickness * 0.82);
-
 				ctx.strokeStyle = slotColor;
 				ctx.lineWidth = Math.max(0.7, 1 + s * 0.14);
 				ctx.stroke();
@@ -2604,7 +2633,7 @@ function drawRealisticNut() {
 		// Horizontal (cejuela derecha)
 		//------------------------------------------------
 
-		case 90: { 
+		case 90: {
 
 			const x = boardright - nutThickness / 2;
 			const y = boardtop - nutRadius;
@@ -2612,7 +2641,19 @@ function drawRealisticNut() {
 			const height = boardHeight + nutRadius * 2;
 
 			ctx.beginPath();
-			ctx.roundRect(x, y, width, height, nutRadius);
+
+			ctx.moveTo(x + nutRadius, y);
+			ctx.lineTo(x + width - nutRadius, y);
+			ctx.quadraticCurveTo(x + width, y, x + width, y + nutRadius);
+			ctx.lineTo(x + width, y + height - nutRadius);
+			ctx.quadraticCurveTo(x + width, y + height, x + width - nutRadius, y + height);
+			ctx.lineTo(x + nutRadius, y + height);
+			ctx.quadraticCurveTo(x, y + height, x, y + height - nutRadius);
+			ctx.lineTo(x, y + nutRadius);
+			ctx.quadraticCurveTo(x, y, x + nutRadius, y);
+
+			ctx.closePath();
+
 			ctx.fillStyle = nutFill;
 			ctx.fill();
 
@@ -2633,7 +2674,6 @@ function drawRealisticNut() {
 				ctx.beginPath();
 				ctx.moveTo(x + nutThickness * 0.18, stringY);
 				ctx.lineTo(x + nutThickness * 0.82, stringY);
-
 				ctx.strokeStyle = slotColor;
 				ctx.lineWidth = Math.max(0.7, 1 + s * 0.14);
 				ctx.stroke();
