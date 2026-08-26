@@ -251,9 +251,12 @@ function configureUserControls(){
 
 				setMenu("edit");
 
-				workspaceTitleText.style.display = "none";
+				btnProyectos.style.display = "none";
+				btnProyectosPopup.style.display = "none";
 
 				btnShowProjectPanel.style.display = "none";
+
+				workspaceTitleText.style.display = "none";
 
 				btnUser.querySelector("i").className = "fa-solid fa-user-tie";
 				txtUserTitle.textContent = "Invitado";
