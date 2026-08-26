@@ -203,6 +203,7 @@ function setUserState(){
 
 	}else{
 		user = "admin";
+		subtituleText.textContent = "Fretboard Designer";
 	}
 
 	if (!isAdmin && user !== null) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + user + ".xml";
