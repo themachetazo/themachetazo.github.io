@@ -567,7 +567,7 @@ async function initializeProjects() {
     // ABRIR PROYECTO DE LA URL
     // --------------------------------
 
-    if (currentProjectId !== null) {
+    if (currentProjectId !== null && isUserActive) {
 
         const project = projects.find(project => project.id === currentProjectId);
 
