@@ -30,7 +30,7 @@ body {
 	display:flex;
 	flex-direction:column;
 
-	min-height:100vh;
+/*	min-height:100vh;*/
 
 	font-family: "Segoe UI", Arial, sans-serif;
 	font-size: 12px;
@@ -739,7 +739,6 @@ html {
 
 }
 
-
 .projectOpenButton.active {
 
 	border-left: 4px solid var(--color-hightlight);
@@ -754,7 +753,6 @@ html {
 
 }
 
-
 .projectOpenButton:not(:disabled):hover {
 
 	color: var(--color-hightlight);
@@ -762,7 +760,6 @@ html {
 	font-weight: 700;
 
 }
-
 
 .projectOpenButton:disabled {
 
@@ -773,7 +770,6 @@ html {
 	opacity: .55;
 
 }
-
 
 .projectOpenButton:disabled:hover {
 
@@ -803,7 +799,6 @@ html {
 	opacity: .55;
 
 }
-
 
 .projectOpenButton i {
 
@@ -2866,23 +2861,6 @@ input[type="range"] {
 
 }
 
-@media (hover: hover) and (pointer: fine) {
-
-	.toolbarTop-Controls button:not(:disabled):hover,
-	#workspaceHeader button:not(:disabled):hover,
-	.projectPanelHeader button:not(:disabled):hover {
-
-		color:#fff;
-		background:var(--color-hightlight);
-		border:1px solid #000;
-
-		box-shadow:inset 2px 2px 4px rgba(0,0,0,.35);
-
-		transform:translateY(1px);
-
-	}
-
-}
 
 /* =================================
    FOOTER - MÓVIL
