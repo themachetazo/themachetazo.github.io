@@ -392,7 +392,6 @@ async function playMusic(){
 		setPlayStopButton(btnPlayStop, true);
 
 		// Mostrar timeline e información
-
 		workspaceTimeInfo.style.display = "flex";
 
 		// Abrir y cerrar controles
@@ -436,21 +435,13 @@ async function playMusic(){
 			metronome.stop();
 		}
 
-		scorePaint_stop();
+		if (isScoreVisible) scorePaint_stop();
 
 		setControlsEnabled(true);
 
 		setPlayStopButton(btnPlayStop, false);
 
-		// Ocultar timeline e información
-
-		if (!chkMetronomeOn.checked) workspaceMetronome.style.display = "none";
-
 		resetPlaybackTimeline();
-
-		workspaceTimeInfo.style.display = "none";
-
-		// Abrir y cerrar controles
 
 		if (topControlsWasOpen) openTopControls();
 		topControlsWasOpen = false;
@@ -458,6 +449,7 @@ async function playMusic(){
 		if (!libraryWasClosed && appMode !== "Guest") openProjectsPanel();
 		libraryWasClosed = false;
 
+		if (chkAutoScroll.checked) window.scrollTo({top: 0,left: 0,behavior: "smooth"});
 	}
 
 }
@@ -534,8 +526,6 @@ function resetScorePlayer() {
     });
 
     scorePaint_stop();
-
-    scorePaint_clearAllHighlights(scoreSvg);
 
     scorePaint_removeProgressBar();
 

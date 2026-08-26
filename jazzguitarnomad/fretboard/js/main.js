@@ -17,7 +17,7 @@ async function initializeApp() {
 
 		setUserStates();
 
-		setUserControlsStates();
+		setUserInitControlsStates();
 
 
 		// PROJECTS ----------------------
@@ -26,7 +26,7 @@ async function initializeApp() {
 
 		await loadXML("project",xmlProjects);
 
-		setProjectsControlsStates();
+		setProjectsInitControlsStates();
 
 
 		// LAYOUT ----------------------
@@ -208,7 +208,7 @@ function setUserStates(){
 
 }
 
-function setUserControlsStates(){
+function setUserInitControlsStates(){
 
 	if (!isAdmin) {
 
@@ -327,8 +327,8 @@ function setUserControlsStates(){
 
 function setMenu(m){
 
-	// alternar abrir-cerrar si se pulsa el mismo menú y no es movil
-	if (!isMobile && menuOpen === m) {
+	// alternar abrir-cerrar si se pulsa el mismo menú
+	if (menuOpen === m) {
 
 		if (topControlsContainer.classList.contains("isOpen")) {
 
@@ -408,7 +408,7 @@ function setMenu(m){
 				topTitle
 			);
 
-			menuSelectorText.textContent = "PROYECTO";
+			menuSelectorText.textContent = "PROYECTOS";
 			menuSelectorIcon.className = "fa-solid fa-folder";
 
 			break;
@@ -524,7 +524,7 @@ function setMenu(m){
 
 }
 
-function setProjectsControlsStates() {
+function setProjectsInitControlsStates() {
 
 	setProjectsInfoLabel(xmlProjects.substring(xmlProjects.indexOf("/") + 1));
 
@@ -623,15 +623,21 @@ function setProjectsInfoLabel(fileName){
 
 	const appUrl = window.location.href.substring(0,window.location.href.lastIndexOf("/") + 1);
 
+	projectPanelHeaderTitle.textContent = libraryName === "" ? "Sin Nombre" : libraryName;
+
 	let txtInfo = "";
+
 	if (isAdmin){
 		txtInfo = txtInfo + "<i><a href='" + appUrl;
 		if (xmlType !== "Server") txtInfo = txtInfo + "projects/";
 		txtInfo = txtInfo + xmlProjects + "' target='_blank'>" + fileName + "</a></i><br>";
 	}
-	txtInfo = txtInfo + "<b>" + libraryName + "</b><br>" + libraryDesc + "<br>";
+
+	if (libraryDesc !== "") txtInfo = txtInfo + libraryDesc;
 
 	projectPanelInfo.innerHTML = txtInfo;
+
+	if (txtInfo === "") projectPanelInfo.style.display = "none";
 
 }
 
@@ -1498,13 +1504,14 @@ function resetPlaybackTimeline(){
 
 	metronome_Info.innerHTML = "Metrónomo: <b>1 / 1</b>";
 
-	player_repeatInfo.innerHTML = "Repetición: <b>1</b>&nbsp;Compás: <b>1</b>";
+	player_repeatInfo.innerHTML = "Loop: <b>1</b>&nbsp;Compás: <b>1</b>";
+
+	// Solo ocultar si realmente hemos parado. Durante el arranque/count-in isPlaying sigue siendo true.
+	if (!isPlaying && !chkMetronomeOn.checked) workspaceTimeInfo.style.display = "none";
 
 	countBars = 1;
 	repetitionSequence = 1;
 	firstTick = true;
-
-//	window.scrollTo({top: 0,left: 0,behavior: "smooth"});
 
 }
 
@@ -1604,7 +1611,7 @@ function setErrorLoadingProgress(err){
 
 }
 
-function showAlert(message, type = "success", duration = 2000) {
+function showAlert(message, type = "success", duration = 2500) {
 
 	// Cancelar desaparición anterior
 

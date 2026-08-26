@@ -152,6 +152,7 @@ const btnDelCategory = document.getElementById("btnDelCategory");
 const btnShowProjectPanel = document.getElementById("btnShowProjectPanel");
 const btnToggleLibrary = document.getElementById("btnToggleLibrary");
 const projectPanelInfo = document.getElementById("projectPanelInfo");
+const projectPanelHeaderTitle = document.getElementById("projectPanelHeaderTitle");
 const libraryNameText = document.getElementById("libraryNameText");
 const libraryDescText = document.getElementById("libraryDescText");
 const workspaceProjectsPanel = document.getElementById("workspaceProjectsPanel");

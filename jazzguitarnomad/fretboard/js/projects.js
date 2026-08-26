@@ -378,7 +378,7 @@ function parseProjectsXml(xml) {
 	libraryNameText.value = libraryName;
 	libraryNameOld = libraryName;
 
-	libraryDesc = xml.querySelector("projects")?.getAttribute("desc") || "Descripción";
+	libraryDesc = xml.querySelector("projects")?.getAttribute("desc") || "";
 	libraryDescText.value = libraryDesc;
 	libraryDescOld = libraryDesc;
 

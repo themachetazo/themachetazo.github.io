@@ -65,30 +65,6 @@ document.addEventListener("contextmenu", (e) => {
 
 });
 
-/*
-document.addEventListener("selectstart",(e) => {
-
-	if (!isAdmin) return;
-
-	if (e.target.matches("input, textarea")) return;
-
-	e.preventDefault();
-
-});
-
-document.addEventListener("mousedown",(e) => {
-
-	if (!isAdmin) return;
-
-	if (e.target.matches("input, textarea")) return;
-
-	if (e.detail > 1) {
-		e.preventDefault();
-	}
-
-});
-*/
-
 
 ////////////////////////////////////////////////////////////
 //
@@ -195,10 +171,6 @@ document.addEventListener("playerBeat", (e) => {
 
 			resetPlaybackTimeline();
 
-			// Solo ocultar si realmente hemos parado. Durante el arranque/count-in isPlaying sigue siendo true.
-
-			if (!isPlaying) workspaceTimeInfo.style.display = "none";
-
 			break;
 
 		case "end":
@@ -213,21 +185,11 @@ document.addEventListener("playerBeat", (e) => {
 
 			setPlayStopButton(btnPlayStop, false);
 
-			// La reproducción ha terminado realmente
-
-			workspaceTimeInfo.style.display = "none";
-
-			// Abrir y cerrar controles
-
-			if (topControlsWasOpen) {
-				openTopControls();
-			}
-
+			if (topControlsWasOpen) openTopControls();
 			topControlsWasOpen = false;
-		
-			if (appMode !== "Guest" && !libraryWasOpen) openProjectsPanel();
 
-			libraryWasOpen = false;
+			if (!libraryWasClosed && appMode !== "Guest") openProjectsPanel();
+			libraryWasClosed = false;
 
 			break;
 
@@ -237,8 +199,9 @@ document.addEventListener("playerBeat", (e) => {
 
 		player_repeatInfo.innerHTML = "Repetición: <b>" + repetitionSequence + "&nbsp;</b>Compás: <b>" + countBars + "</b>";
 
+	}else{
+		if (chkAutoScroll.checked) window.scrollTo({top: 0,left: 0,behavior: "smooth"});
 	}
-
 });
 
 
