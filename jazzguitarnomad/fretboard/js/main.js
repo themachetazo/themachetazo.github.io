@@ -1160,23 +1160,6 @@ function saveHistory() {
 
 }
 
-function undo() {
-
-	if (history.length === 0) {
-		return;
-	}
-
-	const lastState = history.pop();
-
-	notes = lastState.notes;
-	nutNotes = lastState.nutNotes;
-	barreNotes = lastState.barreNotes ?? [];
-
-	drawFretboard();
-	drawNotes();
-
-}
-
 function showProjectPanel(){
 
 	if (workspaceProjectsPanel.classList.contains("panelHidden")) {
