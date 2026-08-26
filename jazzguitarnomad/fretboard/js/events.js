@@ -200,7 +200,7 @@ document.addEventListener("playerBeat", (e) => {
 		player_repeatInfo.innerHTML = "Repetición: <b>" + repetitionSequence + "&nbsp;</b>Compás: <b>" + countBars + "</b>";
 
 	}else{
-		if (chkAutoScroll.checked) window.scrollTo({top: 0,left: 0,behavior: "smooth"});
+		if (chkAutoScroll.checked) document.body.scrollTo({top: 0,left: 0,behavior: "smooth"});
 	}
 });
 

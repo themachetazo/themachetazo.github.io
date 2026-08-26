@@ -449,7 +449,7 @@ async function playMusic(){
 		if (!libraryWasClosed && appMode !== "Guest") openProjectsPanel();
 		libraryWasClosed = false;
 
-		if (chkAutoScroll.checked) window.scrollTo({top: 0,left: 0,behavior: "smooth"});
+		if (chkAutoScroll.checked) document.body.scrollTo({top: 0,left: 0,behavior: "smooth"});
 	}
 
 }
@@ -1423,13 +1423,7 @@ function scorePaint_stop() {
 
     scoreEventIndex = 0;
 
-    if (vexTab_container) {
-        vexTab_container.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: "smooth"
-        });
-    }
+    if (vexTab_container) vexTab_container.scrollTo({top: 0,left: 0,behavior: "smooth"});
 
 }
 

@@ -226,9 +226,22 @@ function setUserInitControlsStates(){
 		btnUser.classList.remove("admin");
 		btnUser.classList.add("user");
 
+//		topScoreDownload.classList.remove("isHidden");
+
 		if (appMode === "Guest"){
 
 			setMenu("fretboard");
+
+			btnProyectos.style.display = "";
+			btnProyectosPopup.style.display = "";
+			topLibrary.style.display = "none";
+			topLibraryInfo.style.display = "none";
+			btnSaveProject.style.display = "none";
+			btnDelProject.style.display = "none";
+			topTitle.style.display = "none";
+			topCategory.style.display = "none";
+			topTitleViewMode.style.display = "none";
+			topShare.style.display = "none";
 
 			topFretboardDownload.style.display = "none";
 			topScoreDownload.style.display = "none";
@@ -236,7 +249,6 @@ function setUserInitControlsStates(){
 			btnShowProjectPanel.style.display = "none";
 
 			btnUser.querySelector("i").className = "fa-solid fa-user-lock";
-
 			txtUserTitle.textContent = "Invitado";
 
 		}else{
@@ -245,27 +257,37 @@ function setUserInitControlsStates(){
 
 				setMenu("edit");
 
-				btnShowProjectPanel.style.display = "none";
 				workspaceTitleText.style.display = "none";
+
+				btnProyectos.style.display = "";
+				btnProyectosPopup.style.display = "";
+				topLibrary.style.display = "none";
+				topLibraryInfo.style.display = "none";
+				btnSaveProject.style.display = "none";
+				btnDelProject.style.display = "none";
+				topTitle.style.display = "none";
+				topCategory.style.display = "none";
+				topTitleViewMode.style.display = "none";
+				topShare.style.display = "none";
+
+				btnShowProjectPanel.style.display = "none";
 
 				btnEdicion.style.display = "";
 				btnEdicionPopup.style.display = "";
 
 				btnUser.querySelector("i").className = "fa-solid fa-user-tie";
-
 				txtUserTitle.textContent = "Invitado";
 
 			}else{
 
 				setMenu("fretboard");
 
-				txtUserTitle.textContent = userName;
-
 				if (!isUserActive){
 					btnUser.querySelector("i").className = "fa-solid fa-user-lock";
 				}else{
 					btnUser.querySelector("i").className = "fa-solid fa-user-tie";
 				}
+				txtUserTitle.textContent = userName;
 
 			}
 
@@ -478,8 +500,6 @@ function setMenu(m){
 				topScoreMargin,
 				topScoreDownload
 			);
-
-			if (!isAdmin) topScoreDownload.classList.remove("isHidden");
 
 			menuSelectorText.textContent = "PARTITURA";
 			menuSelectorIcon.className = "fa-solid fa-music";
