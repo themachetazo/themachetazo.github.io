@@ -205,8 +205,6 @@ function setUserState(){
 		user = "admin";
 	}
 
-	subtituleText.textContent = "Fretboard " + appMode;
-
 	if (!isAdmin && user !== null) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + user + ".xml";
 
 	if (lib !== null && isUserActive) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + lib + ".xml";
@@ -214,6 +212,8 @@ function setUserState(){
 }
 
 function configureUserControls(){
+
+	subtituleText.textContent = "Fretboard Designer";
 
 	if (!isAdmin) {
 
@@ -302,6 +302,8 @@ function configureUserControls(){
 
 			btnMetronome.style.display = "none";
 			btnMetronomePopup.style.display = "none";
+
+			subtituleText.textContent = "Fretboard Viewer";
 
 		}
 
