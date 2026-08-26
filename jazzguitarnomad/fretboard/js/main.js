@@ -251,10 +251,14 @@ function configureUserControls(){
 
 				setMenu("edit");
 
-				btnProyectos.style.display = "none";
-				btnProyectosPopup.style.display = "none";
+				if (currentProjectId !== null){
 
-				btnShowProjectPanel.style.display = "none";
+					btnProyectos.style.display = "none";
+					btnProyectosPopup.style.display = "none";
+
+					btnShowProjectPanel.style.display = "none";
+		
+				}
 
 				workspaceTitleText.style.display = "none";
 
