@@ -1801,6 +1801,7 @@ html {
 .toolbarTop-Controls input{
 
 	height:30px;
+	width:120px;
 
 	padding:0 8px;
 
@@ -1919,20 +1920,20 @@ html {
 }
 
 input[type="range"] {
-	max-width:100px;
+	max-width:60px;
 	accent-color:var(--color-main-text);
 
 }
 
 #noteText {
-	width: 70px;
+	width: 50px;
 	text-align: center;
 }
 
 #numFrets,
 #numberFrets,
 #numTempo {
-	width: 55px;
+	width: 50px;
 	text-align: center;
 }
 
@@ -2646,7 +2647,7 @@ input[type="range"] {
 	}
 
 	#toolbarTop input[type="range"] {
-		max-width: 80px;
+		max-width: 60px;
 	}
 
 	#toolbarTop select {
