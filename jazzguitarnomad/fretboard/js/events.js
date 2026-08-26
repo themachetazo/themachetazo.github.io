@@ -351,7 +351,16 @@ canvas.addEventListener("click", (e) => {
 
 			saveHistory();
 
-			addNote(cell,chord);
+			eraseNote(cell);
+
+			notes.push({
+				string: cell.string,
+				fret: cell.fret,
+				color: colorPicker.value,
+				text: noteText.value.trim().substring(0, 3),
+				chord: chord,
+				order: noteOrder
+			});
 
 			break;
 

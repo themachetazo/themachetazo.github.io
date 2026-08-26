@@ -2867,24 +2867,6 @@ function drawNotes() {
 
 }
 
-function addNote(cell, chord) {
-
-	eraseNote(cell);
-
-	notes.push({
-		string: cell.string,
-		fret: cell.fret,
-		color: colorPicker.value,
-		text: noteText.value.trim().substring(0, 3),
-		chord: chord,
-		order: noteOrder
-	});
-
-	drawFretboard();
-	drawNotes();
-
-}
-
 function eraseNote(cell) {
 
 	notes = notes.filter(note => {
