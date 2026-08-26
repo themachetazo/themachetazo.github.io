@@ -1049,6 +1049,10 @@ function setControlsEnabled(enabled) {
         control.disabled = !enabled;
     });
 
+    document.querySelectorAll("#topControlsContainer span").forEach(span => {
+	span.style.opacity = enabled ? 1 : "0.55";
+    });
+
     if (cmbProjectType !== "chord") {
 
 	cmbChords.disabled = true;
