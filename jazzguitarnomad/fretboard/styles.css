@@ -1915,7 +1915,7 @@ html {
 }
 
 input[type="range"] {
-	max-width:60px;
+	max-width:110px;
 	accent-color:var(--color-main-text);
 
 }
