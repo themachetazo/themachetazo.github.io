@@ -593,7 +593,7 @@ async function initializeProjects() {
     // ABRIR PRIMER PROYECTO
     // --------------------------------
 
-    else if (user !== null) {
+    else if (user !== null && isUserActive) {
 
         const firstProject = getFirstProject();
 
