@@ -609,7 +609,7 @@ function setProjectControlsType(){
 	cmbTipoSecuencia.disabled = projectType === "fretboard";
 	chkMetronomeOn.disabled = projectType === "fretboard";
 
-	cmbChords.disabled = cmbProjectType.value !== "chord" ? "none" : "flex";
+	cmbChords.disabled = projectType !== "chord" ? "none" : "flex";
 
 	btnScore.disabled = projectType === "fretboard";
 	btnScorePopup.disabled = projectType === "fretboard";
