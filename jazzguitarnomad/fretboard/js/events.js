@@ -45,6 +45,7 @@ document.addEventListener("keydown",(e)=>{
 	if (!isUndoShortcut) return;
 
 	e.preventDefault();
+
 	undo();
 
 });
@@ -673,6 +674,20 @@ btnOpenProjects.addEventListener("click", async () => {
 });
 
 btnNewProject.addEventListener("click", () => {
+
+	if (newProject()){
+
+		setPlayerValues();
+
+		if (isFretboardVisible) resizeCanvas();
+
+		if (isScoreVisible) scoreRender();
+
+	}
+
+});
+
+btnNewProjectGuest.addEventListener("click", () => {
 
 	if (newProject()){
 

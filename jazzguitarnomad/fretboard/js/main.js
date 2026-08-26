@@ -222,9 +222,10 @@ function configureUserControls(){
 		btnDelProject.style.display = "none";
 		topTitle.style.display = "none";
 		topCategory.style.display = "none";
-		topTitleViewMode.style.display = "none";
 		topShare.style.display = "none";
 
+		btnProyectos.style.display = "none";
+		btnProyectosPopup.style.display = "none";
 		btnAudio.style.display = "none";
 		btnAudioPopup.style.display = "none";
 
@@ -251,14 +252,7 @@ function configureUserControls(){
 
 				setMenu("edit");
 
-				if (currentProjectId !== null){
-
-					btnProyectos.style.display = "none";
-					btnProyectosPopup.style.display = "none";
-
-					btnShowProjectPanel.style.display = "none";
-		
-				}
+				btnShowProjectPanel.style.display = "none";
 
 				workspaceTitleText.style.display = "none";
 
@@ -315,6 +309,7 @@ function configureUserControls(){
 
 		setMenu("projects");
 
+		topProjectGuest.style.display = "none";
 		topTitleViewMode.style.display = "none";
 
 		btnUser.classList.remove("user");
@@ -400,7 +395,8 @@ function setMenu(m){
 		topMetronomeControls,
 		topBuffer,
 		topAudio,
-		topLibraryInfo
+		topLibraryInfo,
+		topProjectGuest
 	].forEach(control => control.classList.add("isHidden"));
 
 	switch (menuOpen){
@@ -412,7 +408,6 @@ function setMenu(m){
 			showMenuControls(
 				topProject,
 				topLibraryInfo,
-				topForm,
 				topCategory,
 				topLibrary,
 				topShare,
@@ -433,7 +428,9 @@ function setMenu(m){
 				topUndo,
 				topColor,
 				topNoteNames,
-				topChords
+				topForm,
+				topChords,
+				topProjectGuest
 			);
 
 			menuSelectorText.textContent = "EDICIÓN";

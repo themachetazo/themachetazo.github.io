@@ -115,6 +115,7 @@ const topChords = document.getElementById("topChords");
 const topTitleViewMode = document.getElementById("topTitleViewMode");
 const topLibraryInfo = document.getElementById("topLibraryInfo");
 const topScroll = document.getElementById("topScroll");
+const topProjectGuest = document.getElementById("topProjectGuest");
 
 /*==================================================
 	REFERENCIAS DOM: BARRA DE HERRAMIENTAS
@@ -135,6 +136,7 @@ const btnRotate = document.getElementById("btnRotate");
 
 const btnCreate = document.getElementById("btnCreate");
 const btnNewProject = document.getElementById("btnNewProject");
+const btnNewProjectGuest = document.getElementById("btnNewProjectGuest");
 const btnSaveProject = document.getElementById("btnSaveProject");
 const btnDelProject = document.getElementById("btnDelProject");
 const btnOpenProjects = document.getElementById("btnOpenProjects");
