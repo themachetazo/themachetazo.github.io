@@ -1276,13 +1276,6 @@ function setEditMode(newMode) {
 
 	cursor.style.color = colorPicker.value;
 
-/*
-	hoverCell = null;
-
-	drawFretboard();
-	drawNotes();
-*/
-
 }
 
 function showMenuControls(...controls){

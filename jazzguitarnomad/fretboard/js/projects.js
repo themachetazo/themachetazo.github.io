@@ -198,26 +198,6 @@ async function loadProject(project) {
 
 	setEditMode("view");
 
-	// --------------------------------
-	// PLAYER
-	// --------------------------------
-
-	setPlayerValues();
-
-	// --------------------------------
-	// DIBUJADO
-	// --------------------------------
-
-	if (isFretboardVisible) {
-
-		resizeCanvas();
-
-		scrollToFretboardNut();
-	
-	}
-
-	if (isScoreVisible) scoreRender();
-
 }
 
 function newProject() {
@@ -366,6 +346,12 @@ async function openXMLProjectsFile() {
 			newProject();
 
 		}
+
+		setPlayerValues();
+
+		if (isFretboardVisible) resizeCanvas();
+
+		if (isScoreVisible) scoreRender();
 
 		return true;
 
@@ -863,6 +849,12 @@ function renderProjectsLibrary() {
 				}
 
 				selectProject(currentProject);
+
+				setPlayerValues();
+
+				if (isFretboardVisible) resizeCanvas();
+
+				if (isScoreVisible) scoreRender();
 
 			});
 
