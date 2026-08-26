@@ -213,8 +213,6 @@ function setUserState(){
 
 function configureUserControls(){
 
-	subtituleText.textContent = "Fretboard Designer";
-
 	if (!isAdmin) {
 
 		topLibrary.style.display = "none";
@@ -302,8 +300,6 @@ function configureUserControls(){
 
 			btnMetronome.style.display = "none";
 			btnMetronomePopup.style.display = "none";
-
-			subtituleText.textContent = "Fretboard Viewer";
 
 		}
 
