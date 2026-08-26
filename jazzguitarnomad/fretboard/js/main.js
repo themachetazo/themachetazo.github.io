@@ -1253,7 +1253,7 @@ function setEditMode(newMode) {
 
 			cursor.innerHTML = '<i class="fa-solid fa-pencil"></i>';
 
-			if (window.innerWidth > maxMediaScreenWidth) {
+			if (!isMobile) {
 				noteText.value = "";
 				noteText.focus();
 			}

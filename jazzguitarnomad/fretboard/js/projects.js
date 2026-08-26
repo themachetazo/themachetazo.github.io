@@ -733,9 +733,7 @@ function projectToXml(project, indent = "\t") {
 function renderProjectsLibrary() {
 
 	// Eliminar todas las categorías actuales excepto la cabecera
-	projectPanel
-		.querySelectorAll(".projectCategory")
-		.forEach(category => category.remove());
+	projectPanel.querySelectorAll(".projectCategory").forEach(category => category.remove());
 
 	getSortedCategories().forEach(category => {
 
@@ -836,7 +834,7 @@ function renderProjectsLibrary() {
 			const currentProject = projects.find(item => item.id === project.id);
 
 			// Al pulsar, seleccionamos explícitamente
-			openButton.addEventListener("click", () => {
+			openButton.addEventListener("click", async () => {
 
 				if (!currentProject) return;
 
@@ -848,7 +846,7 @@ function renderProjectsLibrary() {
 
 				}
 
-				selectProject(currentProject);
+				await selectProject(currentProject);
 
 				setPlayerValues();
 
@@ -907,7 +905,7 @@ function renderProjectsLibrary() {
 	// ACTUALIZAR PROYECTO SELECCIONADO
 	// --------------------------------
 
-	updateSelectedProject();
+	updateSelectedProjectButton();
 
 }
 
@@ -944,7 +942,7 @@ async function selectProject(project) {
 
 	openProjectCategory(project.category);
 
-	updateSelectedProject();
+	updateSelectedProjectButton();
 
 	await loadProject(project);
 
@@ -1103,7 +1101,7 @@ function generateCategoryId() {
 	return (crypto.getRandomValues(new Uint32Array(1))[0] % 10000).toString().padStart(4, "0");
 }
 
-function updateSelectedProject() {
+function updateSelectedProjectButton() {
 
 	document.querySelectorAll(".projectOpenButton")
 		.forEach(button => {
