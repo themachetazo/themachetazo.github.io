@@ -47,10 +47,10 @@
 			</div>
 
 			<nav id="mainMenu">
-				<button type="button" id="btnProyectos" class="menuButton"><i class="fa-solid fa-folder"></i>PROYECTO</button>
+				<button type="button" id="btnProyectos" class="menuButton"><i class="fa-solid fa-folder-open"></i>PROYECTOS</button>
 				<button type="button" id="btnEdicion" class="menuButton active"><i class="fa-solid fa-pen"></i>EDITAR</button>
 				<button type="button" id="btnFretboard" class="menuButton"><i class="fa-solid fa-guitar"></i>MÁSTIL</button>
-				<button type="button" id="btnScore" class="menuButton"><i class="fa-solid fa-music"></i>PARTITURA</button>
+				<button type="button" id="btnScore" class="menuButton"><i class="fa-solid fa-sliders"></i>PARTITURA</button>
 				<button type="button" id="btnPlayer" class="menuButton"><i class="fa-solid fa-radio"></i>PLAYER</button>
 				<button type="button" id="btnMetronome" class="menuButton"><i class="fa-solid fa-stopwatch"></i>METRÓNOMO</button>
 				<button type="button" id="btnAudio" class="menuButton"><i class="fa-solid fa-file-audio"></i>AUDIO</button>
@@ -67,10 +67,10 @@
 				</button>
 
 				<div id="menuPopup">
-					<button type="button" id="btnProyectosPopup" data-menu="projects"><i class="fa-solid fa-folder"></i>PROYECTO</button>
+					<button type="button" id="btnProyectosPopup" data-menu="projects"><i class="fa-solid fa-folder-open"></i>PROYECTOS</button>
 					<button type="button" id="btnEdicionPopup" data-menu="edit"><i class="fa-solid fa-pen"></i>EDICIÓN</button>
 					<button type="button" id="btnFretboardPopup" data-menu="fretboard"><i class="fa-solid fa-guitar"></i>MÁSTIL</button>
-					<button type="button" id="btnScorePopup" data-menu="score"><i class="fa-solid fa-music"></i>PARTITURA</button>
+					<button type="button" id="btnScorePopup" data-menu="score"><i class="fa-solid fa-sliders"></i>PARTITURA</button>
 					<button type="button" id="btnPlayerPopup" data-menu="player"><i class="fa-solid fa-radio"></i>PLAYER</button>
 					<button type="button" id="btnMetronomePopup" data-menu="metronome"><i class="fa-solid fa-stopwatch"></i>METRÓNOMO</button>
 					<button type="button" id="btnAudioPopup" data-menu="audio"><i class="fa-solid fa-file-audio"></i>AUDIO</button>
@@ -91,15 +91,15 @@
 				<div id="toolbarTop">
 
 					<div class="toolbarTop-Controls" id="topLibrary">
-						<span>BIBLIOTECA</span>
+						<span>LIBRERÍA</span>
 						<div class="toolRow">
-							<button type="button" id="btnCreate" title="Crear biblioteca"><i class="fa-solid fa-file-circle-plus"></i><span>Crear</span></button>
-							<button type="button" id="btnOpenProjects" title="Abrir biblioteca de proyectos"><i class="fa-solid fa-folder-open"></i><span>Abrir</span></button>
+							<button type="button" id="btnCreate" title="Crear librería"><i class="fa-solid fa-file-circle-plus"></i><span>Crear</span></button>
+							<button type="button" id="btnOpenProjects" title="Abrir librería de proyectos"><i class="fa-solid fa-folder-plus"></i><span>Abrir</span></button>
 						</div>
 					</div>
 
 					<div class="toolbarTop-Controls" id="topLibraryInfo">
-						<span>INFORMACIÓN</span>
+						<span>NOMBRE/DESCRIPCIÓN</span>
 						<div class="toolRow">
 							<input id="libraryNameText" type="text" maxlength="60" placeholder="Sin Nombre">
 						</div>
@@ -124,12 +124,12 @@
 						</div>
 						<div class="toolRow">
 							<label class="lblToggle" title="Mostrar título en mástil">
-								<span class="lblToggleText">Mástil</span>
+								<span class="lblToggleText"><i class="fa-solid fa-guitar"></i></span>
 								<input id="chkShowTitle" type="checkbox">
 								<span class="lblToggleSpan"></span>
 							</label>
 							<label class="lblToggle" title="Mostrar Encabezado/Pie de partitura">
-								<span class="lblToggleText">Partitura</span>
+								<span class="lblToggleText"><i class="fa-solid fa-sliders"></i></span>
 								<input id="chkScoreTitle" type="checkbox">
 								<span class="lblToggleSpan"></span>
 							</label>
@@ -148,9 +148,9 @@
 					</div>
 
 					<div class="toolbarTop-Controls" id="topForm">
-						<span>TIPO</span>
+						<span>FORMATO</span>
 						<div class="toolRow">
-							<span>Tipo</span>
+							<span>Tipo&nbsp;<i class="fa-solid fa-guitar"></i> </span>
 							<select id="cmbProjectType">
 							    <option value="fretboard">Mástil</option>
 							    <option value="sequence" selected>Secuencia</option>
@@ -158,7 +158,7 @@
 							</select>
 						</div>
 						<div class="toolRow">
-							<span>Dirección</span>
+							<span>Dirección&nbsp;<i class="fa-solid fa-up-right-and-down-left-from-center"></i></span>
 							<select id="cmbTipoSecuencia">
 							    <option value="up">UP</option>
 							    <option value="down">DOWN</option>
@@ -185,7 +185,7 @@
 						<span>ENCABEZADO/PIE</span>
 						<div class="toolRow">
 							<label class="lblToggle" title="Mostrar Encabezado/Pie de partitura">
-								<span class="lblToggleText">Título/Pie</span>
+								<span class="lblToggleText">Título/Pie&nbsp;<i class="fa-solid fa-font"></i></span>
 								<input id="chkScoreTitleViewMode" type="checkbox">
 								<span class="lblToggleSpan"></span>
 							</label>
@@ -351,7 +351,7 @@
 						</div>
 						<div class="toolRow">
 							<label class="lblToggle" title="Swing Feel">
-								<span class="lblToggleText">Swing</span>
+								<span class="lblToggleText">Swing&nbsp;<i class="fa-solid fa-music"></i></span>
 								<input id="chkPlayerSwing" type="checkbox">
 								<span class="lblToggleSpan"></span>
 							</label>
@@ -361,7 +361,7 @@
 					<div class="toolbarTop-Controls" id="topRepeats">
 						<span>REPETICIONES</span>
 						<div class="toolRow">
-							<span>Repeticiones</span>
+							<span>Loop&nbsp;<i class="fa-solid fa-repeat"></i></span>
 							<select id="cmbPlayerRepeats">
 								<option value="1">1</option>
 								<option value="2" selected>2</option>
@@ -376,7 +376,7 @@
 							</select>
 						</div>
 						<div class="toolRow">
-							<span>Cuenta atrás</span>
+							<span>Cuenta atrás&nbsp;<i class="fa-solid fa-stopwatch"></i></span>
 							<select id="cmbCountIn">
 								<option value="0" selected>No</option>
 								<option value="1">1 compás</option>
@@ -401,11 +401,11 @@
 					<div class="toolbarTop-Controls" id="topVolumen">
 						<span>VOLUMEN</span>
 						<div class="toolRow">
-							<span>Instrumento</span>
+							<span><i class="fa-solid fa-guitar"></i>&nbsp;<i class="fa-solid fa-volume-high"></i></span>
 							<input type="range" id="samplerVolume" title="0" min="-40" max="0" step="1" value="0">
 						</div>
 						<div class="toolRow">
-							<span>Metrónomo</span>
+							<span><i class="fa-solid fa-stopwatch"></i>&nbsp;<i class="fa-solid fa-volume-high"></i></span>
 							<input type="range" id="sliderMetronomeVolumen_2" title="-12" min="-40" max="0" step="1" value="-12">
 						</div>
 					</div>
@@ -461,7 +461,7 @@
 					<div class="toolbarTop-Controls" id="topTonality">
 						<span>TONALIDAD</span>
 						<div class="toolRow">
-							<span>Key</span>
+							<span>𝄞</span>
 							<select id="cmbTonalidad">
 								<option value="C" selected>C</option>
 								<option value="Db">Db</option>
@@ -489,7 +489,7 @@
 							</select>
 						</div>
 						<div class="toolRow">
-							<span>Zoom</span>
+							<span><i class="fa-solid fa-magnifying-glass"></i></span>
 							<input type="range" id="sliderScoreZoom" title="50%" value="50" min="10" max="100" step="5">
 						</div>
 					</div>
@@ -534,7 +534,7 @@
 					<div class="toolbarTop-Controls" id="topMetronomeControls">
 						<span>CONTROLES</span>
 						<div class="toolRow">
-							<span>Volumen</span>
+							<span><i class="fa-solid fa-volume-high"></i></span>
 							<input type="range" id="sliderMetronomeVolumen" title="-12" min="-40" max="0" step="1" value="-12">
 						</div>
 						<div class="toolRow">
@@ -571,9 +571,9 @@
 
 			<div class="workspaceControls" id="workspaceControls">
 				<button type="button" id="btnPlayStop" class="buttonPlay" title="Reproducir" disabled><i class="fa-solid fa-play"></i><span>Play</span></button>
-				<button type="button" id="btnShowProjectPanel" title="Ver biblioteca"><i class="fa-solid fa-folder-tree"></i><span>Biblioteca</span></button>
-				<button type="button" id="btnFretboardVisible" title="Ver partitura"><i class="fa-solid fa-guitar"></i><span>Fretboard</span></button>
-				<button type="button" id="btnScoreVisible" title="Ver partitura"><i class="fa-solid fa-file-lines"></i><span>Partitura</span></button>
+				<button type="button" id="btnShowProjectPanel" title="Ver librería"><i class="fa-solid fa-folder-tree"></i><span>Proyectos</span></button>
+				<button type="button" id="btnFretboardVisible" title="Ver mástil"><i class="fa-solid fa-guitar"></i><span>Fretboard</span></button>
+				<button type="button" id="btnScoreVisible" title="Ver partitura"><i class="fa-solid fa-sliders"></i><span>Partitura</span></button>
 				<button type="button" id="btnVertical" class="active" title="Cambiar orientación"><i class="fa-solid fa-arrows-up-down"></i><span>Vertical</span></button>
 				<button type="button" id="btnHorizontal" title="Cambiar orientación"><i class="fa-solid fa-arrows-left-right"></i><span>Horizontal</span></button>
 			</div>
@@ -606,11 +606,11 @@
 				<!-- Lista preparada para los proyectos -->
 				<div id="projectPanel">
 					<div class="projectPanelHeader">
-						<span id="projectPanelHeaderTitle">BIBLIOTECA</span>
-						<button type="button" id="btnToggleLibrary" title="Ocultar biblioteca"><i class="fa-solid fa-folder-tree"></i></button>
+						<span id="projectPanelHeaderTitle">Sin Nombre</span>
+						<button type="button" id="btnToggleLibrary" title="Ocultar librería de proyectos"><i class="fa-solid fa-xmark"></i></button>
 					</div>
 
-					<div id="projectPanelInfo"><i>versión=1.0 Server=<a href="#">default.xml</a></i><br><b>Sin nombre</b><br>Descripción</div>
+					<div id="projectPanelInfo"><i><a href="#">default.xml</a></i><br>Descripción</div>
 
 	<!--
 					<div class="projectCategory">
@@ -682,8 +682,8 @@
 
 		<div class="footerDivs">
 			<strong>CONTACTO</strong>
-			<a href="#"><i class="fa-solid fa-envelope"></i>info@jazzguitarnomad.com</a>
-			<a href="#"><i class="fa-solid fa-phone"></i>+34 910 000 000</a>
+			<a href="#"><!--<i class="fa-solid fa-envelope"></i>-->info@jazzguitarnomad.com</a>
+			<a href="#"><!--<i class="fa-solid fa-phone"></i>-->+34 910 000 000</a>
 			<span><i class="fa-solid fa-location-dot"></i>Madrid, España</span>
 		</div>
 
