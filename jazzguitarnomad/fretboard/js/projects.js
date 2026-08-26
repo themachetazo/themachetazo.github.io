@@ -158,7 +158,7 @@ async function loadProject(project) {
 	// CONTROLES
 	// --------------------------------
 
-	setDefaultControlsValues("loadProject");
+	resetControlsValues("loadProject");
 
 	setOrientation(orientation);
 
@@ -178,8 +178,6 @@ async function loadProject(project) {
 	// ACTUALIZAR INTERFAZ
 	// --------------------------------
 
-	setEditMode("view");
-
 	setWorkspaceLayout();
 
 	// --------------------------------
@@ -193,6 +191,12 @@ async function loadProject(project) {
 		await loadFretboardImage();
 
 	}
+
+	// --------------------------------
+	// MODO DE EDICIÓN
+	// --------------------------------
+
+	setEditMode("view");
 
 	// --------------------------------
 	// PLAYER
@@ -230,7 +234,7 @@ function newProject() {
 
 	projectModified = false;
 
-	setDefaultControlsValues("newProject");
+	resetControlsValues("newProject");
 
 	setEditMode("view");
 
@@ -349,7 +353,7 @@ async function openXMLProjectsFile() {
 
 			if (firstProject) {
 
-				selectProject(firstProject);
+				await selectProject(firstProject);
 
 			} else {
 

@@ -27,7 +27,7 @@ async function initializeApp() {
 
 		await loadXML("project",xmlProjects);
 
-		setProjectsInitControlsStates();
+		await initializeProjects();
 
 
 		// LAYOUT ----------------------
@@ -548,67 +548,104 @@ function setMenu(m){
 
 }
 
-function setProjectsInitControlsStates() {
+async function initializeProjects() {
 
-	setProjectsInfoLabel(xmlProjects.substring(xmlProjects.indexOf("/") + 1));
+    setProjectsInfoLabel(xmlProjects.substring(xmlProjects.indexOf("/") + 1));
 
-	if (projectsLoaded && currentProjectId !== null) {
+    // --------------------------------
+    // NO HAY BIBLIOTECA
+    // --------------------------------
 
-		const project = projects.find(project => project.id === currentProjectId);
+    if (!projectsLoaded) {
 
-		if (project) {
+        initializeEmptyProject();
 
-			renderProjectsLibrary();
+        libraryNameText.disabled = true;
+        libraryDescText.disabled = true;
 
-			selectProject(project);
+        btnSaveProject.disabled = true;
+        btnDelProject.disabled = true;
+
+        cmbProjectCategory.disabled = true;
+        btnNewCategory.disabled = true;
+        btnDelCategory.disabled = true;
+
+        return;
+
+    }
+
+    // --------------------------------
+    // RENDERIZAR BIBLIOTECA
+    // --------------------------------
+
+    renderProjectsLibrary();
+
+    // --------------------------------
+    // ABRIR PROYECTO DE LA URL
+    // --------------------------------
+
+    if (currentProjectId !== null) {
+
+        const project = projects.find(project => project.id === currentProjectId);
+
+        if (project) {
+
+            await selectProject(project);
+
+        } else {
+
+            showAlert("No se encontró el proyecto '" + currentProjectId + "'","error");
+
+            initializeEmptyProject();
+
+        }
+
+    }
+
+    // --------------------------------
+    // ABRIR PRIMER PROYECTO
+    // --------------------------------
+
+    else if (user !== null) {
+
+        const firstProject = getFirstProject();
+
+        if (firstProject) {
+
+            await selectProject(firstProject);
+
+        } else {
+
+            initializeEmptyProject();
+
+        }
+
+    }
+
+    // --------------------------------
+    // DISEÑADOR SIN USUARIO
+    // --------------------------------
+
+    else {
+
+        initializeEmptyProject();
+
+    }
+
+    // --------------------------------
+    // PANEL
+    // --------------------------------
+
+    if (!isMobile && appMode !== "Guest" && user !== null) openProjectsPanel();
+
+}
 
 
-		}else{
+function initializeEmptyProject() {
 
-			showAlert("No se encontró el proyecto '" + currentProjectId + "'", "error");
+    currentProjectId = generateProjectId();
 
-			currentProjectId = generateProjectId();
-
-			setDefaultControlsValues("init");
-
-			renderProjectsLibrary();
-
-		}
-
-	}else if (projectsLoaded){
-
-		if (user !== null){
-
-			const firstProject = getFirstProject();
-
-			if (firstProject) {
-
-				renderProjectsLibrary();
-
-				selectProject(firstProject);
-
-			}
-
-		}
-
-	}else{
-
-		currentProjectId = generateProjectId();
-
-		setDefaultControlsValues("init");
-
-		libraryNameText.disabled = true;
-		libraryDescText.disabled = true;
-		btnSaveProject.disabled = true;
-		btnDelProject.disabled = true;
-
-		cmbProjectCategory.disabled = true;
-		btnNewCategory.disabled = true;
-		btnDelCategory.disabled = true;
-
-	}
-
-	if (!isMobile && appMode !== "Guest" && user !== null) openProjectsPanel();
+    resetControlsValues("init");
 
 }
 
@@ -767,7 +804,7 @@ function parseUsersXml(xml) {
 
 }
 
-function setDefaultControlsValues(state){
+function resetControlsValues(state){
 
 	if (state === "init"){
 
