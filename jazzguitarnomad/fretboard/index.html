@@ -147,27 +147,6 @@
 						</div>
 					</div>
 
-					<div class="toolbarTop-Controls" id="topForm">
-						<span>FORMATO</span>
-						<div class="toolRow">
-							<span>Tipo&nbsp;<i class="fa-solid fa-guitar"></i> </span>
-							<select id="cmbProjectType">
-							    <option value="fretboard">Mástil</option>
-							    <option value="sequence" selected>Secuencia</option>
-							    <option value="chord">Acorde</option>
-							</select>
-						</div>
-						<div class="toolRow">
-							<span>Dirección&nbsp;<i class="fa-solid fa-up-right-and-down-left-from-center"></i></span>
-							<select id="cmbTipoSecuencia">
-							    <option value="up">UP</option>
-							    <option value="down">DOWN</option>
-							    <option value="up-down">UP-DOWN</option>
-							    <option value="down-up">DOWN-UP</option>
-							</select>
-						</div>
-					</div>
-
 					<div class="toolbarTop-Controls" id="topTitleViewMode">
 						<span>ENCABEZADO/PIE</span>
 						<div class="toolRow">
@@ -186,6 +165,13 @@
 						</div>
 					</div>
 
+					<div class="toolbarTop-Controls" id="topProjectGuest">
+						<span>PROYECTO</span>
+						<div class="toolRow">
+							<button type="button" id="btnNewProjectGuest" title="Nuevo proyecto"><i class="fa-solid fa-file"></i><span>Nuevo</span></button>
+						</div>
+					</div>
+
 					<div class="toolbarTop-Controls" id="topEdit">
 						<span>ESCRIBIR</span>
 						<div class="toolRow">
@@ -199,6 +185,27 @@
 						<div class="toolRow">
 							<button type="button" id="btnErase" title="Borrar nota"><i class="fa-solid fa-eraser"></i><span>Borrar</span></button>
 							<button type="button" id="btnUndo" title="Deshacer escritura"><i class="fa-solid fa-rotate-left"></i><span>Deshacer</span></button>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topForm">
+						<span>FORMATO</span>
+						<div class="toolRow">
+							<span>Tipo&nbsp;<i class="fa-solid fa-guitar"></i> </span>
+							<select id="cmbProjectType">
+							    <option value="fretboard">Mástil</option>
+							    <option value="sequence" selected>Secuencia</option>
+							    <option value="chord">Acorde</option>
+							</select>
+						</div>
+						<div class="toolRow">
+							<span>Dirección&nbsp;<i class="fa-solid fa-up-right-and-down-left-from-center"></i></span>
+							<select id="cmbTipoSecuencia">
+							    <option value="up">UP</option>
+							    <option value="down">DOWN</option>
+							    <option value="up-down">UP-DOWN</option>
+							    <option value="down-up">DOWN-UP</option>
+							</select>
 						</div>
 					</div>
 
