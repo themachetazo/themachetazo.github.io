@@ -1921,14 +1921,14 @@ input[type="range"] {
 }
 
 #noteText {
-	width: 50px;
+	width: 40px;
 	text-align: center;
 }
 
 #numFrets,
 #numberFrets,
 #numTempo {
-	width: 50px;
+	width: 40px;
 	text-align: center;
 }
 
