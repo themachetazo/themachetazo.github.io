@@ -926,8 +926,6 @@ function changeProjectType(oldType) {
 			btnNewChord.disabled = true;
 			btnDelChord.disabled = true;
 
-			isScoreVisible = false;
-
 			setWorkspaceLayout();
 
 			break;
@@ -938,8 +936,6 @@ function changeProjectType(oldType) {
 			btnNewChord.disabled = true;
 			btnDelChord.disabled = true;
 
-			btnBarre.disabled = true;
-
 			break;
 
 		case "chord":
@@ -947,8 +943,6 @@ function changeProjectType(oldType) {
 			cmbChords.disabled = false;
 			btnNewChord.disabled = false;
 			btnDelChord.disabled = false;
-
-			btnBarre.disabled = false;
 
 			break;
 
