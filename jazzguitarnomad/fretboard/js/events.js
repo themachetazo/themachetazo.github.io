@@ -271,6 +271,10 @@ canvas.addEventListener("click", (e) => {
 
 	if (editMode === "view") return;
 
+	let chord = cmbChords.value;
+
+	if (cmbProjectType.value !== "chord") chord = "";
+
 	projectModified = true;
 
 	btnPlayStop.disabled = false;
@@ -285,11 +289,15 @@ canvas.addEventListener("click", (e) => {
 
 		if (editMode === "note") {
 
+			noteOrder++;
+
 			saveHistory();
 
 			nutNotes[nutString] = {
 				color: colorPicker.value,
-				text: noteText.value.trim()
+				text: noteText.value.trim(),
+				chord: chord,
+				order: noteOrder
 			};
 
 			if (!isMobile) noteText.focus();
@@ -329,22 +337,21 @@ canvas.addEventListener("click", (e) => {
 
 		case "barre":
 
+			noteOrder++;
+
 			saveHistory();
 
-			addOrReplaceBarre(
-				cell.string,
-				cell.fret,
-				colorPicker.value,
-				noteText.value.trim().substring(0, 3)
-			);
+			addOrReplaceBarre(cell,chord);
 
 			break;
 
 		case "note":
 
+			noteOrder++;
+
 			saveHistory();
 
-			addNote(cell);
+			addNote(cell,chord);
 
 			break;
 
@@ -388,6 +395,14 @@ canvas.addEventListener("click", (e) => {
 	if (!isMobile && editMode !== "erase") noteText.focus();
 	noteText.value = "";
 
+	aSequence = buildOrderedSequence();
+
+	aChords = buildOrderedChords();
+
+	loadArrayNotas();
+
+	if (isScoreVisible) scoreRender();
+
 });
 
 
@@ -402,6 +417,22 @@ alert(1);
 
 chkNoteNames.addEventListener("change",(e)=>{
 alert(1);
+});
+
+btnNewChord.addEventListener("click", () => {
+
+	addChord();
+
+});
+
+btnDelChord.addEventListener("click", () => {
+
+	delChord();
+
+	if (isFretboardVisible) resizeCanvas();
+
+	if (isScoreVisible) scoreRender();
+
 });
 
 btnScoreDownloadImage.addEventListener("click", () => {
@@ -658,26 +689,16 @@ btnEdit.addEventListener("click", () => {
 	setEditMode("note");
 });
 
+btnBarre.addEventListener("click", () => {
+	setEditMode("barre");
+});
+
 btnErase.addEventListener("click", () => {
 	setEditMode("erase");
 });
 
 btnUndo.addEventListener("click", () => {
 	undo();
-});
-
-btnNutMode.addEventListener("click", () => {
-
-	if (editMode === "barre") {
-
-		setEditMode("note");
-
-	} else {
-
-		setEditMode("barre");
-
-	}
-
 });
 
 btnRotate.addEventListener("click", () => {
@@ -940,9 +961,36 @@ cmbProjectType.addEventListener("change", function () {
 
 		}
 
+	} else {
+
+		// --------------------------------
+		// NO ES TIPO CHORD
+		// --------------------------------
+
+		notes.forEach(note => {
+			note.chord = "";
+		});
+
+		barreNotes.forEach(barre => {
+			barre.chord = "";
+		});
+
+		nutNotes.forEach(note => {
+			if (note) note.chord = "";
+		});
+
+		resetComboChords();
+
 	}
 
+	aSequence = buildOrderedSequence();
+
+	aChords = buildOrderedChords();
+
+	loadArrayNotas();
+
 	projectType = newType;
+
 	this.value = newType;
 
 	changeProjectType();
@@ -951,13 +999,11 @@ cmbProjectType.addEventListener("change", function () {
 
 cmbTipoSecuencia.addEventListener("change", function () {
 
-    tipoSecuencia = cmbTipoSecuencia.value;
+	tipoSecuencia = cmbTipoSecuencia.value;
 
-    loadNotas(this.value);
-    scoreLoadArray(this.value);
-//    loadArrays(tipoSecuencia);
+	loadArrayNotas();
 
-    if (isScoreVisible) scoreRender();
+	if (isScoreVisible) scoreRender();
 
 });
 

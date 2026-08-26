@@ -271,6 +271,8 @@ function loadArrays(mode) {
 }
 */
 
+
+/*
 function loadNotas(mode){
 
     NOTAS = [];
@@ -345,6 +347,7 @@ function scoreLoadArray(mode){
     }
 
 }
+*/
 
 function setPlayerValues(){
 

@@ -79,8 +79,6 @@ const numberFrets = document.getElementById("numberFrets");
 const btnLessNumberFrets = document.getElementById("btnLessNumberFrets");
 const btnMoreNumberFrets = document.getElementById("btnMoreNumberFrets");
 
-const btnNutMode = document.getElementById("btnNutMode");
-
 const cmbDiapason = document.getElementById("cmbDiapason");
 const chkInlays = document.getElementById("chkInlays");
 
@@ -123,6 +121,7 @@ const topScroll = document.getElementById("topScroll");
 ==================================================*/
 
 const btnEdit = document.getElementById("btnEdit");
+const btnBarre = document.getElementById("btnBarre");
 const btnErase = document.getElementById("btnErase");
 const btnUndo = document.getElementById("btnUndo");
 const btnDisplay = document.getElementById("btnDisplay");
@@ -156,6 +155,8 @@ const projectPanelHeaderTitle = document.getElementById("projectPanelHeaderTitle
 const libraryNameText = document.getElementById("libraryNameText");
 const libraryDescText = document.getElementById("libraryDescText");
 const workspaceProjectsPanel = document.getElementById("workspaceProjectsPanel");
+const btnNewChord = document.getElementById("btnNewChord");
+const btnDelChord = document.getElementById("btnDelChord");
 
 /*==================================================
 	REFERENCIAS DOM: CANVAS
@@ -376,7 +377,7 @@ const neckImage = new Image();
 	NOTAS
 ==================================================*/
 
-let notesOrder = 0;
+let noteOrder = 0;
 
 let hoverCell = null;
 let hoverNut = null;
@@ -384,6 +385,9 @@ let hoverNut = null;
 let notes = [];
 let nutNotes = Array(stringCount).fill(null); //array con una posición por cada cuerda
 let barreNotes = [];
+
+let aSequence = [];
+let aChords = [];
 
 let NOTAS = [];
 let ACORDES = [];
@@ -561,248 +565,4 @@ fretboardMapNotes[0][0]; // E
 
   // 6ª cuerda (E2)
   ["E2","F2","F#2","G2","G#2","A2","A#2","B2","C3","C#3","D3","D#3","E3","F3","F#3","G3","G#3","A3","A#3","B3","C4","C#4","D4","D#4","E4"]
-];
-
-
-
-
-
-
-
-
-
-
-
-
-const sequenceUp = [
-  { string: 5, fret: 0, note: "E2" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 0, fret: 24, note: "E6" }
-];
-
-const sequenceDown = [
-  { string: 3, fret: 4, note: "F#3" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 0, fret: 0, note: "E4" }
-];
-
-const sequenceUpDown = [
-  { string: 0, fret: 0, note: "E4" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 3, fret: 4, note: "F#3" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 0, fret: 0, note: "E4" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 3, fret: 4, note: "F#3" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 0, note: "E4" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 0, fret: 0, note: "E4" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 3, fret: 4, note: "F#3" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 0, note: "E4" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 3, fret: 4, note: "F#3" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 0, note: "E4" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 0, note: "E4" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 0, fret: 0, note: "E4" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 3, fret: 4, note: "F#3" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 0, note: "E4" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 3, fret: 4, note: "F#3" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 0, note: "E4" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 0, note: "E4" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 0, fret: 0, note: "E4" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 3, fret: 4, note: "F#3" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 0, note: "E4" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 3, fret: 4, note: "F#3" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 0, note: "E4" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 0, fret: 0, note: "E4" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 3, fret: 4, note: "F#3" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 0, note: "E4" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 3, fret: 4, note: "F#3" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 0, fret: 0, note: "E4" }
-];
-
-const sequenceDownUp = [];
-/*
-  { string: 3, fret: 4, note: "F#3" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 0, fret: 0, note: "E4" },
-  { string: 0, fret: 0, note: "E4" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 0, fret: 0, note: "E4" },
-  { string: 5, fret: 1, note: "F2" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 3, fret: 2, note: "E3" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 0, fret: 5, note: "A4" },
-  { string: 1, fret: 6, note: "F4" },
-  { string: 3, fret: 4, note: "F#3" }
-];
-*/
-
-const chordsUp = [
-  { chord: 0, string: 2, fret: 2, note: "A3" },
-  { chord: 0, string: 1, fret: 2, note: "C#4" },
-  { chord: 0, string: 0, fret: 2, note: "F#4" },
-  { chord: 1, string: 5, fret: 5, note: "D3" },
-  { chord: 1, string: 4, fret: 5, note: "D3" },
-  { chord: 1, string: 3, fret: 5, note: "G3" }
-];
-
-const chordsDown = [
-  { chord: 0, string: 5, fret: 5, note: "D3" },
-  { chord: 0, string: 4, fret: 5, note: "D3" },
-  { chord: 0, string: 3, fret: 5, note: "G3" },
-  { chord: 1, string: 2, fret: 2, note: "A3" },
-  { chord: 1, string: 1, fret: 2, note: "C#4" },
-  { chord: 1, string: 0, fret: 2, note: "F#4" }
-];
-
-const chordsUpDown = [
-  { chord: 0, string: 2, fret: 2, note: "A3" },
-  { chord: 0, string: 1, fret: 2, note: "C#4" },
-  { chord: 0, string: 0, fret: 2, note: "F#4" },
-  { chord: 1, string: 5, fret: 5, note: "D3" },
-  { chord: 1, string: 4, fret: 5, note: "D3" },
-  { chord: 1, string: 3, fret: 5, note: "G3" },
-  { chord: 2, string: 2, fret: 2, note: "A3" },
-  { chord: 2, string: 1, fret: 2, note: "C#4" },
-  { chord: 2, string: 0, fret: 2, note: "F#4" }
-];
-
-const chordsDownUp = [
-  { chord: 0, string: 5, fret: 5, note: "D3" },
-  { chord: 0, string: 4, fret: 5, note: "D3" },
-  { chord: 0, string: 3, fret: 5, note: "G3" },
-  { chord: 1, string: 2, fret: 2, note: "A3" },
-  { chord: 1, string: 1, fret: 2, note: "C#4" },
-  { chord: 1, string: 0, fret: 2, note: "F#4" },
-  { chord: 2, string: 2, fret: 2, note: "A3" },
-  { chord: 2, string: 1, fret: 2, note: "C#4" },
-  { chord: 2, string: 0, fret: 2, note: "F#4" },
-  { chord: 3, string: 5, fret: 5, note: "D3" },
-  { chord: 3, string: 4, fret: 5, note: "D3" },
-  { chord: 3, string: 3, fret: 5, note: "G3" }
 ];

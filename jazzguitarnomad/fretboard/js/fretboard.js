@@ -2867,7 +2867,7 @@ function drawNotes() {
 
 }
 
-function addNote(cell) {
+function addNote(cell, chord) {
 
 	eraseNote(cell);
 
@@ -2875,7 +2875,9 @@ function addNote(cell) {
 		string: cell.string,
 		fret: cell.fret,
 		color: colorPicker.value,
-		text: noteText.value.trim().substring(0, 3)
+		text: noteText.value.trim().substring(0, 3),
+		chord: chord,
+		order: noteOrder
 	});
 
 	drawFretboard();
@@ -2896,30 +2898,32 @@ function eraseNote(cell) {
 
 }
 
-function addOrReplaceBarre(string, fret, color, text = "") {
+function addOrReplaceBarre(cell, chord) {
 
 	// Elimina cualquier cejilla existente en ese traste
 	barreNotes = barreNotes.filter(barre => {
-		return barre.fret !== fret;
+		return barre.fret !== cell.fret;
 	});
 
 	// Elimina notas normales que quedarían cubiertas por la cejilla
 	notes = notes.filter(note => {
 
-		if (note.fret !== fret) {
+		if (note.fret !== cell.fret) {
 			return true;
 		}
 
 		// La cejilla ocupa desde la cuerda 0 hasta la cuerda pulsada
-		return note.string > string;
+		return note.string > cell.string;
 
 	});
 
 	barreNotes.push({
-		fret: fret,
-		startString: string,
-		color: color,
-		text: text
+		fret: cell.fret,
+		startString: cell.string,
+		color: colorPicker.value,
+		text: noteText.value.trim(),
+		chord: chord,
+		order: noteOrder
 	});
 
 }

@@ -89,8 +89,11 @@ async function initializeApp() {
 
 			setLoadingProgress(70, "Cargando notas...");
 
-			loadNotas(tipoSecuencia);
-			scoreLoadArray(tipoSecuencia);
+			aSequence = buildOrderedSequence();
+
+			aChords = buildOrderedChords();
+
+			loadArrayNotas();
 
 			console.log("Notas cargadas");
 
@@ -425,7 +428,6 @@ function setMenu(m){
 				topLibraryInfo,
 				topForm,
 				topCategory,
-				topChords,
 				topLibrary,
 				topShare,
 				topTitle
@@ -444,7 +446,8 @@ function setMenu(m){
 				topEdit,
 				topUndo,
 				topColor,
-				topNoteNames
+				topNoteNames,
+				topChords
 			);
 
 			menuSelectorText.textContent = "EDICIÓN";
@@ -599,6 +602,10 @@ function setProjectsInitControlsStates() {
 		btnSaveProject.disabled = true;
 		btnDelProject.disabled = true;
 
+		cmbProjectCategory.disabled = true;
+		btnNewCategory.disabled = true;
+		btnDelCategory.disabled = true;
+
 	}
 
 	if (!isMobile && appMode !== "Guest" && user !== null) openProjectsPanel();
@@ -611,6 +618,8 @@ function setProjectControlsType(){
 	chkMetronomeOn.disabled = projectType === "fretboard";
 
 	cmbChords.disabled = projectType !== "chord" ? "none" : "flex";
+	btnNewChord.disabled = projectType !== "chord" ? "none" : "flex";
+	btnDelChord.disabled = projectType !== "chord" ? "none" : "flex";
 
 	btnScore.disabled = projectType === "fretboard";
 	btnScorePopup.disabled = projectType === "fretboard";
@@ -835,7 +844,7 @@ function setDefaultControlsValues(state){
 
 	cmbTipoSecuencia.value = tipoSecuencia;
 
-	cmbChords.value = 1;
+	cmbChords.value = 0;
 
 	cmbCountIn.value = countBars;
 
@@ -874,26 +883,30 @@ function setDefaultControlsValues(state){
 	samplerGate.value = 100;
 	samplerVolume.title = "100";
 
+	cmbProjectCategory.disabled = false;
+	btnNewCategory.disabled = false;
+	btnDelCategory.disabled = false;
+
 	if (state !== "loadProject"){
 
-		notesOrder = 0;
+		resetComboChords();
 
 		notes = [];
 		barreNotes = [];
 		nutNotes = Array(stringCount).fill(null);
 
+		aSequence = buildOrderedSequence();
+		aChords = buildOrderedChords();
+
+		loadArrayNotas();
+
+		noteOrder = 0;
+
 		btnPlayStop.disabled = true;
 
-/*
-		NOTAS = [];
-		ACORDES = [];
+	}else{
 
-		sequenceXMLNotes.length = 0;
-		chordsXMLNotes.length = 0;
-
-		sequenceToPlay.length = 0;
-		chordsToPlay.length = 0;
-*/
+		loadComboChords();
 
 	}
 
@@ -910,6 +923,8 @@ function changeProjectType(oldType) {
 		case "fretboard":
 
 			cmbChords.disabled = true;
+			btnNewChord.disabled = true;
+			btnDelChord.disabled = true;
 
 			isScoreVisible = false;
 
@@ -920,14 +935,20 @@ function changeProjectType(oldType) {
 		case "sequence":
 
 			cmbChords.disabled = true;
-			btnNutMode.disabled = true;
+			btnNewChord.disabled = true;
+			btnDelChord.disabled = true;
+
+			btnBarre.disabled = true;
 
 			break;
 
 		case "chord":
 
 			cmbChords.disabled = false;
-			btnNutMode.disabled = false;
+			btnNewChord.disabled = false;
+			btnDelChord.disabled = false;
+
+			btnBarre.disabled = false;
 
 			break;
 
@@ -1009,6 +1030,14 @@ function setControlsEnabled(enabled) {
     controls.forEach(control => {
         control.disabled = !enabled;
     });
+
+    if (cmbProjectType !== "chord") {
+
+	cmbChords.disabled = true;
+	btnNewChord.disabled = true;
+	btnDelChord.disabled = true;
+
+    }
 
 }
 
@@ -1177,9 +1206,9 @@ function setEditMode(newMode) {
 
 	btnEdit.classList.toggle("active",newMode === "note");
 	btnErase.classList.toggle("active",newMode === "erase");
-	btnNutMode.classList.toggle("active",newMode === "barre");
+	btnBarre.classList.toggle("active",newMode === "barre");
 
-	btnNutMode.setAttribute("aria-pressed",String(newMode === "barre"));
+	btnBarre.setAttribute("aria-pressed",String(newMode === "barre"));
 
 	switch (newMode) {
 
@@ -1682,5 +1711,453 @@ function showAlert(message, type = "success", duration = 2500) {
 		appAlert.classList.remove("show");
 
 	}, duration);
+
+}
+
+function loadArrayNotas() {
+
+	NOTAS = [];
+	ACORDES = [];
+	scoreArray = [];
+
+	const sequenceUp = [...aSequence];
+	const sequenceDown = [...aSequence].reverse();
+
+	// --------------------------------
+	// AGRUPAR ACORDES
+	// --------------------------------
+
+	const chordGroups = [];
+
+	let currentChord = null;
+
+	for (const item of aChords) {
+
+		if (item.chord !== currentChord) {
+
+			currentChord = item.chord;
+
+			chordGroups.push([]);
+
+		}
+
+		chordGroups[chordGroups.length - 1].push(item);
+
+	}
+
+	// --------------------------------
+	// COPIAS DE LOS GRUPOS
+	// --------------------------------
+
+	const chordsUp = [...chordGroups];
+
+	const chordsDown = [...chordGroups].reverse();
+
+	// --------------------------------
+	// CONSTRUIR RECORRIDO DE ACORDES
+	// --------------------------------
+
+	let chordSequence = [];
+
+	switch (tipoSecuencia) {
+
+		// --------------------------------
+		// GRAVE → AGUDO
+		// --------------------------------
+
+		case "up":
+
+			chordSequence = [
+				...chordsUp
+			];
+
+			break;
+
+
+		// --------------------------------
+		// AGUDO → GRAVE
+		// --------------------------------
+
+		case "down":
+
+			chordSequence = [
+				...chordsDown
+			];
+
+			break;
+
+
+		// --------------------------------
+		// GRAVE → AGUDO → GRAVE
+		// --------------------------------
+
+		case "up-down":
+
+			chordSequence = [
+				...chordsUp,
+				...chordsDown
+			];
+
+			break;
+
+
+		// --------------------------------
+		// AGUDO → GRAVE → AGUDO
+		// --------------------------------
+
+		case "down-up":
+
+			chordSequence = [
+				...chordsDown,
+				...chordsUp
+			];
+
+			break;
+
+	}
+
+	// --------------------------------
+	// SCORE ARRAY
+	// --------------------------------
+
+	if (projectType === "sequence") {
+
+		switch (tipoSecuencia) {
+
+			case "up":
+
+				scoreArray = [
+					...sequenceUp
+				];
+
+				break;
+
+			case "down":
+
+				scoreArray = [
+					...sequenceDown
+				];
+
+				break;
+
+			case "up-down":
+
+				scoreArray = [
+					...sequenceUp,
+					...sequenceDown
+				];
+
+				break;
+
+			case "down-up":
+
+				scoreArray = [
+					...sequenceDown,
+					...sequenceUp
+				];
+
+				break;
+
+		}
+
+	}
+
+	else {
+
+		// --------------------------------
+		// SCORE DE ACORDES
+		// --------------------------------
+
+		scoreArray = [];
+
+		chordSequence.forEach((group, index) => {
+
+			group.forEach(item => {
+
+				scoreArray.push({
+
+					chord: index,
+					string: item.string,
+					fret: item.fret,
+					note: item.note
+
+				});
+
+			});
+
+		});
+
+	}
+
+	// --------------------------------
+	// NOTAS
+	// --------------------------------
+
+	NOTAS = scoreArray.map(item => item.note);
+
+	// --------------------------------
+	// ACORDES
+	// --------------------------------
+
+	ACORDES = chordSequence.map(group => {
+
+		return group.map(item => item.note);
+
+	});
+
+}
+
+function loadComboChords() {
+
+	cmbChords.innerHTML = "";
+
+	let maxChord = -1;
+
+	// --------------------------------
+	// NOTES
+	// --------------------------------
+
+	notes.forEach(note => {
+
+		const chord = Number(note.chord);
+
+		if (Number.isInteger(chord)) {
+
+			maxChord = Math.max(maxChord, chord);
+
+		}
+
+	});
+
+	// --------------------------------
+	// BARRE NOTES
+	// --------------------------------
+
+	barreNotes.forEach(barre => {
+
+		const chord = Number(barre.chord);
+
+		if (Number.isInteger(chord)) {
+
+			maxChord = Math.max(maxChord, chord);
+
+		}
+
+	});
+
+	// --------------------------------
+	// NUT NOTES
+	// --------------------------------
+
+	nutNotes.forEach(note => {
+
+		if (!note) return;
+
+		const chord = Number(note.chord);
+
+		if (Number.isInteger(chord)) {
+
+			maxChord = Math.max(maxChord, chord);
+
+		}
+
+	});
+
+	// --------------------------------
+	// SI NO HAY ACORDES
+	// --------------------------------
+
+	if (maxChord < 0) {
+
+		resetComboChords();
+
+		return;
+
+	}
+
+	// --------------------------------
+	// CREAR OPTIONS
+	// --------------------------------
+
+	for (let chord = 0; chord <= maxChord; chord++) {
+
+		const option = document.createElement("option");
+
+		option.value = chord;
+		option.textContent = "Acorde " + (chord + 1);
+
+		cmbChords.appendChild(option);
+
+	}
+
+	// --------------------------------
+	// SELECCIONAR EL PRIMERO
+	// --------------------------------
+
+	cmbChords.value = 0;
+
+}
+
+function resetComboChords() {
+
+	cmbChords.innerHTML = "";
+
+	const option = document.createElement("option");
+
+	option.value = 0;
+	option.textContent = "Acorde 1";
+
+	cmbChords.appendChild(option);
+
+	cmbChords.value = 0;
+
+}
+
+function addChord() {
+
+	const nextChord = cmbChords.options.length;
+
+	const option = document.createElement("option");
+
+	option.value = nextChord;
+	option.textContent = "Acorde " + (nextChord + 1);
+
+	cmbChords.appendChild(option);
+
+	cmbChords.selectedIndex = cmbChords.options.length - 1;
+
+}
+
+function delChord() {
+
+	const selectedIndex = cmbChords.selectedIndex;
+
+	// --------------------------------
+	// NO PERMITIR BORRAR ACORDE 1
+	// --------------------------------
+
+	if (selectedIndex <= 0) {
+		return;
+	}
+
+	const selectedChord = Number(cmbChords.value);
+
+	// --------------------------------
+	// ELIMINAR Y RENUMERAR NOTES
+	// --------------------------------
+
+	notes = notes
+		.filter(note => {
+
+			return Number(note.chord) !== selectedChord;
+
+		})
+		.map(note => {
+
+			const chord = Number(note.chord);
+
+			return {
+				...note,
+				chord: chord > selectedChord
+					? chord - 1
+					: chord
+			};
+
+		});
+
+	// --------------------------------
+	// ELIMINAR Y RENUMERAR BARRE NOTES
+	// --------------------------------
+
+	barreNotes = barreNotes
+		.filter(barre => {
+
+			return Number(barre.chord) !== selectedChord;
+
+		})
+		.map(barre => {
+
+			const chord = Number(barre.chord);
+
+			return {
+				...barre,
+				chord: chord > selectedChord
+					? chord - 1
+					: chord
+			};
+
+		});
+
+	// --------------------------------
+	// ELIMINAR Y RENUMERAR NUT NOTES
+	// --------------------------------
+
+	nutNotes.forEach((note, string) => {
+
+		if (!note) {
+			return;
+		}
+
+		const chord = Number(note.chord);
+
+		// Eliminar notas del acorde borrado
+		if (chord === selectedChord) {
+
+			nutNotes[string] = null;
+
+			return;
+
+		}
+
+		// Renumerar acordes posteriores
+		if (chord > selectedChord) {
+
+			nutNotes[string].chord = chord - 1;
+
+		}
+
+	});
+
+	// --------------------------------
+	// ELIMINAR OPTION
+	// --------------------------------
+
+	cmbChords.remove(selectedIndex);
+
+	// --------------------------------
+	// RENOMBRAR OPTIONS
+	// --------------------------------
+
+	for (let i = 0; i < cmbChords.options.length; i++) {
+
+		cmbChords.options[i].value = String(i);
+		cmbChords.options[i].textContent = "Acorde " + (i + 1);
+
+	}
+
+	// --------------------------------
+	// SELECCIONAR ACORDE
+	// --------------------------------
+
+	if (cmbChords.options.length > 0) {
+
+		const newIndex = Math.min(
+			selectedIndex,
+			cmbChords.options.length - 1
+		);
+
+		cmbChords.selectedIndex = newIndex;
+
+	}
+
+	// --------------------------------
+	// CARGAR NOTAS MUSICALES
+	// --------------------------------
+
+	aSequence = buildOrderedSequence();
+
+	aChords = buildOrderedChords();
+
+	loadArrayNotas();
 
 }
