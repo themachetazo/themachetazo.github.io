@@ -1178,7 +1178,7 @@ function openProjectsPanel(){
 
 	btnShowProjectPanel.classList.add("active");
 
-	btnShowProjectPanel.title = "Ocultar biblioteca";
+	btnShowProjectPanel.title = "Ocultar librería";
 }
 
 function closeProjectsPanel(){
@@ -1187,7 +1187,7 @@ function closeProjectsPanel(){
 
 	btnShowProjectPanel.classList.remove("active");
 
-	btnShowProjectPanel.title = "Ver biblioteca";
+	btnShowProjectPanel.title = "Ver librería";
 
 }
 
