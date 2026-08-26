@@ -109,7 +109,7 @@
 					</div>
 
 					<div class="toolbarTop-Controls" id="topProject">
-						<span>EDITAR PROYECTO</span>
+						<span>ACCIONES</span>
 						<div class="toolRow">
 							<button type="button" id="btnNewProject" title="Nuevo proyecto"><i class="fa-solid fa-file"></i><span>Nuevo</span></button>
 							<button type="button" id="btnSaveProject" title="Guardar proyecto"><i class="fa-solid fa-floppy-disk"></i><span>Guardar</span></button>
@@ -336,11 +336,6 @@
 								<option value="piano" selected>Piano</option>
 							</select>
 						</div>
-						<label class="lblToggle" title="Auto Scroll">
-							<span class="lblToggleText">Auto Scroll</span>
-							<input id="chkAutoScroll" type="checkbox">
-							<span class="lblToggleSpan"></span>
-						</label>
 					</div>
 
 					<div class="toolbarTop-Controls" id="topArticulation">
@@ -458,10 +453,17 @@
 						</div>
 					</div>
 
-					<div class="toolbarTop-Controls" id="topTonality">
-						<span>TONALIDAD</span>
+					<div class="toolbarTop-Controls" id="topScoreStaves">
+						<span>SISTEMAS</span>
 						<div class="toolRow">
-							<span>𝄞</span>
+							<select id="cmbScoreStaves">
+								<option value="all" selected>Pentagrama/Tablatura</option>
+								<option value="notation">Pentagrama</option>
+								<option value="tablature">Tablatura</option>
+							</select>
+						</div>
+						<div class="toolRow">
+							<span>Tonalidad</span>
 							<select id="cmbTonalidad">
 								<option value="C" selected>C</option>
 								<option value="Db">Db</option>
@@ -494,15 +496,8 @@
 						</div>
 					</div>
 
-					<div class="toolbarTop-Controls" id="topScoreStaves">
-						<span>SISTEMAS</span>
-						<div class="toolRow">
-							<select id="cmbScoreStaves">
-								<option value="all" selected>Pentagrama/Tablatura</option>
-								<option value="notation">Pentagrama</option>
-								<option value="tablature">Tablatura</option>
-							</select>
-						</div>
+					<div class="toolbarTop-Controls" id="topScroll">
+						<span>SCROLL</span>
 						<div class="toolRow">
 							<!--<span>Orientación</span>-->
 							<select id="cmbScoreLayout">
@@ -510,6 +505,11 @@
 								<option value="horizontal">Horizontal</option>
 							</select>
 						</div>
+						<label class="lblToggle" title="Auto Scroll">
+							<span class="lblToggleText">Off/On</span>
+							<input id="chkAutoScroll" type="checkbox">
+							<span class="lblToggleSpan"></span>
+						</label>
 					</div>
 
 					<div class="toolbarTop-Controls" id="topScoreMargin">
