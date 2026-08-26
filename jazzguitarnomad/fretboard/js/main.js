@@ -29,8 +29,6 @@ async function initializeApp() {
 
 		await loadXML("project",xmlProjects);
 
-		setProjectsInfoLabel(xmlProjects.substring(xmlProjects.indexOf("/") + 1));
-
 		await initializeProjects();
 
 
@@ -219,16 +217,17 @@ function configureUserControls(){
 
 	if (!isAdmin) {
 
-		btnProyectos.style.display = "none";
-		btnProyectosPopup.style.display = "none";
-		btnAudio.style.display = "none";
-		btnAudioPopup.style.display = "none";
-
-		btnEdicion.style.display = "none";
-		btnEdicionPopup.style.display = "none";
-
+		topLibrary.style.display = "none";
+		topLibraryInfo.style.display = "none";
+		btnSaveProject.style.display = "none";
+		btnDelProject.style.display = "none";
 		topTitle.style.display = "none";
 		topCategory.style.display = "none";
+		topTitleViewMode.style.display = "none";
+		topShare.style.display = "none";
+
+		btnAudio.style.display = "none";
+		btnAudioPopup.style.display = "none";
 
 		btnUser.classList.remove("admin");
 		btnUser.classList.add("user");
@@ -237,19 +236,10 @@ function configureUserControls(){
 
 			setMenu("fretboard");
 
-			btnProyectos.style.display = "";
-			btnProyectosPopup.style.display = "";
-			topLibrary.style.display = "none";
-			topLibraryInfo.style.display = "none";
-			btnSaveProject.style.display = "none";
-			btnDelProject.style.display = "none";
-			topTitle.style.display = "none";
-			topCategory.style.display = "none";
-			topTitleViewMode.style.display = "none";
-			topShare.style.display = "none";
-
 			topFretboardDownload.style.display = "none";
 			topScoreDownload.style.display = "none";
+
+			workspaceTitleText.style.display = "none";
 
 			btnShowProjectPanel.style.display = "none";
 
@@ -264,21 +254,7 @@ function configureUserControls(){
 
 				workspaceTitleText.style.display = "none";
 
-				btnProyectos.style.display = "";
-				btnProyectosPopup.style.display = "";
-				topLibrary.style.display = "none";
-				topLibraryInfo.style.display = "none";
-				btnSaveProject.style.display = "none";
-				btnDelProject.style.display = "none";
-				topTitle.style.display = "none";
-				topCategory.style.display = "none";
-				topTitleViewMode.style.display = "none";
-				topShare.style.display = "none";
-
 				btnShowProjectPanel.style.display = "none";
-
-				btnEdicion.style.display = "";
-				btnEdicionPopup.style.display = "";
 
 				btnUser.querySelector("i").className = "fa-solid fa-user-tie";
 				txtUserTitle.textContent = "Invitado";
@@ -301,6 +277,11 @@ function configureUserControls(){
 		if (!isUserActive){
 
 			setControlsEnabled(false);
+
+			btnProyectos.style.display = "none";
+			btnProyectosPopup.style.display = "none";
+			btnEdicion.style.display = "none";
+			btnEdicionPopup.style.display = "none";
 
 			btnFretboard.disabled = false;
 			btnScore.disabled = false;
@@ -550,6 +531,12 @@ function setMenu(m){
 async function initializeProjects() {
 
     // --------------------------------
+    // INFORMACION DE LIBRERIA
+    // --------------------------------
+
+    setLibraryInfo(xmlProjects.substring(xmlProjects.indexOf("/") + 1));
+
+    // --------------------------------
     // NO HAY BIBLIOTECA
     // --------------------------------
 
@@ -683,7 +670,7 @@ function setProjectControlsDisabled(){
 
 }
 
-function setProjectsInfoLabel(fileName){
+function setLibraryInfo(fileName){
 
 	const appUrl = window.location.href.substring(0,window.location.href.lastIndexOf("/") + 1);
 
@@ -1087,10 +1074,10 @@ function updateFigureOptions() {
             <option value="2">Corchea</option>
             <option value="4">Semicorchea</option>
         `;
-	cmbFigure.disabled = false;
+//	cmbFigure.disabled = false;
     } else if (denominator === "8") {
         cmbFigure.innerHTML = `<option value="2">Corchea</option>`;
-	cmbFigure.disabled = true;
+//	cmbFigure.disabled = true;
     }
     const option = cmbFigure.querySelector(`option[value="${previousValue}"]`);
     if (option) option.selected = true;
