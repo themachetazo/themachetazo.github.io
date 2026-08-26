@@ -386,6 +386,7 @@ function setMenu(m){
 		topEdit,
 		topUndo,
 		topChords,
+		topScroll,
 		topColor,
 		topNoteNames,
 		topFrets,
@@ -395,7 +396,6 @@ function setMenu(m){
 		topDiapason,
 		topInstrument,
 		topTempo,
-		topTonality,
 		topTimeSignature,
 		topForm,
 		topScoreStaves,
@@ -492,11 +492,11 @@ function setMenu(m){
 
 			showMenuControls(
 				topTitleViewMode,
-				topTonality,
 				topTempo,
 				topTimeSignature,
 				topScoreStaves,
 				topScoreScale,
+				topScroll,
 				topScoreMargin,
 				topScoreDownload
 			);

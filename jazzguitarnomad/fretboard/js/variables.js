@@ -116,7 +116,7 @@ const topScoreDownload = document.getElementById("topScoreDownload");
 const topChords = document.getElementById("topChords");
 const topTitleViewMode = document.getElementById("topTitleViewMode");
 const topLibraryInfo = document.getElementById("topLibraryInfo");
-
+const topScroll = document.getElementById("topScroll");
 
 /*==================================================
 	REFERENCIAS DOM: BARRA DE HERRAMIENTAS
