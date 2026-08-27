@@ -191,7 +191,7 @@
 					<div class="toolbarTop-Controls" id="topForm">
 						<span>FORMATO</span>
 						<div class="toolRow">
-							<span>Tipo&nbsp;<i class="fa-solid fa-guitar"></i> </span>
+							<span>Tipología</span>
 							<select id="cmbProjectType">
 							    <option value="fretboard">Mástil</option>
 							    <option value="sequence" selected>Secuencia</option>
@@ -199,12 +199,12 @@
 							</select>
 						</div>
 						<div class="toolRow">
-							<span>Dirección&nbsp;<i class="fa-solid fa-up-right-and-down-left-from-center"></i></span>
+							<span>Dirección</span>
 							<select id="cmbTipoSecuencia">
-							    <option value="up">UP</option>
-							    <option value="down">DOWN</option>
-							    <option value="up-down">UP-DOWN</option>
-							    <option value="down-up">DOWN-UP</option>
+							    <option value="up">Up</option>
+							    <option value="down">Down</option>
+							    <option value="up-down">Up-Down</option>
+							    <option value="down-up">Down-Up</option>
 							</select>
 						</div>
 					</div>
@@ -246,17 +246,23 @@
 					</div>
 
 					<div class="toolbarTop-Controls" id="topNoteNames">
-						<span>NOTACIÓN</span>
+						<span>NOTAS</span>
 						<div class="toolRow">
+							<span>Notación</span>
 							<select id="cmbNoteNames">
-							    <option value="notes-es">Latina</option>
-							    <option value="notes-en" selected>Anglosajona</option>
+							    <option value="latin">Latina</option>
+							    <option value="anglo" selected>Anglosajona</option>
 							</select>
 						</div>
 						<div class="toolRow">
 							<label class="lblToggle" title="Mostrar notas">
 								<span class="lblToggleText">Mostrar</span>
 								<input id="chkNoteNames" type="checkbox">
+								<span class="lblToggleSpan"></span>
+							</label>
+							<label class="lblToggle" title="Sostenidos/Bemoles">
+								<span class="lblToggleText" id="noteFlat">♯ / ♭</span>
+								<input id="chkNoteFlat" type="checkbox">
 								<span class="lblToggleSpan"></span>
 							</label>
 						</div>
@@ -353,7 +359,7 @@
 						</div>
 						<div class="toolRow">
 							<label class="lblToggle" title="Swing Feel">
-								<span class="lblToggleText">Swing&nbsp;<i class="fa-solid fa-music"></i></span>
+								<span class="lblToggleText">Swing</span>
 								<input id="chkPlayerSwing" type="checkbox">
 								<span class="lblToggleSpan"></span>
 							</label>
@@ -363,7 +369,7 @@
 					<div class="toolbarTop-Controls" id="topRepeats">
 						<span>REPETICIONES</span>
 						<div class="toolRow">
-							<span>Loop&nbsp;<i class="fa-solid fa-repeat"></i></span>
+							<span>Loop</span>
 							<select id="cmbPlayerRepeats">
 								<option value="1">1</option>
 								<option value="2" selected>2</option>
@@ -378,7 +384,7 @@
 							</select>
 						</div>
 						<div class="toolRow">
-							<span>Cuenta atrás&nbsp;<i class="fa-solid fa-stopwatch"></i></span>
+							<span>Cuenta atrás</span>
 							<select id="cmbCountIn">
 								<option value="0" selected>No</option>
 								<option value="1">1 compás</option>
@@ -403,11 +409,11 @@
 					<div class="toolbarTop-Controls" id="topVolumen">
 						<span>VOLUMEN</span>
 						<div class="toolRow">
-							<span><i class="fa-solid fa-guitar"></i>&nbsp;<i class="fa-solid fa-volume-high"></i></span>
+							<span><i class="fa-solid fa-volume-high"></i>&nbsp;&nbsp;<i class="fa-solid fa-guitar"></i></span>
 							<input type="range" id="samplerVolume" title="0" min="-40" max="0" step="1" value="0">
 						</div>
 						<div class="toolRow">
-							<span><i class="fa-solid fa-stopwatch"></i>&nbsp;<i class="fa-solid fa-volume-high"></i></span>
+							<span><i class="fa-solid fa-volume-high"></i>&nbsp;&nbsp;<i class="fa-solid fa-stopwatch"></i></span>
 							<input type="range" id="sliderMetronomeVolumen_2" title="-12" min="-40" max="0" step="1" value="-12">
 						</div>
 					</div>
@@ -504,7 +510,7 @@
 					</div>
 
 					<div class="toolbarTop-Controls" id="topScroll">
-						<span>ORIENTACIÓN</span>
+						<span>VISTA</span>
 						<div class="toolRow">
 							<!--<span>Orientación</span>-->
 							<select id="cmbScoreLayout">
@@ -513,7 +519,7 @@
 							</select>
 						</div>
 						<label class="lblToggle" title="Auto Scroll">
-							<span class="lblToggleText">Scroll</span>
+							<span class="lblToggleText">Auto Scroll</span>
 							<input id="chkAutoScroll" type="checkbox">
 							<span class="lblToggleSpan"></span>
 						</label>
@@ -593,7 +599,7 @@
 				</div>
 			</div>
 			<div class="workspaceControls" id="workspaceTimeInfo">
-				<div id="player_repeatInfo"><!--Repetición: <b>1</b>&nbsp;Compás: <b>1</b>--></div>
+				<div id="player_repeatInfo">Loop: <b>1</b> Compás: <b>1</b></div>
 				<div id="metronome_Info">Metrónomo: <b>1 / 1</b></div>
 			</div>
 			<div class="workspaceControls">
@@ -617,7 +623,7 @@
 						<button type="button" id="btnToggleLibrary" title="Ocultar librería de proyectos"><i class="fa-solid fa-xmark"></i></button>
 					</div>
 
-					<div id="projectPanelInfo"><i><a href="#">default.xml</a></i><br>Descripción</div>
+					<div id="projectPanelInfo"><i><a href="#">Archivo XML</a></i><br>Descripción</div>
 
 	<!--
 					<div class="projectCategory">
