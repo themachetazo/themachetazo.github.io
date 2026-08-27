@@ -1287,7 +1287,7 @@ async function scoreRender() {
 
 	let vexTabText = vexTab_generateVexTab(scoreArray,cmbTonalidad.value,cmbBar.value,cmbFigure.value,cmbProjectType.value);
 
-//	vexTabText = vexTab_convertStringFretToNotes(vexTabText);
+	console.log(vexTab_convertStringFretToNotes(vexTabText));
 
 	vexTab_container.classList.remove("layout-left","layout-center");
 
