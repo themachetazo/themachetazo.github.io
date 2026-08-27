@@ -10761,7 +10761,7 @@ const MetricsDefaults = {
     },
     TabNote: {
         text: {
-            fontSize: 12,
+            fontSize: 9,
         },
     },
     TabSlide: {
