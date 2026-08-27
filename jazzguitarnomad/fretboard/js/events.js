@@ -98,7 +98,7 @@ document.addEventListener("metronomeBeat", (e) => {
 		case "start":
 		case "tick":
 
-			updateTimeline(beat, subBeat);
+			updateMetronomeTimeline(beat, subBeat);
 
 			metronome_Info.innerHTML = "Metrónomo: <b>" + beat + " / " + subBeat + "</b>";
 
@@ -356,7 +356,7 @@ canvas.addEventListener("click", (e) => {
 				string: cell.string,
 				fret: cell.fret,
 				color: colorPicker.value,
-				text: noteText.value.trim().substring(0, 3),
+				text: noteText.value.trim(),
 				chord: chord,
 				order: noteOrder
 			});
@@ -384,10 +384,7 @@ canvas.addEventListener("click", (e) => {
 				}
 
 				if (barreExists) {
-					removeBarreAtCell(
-						cell.string,
-						cell.fret
-					);
+					removeBarreAtCell(cell.string,cell.fret);
 				}
 
 			}
@@ -418,13 +415,25 @@ canvas.addEventListener("click", (e) => {
 // EVENTOS APP
 //==================================================
 
+cmbNoteNames.addEventListener("change",()=>{
 
-cmbNoteNames.addEventListener("change",(e)=>{
-alert(1);
+	drawFretboard();
+	drawNotes();
+
 });
 
-chkNoteNames.addEventListener("change",(e)=>{
-alert(1);
+chkNoteNames.addEventListener("change",()=>{
+
+	drawFretboard();
+	drawNotes();
+
+});
+
+chkNoteFlat.addEventListener("change",()=>{
+
+	drawFretboard();
+	drawNotes();
+
 });
 
 btnNewChord.addEventListener("click", () => {
@@ -1070,7 +1079,7 @@ btnPlayStopMetronome.addEventListener("click", async function () {
 
 chkMetronomeOn.addEventListener("change", function () {
 
-	setMetronmeOnPlaying(this.checked);
+	player.setMetronomeOn(this.checked);
 
 });
 

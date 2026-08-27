@@ -20,8 +20,6 @@ async function initializeApp() {
 
 		configureUserControls();
 
-		setEditMode("view");
-
 
 		// PROJECTS ----------------------
 
@@ -34,9 +32,7 @@ async function initializeApp() {
 
 		// LAYOUT ----------------------
 
-		setLoadingProgress(20, "Configurando página...");
-
-		setOrientation(orientation);
+		setLoadingProgress(20, "Configurando layout...");
 
 		setLayout();
 
@@ -393,6 +389,7 @@ function setMenu(m){
 		topAudio,
 		topLibraryInfo,
 		topProjectGuest
+
 	].forEach(control => control.classList.add("isHidden"));
 
 	switch (menuOpen){
@@ -530,6 +527,16 @@ function setMenu(m){
 async function initializeProjects() {
 
     // --------------------------------
+    // PANEL
+    // --------------------------------
+
+    if (!isMobile && appMode !== "Guest" && user !== null) {
+
+	openProjectsPanel();
+
+    }
+
+    // --------------------------------
     // INFORMACION DE LIBRERIA
     // --------------------------------
 
@@ -611,12 +618,6 @@ async function initializeProjects() {
 
     }
 
-    // --------------------------------
-    // PANEL
-    // --------------------------------
-
-    if (!isMobile && appMode !== "Guest" && user !== null) openProjectsPanel();
-
 }
 
 
@@ -628,14 +629,14 @@ function initializeEmptyProject() {
 
 }
 
-function setProjectControlsDisabled(){
+function setProjectTypeControlsDisabled(){
 
 	cmbTipoSecuencia.disabled = projectType === "fretboard";
 	chkMetronomeOn.disabled = projectType === "fretboard";
 
-	cmbChords.disabled = projectType !== "chord" ? "none" : "flex";
-	btnNewChord.disabled = projectType !== "chord" ? "none" : "flex";
-	btnDelChord.disabled = projectType !== "chord" ? "none" : "flex";
+	cmbChords.disabled = projectType !== "chord" ? true : false;
+	btnNewChord.disabled = projectType !== "chord" ? true : false;
+	btnDelChord.disabled = projectType !== "chord" ? true : false;
 
 	btnScore.disabled = projectType === "fretboard";
 	btnScorePopup.disabled = projectType === "fretboard";
@@ -676,7 +677,7 @@ function setLibraryInfo(fileName){
 	if (isAdmin){
 		txtInfo = txtInfo + "<i><a href='" + appUrl;
 		if (xmlType !== "Server") txtInfo = txtInfo + "projects/";
-		txtInfo = txtInfo + xmlProjects + "' target='_blank'>" + fileName + "</a></i><br>";
+		txtInfo = txtInfo + xmlProjects + "' target='_blank'>Librería " + fileName.replace(/\.xml$/, "") + "</a></i><br>";
 	}
 
 	if (libraryDesc !== "") txtInfo = txtInfo + libraryDesc;
@@ -812,6 +813,7 @@ function resetControlsValues(state){
 		bpm = 90;
 		key = "C";
 		scoreStaves = "all";
+		notation = "";
 
 /*
 		rotation = 0;
@@ -903,6 +905,17 @@ function resetControlsValues(state){
 	btnNewCategory.disabled = false;
 	btnDelCategory.disabled = false;
 
+	chkNoteNames.checked = notation !== "";
+
+	if (notation !== ""){
+
+		let [type, flat] = notation.split("-");
+
+		cmbNoteNames.value  = type;
+		chkNoteFlat.checked = flat === "b";
+
+	}
+
 	if (state !== "loadProject"){
 
 		resetComboChords();
@@ -940,7 +953,7 @@ function resetControlsValues(state){
 
 function changeProjectType(oldType) {
 
-	setProjectControlsDisabled();
+	setProjectTypeControlsDisabled();
 
 	switch (projectType) {
 
@@ -1053,12 +1066,11 @@ function setControlsEnabled(enabled) {
 	span.style.opacity = enabled ? 1 : "0.55";
     });
 
-    if (cmbProjectType !== "chord") {
+    if (enabled){
 
-	cmbChords.disabled = true;
-	btnNewChord.disabled = true;
-	btnDelChord.disabled = true;
-
+	cmbChords.disabled = cmbProjectType.value !== "chord" ? true : false;
+	btnNewChord.disabled = cmbProjectType.value !== "chord" ? true : false;
+	btnDelChord.disabled = cmbProjectType.value !== "chord" ? true : false;
     }
 
 }
@@ -1404,11 +1416,13 @@ function setLayout() {
 
 		cursor.style.display = "";
 
-		openTopControls();
+		if (isAdmin) {
+			openTopControls();
+		}else{
+			closeTopControls();
+		}
 
 	}
-
-	setWorkspaceLayout();
 
 }
 
@@ -1509,88 +1523,6 @@ function parseBoolean(value, defaultValue = false) {
 	return Boolean(value);
 }
 
-
-// METRONOMO TIMELINE
-
-function buildHtmlDivsTimeline() {
-
-    metronome_timeline.innerHTML = "";
-
-    let indice = 0;
-
-    for (let beat = 1; beat <= metronome.beatsPerBar; beat++) {
-
-        for (let sub = 1; sub <= metronome.subdivision; sub++) {
-
-            const div = document.createElement("div");
-
-            div.className = "metronome_pulse";
-            div.dataset.index = indice++;
-
-            div.classList.add(sub === 1 ? "metronome_beat" : "metronome_sub");
-
-            if (sub === metronome.subdivision && beat < metronome.beatsPerBar) div.classList.add("metronome_bar");
-
-            metronome_timeline.appendChild(div);
-
-        }
-
-    }
-
-}
-
-function updateTimeline(beat,subBeat) {
-
-    const pulses = document.querySelectorAll(".metronome_pulse");
-
-    pulses.forEach(pulse =>
-        pulse.classList.remove("metronome_current")
-    );
-
-    const index = (beat - 1) * metronome.subdivision + (subBeat - 1);
-
-    if (pulses[index]) pulses[index].classList.add("metronome_current");
-
-}
-
-function resetPlaybackTimeline(){
-
-	buildHtmlDivsTimeline();
-
-	metronome_Info.innerHTML = "Metrónomo: <b>1 / 1</b>";
-
-	player_repeatInfo.innerHTML = "Loop: <b>1</b>&nbsp;Compás: <b>1</b>";
-
-	// Solo ocultar si realmente hemos parado. Durante el arranque/count-in isPlaying sigue siendo true.
-	if (!isPlaying && !chkMetronomeOn.checked) workspaceTimeInfo.style.display = "none";
-
-	countBars = 1;
-	repetitionSequence = 1;
-	firstTick = true;
-
-}
-
-function resetMetronomeTimeline(){
-
-	buildHtmlDivsTimeline();
-
-	metronome_Info.innerHTML = "Metrónomo: <b>1 / 1</b>";
-
-}
-
-function setMetronmeOnPlaying(value){
-
-    player.setMetronomeOn(value);
-
-    if (value){
-	metronome_timeline.style.display = "flex";
-    }else{
-	metronome_timeline.style.display = "none";
-
-	metronome_Info.innerHTML = "";
-    }
-
-}
 
 
 //==================================================
@@ -2159,5 +2091,63 @@ function delChord() {
 	aChords = buildOrderedChords();
 
 	loadArrayNotas();
+
+}
+
+function convertNote(note, notation = "latin") {
+
+    if (notation === "anglo") {
+        return note;
+    }
+
+    const notes = {
+        "C": "Do",
+        "D": "Re",
+        "E": "Mi",
+        "F": "Fa",
+        "G": "Sol",
+        "A": "La",
+        "B": "Si"
+    };
+
+    return note.replace(/^([A-G])([#♯b♭]?)(\d+)$/, (_, name, accidental, octave) => {
+        return notes[name] + accidental + octave;
+    });
+
+}
+
+function getTextColor(backgroundColor) {
+
+    const hex = backgroundColor.replace("#", "");
+
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+    return brightness > 155 ? "#000" : "#fff";
+}
+
+function getNoteText(x,y,text,isNut = false){
+
+	if(chkNoteNames.checked){
+
+		let { string, fret } = getCellFromMouse(x, y);
+
+		if (isNut) fret--;
+
+		if (chkNoteFlat.checked){
+			text = fretboardMapNotesFlats[string][fret];
+		}else{
+
+			text = fretboardMapNotes[string][fret];
+		}
+
+		text = convertNote(text, cmbNoteNames.value);
+
+	}
+
+	return text;
 
 }

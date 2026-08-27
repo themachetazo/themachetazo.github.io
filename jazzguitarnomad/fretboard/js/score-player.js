@@ -361,7 +361,7 @@ function setPlayerValues(){
 	player.setInstrumentVolume(0);
 	player.setGate(100);
 
-	setMetronmeOnPlaying(parseBoolean(metronomeOn));
+	player.setMetronomeOn(parseBoolean(metronomeOn));
 
 	player.setRepeticiones(repetitionSequence);
 	player.setCountInBars(countBars);
@@ -373,9 +373,13 @@ function setPlayerValues(){
 
 async function playMusic(){
 
+	resetPlaybackTimeline();
+
 	if (!isPlaying) {
 
 		isPlaying = true;
+
+		setEditMode("view");
 
 		setControlsEnabled(false);
 
@@ -394,10 +398,7 @@ async function playMusic(){
 
 		setPlayStopButton(btnPlayStop, true);
 
-		// Mostrar timeline e información
 		workspaceTimeInfo.style.display = "flex";
-
-		// Abrir y cerrar controles
 
 		topControlsWasOpen = topControlsContainer.classList.contains("isOpen");
 		closeTopControls();
@@ -444,7 +445,7 @@ async function playMusic(){
 
 		setPlayStopButton(btnPlayStop, false);
 
-		resetPlaybackTimeline();
+		workspaceTimeInfo.style.display = "none";
 
 		if (topControlsWasOpen) openTopControls();
 		topControlsWasOpen = false;
@@ -452,7 +453,9 @@ async function playMusic(){
 		if (!libraryWasClosed && appMode !== "Guest") openProjectsPanel();
 		libraryWasClosed = false;
 
-		if (chkAutoScroll.checked) document.body.scrollTo({top: 0,left: 0,behavior: "smooth"});
+		if (chkAutoScroll.checked) {
+			document.body.scrollTo({top: 0,left: 0,behavior: "smooth"});
+		}
 	}
 
 }
@@ -465,6 +468,8 @@ async function metronomePlayStop(){
 		await Tone.context.resume();
 	}
 
+	resetMetronomeTimeline();
+
 	if (metronome.playing) {
 
 		metronome.stop();
@@ -473,12 +478,11 @@ async function metronomePlayStop(){
 
 		setPlayStopButton(btnPlayStopMetronome, false);
 
-		resetMetronomeTimeline();
-
-//		workspaceMetronome.style.display = "none";
 		workspaceTimeInfo.style.display = "none";
 
 	} else {
+
+		setEditMode("view");
 
 		setControlsEnabled(false);
 
@@ -491,15 +495,9 @@ async function metronomePlayStop(){
 		setPlayStopButton(btnPlayStopMetronome, true);
 
 		if (!chkMetronomeOn.checked) {
-			setMetronmeOnPlaying(true);
+			player.setMetronomeOn(true);
 		}
 
-		resetMetronomeTimeline();
-
-		metronome_timeline.style.display = "flex";
-		player_repeatInfo.style.display = "none";
-
-		workspaceMetronome.style.display = "flex";
 		workspaceTimeInfo.style.display = "flex";
 
 		metronome.start();
@@ -512,9 +510,78 @@ async function metronomePlayStop(){
 
 }
 
+function resetPlaybackTimeline(){
+
+	buildMetronomeTimeline();
+
+	metronome_Info.innerHTML = chkMetronomeOn.checked ? "Metrónomo: <b>1 / 1</b>" : "";
+
+	player_repeatInfo.innerHTML = "Loop: <b>1</b>&nbsp;Compás: <b>1</b>";
+
+	// Solo ocultar si realmente hemos parado. Durante el arranque/count-in isPlaying sigue siendo true.
+	if (!isPlaying) workspaceTimeInfo.style.display = "none";
+
+	countBars = 1;
+	repetitionSequence = 1;
+	firstTick = true;
+
+}
+
+function buildMetronomeTimeline() {
+
+    metronome_timeline.innerHTML = "";
+
+    let indice = 0;
+
+    for (let beat = 1; beat <= metronome.beatsPerBar; beat++) {
+
+        for (let sub = 1; sub <= metronome.subdivision; sub++) {
+
+            const div = document.createElement("div");
+
+            div.className = "metronome_pulse";
+            div.dataset.index = indice++;
+
+            div.classList.add(sub === 1 ? "metronome_beat" : "metronome_sub");
+
+            if (sub === metronome.subdivision && beat < metronome.beatsPerBar) div.classList.add("metronome_bar");
+
+            metronome_timeline.appendChild(div);
+
+        }
+
+    }
+
+}
+
+function updateMetronomeTimeline(beat,subBeat) {
+
+    const pulses = document.querySelectorAll(".metronome_pulse");
+
+    pulses.forEach(pulse =>
+        pulse.classList.remove("metronome_current")
+    );
+
+    const index = (beat - 1) * metronome.subdivision + (subBeat - 1);
+
+    if (pulses[index]) pulses[index].classList.add("metronome_current");
+
+}
+
+function resetMetronomeTimeline(){
+
+	buildMetronomeTimeline();
+
+	metronome_Info.innerHTML = "Metrónomo: <b>1 / 1</b>";
+
+	player_repeatInfo.innerHTML = "";
+
+}
+
 function resetScorePlayer() {
 
     player.stop();
+    player.playing = false;
 
     metronome.stop();
 
@@ -535,9 +602,7 @@ function resetScorePlayer() {
     vexTab_container.scrollLeft = 0;
     vexTab_container.scrollTop = 0;
 
-    buildHtmlDivsTimeline();
-
-    player.playing = false;
+    resetPlaybackTimeline();
 
 }
 
@@ -1001,7 +1066,7 @@ async function vexTab_render() {
 
     if (chkScoreTitle.checked){
 
-        vexTab_createHeaderFooter(svg,titleText.value.trim() || "Sin Título",`${year} - ${scoreFooter}`);
+        vexTab_createHeaderFooter(svg,titleText.value.trim() || "Sin título",`${year} - ${scoreFooter}`);
 
     }
 
@@ -1311,8 +1376,6 @@ async function svg_scoreToPNG(canvas, fileName = "partitura.png") {
 ////////////////////////////////////////////////////////////
 
 async function scoreRender() {
-
-console.log(scoreArray);
 
 	const vexTabText = vexTab_generateVexTab(scoreArray,cmbTonalidad.value,cmbBar.value,cmbFigure.value,cmbProjectType.value);
 

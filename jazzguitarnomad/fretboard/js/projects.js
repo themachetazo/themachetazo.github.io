@@ -98,6 +98,7 @@ async function loadProject(project) {
 	isFretboardVisible = parseBoolean(project.settings?.isFretboardVisible, true);
 	isScoreVisible = parseBoolean(project.settings?.isScoreVisible, false);
 	metronomeOn = parseBoolean(project.settings?.metronomeOn, true);
+	notation = project.settings?.notation ?? "";
 
 	// --------------------------------
 	// NOTAS
@@ -285,6 +286,10 @@ async function openXMLProjectsFile() {
 
 				await selectProject(firstProject);
 
+				neckImageLoaded = false;
+
+				if (fretboardStyle !== "blank") await loadFretboardImage();
+
 			} else {
 
 				newProject();
@@ -401,7 +406,8 @@ function parseProjectsXml(xml) {
 				scoreStaves: getSetting("scoreStaves","all"),
 				scoreLayout: getSetting("scoreLayout","vertical"),
 				swing: getSetting("swing",false),
-				metronomeOn: getSetting("metronomeOn",true)
+				metronomeOn: getSetting("metronomeOn",true),
+				notation: getSetting("notation","")
 
 			},
 
@@ -465,6 +471,12 @@ function getCurrentProject() {
 
 	const projectTitle = titleText.value.trim();
 
+	let notacion = "";
+
+	if (chkNoteNames.checked) notacion = cmbNoteNames.value + "-" + chkNoteFlat.checked ? "b" : "#";
+
+alert(notacion);
+
 	if (!projectTitle) {
 		alert("Escribe un título antes de guardar el proyecto.");
 		titleText.focus();
@@ -504,7 +516,8 @@ function getCurrentProject() {
 			scoreStaves: cmbScoreStaves.value,
 			scoreLayout: cmbScoreLayout.value,
 			swing: chkPlayerSwing.checked,
-			metronomeOn: chkMetronomeOn.checked
+			metronomeOn: chkMetronomeOn.checked,
+			notation: notacion
 		},
 
 		notes: notes.map(note => ({
@@ -619,6 +632,7 @@ function projectToXml(project, indent = "\t") {
 	lines.push(`${indent}\t\t<scoreLayout>${project.settings.scoreLayout}</scoreLayout>`);
 	lines.push(`${indent}\t\t<swing>${project.settings.swing}</swing>`);
 	lines.push(`${indent}\t\t<metronomeOn>${project.settings.metronomeOn}</metronomeOn>`);
+	lines.push(`${indent}\t\t<notation>${project.settings.notation}</notation>`);
 	lines.push(`${indent}\t</settings>`);
 
 	lines.push(`${indent}\t<notes>`);
@@ -798,13 +812,11 @@ function renderProjectsLibrary() {
 
 				await selectProject(currentProject);
 
-/*
+				setPlayerValues();
+
 				neckImageLoaded = false;
 
 				if (fretboardStyle !== "blank") await loadFretboardImage();
-*/
-
-				setPlayerValues();
 
 				if (isFretboardVisible) resizeCanvas();
 

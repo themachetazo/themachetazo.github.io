@@ -997,349 +997,6 @@ function drawVertical() {
 
 }
 
-
-
-
-
-
-/*
-function drawHorizontal() {
-
-	boardright = boardleft + boardWidth;
-	boardbottom = boardtop + boardHeight;
-
-	stringSpace = boardHeight / (stringCount - 1);
-	fretSpace = boardWidth / fretCount;
-
-	const reverseStrings = (rotation === 90);
-
-	//------------------------------------------------
-	// Trastes
-	//------------------------------------------------
-
-	for (let fret = 1; fret <= fretCount; fret++) {
-
-		const x = boardleft + getFretPosition(fret);
-
-		const fretWidth = Math.max(
-			2,
-			stringSpace * 0.10
-		);
-
-		const margin = fretWidth / 2;
-
-		if (fretboardStyle === "blank") {
-
-			drawFret(
-				x,
-				boardtop,
-				x,
-				boardbottom,
-				fretWidth
-			);
-
-		} else {
-
-			drawFret(
-				x,
-				imageTop + margin,
-				x,
-				imageTop + imageHeight - margin,
-				fretWidth
-			);
-
-		}
-
-	}
-
-	if (displayMode) {
-
-		drawInlays(
-			boardleft,
-			boardtop,
-			stringSpace
-		);
-
-	}
-
-	//------------------------------------------------
-	// Cuerdas
-	//------------------------------------------------
-
-	const stringBleed = Math.max(
-		3,
-		stringSpace * 0.10
-	);
-
-	for (let s = 0; s < stringCount; s++) {
-
-		const index =
-			reverseStrings
-				? stringCount - 1 - s
-				: s;
-
-		const y = boardtop + index * stringSpace;
-
-		let stringWidth;
-
-		if (s < 3) {
-
-			stringWidth = 1 + s * 0.2;
-
-		} else {
-
-			stringWidth = 1.8 + (s - 3) * 0.45;
-
-		}
-
-		if (fretboardStyle === "blank") {
-
-			ctx.beginPath();
-			ctx.moveTo(boardleft, y);
-			ctx.lineTo(boardright, y);
-			ctx.lineWidth = 1;
-			ctx.strokeStyle = "#000";
-			ctx.stroke();
-
-		} else {
-
-			drawRealisticString(
-				boardleft - stringBleed,
-				y,
-				boardright,
-				y,
-				stringWidth
-			);
-
-		}
-
-	}
-
-	//------------------------------------------------
-	// Cejuela
-	//------------------------------------------------
-
-	if (!displayMode) {
-
-		const fretWidth = Math.max(2, stringSpace * 0.10);
-
-		const nutX = rotation === 270 ? boardleft : boardright;
-
-		drawFret(
-			nutX,
-			boardtop,
-			nutX,
-			boardbottom,
-			fretWidth
-		);
-
-	} else {
-
-		if (fretboardStyle === "blank") {
-
-			const nutWidth = 3;
-			const gap = 5;
-
-			ctx.lineWidth = nutWidth;
-			ctx.strokeStyle = getNutColor();
-
-			const x1 = rotation === 270 ? boardleft : boardright;
-
-			const x2 = rotation === 270 ? boardleft + gap : boardright - gap;
-
-			ctx.beginPath();
-			ctx.moveTo(x1, boardtop);
-			ctx.lineTo(x1, boardbottom);
-			ctx.stroke();
-
-			ctx.beginPath();
-			ctx.moveTo(x2, boardtop);
-			ctx.lineTo(x2, boardbottom);
-			ctx.stroke();
-
-		} else {
-
-			drawRealisticNut();
-
-		}
-
-	}
-
-}
-
-function drawVertical() {
-
-	boardright = boardleft + boardWidth;
-	boardbottom = boardtop + boardHeight;
-
-	stringSpace = boardWidth / (stringCount - 1);
-	fretSpace = boardHeight / fretCount;
-
-	const reverseStrings = (rotation === 180);
-
-	//------------------------------------------------
-	// Trastes
-	//------------------------------------------------
-
-	for (let fret = 1; fret <= fretCount; fret++) {
-
-		const y = boardtop + getFretPosition(fret);
-
-		const fretWidth = Math.max(
-			2,
-			stringSpace * 0.10
-		);
-
-		const margin = fretWidth / 2;
-
-		if (fretboardStyle === "blank") {
-
-			drawFret(
-				boardleft,
-				y,
-				boardright,
-				y,
-				fretWidth
-			);
-
-		} else {
-
-			drawFret(
-				imageLeft + margin,
-				y,
-				imageLeft + imageWidth - margin,
-				y,
-				fretWidth
-			);
-
-		}
-
-	}
-
-	if (displayMode) {
-
-		drawInlays(
-			boardleft,
-			boardtop,
-			stringSpace
-		);
-
-	}
-	//------------------------------------------------
-	// Cuerdas
-	//------------------------------------------------
-
-	const stringBleed = Math.max(
-		3,
-		stringSpace * 0.10
-	);
-
-	for (let s = 0; s < stringCount; s++) {
-
-		const index =
-			reverseStrings
-				? s
-				: stringCount - 1 - s;
-
-		const x = boardleft + index * stringSpace;
-
-		let stringWidth;
-
-		if (s < 3) {
-
-			stringWidth = 1 + s * 0.2;
-
-		} else {
-
-			stringWidth = 1.8 + (s - 3) * 0.45;
-
-		}
-
-		if (fretboardStyle === "blank") {
-
-			ctx.beginPath();
-			ctx.moveTo(x, boardtop);
-			ctx.lineTo(x, boardbottom);
-			ctx.lineWidth = 1;
-			ctx.strokeStyle = "#000";
-			ctx.stroke();
-
-		} else {
-
-			drawRealisticString(
-				x,
-				boardtop - stringBleed,
-				x,
-				boardbottom,
-				stringWidth
-			);
-
-		}
-
-	}
-
-	//------------------------------------------------
-	// Cejuela
-	//------------------------------------------------
-
-	if (!displayMode) {
-
-		const fretWidth = Math.max(2, stringSpace * 0.10);
-
-		const nutY =
-			rotation === 0
-				? boardtop
-				: boardbottom;
-
-		drawFret(
-			boardleft,
-			nutY,
-			boardright,
-			nutY,
-			fretWidth
-		);
-
-	} else {
-
-		if (fretboardStyle === "blank") {
-
-			const nutWidth = 3;
-			const gap = 5;
-
-			ctx.lineWidth = nutWidth;
-			ctx.strokeStyle = getNutColor();
-
-			const y1 =
-				rotation === 0
-					? boardtop
-					: boardbottom;
-
-			const y2 =
-				rotation === 0
-					? boardtop + gap
-					: boardbottom - gap;
-
-			ctx.beginPath();
-			ctx.moveTo(boardleft, y1);
-			ctx.lineTo(boardright, y1);
-			ctx.stroke();
-
-			ctx.beginPath();
-			ctx.moveTo(boardleft, y2);
-			ctx.lineTo(boardright, y2);
-			ctx.stroke();
-
-		} else {
-
-			drawRealisticNut();
-
-		}
-
-	}
-
-}
-*/
-
 function roundedRectPath(x, y, width, height, radius) {
 
 	const r = Math.min(
@@ -2100,78 +1757,6 @@ function getNutStringFromMouse(x, y) {
 
 }
 
-function drawNutNotes() {
-
-	const gap = 5;
-
-	for (let s = 0; s < stringCount; s++) {
-
-		const note = nutNotes[s];
-
-		if (!note)
-			continue;
-
-		let x;
-		let y;
-
-		switch (rotation) {
-
-			//------------------------------------------------
-			// Vertical (cejuela arriba)
-			//------------------------------------------------
-
-			case 0:
-
-				x = boardleft + (stringCount - 1 - s) * stringSpace;
-				y = boardtop + gap / 2;
-
-				break;
-
-			//------------------------------------------------
-			// Horizontal (cejuela izquierda)
-			//------------------------------------------------
-
-			case 270:
-
-				x = boardleft + gap / 2;
-				y = boardtop + s * stringSpace;
-
-				break;
-
-			//------------------------------------------------
-			// Vertical (cejuela abajo)
-			//------------------------------------------------
-
-			case 180:
-
-				x = boardleft + s * stringSpace;
-				y = boardbottom - gap / 2;
-
-				break;
-
-			//------------------------------------------------
-			// Horizontal (cejuela derecha)
-			//------------------------------------------------
-
-			case 90:
-
-				x = boardright - gap / 2;
-				y = boardtop + (stringCount - 1 - s) * stringSpace;
-
-				break;
-
-		}
-
-		drawMarker(
-			x,
-			y,
-			note
-		);
-
-	}
-
-}
-
 function getDynamicNeckLength() {
 
 	const calculatedLength = fretCount * PIXELS_PER_FRET;
@@ -2316,118 +1901,6 @@ function drawRealisticString(x1, y1, x2, y2, lineWidth) {
 	}
 
 	ctx.stroke();
-
-}
-
-
-// ============================================================
-// CEJILLAS
-// ============================================================
-
-function drawBarre(barre) {
-
-	const firstString = 0;
-	const lastString = barre.startString;
-
-	const markerRadius = Math.min(stringSpace * 0.34, 14);
-
-	const barThickness = markerRadius * 2;
-
-	const border = Math.max(
-		0.6,
-		markerRadius * 0.05
-	);
-
-	const fillColor = String(barre.color).toLowerCase();
-
-	const textColor =
-		fillColor === "#ffffff" ||
-		fillColor === "white"
-			? "#000"
-			: "#fff";
-
-	ctx.save();
-
-	ctx.lineCap = "round";
-	ctx.lineJoin = "round";
-
-	ctx.shadowColor = "rgba(0,0,0,0.28)";
-	ctx.shadowBlur = 2;
-	ctx.shadowOffsetX = 1;
-	ctx.shadowOffsetY = 1;
-
-	//------------------------------------------------
-	// Posición
-	//------------------------------------------------
-
-	const p1 = getCellCenter(
-		firstString,
-		barre.fret
-	);
-
-	const p2 = getCellCenter(
-		lastString,
-		barre.fret
-	);
-
-	const x1 = p1.x;
-	const y1 = p1.y;
-
-	const x2 = p2.x;
-	const y2 = p2.y;
-
-	//------------------------------------------------
-	// Barra
-	//------------------------------------------------
-
-	ctx.beginPath();
-	ctx.strokeStyle = "#000";
-	ctx.lineWidth = barThickness + border * 2;
-	ctx.moveTo(x1, y1);
-	ctx.lineTo(x2, y2);
-	ctx.stroke();
-
-	ctx.beginPath();
-	ctx.strokeStyle = barre.color;
-	ctx.lineWidth = barThickness;
-	ctx.moveTo(x1, y1);
-	ctx.lineTo(x2, y2);
-	ctx.stroke();
-
-	//------------------------------------------------
-	// Texto
-	//------------------------------------------------
-
-	if (barre.text && barre.text.trim() !== "") {
-
-		const textX = (x1 + x2) / 2;
-		const textY = (y1 + y2) / 2;
-
-		ctx.shadowColor = "transparent";
-		ctx.fillStyle = textColor;
-		ctx.font = `bold ${markerRadius * 1.45}px Segoe UI`;
-		ctx.textAlign = "center";
-		ctx.textBaseline = "middle";
-
-		ctx.fillText(
-			barre.text,
-			textX,
-			textY + markerRadius * 0.03
-		);
-
-	}
-
-	ctx.restore();
-
-}
-
-function drawBarres() {
-
-	for (const barre of barreNotes) {
-
-		drawBarre(barre);
-
-	}
 
 }
 
@@ -2693,13 +2166,257 @@ function drawRealisticNut() {
 // DRAW NOTES
 //==================================================
 
-function drawMarker(x, y, note) {
+function drawNutNotes() {
+
+	const gap = 5;
+
+	for (let s = 0; s < stringCount; s++) {
+
+		const note = nutNotes[s];
+
+		if (!note)
+			continue;
+
+		let x;
+		let y;
+
+		switch (rotation) {
+
+			//------------------------------------------------
+			// Vertical (cejuela arriba)
+			//------------------------------------------------
+
+			case 0:
+
+				x = boardleft + (stringCount - 1 - s) * stringSpace;
+				y = boardtop + gap / 2;
+
+				break;
+
+			//------------------------------------------------
+			// Horizontal (cejuela izquierda)
+			//------------------------------------------------
+
+			case 270:
+
+				x = boardleft + gap / 2;
+				y = boardtop + s * stringSpace;
+
+				break;
+
+			//------------------------------------------------
+			// Vertical (cejuela abajo)
+			//------------------------------------------------
+
+			case 180:
+
+				x = boardleft + s * stringSpace;
+				y = boardbottom - gap / 2;
+
+				break;
+
+			//------------------------------------------------
+			// Horizontal (cejuela derecha)
+			//------------------------------------------------
+
+			case 90:
+
+				x = boardright - gap / 2;
+				y = boardtop + (stringCount - 1 - s) * stringSpace;
+
+				break;
+
+		}
+
+		drawMarker(x,y,note,true);
+
+	}
+
+}
+
+function drawBarre(barre) {
+
+	const firstString = 0;
+	const lastString = barre.startString;
+
+	const markerRadius = Math.min(stringSpace * 0.34, 14);
+
+	const barThickness = markerRadius * 2;
+
+	const border = Math.max(
+		0.6,
+		markerRadius * 0.05
+	);
+
+	const fillColor = String(barre.color).toLowerCase();
+
+	const textColor = getTextColor(fillColor);
+
+	ctx.save();
+
+	ctx.lineCap = "round";
+	ctx.lineJoin = "round";
+
+	ctx.shadowColor = "rgba(0,0,0,0.28)";
+	ctx.shadowBlur = 2;
+	ctx.shadowOffsetX = 1;
+	ctx.shadowOffsetY = 1;
+
+	//------------------------------------------------
+	// Posición
+	//------------------------------------------------
+
+	const p1 = getCellCenter(
+		firstString,
+		barre.fret
+	);
+
+	const p2 = getCellCenter(
+		lastString,
+		barre.fret
+	);
+
+	const x1 = p1.x;
+	const y1 = p1.y;
+
+	const x2 = p2.x;
+	const y2 = p2.y;
+
+	//------------------------------------------------
+	// Barra
+	//------------------------------------------------
+
+	ctx.beginPath();
+	ctx.strokeStyle = "#000";
+	ctx.lineWidth = barThickness + border * 2;
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2, y2);
+	ctx.stroke();
+
+	ctx.beginPath();
+	ctx.strokeStyle = barre.color;
+	ctx.lineWidth = barThickness;
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2, y2);
+	ctx.stroke();
+
+	//------------------------------------------------
+	// Texto
+	//------------------------------------------------
+
+	const textPosition = getCellCenter(
+		barre.startString,
+		barre.fret
+	);
+
+	const textX = textPosition.x;
+	const textY = textPosition.y;
+
+	const text = getNoteText(
+		textX,
+		textY,
+		barre.text
+	);
+
+	ctx.shadowColor = "transparent";
+	ctx.fillStyle = textColor;
+	ctx.textAlign = "center";
+	ctx.textBaseline = "middle";
+
+	//------------------------------------------------
+	// Tamaño de fuente
+	//------------------------------------------------
+
+	let fontSize = markerRadius * 1.45;
+
+	ctx.font = `bold ${fontSize}px Segoe UI`;
+
+	// Ancho disponible dentro de la barra
+	const maxWidth = barThickness * 0.85;
+
+	while (ctx.measureText(text).width > maxWidth && fontSize > 5) {
+
+		fontSize -= 0.5;
+
+		ctx.font = `bold ${fontSize}px Segoe UI`;
+	}
+
+	//------------------------------------------------
+	// Dibujar texto
+	//------------------------------------------------
+
+	ctx.fillText(
+		text,
+		textX,
+		textY + fontSize * 0.03
+	);
+
+	ctx.restore();
+
+}
+
+function drawBarres() {
+
+	for (const barre of barreNotes) {
+
+		drawBarre(barre);
+
+	}
+
+}
+
+function addOrReplaceBarre(cell, chord) {
+
+	// Elimina cualquier cejilla existente en ese traste
+	barreNotes = barreNotes.filter(barre => {
+		return barre.fret !== cell.fret;
+	});
+
+	// Elimina notas normales que quedarían cubiertas por la cejilla
+	notes = notes.filter(note => {
+
+		if (note.fret !== cell.fret) {
+			return true;
+		}
+
+		// La cejilla ocupa desde la cuerda 0 hasta la cuerda pulsada
+		return note.string > cell.string;
+
+	});
+
+	barreNotes.push({
+		fret: cell.fret,
+		startString: cell.string,
+		color: colorPicker.value,
+		text: noteText.value.trim(),
+		chord: chord,
+		order: noteOrder
+	});
+
+}
+
+function removeBarreAtCell(string, fret) {
+
+	barreNotes = barreNotes.filter(barre => {
+
+		if (barre.fret !== fret) {
+			return true;
+		}
+
+		// La cejilla ocupa desde la cuerda 0 hasta startString.
+		// Se borra si se pulsa cualquier cuerda ocupada por ella.
+		return string > barre.startString;
+
+	});
+
+}
+
+function drawMarker(x, y, note, isNut = false) {
 
 	if (!note || !note.color) return;
 
 	const radius = stringSpace * 0.39;
 	const border = Math.max(0.6, radius * 0.05);
-	const fontSize = radius * 1.15;
 
 	ctx.beginPath();
 	ctx.arc(x, y, radius, 0, Math.PI * 2);
@@ -2712,13 +2429,41 @@ function drawMarker(x, y, note) {
 	ctx.stroke();
 
 	const fillColor = String(note.color).toLowerCase();
-	const textColor = fillColor === "#ffffff" || fillColor === "white" ? "#000" : "#fff";
+
+	const textColor = getTextColor(fillColor);
 
 	ctx.fillStyle = textColor;
-	ctx.font = `bold ${fontSize}px Segoe UI`;
 	ctx.textAlign = "center";
 	ctx.textBaseline = "middle";
-	ctx.fillText(note.text, x, y + fontSize * 0.03);
+
+	const text = getNoteText(x, y, note.text, isNut);
+
+	// --------------------------------
+	// Tamaño de fuente
+	// --------------------------------
+
+	let fontSize = radius * 1.15;
+
+	ctx.font = `bold ${fontSize}px Segoe UI`;
+
+	const maxWidth = radius * 1.7;
+
+	while (ctx.measureText(text).width > maxWidth && fontSize > 5) {
+
+		fontSize -= 0.5;
+
+		ctx.font = `bold ${fontSize}px Segoe UI`;
+	}
+
+	// --------------------------------
+	// Texto
+	// --------------------------------
+
+	ctx.fillText(
+		text,
+		x,
+		y + fontSize * 0.03
+	);
 }
 
 function drawHoverMarker() {
@@ -2905,55 +2650,9 @@ function eraseNote(cell) {
 
 }
 
-function addOrReplaceBarre(cell, chord) {
-
-	// Elimina cualquier cejilla existente en ese traste
-	barreNotes = barreNotes.filter(barre => {
-		return barre.fret !== cell.fret;
-	});
-
-	// Elimina notas normales que quedarían cubiertas por la cejilla
-	notes = notes.filter(note => {
-
-		if (note.fret !== cell.fret) {
-			return true;
-		}
-
-		// La cejilla ocupa desde la cuerda 0 hasta la cuerda pulsada
-		return note.string > cell.string;
-
-	});
-
-	barreNotes.push({
-		fret: cell.fret,
-		startString: cell.string,
-		color: colorPicker.value,
-		text: noteText.value.trim(),
-		chord: chord,
-		order: noteOrder
-	});
-
-}
-
-function removeBarreAtCell(string, fret) {
-
-	barreNotes = barreNotes.filter(barre => {
-
-		if (barre.fret !== fret) {
-			return true;
-		}
-
-		// La cejilla ocupa desde la cuerda 0 hasta startString.
-		// Se borra si se pulsa cualquier cuerda ocupada por ella.
-		return string > barre.startString;
-
-	});
-
-}
-
 function updateHoverCell(e) {
 
-	if (window.innerWidth <= maxMediaScreenWidth || (editMode !== "note" && editMode !== "barre")) {
+	if (isMobile || (editMode !== "note" && editMode !== "barre")) {
 
 		if (hoverCell !== null) {
 

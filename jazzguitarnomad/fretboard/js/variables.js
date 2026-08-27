@@ -191,6 +191,7 @@ const cmbChords = document.getElementById("cmbChords");
 
 const cmbNoteNames = document.getElementById("cmbNoteNames");
 const chkNoteNames = document.getElementById("chkNoteNames");
+const chkNoteFlat = document.getElementById("chkNoteFlat");
 
 const cmbProjectType = document.getElementById("cmbProjectType");
 
@@ -320,6 +321,7 @@ let scoreLayout = "vertical";
 let swing = false;
 let metronomeOn = true;
 let inlays = true;
+let notation = "";
 
 let topControlsWasOpen = true;
 let libraryWasClosed = false;
@@ -543,13 +545,6 @@ const instrumentDefs = {
 };
 
 const fretboardMapNotes = [
-/*
-fretboardMapNotes[0] → 1ª cuerda
-fretboardMapNotes[5] → 6ª cuerda
-// 1ª cuerda, traste 0
-fretboardMapNotes[0][0]; // E
-*/
-
   // 1ª cuerda (E4)
   ["E4","F4","F#4","G4","G#4","A4","A#4","B4","C5","C#5","D5","D#5","E5","F5","F#5","G5","G#5","A5","A#5","B5","C6","C#6","D6","D#6","E6"],
 
@@ -567,4 +562,24 @@ fretboardMapNotes[0][0]; // E
 
   // 6ª cuerda (E2)
   ["E2","F2","F#2","G2","G#2","A2","A#2","B2","C3","C#3","D3","D#3","E3","F3","F#3","G3","G#3","A3","A#3","B3","C4","C#4","D4","D#4","E4"]
+];
+
+const fretboardMapNotesFlats = [
+  // 1ª cuerda (E4)
+  ["E4","F4","G♭4","G4","A♭4","A4","B♭4","B4","C5","D♭5","D5","E♭5","E5","F5","G♭5","G5","A♭5","A5","B♭5","B5","C6","D♭6","D6","E♭6","E6"],
+
+  // 2ª cuerda (B3)
+  ["B3","C4","D♭4","D4","E♭4","E4","F4","G♭4","G4","A♭4","A4","B♭4","B4","C5","D♭5","D5","E♭5","E5","F5","G♭5","G5","A♭5","A5","B♭5","B5"],
+
+  // 3ª cuerda (G3)
+  ["G3","A♭3","A3","B♭3","B3","C4","D♭4","D4","E♭4","E4","F4","G♭4","G4","A♭4","A4","B♭4","B4","C5","D♭5","D5","E♭5","E5","F5","G♭5"],
+
+  // 4ª cuerda (D3)
+  ["D3","E♭3","E3","F3","G♭3","G3","A♭3","A3","B♭3","B3","C4","D♭4","D4","E♭4","E4","F4","G♭4","G4","A♭4","A4","B♭4","B4","C5","D♭5","D5"],
+
+  // 5ª cuerda (A2)
+  ["A2","B♭2","B2","C3","D♭3","D3","E♭3","E3","F3","G♭3","G3","A♭3","A3","B♭3","B3","C4","D♭4","D4","E♭4","E4","F4","G♭4","G4","A♭4","A4"],
+
+  // 6ª cuerda (E2)
+  ["E2","F2","G♭2","G2","A♭2","A2","B♭2","B2","C3","D♭3","D3","E♭3","E3","F3","G♭3","G3","A♭3","A3","B♭3","B3","C4","D♭4","D4","E♭4","E4"]
 ];
