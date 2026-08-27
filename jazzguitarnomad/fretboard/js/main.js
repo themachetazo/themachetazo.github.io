@@ -327,7 +327,7 @@ function configureUserControls(){
 function setMenu(m){
 
 	// alternar abrir-cerrar si se pulsa el mismo menú
-	if (menuOpen === m) {
+	if (!isMobile && menuOpen === m) {
 
 		if (topControlsContainer.classList.contains("isOpen")) {
 
@@ -516,9 +516,6 @@ function setMenu(m){
 
 			break;
 	}
-
-	// En móvil, cerrar el menú desplegable al seleccionar una opción
-	menuPopup.classList.remove("isOpen");
 
 	openTopControls();
 
@@ -925,6 +922,7 @@ function resetControlsValues(state){
 		nutNotes = Array(stringCount).fill(null);
 
 		aSequence = buildOrderedSequence();
+
 		aChords = buildOrderedChords();
 
 		loadArrayNotas();
@@ -1066,13 +1064,13 @@ function setControlsEnabled(enabled) {
 	span.style.opacity = enabled ? 1 : "0.55";
     });
 
-    if (enabled){
-
-	cmbChords.disabled = cmbProjectType.value !== "chord" ? true : false;
-	btnNewChord.disabled = cmbProjectType.value !== "chord" ? true : false;
-	btnDelChord.disabled = cmbProjectType.value !== "chord" ? true : false;
+    if (enabled) setProjectTypeControlsDisabled();
+/*
+	cmbChords.disabled = projectType !== "chord" ? true : false;
+	btnNewChord.disabled = projectType !== "chord" ? true : false;
+	btnDelChord.disabled = projectType !== "chord" ? true : false;
     }
-
+*/
 }
 
 function updateFigureOptions() {
@@ -1523,12 +1521,6 @@ function parseBoolean(value, defaultValue = false) {
 	return Boolean(value);
 }
 
-
-
-//==================================================
-// CLIPBOARD
-//==================================================
-
 async function copyCanvasToClipboard() {
 
     try {
@@ -1643,6 +1635,512 @@ function showAlert(message, type = "success", duration = 2500) {
 		appAlert.classList.remove("show");
 
 	}, duration);
+
+}
+
+
+function getMaxOrder() {
+
+	let maxOrder = -1;
+
+	notes.forEach(note => {
+
+		if (note && Number(note.order) > maxOrder) {
+			maxOrder = Number(note.order);
+		}
+
+	});
+
+	barreNotes.forEach(barre => {
+
+		if (barre && Number(barre.order) > maxOrder) {
+			maxOrder = Number(barre.order);
+		}
+
+	});
+
+	nutNotes.forEach(note => {
+
+		if (note && Number(note.order) > maxOrder) {
+			maxOrder = Number(note.order);
+		}
+
+	});
+
+	return maxOrder + 1;
+
+}
+
+function buildOrderedSequence() {
+
+	const result = [];
+
+	// --------------------------------
+	// MAPA DE NOTAS SEGÚN NOTACIÓN
+	// --------------------------------
+
+	const noteMap = chkNoteFlat.checked ? fretboardMapNotesFlats : fretboardMapNotes;
+
+	// --------------------------------
+	// NOTAS DEL MÁSTIL
+	// --------------------------------
+
+	notes.forEach(note => {
+
+		const string = Number(note.string);
+		const fret = Number(note.fret);
+		const order = Number(note.order);
+
+		if (string >= 0 && string < noteMap.length && fret >= 0 && fret < noteMap[string].length) {
+
+			result.push({
+				type: "note",
+				string: string,
+				fret: fret,
+				note: noteMap[string][fret],
+				order: order
+			});
+
+		}
+
+	});
+
+	// --------------------------------
+	// NOTAS DE LA CEJUELA
+	// --------------------------------
+
+	nutNotes.forEach((note, string) => {
+
+		if (!note) return;
+
+		if (string >= 0 && string < noteMap.length) {
+
+			result.push({
+				type: "note",
+				string: string,
+				fret: 0,
+				note: noteMap[string][0],
+				order: Number(note.order)
+			});
+
+		}
+
+	});
+
+	// --------------------------------
+	// CEJILLAS
+	// --------------------------------
+
+	barreNotes.forEach(barre => {
+
+		const fret = Number(barre.fret);
+		const startString = Number(barre.startString);
+		const order = Number(barre.order);
+
+		if (fret < 0 || fret >= 25 || startString < 0 || startString >= noteMap.length) return;
+
+		const barreItems = [];
+
+		// --------------------------------
+		// CONSTRUIR BLOQUE DE LA CEJILLA
+		// --------------------------------
+
+		for (let string = startString; string >= 0; string--) {
+
+			// --------------------------------
+			// BUSCAR NOTA QUE ANULA LA CEJILLA
+			// --------------------------------
+
+			const overridingNote = notes
+				.filter(note => {
+
+					return Number(note.string) === string && Number(note.order) > order;
+
+				})
+				.sort((a, b) => {
+
+					return Number(a.order) - Number(b.order);
+
+				})
+				[0];
+
+			// --------------------------------
+			// SI EXISTE UNA NOTA EXPLÍCITA
+			// QUE ANULA LA CEJILLA
+			// --------------------------------
+
+			if (overridingNote) {
+
+				const explicitFret = Number(overridingNote.fret);
+				const explicitOrder = Number(overridingNote.order);
+
+				if (explicitFret >= 0 && explicitFret < noteMap[string].length) {
+
+					const explicitIndex = result.findIndex(item => {
+
+						return item.type === "note" && item.string === string && item.order === explicitOrder;
+
+					});
+
+					if (explicitIndex !== -1) {
+
+						const explicitItem = result.splice(explicitIndex, 1)[0];
+
+						barreItems.push({
+
+							type: "barreNote",
+							string: string,
+							fret: explicitFret,
+							note: noteMap[string][explicitFret],
+							order: explicitOrder
+
+						});
+
+					}
+
+				}
+
+				continue;
+
+			}
+
+			// --------------------------------
+			// GENERAR NOTA DE LA CEJILLA
+			// --------------------------------
+
+			barreItems.push({
+
+				type: "barreNote",
+				string: string,
+				fret: fret,
+				note: noteMap[string][fret],
+				order: order
+
+			});
+
+		}
+
+		// --------------------------------
+		// ORDENAR BLOQUE DE LA CEJILLA
+		// GRAVE → AGUDO
+		// --------------------------------
+
+		barreItems.sort((a, b) => {
+
+			return b.string - a.string;
+
+		});
+
+		// --------------------------------
+		// AÑADIR CEJILLA COMO BLOQUE
+		// --------------------------------
+
+		result.push({
+
+			type: "barre",
+			order: order,
+			items: barreItems
+
+		});
+
+	});
+
+	// --------------------------------
+	// ORDENAR ELEMENTOS PRINCIPALES
+	// --------------------------------
+
+	result.sort((a, b) => {
+
+		return a.order - b.order;
+
+	});
+
+	// --------------------------------
+	// CONSTRUIR RESULTADO FINAL
+	// --------------------------------
+
+	const finalResult = [];
+
+	result.forEach(item => {
+
+		// --------------------------------
+		// BLOQUE DE CEJILLA
+		// --------------------------------
+
+		if (item.type === "barre") {
+
+			item.items.forEach(barreItem => {
+
+				finalResult.push({
+
+					string: barreItem.string,
+					fret: barreItem.fret,
+					note: barreItem.note
+
+				});
+
+			});
+
+			return;
+
+		}
+
+		// --------------------------------
+		// NOTA NORMAL
+		// --------------------------------
+
+		finalResult.push({
+
+			string: item.string,
+			fret: item.fret,
+			note: item.note
+
+		});
+
+	});
+
+	return finalResult;
+
+}
+
+function buildOrderedChords() {
+
+	const result = [];
+
+	// --------------------------------
+	// MAPA DE NOTAS SEGÚN NOTACIÓN
+	// --------------------------------
+
+	const noteMap = chkNoteFlat.checked ? fretboardMapNotesFlats : fretboardMapNotes;
+
+	// --------------------------------
+	// AGRUPAR NOTAS EXPLÍCITAS
+	// --------------------------------
+
+	const chordNotes = {};
+
+	notes.forEach(note => {
+
+		const chord = Number(note.chord);
+
+		if (!Number.isInteger(chord)) return;
+
+		if (!chordNotes[chord]) chordNotes[chord] = [];
+
+		chordNotes[chord].push(note);
+
+	});
+
+	// --------------------------------
+	// AGRUPAR NUT NOTES
+	// --------------------------------
+
+	nutNotes.forEach((note, string) => {
+
+		if (!note) return;
+
+		const chord = Number(note.chord);
+
+		if (!Number.isInteger(chord)) return;
+
+		if (!chordNotes[chord]) chordNotes[chord] = [];
+
+		chordNotes[chord].push({
+			string: string,
+			fret: 0,
+			chord: chord,
+			order: note.order
+		});
+
+	});
+
+	// --------------------------------
+	// AGRUPAR BARRES
+	// --------------------------------
+
+	const chordBarres = {};
+
+	barreNotes.forEach(barre => {
+
+		const chord = Number(barre.chord);
+
+		if (!Number.isInteger(chord)) return;
+
+		if (!chordBarres[chord]) chordBarres[chord] = [];
+
+		chordBarres[chord].push(barre);
+
+	});
+
+	// --------------------------------
+	// PROCESAR CADA ACORDE
+	// --------------------------------
+
+	Object.keys(chordNotes)
+		.map(Number)
+		.sort((a, b) => a - b)
+		.forEach(chord => {
+
+			const chordItems = [];
+
+			// --------------------------------
+			// NOTAS EXPLÍCITAS
+			// --------------------------------
+
+			chordNotes[chord].forEach(note => {
+
+				const string = Number(note.string);
+				const fret = Number(note.fret);
+				const order = Number(note.order);
+
+				if (string >= 0 && string < noteMap.length && fret >= 0 && fret < noteMap[string].length) {
+
+					chordItems.push({
+						chord: chord,
+						string: string,
+						fret: fret,
+						note: noteMap[string][fret],
+						order: order,
+						isBarreBlock: false
+					});
+
+				}
+
+			});
+
+			// --------------------------------
+			// BARRES
+			// --------------------------------
+
+			(chordBarres[chord] || []).forEach(barre => {
+
+				const fret = Number(barre.fret);
+				const startString = Number(barre.startString);
+				const order = Number(barre.order);
+
+				if (fret < 0 || fret >= 25 || startString < 0 || startString >= noteMap.length) return;
+
+				const barreItems = [];
+
+				// --------------------------------
+				// GENERAR NOTAS DE LA BARRE
+				// --------------------------------
+
+				for (let string = startString; string >= 0; string--) {
+
+					// --------------------------------
+					// BUSCAR NOTA EXPLÍCITA
+					// DEL MISMO ACORDE Y CUERDA
+					// --------------------------------
+
+					const explicitNote = chordNotes[chord].find(note => {
+
+						return Number(note.string) === string;
+
+					});
+
+					if (explicitNote) {
+
+						const explicitFret = Number(explicitNote.fret);
+
+						if (explicitFret >= 0 && explicitFret < noteMap[string].length) {
+
+							const explicitOrder = Number(explicitNote.order);
+
+							const explicitIndex = chordItems.findIndex(item => {
+
+								return item.string === string && item.order === explicitOrder;
+
+							});
+
+							if (explicitIndex !== -1) {
+
+								const explicitItem = chordItems.splice(explicitIndex, 1)[0];
+
+								explicitItem.isBarreBlock = true;
+
+								barreItems.push(explicitItem);
+
+							}
+
+						}
+
+						continue;
+
+					}
+
+					// --------------------------------
+					// CREAR NOTA GENERADA POR BARRE
+					// --------------------------------
+
+					barreItems.push({
+						chord: chord,
+						string: string,
+						fret: fret,
+						note: noteMap[string][fret],
+						order: order,
+						isBarreBlock: true
+					});
+
+				}
+
+				// --------------------------------
+				// ORDENAR BLOQUE DE LA BARRE
+				// GRAVE → AGUDO
+				// --------------------------------
+
+				barreItems.sort((a, b) => {
+
+					return b.string - a.string;
+
+				});
+
+				// --------------------------------
+				// AÑADIR BLOQUE
+				// --------------------------------
+
+				chordItems.push(...barreItems);
+
+			});
+
+			// --------------------------------
+			// ORDEN GENERAL
+			// --------------------------------
+
+			chordItems.sort((a, b) => {
+
+				// Si los dos elementos pertenecen
+				// a un bloque de barre, por cuerda
+
+				if (a.isBarreBlock && b.isBarreBlock) return b.string - a.string;
+
+				// Los demás elementos siguen
+				// su order original
+
+				return a.order - b.order;
+
+			});
+
+			// --------------------------------
+			// AÑADIR AL RESULTADO
+			// --------------------------------
+
+			result.push(...chordItems);
+
+		});
+
+	// --------------------------------
+	// ELIMINAR DATOS INTERNOS
+	// --------------------------------
+
+	return result.map(item => ({
+
+		chord: item.chord,
+		string: item.string,
+		fret: item.fret,
+		note: item.note
+
+	}));
 
 }
 

@@ -433,8 +433,16 @@ chkNoteNames.addEventListener("change",()=>{
 
 chkNoteFlat.addEventListener("change",()=>{
 
+	aSequence = buildOrderedSequence();
+
+	aChords = buildOrderedChords();
+
+	loadArrayNotas();
+
 	drawFretboard();
 	drawNotes();
+
+	if (isScoreVisible) scoreRender();
 
 });
 
@@ -513,6 +521,13 @@ btnMenuSelector.addEventListener("click", () => {
 
 		closeTopControls();
 
+		menuPopup.classList.remove("isOpen");
+
+		menuSelectorText.textContent = "MENÚ";
+		menuSelectorIcon.className = "fa-solid fa-gear fa-fw";
+
+		return;
+
 	}
 
 	menuPopup.classList.toggle("isOpen");
@@ -529,6 +544,7 @@ menuPopup.querySelectorAll("button").forEach(button=>{
 		setMenu(button.dataset.menu);
 
 		menuPopup.classList.remove("isOpen");
+
 	});
 
 });

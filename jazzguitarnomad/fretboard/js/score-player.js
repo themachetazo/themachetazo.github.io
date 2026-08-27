@@ -212,143 +212,6 @@ function organizeChords(direction, playLast = true) {
 
 }
 
-/*
-function loadArrays(mode) {
-
-    NOTAS = [];
-    ACORDES = [];
-
-    let sequence;
-    let chords;
-
-    switch (mode) {
-
-        case "up":
-            sequence = sequenceUp;
-            chords = chordsUp;
-            break;
-
-        case "down":
-            sequence = sequenceDown;
-            chords = chordsDown;
-            break;
-
-        case "up-down":
-            sequence = sequenceUpDown;
-            chords = chordsUpDown;
-            break;
-
-        case "down-up":
-            sequence = sequenceDownUp;
-            chords = chordsDownUp;
-            break;
-
-    }
-
-    NOTAS = sequence.map(item => item.note);
-    ACORDES = [...chords];
-
-    scoreArray = (projectType === "sequence" ? sequence : chords);
-
-    const result = [];
-    let currentChord = null;
-
-    for (const item of ACORDES) {
-
-        if (item.chord !== currentChord) {
-
-            currentChord = item.chord;
-            result.push([]);
-
-        }
-
-        result[result.length - 1].push(item.note);
-
-    }
-
-    ACORDES = result;
-
-}
-*/
-
-
-/*
-function loadNotas(mode){
-
-    NOTAS = [];
-    ACORDES = [];
-
-    switch (mode) {
-
-        case "up":
-            NOTAS = sequenceUp.map(item => item.note);
-            ACORDES = [...chordsUp];
-            break;
-
-        case "down":
-            NOTAS = sequenceDown.map(item => item.note);
-            ACORDES = [...chordsDown];
-            break;
-
-        case "up-down":
-            NOTAS = sequenceUpDown.map(item => item.note);
-            ACORDES = [...chordsUpDown];
-            break;
-
-        case "down-up":
-            NOTAS = sequenceDownUp.map(item => item.note);
-            ACORDES = [...chordsDownUp];
-            break;
-
-    }
-
-    const result = [];
-
-    let currentChord = null;
-
-    for (const item of ACORDES) {
-
-        if (item.chord !== currentChord) {
-
-            currentChord = item.chord;
-
-            result.push([]);
-
-        }
-
-        result[result.length - 1].push(item.note);
-
-    }
-
-    ACORDES = result;
-
-}
-
-function scoreLoadArray(mode){
-
-    switch (mode) {
-
-        case "up":
-            scoreArray = (projectType === "sequence" ? sequenceUp : chordsUp);
-            break;
-
-        case "down":
-            scoreArray = (projectType === "sequence" ? sequenceDown : chordsDown);
-            break;
-
-        case "up-down":
-            scoreArray = (projectType === "sequence" ? sequenceUpDown : chordsUpDown);
-            break;
-
-        case "down-up":
-            scoreArray = (projectType === "sequence" ? sequenceDownUp : chordsDownUp);
-            break;
-
-    }
-
-}
-*/
-
 function setPlayerValues(){
 
 	metronome.setBpm(bpm);
@@ -393,7 +256,6 @@ async function playMusic(){
 			sliderMetronomeVolumen.disabled = false;
 			sliderMetronomeVolumen_2.disabled = false;
 
-			workspaceMetronome.style.display = "flex";
 		}
 
 		setPlayStopButton(btnPlayStop, true);
@@ -428,8 +290,7 @@ async function playMusic(){
 	} else {
 
 		// IMPORTANTE:
-		// Cambiar el estado ANTES de player.stop()
-		// porque player.stop() puede emitir "playerBeat: stop".
+		// Cambiar el estado ANTES de player.stop() porque player.stop() puede emitir "playerBeat: stop".
 
 		isPlaying = false;
 
@@ -862,6 +723,53 @@ function vexTab_calcScale(scoreWidth){
 	return scoreScale;
     }
 
+}
+
+function vexTab_convertStringFretToNotes(vexTabText) {
+
+	const noteMap = chkNoteFlat.checked ? fretboardMapNotesFlats : fretboardMapNotes;
+
+	// --------------------------------
+	// BUSCAR LÍNEA DE NOTES
+	// --------------------------------
+
+	const lines = vexTabText.split("\n");
+
+	const notesLineIndex = lines.findIndex(line => line.trim().startsWith("notes "));
+
+	if (notesLineIndex === -1) return vexTabText;
+
+	// --------------------------------
+	// CONVERTIR TRaste/CUERDA
+	// --------------------------------
+
+	lines[notesLineIndex] = lines[notesLineIndex].replace(/\b(\d+)\/(\d+)\b/g, (match, fret, string) => {
+
+		const fretNumber = Number(fret);
+		const stringNumber = Number(string) - 1;
+
+		if (
+			stringNumber < 0 ||
+			stringNumber >= noteMap.length ||
+			fretNumber < 0 ||
+			fretNumber >= noteMap[stringNumber].length
+		) {
+			return match;
+		}
+
+		const note = noteMap[stringNumber][fretNumber];
+
+		const noteMatch = note.match(/^([A-Ga-g])([#b]?)(\d+)$/);
+
+		if (!noteMatch) return match;
+
+		const [, name, accidental, octave] = noteMatch;
+
+		return `${name.toUpperCase()}${accidental}/${octave}`;
+
+	});
+
+	return lines.join("\n");
 }
 
 function vexTab_generateVexTab(data,key = "C",time = "4/4",figure = 1,mode = "sequence") {
@@ -1377,7 +1285,9 @@ async function svg_scoreToPNG(canvas, fileName = "partitura.png") {
 
 async function scoreRender() {
 
-	const vexTabText = vexTab_generateVexTab(scoreArray,cmbTonalidad.value,cmbBar.value,cmbFigure.value,cmbProjectType.value);
+	let vexTabText = vexTab_generateVexTab(scoreArray,cmbTonalidad.value,cmbBar.value,cmbFigure.value,cmbProjectType.value);
+
+//	vexTabText = vexTab_convertStringFretToNotes(vexTabText);
 
 	vexTab_container.classList.remove("layout-left","layout-center");
 
