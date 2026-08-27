@@ -567,7 +567,6 @@ html {
 
 }
 
-
 #workspaceHeader{
 
 	grid-area:workspaceHeader;
@@ -630,45 +629,6 @@ html {
 	text-overflow:ellipsis;
 
 }
-
-/* ===========================
-   METRONOMO TIME LINE
-=========================== */
-
-#metronome_timeline{
-	display:flex;
-	flex-wrap:nowrap;
-	gap:4px;
-	align-items:center;
-	width:max-content;
-}
-
-.metronome_pulse{
-    width:10px;
-    height:10px;
-    border-radius:50%;
-    background:#777;
-    transition:.08s;
-}
-
-.metronome_pulse.metronome_bar{
-    margin-right:10px;
-}
-
-.metronome_pulse.metronome_beat{
-    background:var(--color-main-text);
-}
-
-.metronome_pulse.metronome_sub{
-    background:#555;
-}
-
-.metronome_pulse.metronome_current{
-    background:var(--color-hightlight) !important;
-    transform:scale(1.18);
-    box-shadow:0 0 12px #fff;
-}
-
 
 /* ===========================
    PROJECTS PANEL
@@ -1055,6 +1015,44 @@ html {
 	align-items:center;
 	justify-content:center;
 	gap:20px;
+}
+
+/* ===========================
+   METRONOMO TIME LINE
+=========================== */
+
+#metronome_timeline{
+	display:flex;
+	flex-wrap:nowrap;
+	gap:4px;
+	align-items:center;
+	width:max-content;
+}
+
+.metronome_pulse{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#777;
+    transition:.08s;
+}
+
+.metronome_pulse.metronome_bar{
+    margin-right:10px;
+}
+
+.metronome_pulse.metronome_beat{
+    background:var(--color-main-text);
+}
+
+.metronome_pulse.metronome_sub{
+    background:#555;
+}
+
+.metronome_pulse.metronome_current{
+    background:var(--color-hightlight) !important;
+    transform:scale(1.18);
+    box-shadow:0 0 12px #fff;
 }
 
 
@@ -1562,7 +1560,6 @@ html {
 	white-space:nowrap;
 
 }
-
 
 
 /* ===========================
@@ -2357,6 +2354,9 @@ input[type="range"] {
 
 }
 
+#noteFlat{
+	font-size: 14px;
+}
 
 
 /* ===========================
@@ -2862,6 +2862,9 @@ input[type="range"] {
 
 	}
 
+	#noteFlat{
+		font-size: 11px;
+	}
 }
 
 
