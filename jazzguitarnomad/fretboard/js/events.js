@@ -180,6 +180,8 @@ document.addEventListener("playerBeat", (e) => {
 
 			resetPlaybackTimeline();
 
+			workspaceTimeInfo.style.display = "none";
+
 			setControlsEnabled(true);
 
 			isPlaying = false;
