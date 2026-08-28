@@ -607,7 +607,7 @@ async function initializeProjects() {
 
 function initializeEmptyProject() {
 
-    currentProjectId = generateProjectId();
+    currentProjectId = generateIDKey();
 
     resetControlsValues("init");
 
@@ -787,7 +787,7 @@ function resetControlsValues(state){
 		countBars = 0;
 		repetitionSequence = 2;
 		isFretboardVisible = true;
-		isScoreVisible = false;
+		isScoreVisible = true;
 		tipoSecuencia = "up";
 		swing = false;
 		metronomeOn = true;
@@ -799,11 +799,11 @@ function resetControlsValues(state){
 		notation = "";
 		rotation = 0;
 		rotated = false;
+		scoreLayout = "vertical";
 
 /*
 		fretboardStyle = "maple";
 		showFretNumbers = false;
-		scoreLayout = "vertical";
 		currentInstrument = "piano";
 */
 

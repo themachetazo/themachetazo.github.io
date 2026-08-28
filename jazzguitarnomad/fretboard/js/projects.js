@@ -131,7 +131,7 @@ function newProject() {
 
 	}
 
-	currentProjectId = generateProjectId();
+	currentProjectId = generateIDKey();
 
 	projectModified = false;
 
@@ -254,17 +254,7 @@ async function openXMLProjectsFile() {
 
 		}
 
-//		if (menuOpen !== "edit") setMenu("edit");
-
-		neckImageLoaded = false;
-
-		if (fretboardStyle !== "blank") await loadFretboardImage();
-
-		setPlayerValues();
-
-		if (isFretboardVisible) resizeCanvas();
-
-		if (isScoreVisible) scoreRender();
+		renderProject();
 
 		return true;
 
@@ -767,15 +757,7 @@ function renderProjectsLibrary() {
 
 				if (menuOpen !== "edit") setMenu("edit");
 
-				neckImageLoaded = false;
-
-				if (fretboardStyle !== "blank") await loadFretboardImage();
-
-				setPlayerValues();
-
-				if (isFretboardVisible) resizeCanvas();
-
-				if (isScoreVisible) scoreRender();
+				renderProject();
 
 			});
 
@@ -997,15 +979,7 @@ async function deleteProject(id) {
 	// Crear un proyecto nuevo
 	newProject();
 
-	neckImageLoaded = false;
-
-	if (fretboardStyle !== "blank") await loadFretboardImage();
-
-	setPlayerValues();
-
-	if (isFretboardVisible) resizeCanvas();
-
-	if (isScoreVisible) scoreRender();
+	renderProject();
 
 }
 
@@ -1020,18 +994,15 @@ function escapeXml(value) {
 
 }
 
-function generateProjectId() {
-
-	return crypto.randomUUID().replaceAll("-", "");
-
-}
-
-function generateCategoryId() {
+function generateIDKey() {
 
 //    return crypto.getRandomValues(new BigUint64Array(1))[0].toString();
 //    return crypto.getRandomValues(new Uint32Array(1))[0].toString();
+//	return (crypto.getRandomValues(new Uint32Array(1))[0] % 10000).toString().padStart(4, "0");
 
-	return (crypto.getRandomValues(new Uint32Array(1))[0] % 10000).toString().padStart(4, "0");
+//	return crypto.randomUUID().replaceAll("-", "");
+
+	return crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
 }
 
 function updateSelectedProjectButton() {
@@ -1138,7 +1109,7 @@ function addCategory() {
 
 	if (!newProject()) return;
 
-	const categoryId = generateCategoryId(); //categories.length > 0 ? categories.length + 1 : 1;
+	const categoryId = generateIDKey(); //categories.length > 0 ? categories.length + 1 : 1;
 
 	const category = {
 
@@ -1228,5 +1199,19 @@ function deleteCategory() {
 	}
 
 	saveProjectsFile();
+
+}
+
+function renderProject(){
+
+	setPlayerValues();
+
+	neckImageLoaded = false;
+
+	if (fretboardStyle !== "blank") await loadFretboardImage();
+
+	if (isFretboardVisible) resizeCanvas();
+
+	if (isScoreVisible) scoreRender();
 
 }
