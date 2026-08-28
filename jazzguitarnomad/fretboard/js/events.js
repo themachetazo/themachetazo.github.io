@@ -789,7 +789,9 @@ btnSaveProject.addEventListener("click", async () => {
 });
 
 btnDelProject.addEventListener("click", () => {
+
 	deleteProject(currentProjectId);
+
 });
 
 btnEdit.addEventListener("click", () => {

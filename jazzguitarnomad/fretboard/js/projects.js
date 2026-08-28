@@ -804,16 +804,6 @@ function renderProjectsLibrary() {
 
 					deleteProject(currentProject.id);
 
-					neckImageLoaded = false;
-
-					if (fretboardStyle !== "blank") await loadFretboardImage();
-
-					setPlayerValues();
-
-					if (isFretboardVisible) resizeCanvas();
-
-					if (isScoreVisible) scoreRender();
-
 				});
 
 				item.appendChild(deleteButton);
@@ -1006,6 +996,16 @@ async function deleteProject(id) {
 
 	// Crear un proyecto nuevo
 	newProject();
+
+	neckImageLoaded = false;
+
+	if (fretboardStyle !== "blank") await loadFretboardImage();
+
+	setPlayerValues();
+
+	if (isFretboardVisible) resizeCanvas();
+
+	if (isScoreVisible) scoreRender();
 
 }
 
