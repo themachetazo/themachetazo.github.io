@@ -694,7 +694,7 @@ btnCreate.addEventListener("click", () => {
 
 		const created = createLibrary(nombre);
 
-		if (created) showAlert("Biblioteca '" + libraryNameText.value + "' creada.", "success");
+		if (created) showAlert("Librería '" + libraryNameText.value + "' creada.", "success");
 
 	}
 
@@ -720,7 +720,7 @@ btnShare.addEventListener("click", () => {
 
 		navigator.clipboard.writeText(shareUrl);
 
-		showAlert("URL de la Biblioteca copiada al portapapeles.", "success");
+		showAlert("URL de la Librería copiada al portapapeles.", "success");
 	}
 
 });
@@ -732,7 +732,7 @@ btnOpenProjects.addEventListener("click", async () => {
 	// Preguntar solo si hay cambios sin guardar
 	if (projectModified) {
 
-		if (!confirm("Hay cambios sin guardar que se perderán. ¿Deseas abrir una nueva biblioteca de proyectos?")) {
+		if (!confirm("Hay cambios sin guardar que se perderán. ¿Deseas abrir una nueva librería de proyectos?")) {
 			return;
 		}
 	}
