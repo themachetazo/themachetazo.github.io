@@ -45,8 +45,6 @@ async function initializeApp() {
 
 			await loadFretboardImage();
 
-			console.log("Imágenes cargadas");
-
 			resizeCanvas();
 
 		}
@@ -75,8 +73,6 @@ async function initializeApp() {
 
 			setPlayerValues();
 
-			console.log("Player cargado");
-
 		}
 
 
@@ -92,8 +88,6 @@ async function initializeApp() {
 
 			loadArrayNotas();
 
-			console.log("Notas cargadas");
-
 		}
 
 
@@ -107,8 +101,6 @@ async function initializeApp() {
 
 			scrollToFretboardNut();
 
-			console.log("Mástil renderizado");
-		
 		}
 
 
@@ -118,13 +110,7 @@ async function initializeApp() {
 
 			setLoadingProgress(90, "Renderizando partitura...");
 
-			if (isScoreVisible) {
-
-				scoreRender();
-
-				console.log("Partitura renderizada");
-
-			}
+			if (isScoreVisible) scoreRender();
 
 		}
 
@@ -163,6 +149,7 @@ function getURLParams(){
 function setUserState(){
 
 	isMobile = window.innerWidth <= maxMediaScreenWidth;
+	isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
 
 	isUserActive = true;
 
@@ -222,8 +209,6 @@ function configureUserControls(){
 
 		btnProyectos.style.display = "none";
 		btnProyectosPopup.style.display = "none";
-		btnAudio.style.display = "none";
-		btnAudioPopup.style.display = "none";
 
 		btnUser.classList.remove("admin");
 		btnUser.classList.add("user");
@@ -281,6 +266,10 @@ function configureUserControls(){
 			btnFretboardPopup.disabled = false;
 			btnScorePopup.disabled = false;
 			btnPlayerPopup.disabled = false;
+			btnAudio.style.display = "none";
+			btnAudioPopup.style.display = "none";
+
+			btnMenuSelector.disabled = false;
 
 			btnShowProjectPanel.disabled = false;
 			btnToggleLibrary.disabled = false;
@@ -327,7 +316,7 @@ function configureUserControls(){
 function setMenu(m){
 
 	// alternar abrir-cerrar si se pulsa el mismo menú
-	if (!isMobile && menuOpen === m) {
+	if (btnMenuSelector.style.display === "none" && menuOpen === m) {
 
 		if (topControlsContainer.classList.contains("isOpen")) {
 
@@ -811,10 +800,10 @@ function resetControlsValues(state){
 		key = "C";
 		scoreStaves = "all";
 		notation = "";
-
-/*
 		rotation = 0;
 		rotated = false;
+
+/*
 		fretboardStyle = "maple";
 		showFretNumbers = false;
 		scoreLayout = "vertical";
@@ -1239,7 +1228,7 @@ function setEditMode(newMode) {
 
 			if (!isMobile) {
 				noteText.value = "";
-				noteText.focus();
+				noteText.focus({ preventScroll: true });
 			}
 
 			break;

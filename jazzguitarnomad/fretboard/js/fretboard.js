@@ -2595,7 +2595,8 @@ function drawNutHover() {
 
 function drawNotes() {
 
-	// Notas normales
+	drawBarres();
+
 	notes.forEach(note => {
 
 		const p = getCellCenter(note.string, note.fret);
@@ -2604,9 +2605,8 @@ function drawNotes() {
 
 	});
 
-	// Elementos superpuestos
-	drawBarres();
 	drawNutNotes();
+
 	drawNutHover();
 	drawHoverMarker();
 

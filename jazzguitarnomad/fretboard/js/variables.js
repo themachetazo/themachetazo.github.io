@@ -250,6 +250,7 @@ const btnScoreVisible = document.getElementById("btnScoreVisible");
 ==================================================*/
 
 let isMobile = false;
+let isTouchDevice = false;
 
 let appMode = "Designer";
 

@@ -725,51 +725,133 @@ function vexTab_calcScale(scoreWidth){
 
 }
 
-function vexTab_convertStringFretToNotes(vexTabText) {
+function vexTab_convertStringFretToNotes(vexTabText, mode = "sequence") {
 
-	const noteMap = chkNoteFlat.checked ? fretboardMapNotesFlats : fretboardMapNotes;
+	const noteMap = fretboardMapNotesFlats;
 
-	// --------------------------------
-	// BUSCAR LÍNEA DE NOTES
-	// --------------------------------
+	// ------------------------------------------------
+	// CONVERTIR TRASTE/CUERDA
+	// ------------------------------------------------
 
-	const lines = vexTabText.split("\n");
+	function convertPosition(value) {
 
-	const notesLineIndex = lines.findIndex(line => line.trim().startsWith("notes "));
+		const match = value.match(/^(\d+)\/(\d+)$/);
 
-	if (notesLineIndex === -1) return vexTabText;
+		if (!match) return null;
 
-	// --------------------------------
-	// CONVERTIR TRaste/CUERDA
-	// --------------------------------
+		const fret = Number(match[1]);
+		const string = Number(match[2]) - 1;
 
-	lines[notesLineIndex] = lines[notesLineIndex].replace(/\b(\d+)\/(\d+)\b/g, (match, fret, string) => {
-
-		const fretNumber = Number(fret);
-		const stringNumber = Number(string) - 1;
-
-		if (
-			stringNumber < 0 ||
-			stringNumber >= noteMap.length ||
-			fretNumber < 0 ||
-			fretNumber >= noteMap[stringNumber].length
-		) {
-			return match;
+		if (string < 0 || string >= noteMap.length || fret < 0 || fret >= noteMap[string].length) {
+			return null;
 		}
 
-		const note = noteMap[stringNumber][fretNumber];
+		const note = noteMap[string][fret];
+		const matchNote = note.match(/^([A-G])([#b]?)(\d+)$/);
 
-		const noteMatch = note.match(/^([A-Ga-g])([#b]?)(\d+)$/);
+		if (!matchNote) return null;
 
-		if (!noteMatch) return match;
+		const [, name, accidental, octave] = matchNote;
 
-		const [, name, accidental, octave] = noteMatch;
+		return {
+			name: (name + accidental).replace("b", "@"),
+			octave: Number(octave) + 1
+		};
+	}
 
-		return `${name.toUpperCase()}${accidental}/${octave}`;
+	// ------------------------------------------------
+	// CONVERTIR SECUENCIA
+	// ------------------------------------------------
 
-	});
+	function convertSequence(sequence) {
 
-	return lines.join("\n");
+		const positions = sequence.match(/\d+\/\d+/g);
+
+		if (!positions) return sequence;
+
+		const notes = positions.map(convertPosition);
+
+		if (notes.some(note => !note)) return sequence;
+
+		return notes.map((note, index) => {
+
+			const next = notes[index + 1];
+
+			const octaveChanged = !next || next.octave !== note.octave;
+
+			return note.name + (octaveChanged ? "/" + note.octave : "");
+
+		}).join("-");
+	}
+
+	// ------------------------------------------------
+	// CONVERTIR ACORDE
+	// ------------------------------------------------
+
+	function convertChord(chord) {
+
+		return chord.replace(/\d+\/\d+/g, value => {
+
+			const note = convertPosition(value);
+
+			if (!note) return value;
+
+			return `${note.name}/${note.octave}`;
+
+		});
+	}
+
+	// ------------------------------------------------
+	// PROCESAR LÍNEA NOTES
+	// ------------------------------------------------
+
+	function processNotesLine(line) {
+
+		const prefix = line.match(/^(\s*notes\s+)/);
+
+		if (!prefix) return line;
+
+		const content = line.substring(prefix[1].length);
+
+		const bars = content.split("|");
+
+		const processedBars = bars.map(bar => {
+
+			// ----------------------------------------
+			// ACORDES
+			// ----------------------------------------
+
+			bar = bar.replace(/\(([^()]*)\)/g, (match, chordContent) => {
+
+				return "(" + convertChord(chordContent) + ")";
+
+			});
+
+			// ----------------------------------------
+			// SECUENCIAS
+			// ----------------------------------------
+
+			bar = bar.replace(/\d+\/\d+(?:\s+\d+\/\d+)*/g, match => {
+
+				return convertSequence(match);
+
+			});
+
+			return bar;
+
+		});
+
+		return prefix[1] + processedBars.join("|");
+	}
+
+	// ------------------------------------------------
+	// PROCESAR TODAS LAS LÍNEAS NOTES
+	// ------------------------------------------------
+
+	return vexTabText
+		.split("\n")
+		.map(line => line.trimStart().startsWith("notes ") ? processNotesLine(line) : line)
+		.join("\n");
 }
 
 function vexTab_generateVexTab(data,key = "C",time = "4/4",figure = 1,mode = "sequence") {
@@ -1287,7 +1369,7 @@ async function scoreRender() {
 
 	let vexTabText = vexTab_generateVexTab(scoreArray,cmbTonalidad.value,cmbBar.value,cmbFigure.value,cmbProjectType.value);
 
-	console.log(vexTab_convertStringFretToNotes(vexTabText));
+	if (chkNoteFlat.checked && cmbScoreStaves.value !== "tablature") vexTabText = vexTab_convertStringFretToNotes(vexTabText);
 
 	vexTab_container.classList.remove("layout-left","layout-center");
 

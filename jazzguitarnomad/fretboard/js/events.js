@@ -10,7 +10,16 @@ window.addEventListener("resize", () => {
 
 	isMobile = window.innerWidth <= maxMediaScreenWidth;
 
-	if (!isMobile) updateTopBarMenu();
+	updateTopBarMenu();
+
+	if (isMobile && !topControlsContainer.classList.contains("isOpen")){
+
+		menuPopup.classList.remove("isOpen");
+
+		menuSelectorText.textContent = "MENÚ";
+		menuSelectorIcon.className = "fa-solid fa-gear fa-fw";
+
+	}
 
 	if (!isPlaying && isFretboardVisible) resizeCanvas();
 
@@ -36,17 +45,77 @@ window.addEventListener("orientationchange", () => {
 
 });
 
-document.addEventListener("keydown",(e)=>{
+document.addEventListener("keydown", e => {
 
-	if (editMode === "view") return;
+	if (!isUserActive || isPlaying) return;
 
-	const isUndoShortcut = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z";
+	if (e.code === "Space") {
 
-	if (!isUndoShortcut) return;
+		e.preventDefault();
 
-	e.preventDefault();
+		if (!btnPlayStop.disabled) btnPlayStop.click();
 
-	undo();
+		return;
+	}
+
+	if (!e.ctrlKey && !e.metaKey) return;
+
+	switch (e.key.toLowerCase()) {
+
+		case "p":
+
+			e.preventDefault();
+
+			if (!btnNewProject.disabled) {
+				if (isAdmin) {
+					if (menuOpen !== "projects") setMenu("projects");
+				}else{
+					if (menuOpen !== "edit") setMenu("edit");
+				}
+				btnNewProject.click();
+			}
+
+			break;
+
+		case "s":
+
+			e.preventDefault();
+
+			if (isAdmin && !btnSaveProject.disabled) btnSaveProject.click();
+
+			break;
+
+		case "a":
+
+			e.preventDefault();
+
+			if (isAdmin) {
+				if (menuOpen !== "projects") setMenu("projects");
+				btnOpenProjects.click();
+			}
+
+			break;
+
+		case "e":
+
+			e.preventDefault();
+
+			if (!btnEdit.disabled) {
+				if (menuOpen !== "edit") setMenu("edit");
+				if (editMode !== "edit") btnEdit.click();
+			}
+
+			break;
+
+		case "z":
+
+			e.preventDefault();
+
+			if (editMode !== "view") undo();
+
+			break;
+
+	}
 
 });
 
@@ -216,7 +285,7 @@ document.addEventListener("playerBeat", (e) => {
 
 canvas.addEventListener("mouseenter", () => {
 
-	if (isMobile) {
+	if (isTouchDevice) {
 		cursor.style.display = "none";
 	}else{
 		cursor.style.display = "block";
@@ -242,7 +311,7 @@ canvas.addEventListener("mouseleave", () => {
 
 canvas.addEventListener("mousemove", (e) => {
 
-	if (isMobile) {
+	if (isTouchDevice) {
 
 		cursor.style.display = "none";
 
@@ -303,7 +372,7 @@ canvas.addEventListener("click", (e) => {
 				order: noteOrder
 			};
 
-			if (!isMobile) noteText.focus();
+			if (!isMobile) noteText.focus({ preventScroll: true });
 			noteText.value = "";
 
 		} else if (editMode === "erase") {
@@ -395,11 +464,9 @@ canvas.addEventListener("click", (e) => {
 
 	}
 
-	// Redibujar una vez, después de editar o borrar
-	drawFretboard();
-	drawNotes();
-
-	if (!isMobile && editMode !== "erase") noteText.focus();
+	if (!isMobile && editMode !== "erase") {
+		noteText.focus({ preventScroll: true });
+	}
 	noteText.value = "";
 
 	aSequence = buildOrderedSequence();
@@ -407,6 +474,10 @@ canvas.addEventListener("click", (e) => {
 	aChords = buildOrderedChords();
 
 	loadArrayNotas();
+
+	// Redibujar una vez, después de editar o borrar
+	drawFretboard();
+	drawNotes();
 
 	if (isScoreVisible) scoreRender();
 
@@ -1007,10 +1078,7 @@ cmbProjectType.addEventListener("change", function () {
 	const oldType = projectType;
 	const newType = this.value;
 
-	if (
-		(oldType === "chord" && newType !== "chord") ||
-		(oldType !== "chord" && newType === "chord")
-	) {
+	if ((oldType === "chord" && newType !== "chord") || (oldType !== "chord" && newType === "chord")) {
 
 		if (!newProject()) {
 
@@ -1019,6 +1087,16 @@ cmbProjectType.addEventListener("change", function () {
 			return;
 
 		}
+
+		aSequence = buildOrderedSequence();
+
+		aChords = buildOrderedChords();
+
+		loadArrayNotas();
+
+		if (isFretboardVisible) resizeCanvas();
+
+		if (isScoreVisible) scoreRender();
 
 	} else {
 
@@ -1042,12 +1120,6 @@ cmbProjectType.addEventListener("change", function () {
 
 		if (newType === "fretboard") isScoreVisible = false;
 	}
-
-	aSequence = buildOrderedSequence();
-
-	aChords = buildOrderedChords();
-
-	loadArrayNotas();
 
 	projectType = newType;
 
@@ -1155,7 +1227,7 @@ btnPlayStop.addEventListener("click", async function () {
 
 	playMusic();
 
-	btnPlayStop.focus({ focusVisible: true });
+	btnPlayStop.focus({ focusVisible: true, preventScroll: true });
 
 });
 
@@ -1163,7 +1235,7 @@ scoreFloatingStopButton.addEventListener("click", async function () {
 
 	playMusic();
 
-	scoreFloatingStopButton.focus({ focusVisible: true });
+	scoreFloatingStopButton.focus({ focusVisible: true, preventScroll: true });
 
 });
 
