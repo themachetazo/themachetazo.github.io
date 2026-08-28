@@ -4,50 +4,6 @@
 // PROYECTOS
 // ==================================================
 
-function createLibrary() {
-
-	const fileName = libraryNameText.value;
-
-	const lines = [];
-
-	lines.push('<?xml version="1.0" encoding="UTF-8"?>');
-
-	lines.push(
-		`<projects ` +
-		`version="1.0" ` +
-		`name="${escapeXml(libraryNameText.value)}" ` +
-		`desc="${escapeXml(libraryDescText.value)}">`
-	);
-
-	lines.push(`</projects>`);
-
-	const xmlContent = lines.join("\n");
-
-	const blob = new Blob(
-		[xmlContent],
-		{ type: "application/xml;charset=utf-8" }
-	);
-
-	const url = URL.createObjectURL(blob);
-
-	const link = document.createElement("a");
-
-	link.href = url;
-
-	link.download = fileName.endsWith(".xml") ? fileName : fileName + ".xml";
-
-	document.body.appendChild(link);
-
-	link.click();
-
-	document.body.removeChild(link);
-
-	URL.revokeObjectURL(url);
-
-	return true;
-
-}
-
 async function loadProject(project) {
 
 	if (!project) return;
@@ -298,7 +254,7 @@ async function openXMLProjectsFile() {
 
 		}
 
-		if (menuOpen !== "edit") setMenu("edit");
+//		if (menuOpen !== "edit") setMenu("edit");
 
 		neckImageLoaded = false;
 
@@ -339,11 +295,9 @@ function parseProjectsXml(xml) {
 
 	libraryName = xml.querySelector("projects")?.getAttribute("name") || "Sin Nombre";
 	libraryNameText.value = libraryName;
-	libraryNameOld = libraryName;
 
 	libraryDesc = xml.querySelector("projects")?.getAttribute("desc") || "";
 	libraryDescText.value = libraryDesc;
-	libraryDescOld = libraryDesc;
 
 	categories = [];
 
@@ -842,7 +796,7 @@ function renderProjectsLibrary() {
 
 				deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
 
-				deleteButton.addEventListener("click", e => {
+				deleteButton.addEventListener("click", async (e) => {
 
 					e.stopPropagation();
 
@@ -850,8 +804,17 @@ function renderProjectsLibrary() {
 
 					deleteProject(currentProject.id);
 
-				});
+					neckImageLoaded = false;
 
+					if (fretboardStyle !== "blank") await loadFretboardImage();
+
+					setPlayerValues();
+
+					if (isFretboardVisible) resizeCanvas();
+
+					if (isScoreVisible) scoreRender();
+
+				});
 
 				item.appendChild(deleteButton);
 			}
@@ -1012,6 +975,7 @@ function downloadBlob(blob, filename) {
 	link.download = filename;
 
 	document.body.appendChild(link);
+
 	link.click();
 	link.remove();
 
@@ -1037,11 +1001,11 @@ async function deleteProject(id) {
 	// Guardar el XML
 	saveProjectsFile();
 
-	// Crear un proyecto nuevo
-	newProject();
-
 	// Actualizar la lista
 	renderProjectsLibrary();
+
+	// Crear un proyecto nuevo
+	newProject();
 
 }
 

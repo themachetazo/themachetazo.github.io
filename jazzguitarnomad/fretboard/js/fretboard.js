@@ -160,7 +160,6 @@ function resizeCanvas() {
 	boardbottom = boardtop + boardHeight;
 
 	drawFretboard();
-
 	drawNotes();
 
 }

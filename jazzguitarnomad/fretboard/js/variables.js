@@ -281,8 +281,7 @@ let xmlType = "Server";
 
 let libraryName = "Sin Nombre";
 let libraryDesc = "Descripción";
-let libraryNameOld = "Sin Nombre";
-let libraryDescOld = "Descripción";
+
 
 /*==================================================
 	CONFIGURACIÓN GENERAL DE LA APLICACIÓN

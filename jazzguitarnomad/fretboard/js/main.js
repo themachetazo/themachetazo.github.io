@@ -259,13 +259,14 @@ function configureUserControls(){
 			btnProyectosPopup.style.display = "none";
 			btnEdicion.style.display = "none";
 			btnEdicionPopup.style.display = "none";
-
 			btnFretboard.disabled = false;
-			btnScore.disabled = false;
-			btnPlayer.disabled = false;
 			btnFretboardPopup.disabled = false;
+			btnScore.disabled = false;
 			btnScorePopup.disabled = false;
+			btnPlayer.disabled = false;
 			btnPlayerPopup.disabled = false;
+			btnMetronome.style.display = "none";
+			btnMetronomePopup.style.display = "none";
 			btnAudio.style.display = "none";
 			btnAudioPopup.style.display = "none";
 
@@ -277,12 +278,11 @@ function configureUserControls(){
 			topFretboardDownload.style.display = "none";
 			topScoreDownload.style.display = "none";
 
-			btnUser.querySelector("i").className = "fa-solid fa-user-lock";
-
 			btnPlayStop.disabled = true;
 
-			btnMetronome.style.display = "none";
-			btnMetronomePopup.style.display = "none";
+			workspaceHeader.style.display = "none";
+
+			btnUser.querySelector("i").className = "fa-solid fa-user-lock";
 
 		}
 
@@ -762,8 +762,7 @@ function parseUsersXml(xml) {
 		pass: node.getAttribute("pass"),
 		permits: node.getAttribute("permits"),
 		active: node.getAttribute("active") === "true",
-		alta: node.getAttribute("alta"),
-		avatar: node.getAttribute("avatar")
+		alta: node.getAttribute("alta")
 	}));
 
 	return u;
@@ -1054,12 +1053,7 @@ function setControlsEnabled(enabled) {
     });
 
     if (enabled) setProjectTypeControlsDisabled();
-/*
-	cmbChords.disabled = projectType !== "chord" ? true : false;
-	btnNewChord.disabled = projectType !== "chord" ? true : false;
-	btnDelChord.disabled = projectType !== "chord" ? true : false;
-    }
-*/
+
 }
 
 function updateFigureOptions() {
@@ -1072,10 +1066,8 @@ function updateFigureOptions() {
             <option value="2">Corchea</option>
             <option value="4">Semicorchea</option>
         `;
-//	cmbFigure.disabled = false;
     } else if (denominator === "8") {
         cmbFigure.innerHTML = `<option value="2">Corchea</option>`;
-//	cmbFigure.disabled = true;
     }
     const option = cmbFigure.querySelector(`option[value="${previousValue}"]`);
     if (option) option.selected = true;
@@ -2636,5 +2628,48 @@ function getNoteText(x,y,text,isNut = false){
 	}
 
 	return text;
+
+}
+
+
+function createLibrary(fileName) {
+
+	const lines = [];
+
+	lines.push('<?xml version="1.0" encoding="UTF-8"?>');
+
+	lines.push(
+		`<projects ` +
+		`version="1.0" ` +
+		`name="${fileName}" ` +
+		`desc="">`
+	);
+
+	lines.push(`</projects>`);
+
+	const xmlContent = lines.join("\n");
+
+	const blob = new Blob(
+		[xmlContent],
+		{ type: "application/xml;charset=utf-8" }
+	);
+
+	const url = URL.createObjectURL(blob);
+
+	const link = document.createElement("a");
+
+	link.href = url;
+
+	link.download = fileName + ".xml";
+
+	document.body.appendChild(link);
+
+	link.click();
+
+	document.body.removeChild(link);
+
+	URL.revokeObjectURL(url);
+
+	return true;
 
 }

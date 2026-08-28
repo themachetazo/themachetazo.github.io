@@ -297,15 +297,14 @@ canvas.addEventListener("mouseleave", () => {
 
 	cursor.style.display = "none";
 
-	if (editMode === "view" || (isMobile) || (hoverCell === null && hoverNut === null)) {
-		return;
-	}
-
 	hoverCell = null;
 	hoverNut = null;
 
-	drawFretboard();
-	drawNotes();
+	if (editMode !== "view") {
+
+		drawFretboard();
+		drawNotes();
+	}
 
 });
 
@@ -689,35 +688,13 @@ btnDownloadCanvas.addEventListener("click", () => {
 
 btnCreate.addEventListener("click", () => {
 
-	libraryNameText.disabled = false;
-	libraryDescText.disabled = false;
-	
-	if (libraryNameText.value.trim() === "") {
+	const nombre = prompt("Introduce un Nombre:");
 
-		alert("Intruduce un nombre y descripción para la biblioteca.");
+	if (nombre !== null) {
 
-		libraryNameText.focus();
+		const created = createLibrary(nombre);
 
-		return;
-
-	} else {
-
-		if (!confirm("¿Quieres crear la biblioteca con nombre '" + libraryNameText.value + "' y descripción '" + libraryDescText.value +"'?")) {
-
-			return;
-
-		}
-
-	}
-
-	const created = createLibrary();
-
-	if (created){
-	
-		showAlert("Biblioteca '" + libraryNameText.value + "' creada.", "success");
-
-		libraryNameText.value = libraryNameOld;
-		libraryDescText.value = libraryDescOld;
+		if (created) showAlert("Biblioteca '" + libraryNameText.value + "' creada.", "success");
 
 	}
 
