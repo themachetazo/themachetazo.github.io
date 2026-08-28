@@ -280,8 +280,6 @@ function configureUserControls(){
 
 			btnPlayStop.disabled = true;
 
-			workspaceHeader.style.display = "none";
-
 			btnUser.querySelector("i").className = "fa-solid fa-user-lock";
 
 		}
@@ -1395,11 +1393,7 @@ function setLayout() {
 
 		cursor.style.display = "";
 
-		if (isAdmin) {
-			openTopControls();
-		}else{
-			closeTopControls();
-		}
+		openTopControls();
 
 	}
 
