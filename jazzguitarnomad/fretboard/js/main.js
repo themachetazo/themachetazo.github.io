@@ -800,10 +800,9 @@ function resetControlsValues(state){
 		rotation = 0;
 		rotated = false;
 		scoreLayout = "vertical";
-
+		showFretNumbers = true;
 /*
 		fretboardStyle = "maple";
-		showFretNumbers = false;
 		currentInstrument = "piano";
 */
 
