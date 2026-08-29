@@ -1202,7 +1202,7 @@ function deleteCategory() {
 
 }
 
-function renderProject(){
+async function renderProject(){
 
 	setPlayerValues();
 
