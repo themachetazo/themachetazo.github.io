@@ -135,11 +135,11 @@ const btnRotate = document.getElementById("btnRotate");
 ==================================================*/
 
 const btnCreate = document.getElementById("btnCreate");
+const btnOpen = document.getElementById("btnOpen");
 const btnNewProject = document.getElementById("btnNewProject");
 const btnNewProjectGuest = document.getElementById("btnNewProjectGuest");
 const btnSaveProject = document.getElementById("btnSaveProject");
 const btnDelProject = document.getElementById("btnDelProject");
-const btnOpenProjects = document.getElementById("btnOpenProjects");
 const btnShare = document.getElementById("btnShare");
 const btnCopyCanvas = document.getElementById("btnCopyCanvas");
 const btnDownloadCanvas = document.getElementById("btnDownloadCanvas");
@@ -191,13 +191,13 @@ const cmbChords = document.getElementById("cmbChords");
 
 const cmbNoteNames = document.getElementById("cmbNoteNames");
 const chkNoteNames = document.getElementById("chkNoteNames");
-const chkNoteFlat = document.getElementById("chkNoteFlat");
+const chkNoteAccidentals = document.getElementById("chkNoteAccidentals");
 
 const cmbProjectType = document.getElementById("cmbProjectType");
 
 const cmbBar = document.getElementById("cmbBar");
 const cmbFigure = document.getElementById("cmbFigure");
-const cmbTonalidad = document.getElementById("cmbTonalidad");
+const cmbKey = document.getElementById("cmbKey");
 const cmbTipoSecuencia = document.getElementById("cmbTipoSecuencia");
 
 const sliderBpm = document.getElementById("sliderBpm");
@@ -309,7 +309,7 @@ let projectType = "sequence";
 let countBars = 0;
 let repetitionSequence = 2;
 let isFretboardVisible = true;
-let isScoreVisible = true;
+let isScoreVisible = false;
 let currentInstrument = "piano";
 let tipoSecuencia = "up";
 let fretNumbers = 1;
@@ -583,3 +583,21 @@ const fretboardMapNotesFlats = [
   // 6ª cuerda (E2)
   ["E2","F2","Gb2","G2","Ab2","A2","Bb2","B2","C3","Db3","D3","Eb3","E3","F3","Gb3","G3","Ab3","A3","Bb3","B3","C4","Db4","D4","Eb4","E4"]
 ];
+
+const scales = {
+
+	"C":  ["C",  "D",  "E",  "F",  "G",  "A",  "B"],
+	"Db": ["Db", "Eb", "F",  "Gb", "Ab", "Bb", "C"],
+	"D":  ["D",  "E",  "F#", "G",  "A",  "B",  "C#"],
+	"Eb": ["Eb", "F",  "G",  "Ab", "Bb", "C",  "D"],
+	"E":  ["E",  "F#", "G#", "A",  "B",  "C#", "D#"],
+	"F":  ["F",  "G",  "A",  "Bb", "C",  "D",  "E"],
+	"Gb": ["Gb", "Ab", "Bb", "Cb", "Db", "Eb", "F"],
+	"G":  ["G",  "A",  "B",  "C",  "D",  "E",  "F#"],
+	"Ab": ["Ab", "Bb", "C",  "Db", "Eb", "F",  "G"],
+	"A":  ["A",  "B",  "C#", "D",  "E",  "F#", "G#"],
+	"Bb": ["Bb", "C",  "D",  "Eb", "F",  "G",  "A"],
+	"B":  ["B",  "C#", "D#", "E",  "F#", "G#", "A#"]
+
+};
+//scales["D"][0] // ->"D"

@@ -137,8 +137,6 @@ function newProject() {
 
 	resetControlsValues("newProject");
 
-	showAlert("Nuevo proyecto creado.", "info");
-
 	return true;
 
 }
@@ -416,9 +414,7 @@ function getCurrentProject() {
 
 	const projectTitle = titleText.value.trim();
 
-	let notacion = "";
-
-	if (chkNoteNames.checked) notacion = cmbNoteNames.value + "-" + chkNoteFlat.checked ? "b" : "#";
+	let notacion = chkNoteNames.checked ? cmbNoteNames.value : ""
 
 	if (!projectTitle) {
 		alert("Escribe un título antes de guardar el proyecto.");
@@ -455,7 +451,7 @@ function getCurrentProject() {
 			fretNumbers: numFrets.value,
 			showFretNumbers: showNumber.checked,
 			bpm: sliderBpm.value,
-			key: cmbTonalidad.value,
+			key: cmbKey.value,
 			scoreStaves: cmbScoreStaves.value,
 			scoreLayout: cmbScoreLayout.value,
 			swing: chkPlayerSwing.checked,
@@ -1210,8 +1206,55 @@ async function renderProject(){
 
 	if (fretboardStyle !== "blank") await loadFretboardImage();
 
-	if (isFretboardVisible) resizeCanvas();
+	if (isFretboardVisible) {
+
+		resizeCanvas();
+
+		scrollToFretboardNut();
+	}
 
 	if (isScoreVisible) scoreRender();
+
+}
+
+function createLibrary(fileName) {
+
+	const lines = [];
+
+	lines.push('<?xml version="1.0" encoding="UTF-8"?>');
+
+	lines.push(
+		`<projects ` +
+		`version="1.0" ` +
+		`name="${fileName}" ` +
+		`desc="">`
+	);
+
+	lines.push(`</projects>`);
+
+	const xmlContent = lines.join("\n");
+
+	const blob = new Blob(
+		[xmlContent],
+		{ type: "application/xml;charset=utf-8" }
+	);
+
+	const url = URL.createObjectURL(blob);
+
+	const link = document.createElement("a");
+
+	link.href = url;
+
+	link.download = fileName + ".xml";
+
+	document.body.appendChild(link);
+
+	link.click();
+
+	document.body.removeChild(link);
+
+	URL.revokeObjectURL(url);
+
+	return true;
 
 }

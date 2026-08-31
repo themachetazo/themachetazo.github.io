@@ -91,7 +91,7 @@ document.addEventListener("keydown", e => {
 
 			if (isAdmin) {
 				if (menuOpen !== "projects") setMenu("projects");
-				btnOpenProjects.click();
+				btnOpen.click();
 			}
 
 			break;
@@ -101,8 +101,11 @@ document.addEventListener("keydown", e => {
 			e.preventDefault();
 
 			if (!btnEdit.disabled) {
+
 				if (menuOpen !== "edit") setMenu("edit");
-				if (editMode !== "edit") btnEdit.click();
+
+				if (editMode !== "note") setEditMode("note");
+
 			}
 
 			break;
@@ -121,6 +124,7 @@ document.addEventListener("keydown", e => {
 
 document.addEventListener("click",(e)=>{
 
+	//Cerra el boton de menu cuando se pincha fuera de él
 	if(!menuPopup.contains(e.target) && !btnMenuSelector.contains(e.target)){
 
 		menuPopup.classList.remove("isOpen");
@@ -277,8 +281,6 @@ document.addEventListener("playerBeat", (e) => {
 });
 
 
-
-
 //==================================================
 // EVENTOS DIBUJO CANVAS
 //==================================================
@@ -343,17 +345,13 @@ canvas.addEventListener("click", (e) => {
 	if (editMode === "view") return;
 
 	let chord = cmbChords.value;
-
 	if (cmbProjectType.value !== "chord") chord = "";
 
 	projectModified = true;
 
 	btnPlayStop.disabled = false;
 
-	const nutString = getNutStringFromMouse(
-		e.offsetX,
-		e.offsetY
-	);
+	const nutString = getNutStringFromMouse(e.offsetX,e.offsetY);
 
 	// Zona de la cejuela física
 	if (nutString !== null) {
@@ -394,16 +392,28 @@ canvas.addEventListener("click", (e) => {
 	}
 
 	// Zona de los trastes
-	const cell = getCellFromMouse(
-		e.offsetX,
-		e.offsetY
-	);
+	const cell = getCellFromMouse(e.offsetX,e.offsetY);
 
-	if (!cell) {
-		return;
+	if (!cell) return;
+
+	// Comprobar no repetir nota en acordes
+	let noteChordExists = false;
+	if (cmbProjectType.value === "chord" && editMode !== "erase") {
+
+		noteChordExists = aChords.some(note =>
+			note.string === cell.string &&
+			note.fret === cell.fret &&
+			note.chord === Number(chord)
+		);
+
+		if (noteChordExists) {
+//			showAlert("Esta nota ya existe en el acorde.", "info");
+			return;
+		}
+
 	}
 
-	// Modo Cejilla
+	// Zona de los trastes
 	switch (editMode) {
 
 		case "barre":
@@ -412,15 +422,39 @@ canvas.addEventListener("click", (e) => {
 
 			saveHistory();
 
-			addOrReplaceBarre(cell,chord);
+			// Elimina cualquier cejilla existente en ese traste
+			barreNotes = barreNotes.filter(barre => {
+				return barre.fret !== cell.fret;
+			});
+
+			// Elimina notas normales que quedarían cubiertas por la cejilla
+			notes = notes.filter(note => {
+
+				if (note.fret !== cell.fret) {
+					return true;
+				}
+
+				// La cejilla ocupa desde la cuerda 0 hasta la cuerda pulsada
+				return note.string > cell.string;
+
+			});
+
+			barreNotes.push({
+				fret: cell.fret,
+				startString: cell.string,
+				color: colorPicker.value,
+				text: noteText.value.trim(),
+				chord: chord,
+				order: noteOrder
+			});
 
 			break;
 
 		case "note":
 
-			noteOrder++;
-
 			saveHistory();
+
+			noteOrder++;
 
 			notes.push({
 				string: cell.string,
@@ -450,11 +484,30 @@ canvas.addEventListener("click", (e) => {
 				saveHistory();
 
 				if (noteExists) {
-					eraseNote(cell);
+
+					notes = notes.filter(note => {
+
+						return !(
+							note.string === cell.string &&
+							note.fret === cell.fret
+						);
+
+					});
 				}
 
 				if (barreExists) {
-					removeBarreAtCell(cell.string,cell.fret);
+
+					barreNotes = barreNotes.filter(barre => {
+
+						if (barre.fret !== cell.fret) {
+							return true;
+						}
+
+						// La cejilla ocupa desde la cuerda 0 hasta startString. Se borra si se pulsa cualquier cuerda ocupada por ella.
+						return cell.string > barre.startString;
+
+					});
+
 				}
 
 			}
@@ -472,9 +525,11 @@ canvas.addEventListener("click", (e) => {
 
 	aChords = buildOrderedChords();
 
+console.log(aSequence);
+console.log(aChords);
+
 	loadArrayNotas();
 
-	// Redibujar una vez, después de editar o borrar
 	drawFretboard();
 	drawNotes();
 
@@ -489,30 +544,19 @@ canvas.addEventListener("click", (e) => {
 
 cmbNoteNames.addEventListener("change",()=>{
 
-	drawFretboard();
-	drawNotes();
+	if (isFretboardVisible) {
+		drawFretboard();
+		drawNotes();
+	}
 
 });
 
 chkNoteNames.addEventListener("change",()=>{
 
-	drawFretboard();
-	drawNotes();
-
-});
-
-chkNoteFlat.addEventListener("change",()=>{
-
-	aSequence = buildOrderedSequence();
-
-	aChords = buildOrderedChords();
-
-	loadArrayNotas();
-
-	drawFretboard();
-	drawNotes();
-
-	if (isScoreVisible) scoreRender();
+	if (isFretboardVisible) {
+		drawFretboard();
+		drawNotes();
+	}
 
 });
 
@@ -525,8 +569,6 @@ btnNewChord.addEventListener("click", () => {
 btnDelChord.addEventListener("click", () => {
 
 	delChord();
-
-	if (isFretboardVisible) resizeCanvas();
 
 	if (isScoreVisible) scoreRender();
 
@@ -587,18 +629,7 @@ btnAudio.addEventListener("click", () => {
 
 btnMenuSelector.addEventListener("click", () => {
 
-	if (topControlsContainer.classList.contains("isOpen")) {
-
-		closeTopControls();
-
-		menuPopup.classList.remove("isOpen");
-
-		menuSelectorText.textContent = "MENÚ";
-		menuSelectorIcon.className = "fa-solid fa-gear fa-fw";
-
-		return;
-
-	}
+	if (topControlsContainer.classList.contains("isOpen")) closeTopControls();
 
 	menuPopup.classList.toggle("isOpen");
 
@@ -620,7 +651,9 @@ menuPopup.querySelectorAll("button").forEach(button=>{
 });
 
 cmbDiapason.addEventListener("change", () => {
+
 	setFretboardStyle(cmbDiapason.value);
+
 });
 
 btnShowProjectPanel.addEventListener("click", () => {
@@ -633,19 +666,25 @@ btnToggleLibrary.addEventListener("click", () => {
 
 titleText.addEventListener("input", () => {
 
-    projectTitle = titleText.value.trim() || "Proyecto nuevo sin título";
+	projectTitle = titleText.value.trim() || "Proyecto nuevo sin título";
 
-    workspaceTitleText.textContent = projectTitle;
+	workspaceTitleText.textContent = projectTitle;
 
-    if (isFretboardVisible) resizeCanvas();
+	if (isFretboardVisible) {
+		drawFretboard();
+		drawNotes();
+	}
 
-    if (isScoreVisible) scoreRender();
+	if (isScoreVisible) scoreRender();
 
 });
 
 chkShowTitle.addEventListener("change", () => {
 
-    if (isFretboardVisible) resizeCanvas();
+	if (isFretboardVisible) {
+		drawFretboard();
+		drawNotes();
+	}
 
 });
 
@@ -668,7 +707,11 @@ chkScoreTitleViewMode.addEventListener("change", function () {
 showNumber.addEventListener("change", () => {
 
 	showFretNumbers = !showFretNumbers;
-	if (isFretboardVisible) resizeCanvas();
+
+	if (isFretboardVisible) {
+		drawFretboard();
+		drawNotes();
+	}
 
 });
 
@@ -700,6 +743,29 @@ btnCreate.addEventListener("click", () => {
 
 });
 
+btnOpen.addEventListener("click", async () => {
+
+	openProjectsPanel();
+
+	// Preguntar solo si hay cambios sin guardar
+	if (projectModified) {
+
+		if (!confirm("Hay cambios sin guardar que se perderán. ¿Deseas abrir una nueva librería de proyectos?")) {
+			return;
+		}
+	}
+
+	if (await openXMLProjectsFile()){
+
+		libraryNameText.disabled = false;
+		libraryDescText.disabled = false;
+		btnSaveProject.disabled = false;
+		btnDelProject.disabled = false;
+
+	}
+
+});
+
 libraryNameText.addEventListener("input", () => {
 	projectModified = true;
 	libraryName = libraryNameText.value.trim() || "Sin Nombre";
@@ -725,38 +791,13 @@ btnShare.addEventListener("click", () => {
 
 });
 
-btnOpenProjects.addEventListener("click", async () => {
-
-	openProjectsPanel();
-
-	// Preguntar solo si hay cambios sin guardar
-	if (projectModified) {
-
-		if (!confirm("Hay cambios sin guardar que se perderán. ¿Deseas abrir una nueva librería de proyectos?")) {
-			return;
-		}
-	}
-
-	if (await openXMLProjectsFile()){
-
-		libraryNameText.disabled = false;
-		libraryDescText.disabled = false;
-		btnSaveProject.disabled = false;
-		btnDelProject.disabled = false;
-
-	}
-
-});
-
 btnNewProject.addEventListener("click", () => {
 
 	if (newProject()){
 
-		setPlayerValues();
+		renderProject();
 
-		if (isFretboardVisible) resizeCanvas();
-
-		if (isScoreVisible) scoreRender();
+		showAlert("Nuevo proyecto creado.", "info");
 
 	}
 
@@ -764,15 +805,7 @@ btnNewProject.addEventListener("click", () => {
 
 btnNewProjectGuest.addEventListener("click", () => {
 
-	if (newProject()){
-
-		setPlayerValues();
-
-		if (isFretboardVisible) resizeCanvas();
-
-		if (isScoreVisible) scoreRender();
-
-	}
+	btnNewProject.click();
 
 });
 
@@ -789,9 +822,7 @@ btnSaveProject.addEventListener("click", async () => {
 });
 
 btnDelProject.addEventListener("click", () => {
-
 	deleteProject(currentProjectId);
-
 });
 
 btnEdit.addEventListener("click", () => {
@@ -814,9 +845,36 @@ btnRotate.addEventListener("click", () => {
 
 	rotateFretboard();
 
-	updateOrientationButtons();
+	if (isFretboardVisible) {
+		resizeCanvas();
+		scrollToFretboardNut();
+	}
 
-	if (isFretboardVisible) resizeCanvas();
+	if (isScoreVisible) scoreRender();
+
+});
+
+btnVertical.addEventListener("click", () => {
+
+	setOrientation("vertical");
+
+	if (isFretboardVisible) {
+		resizeCanvas();
+		scrollToFretboardNut();
+	}
+
+	if (isScoreVisible) scoreRender();
+
+});
+
+btnHorizontal.addEventListener("click", () => {
+
+	setOrientation("horizontal");
+
+	if (isFretboardVisible) {
+		resizeCanvas();
+		scrollToFretboardNut();
+	}
 
 	if (isScoreVisible) scoreRender();
 
@@ -859,9 +917,7 @@ sliderFrets.addEventListener("input", () => {
 
 	if (isFretboardVisible) resizeCanvas();
 
-	if (fretCount > previousFretCount) {
-		scrollToFretboardNut();
-	}
+//	if (fretCount > previousFretCount) scrollToFretboardNut();
 
 });
 
@@ -882,9 +938,7 @@ numFrets.addEventListener("change", () => {
 
 	if (isFretboardVisible) resizeCanvas();
 
-	if (fretCount > previousFretCount) {
-		scrollToFretboardNut();
-	}
+//	if (fretCount > previousFretCount) scrollToFretboardNut();
 
 });
 
@@ -899,8 +953,6 @@ btnMoreFrets.addEventListener("click", () => {
 	updateFretNumberControls();
 
 	if (isFretboardVisible) resizeCanvas();
-
-	scrollToFretboardNut();
 
 });
 
@@ -947,13 +999,6 @@ btnLessNumberFrets.addEventListener("click", () => {
 	if (isFretboardVisible) resizeCanvas();
 
 });
-
-
-
-/*============================
-SCORE PLAYER
-==============================*/
-
 
 sliderBpm.addEventListener("input", function () {
 
@@ -1046,9 +1091,14 @@ cmbFigure.addEventListener("change", function () {
 
 });
 
-cmbTonalidad.addEventListener("change", function () {
+cmbKey.addEventListener("change", function () {
 
-    if (isScoreVisible) scoreRender();
+	if (isFretboardVisible){
+		drawFretboard();
+		drawNotes();
+	}
+
+	if (isScoreVisible) scoreRender();
 
 });
 
@@ -1073,7 +1123,10 @@ cmbProjectType.addEventListener("change", function () {
 
 		loadArrayNotas();
 
-		if (isFretboardVisible) resizeCanvas();
+		if (isFretboardVisible) {
+			drawFretboard();
+			drawNotes();
+		}
 
 		if (isScoreVisible) scoreRender();
 
@@ -1220,7 +1273,7 @@ scoreFloatingStopButton.addEventListener("click", async function () {
 
 btnRenderBuffer.addEventListener("click", async function () {
 
-    setControlsEnabled(false);
+//    setControlsEnabled(false);
 
     await Tone.start();
 
@@ -1243,7 +1296,7 @@ btnRenderBuffer.addEventListener("click", async function () {
 
     }
 
-    setControlsEnabled(true);
+//    setControlsEnabled(true);
 
 });
 
@@ -1337,26 +1390,6 @@ btnScoreVisible.addEventListener("click", () => {
 	isScoreVisible = !isScoreVisible;
 
 	setWorkspaceLayout();
-
-	if (isScoreVisible) scoreRender();
-
-});
-
-btnVertical.addEventListener("click", () => {
-
-	setOrientation("vertical");
-
-	if (isFretboardVisible) resizeCanvas();
-
-	if (isScoreVisible) scoreRender();
-
-});
-
-btnHorizontal.addEventListener("click", () => {
-
-	setOrientation("horizontal");
-
-	if (isFretboardVisible) resizeCanvas();
 
 	if (isScoreVisible) scoreRender();
 

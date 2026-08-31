@@ -10,7 +10,7 @@ async function initializeApp() {
 
 		// USUARIO Y CONTROLES ----------------------
 
-		setLoadingProgress(0, "Configurando interface de usuario...");
+		setLoadingProgress(10, "Configurando interface de usuario...");
 
 		getURLParams();
 
@@ -23,18 +23,11 @@ async function initializeApp() {
 
 		// PROJECTS ----------------------
 
-		setLoadingProgress(10, "Cargando proyectos...");
+		setLoadingProgress(20, "Cargando proyectos...");
 
 		await loadXML("project",xmlProjects);
 
 		await initializeProjects();
-
-
-		// LAYOUT ----------------------
-
-		setLoadingProgress(20, "Configurando layout...");
-
-		setLayout();
 
 
 		// IMÁGENES ----------------------
@@ -48,7 +41,6 @@ async function initializeApp() {
 			resizeCanvas();
 
 		}
-
 
 		// PLAYER ----------------------
 
@@ -298,15 +290,30 @@ function configureUserControls(){
 
 	}
 
-	cursor.innerHTML = "";
-
 	workspaceTimeInfo.style.display = "none";
 
 	updateTopBarMenu();
 
-	if (isMobile){
+	cursor.innerHTML = "";
+	cursor.style.color = colorPicker.value;
+
+	if (isMobile) {
+
+		cursor.style.display = "none";
+
 		menuSelectorText.textContent = "MENÚ";
 		menuSelectorIcon.className = "fa-solid fa-gear fa-fw";
+
+		closeProjectsPanel();
+
+		closeTopControls();
+
+	} else {
+
+		cursor.style.display = "";
+
+		openTopControls();
+
 	}
 
 }
@@ -771,8 +778,8 @@ function resetControlsValues(state){
 
 	if (state === "init"){
 
-		orientation = window.innerWidth <= maxMediaScreenWidth ? "vertical" : "horizontal";
-
+		orientation = isMobile ? "vertical" : "horizontal";
+		isScoreVisible = isMobile ? false : true;
 	}
 
 	if (state !== "loadProject"){
@@ -787,21 +794,22 @@ function resetControlsValues(state){
 		countBars = 0;
 		repetitionSequence = 2;
 		isFretboardVisible = true;
-		isScoreVisible = true;
+		key = "C";
 		tipoSecuencia = "up";
 		swing = false;
 		metronomeOn = true;
 		inlays = true;
 		fretNumbers = 1;
+		showFretNumbers = true;
 		bpm = 90;
-		key = "C";
 		scoreStaves = "all";
 		notation = "";
 		rotation = 0;
 		rotated = false;
 		scoreLayout = "vertical";
-		showFretNumbers = true;
+
 /*
+		isScoreVisible = false;
 		fretboardStyle = "maple";
 		currentInstrument = "piano";
 */
@@ -859,7 +867,7 @@ function resetControlsValues(state){
 	sliderBpm.value = bpm;
 	sliderBpm.title = bpm;
 
-	cmbTonalidad.value = key;
+	cmbKey.value = key;
 
 	cmbScoreStaves.value = scoreStaves;
 	cmbScoreLayout.value = scoreLayout;
@@ -887,16 +895,9 @@ function resetControlsValues(state){
 	btnNewCategory.disabled = false;
 	btnDelCategory.disabled = false;
 
-	chkNoteNames.checked = notation !== "";
+	chkNoteNames.checked = notation;
 
-	if (notation !== ""){
-
-		let [type, flat] = notation.split("-");
-
-		cmbNoteNames.value  = type;
-		chkNoteFlat.checked = flat === "b";
-
-	}
+	if (notation !== "") cmbNoteNames.value  = notation;
 
 	if (state !== "loadProject"){
 
@@ -1330,8 +1331,6 @@ function rotateFretboard(){
 
     updateOrientationButtons();
 
-    scrollToFretboardNut();
-
 }
 
 function updateOrientationButtons(){
@@ -1345,19 +1344,21 @@ function updateOrientationButtons(){
 
 function scrollToFretboardNut(){
 
-	requestAnimationFrame(() => {
+	if (!isFretboardVisible) return;
 
-		if (!workspaceFretboard) return;
+	requestAnimationFrame(() => {
 
 		switch (rotation){
 
 			case 0:
-				workspaceFretboard.scrollTop = 0;
+//				workspaceFretboard.scrollTop = 0;
+				document.body.scrollTop = 0;
 
 				break;
 
 			case 180:
-				workspaceFretboard.scrollTop = workspaceFretboard.scrollHeight;
+//				workspaceFretboard.scrollTop = workspaceFretboard.scrollHeight;
+				document.body.scrollTop = document.body.scrollHeight;
 
 				break;
 
@@ -1373,28 +1374,6 @@ function scrollToFretboardNut(){
 		}
 
 	});
-
-}
-
-function setLayout() {
-
-	cursor.style.color = colorPicker.value;
-
-	if (isMobile) {
-
-		cursor.style.display = "none";
-
-		closeProjectsPanel();
-
-		closeTopControls();
-
-	} else {
-
-		cursor.style.display = "";
-
-		openTopControls();
-
-	}
 
 }
 
@@ -1612,7 +1591,6 @@ function showAlert(message, type = "success", duration = 2500) {
 
 }
 
-
 function getMaxOrder() {
 
 	let maxOrder = -1;
@@ -1653,7 +1631,7 @@ function buildOrderedSequence() {
 	// MAPA DE NOTAS SEGÚN NOTACIÓN
 	// --------------------------------
 
-	const noteMap = chkNoteFlat.checked ? fretboardMapNotesFlats : fretboardMapNotes;
+	const noteMap = keyHasFlats() ? fretboardMapNotesFlats : fretboardMapNotes;
 
 	// --------------------------------
 	// NOTAS DEL MÁSTIL
@@ -1885,7 +1863,7 @@ function buildOrderedChords() {
 	// MAPA DE NOTAS SEGÚN NOTACIÓN
 	// --------------------------------
 
-	const noteMap = chkNoteFlat.checked ? fretboardMapNotesFlats : fretboardMapNotes;
+	const noteMap = keyHasFlats() ? fretboardMapNotesFlats : fretboardMapNotes;
 
 	// --------------------------------
 	// AGRUPAR NOTAS EXPLÍCITAS
@@ -1947,10 +1925,19 @@ function buildOrderedChords() {
 	});
 
 	// --------------------------------
+	// OBTENER TODOS LOS ACORDES
+	// --------------------------------
+
+	const chords = new Set([
+		...Object.keys(chordNotes),
+		...Object.keys(chordBarres)
+	]);
+
+	// --------------------------------
 	// PROCESAR CADA ACORDE
 	// --------------------------------
 
-	Object.keys(chordNotes)
+	[...chords]
 		.map(Number)
 		.sort((a, b) => a - b)
 		.forEach(chord => {
@@ -1961,13 +1948,18 @@ function buildOrderedChords() {
 			// NOTAS EXPLÍCITAS
 			// --------------------------------
 
-			chordNotes[chord].forEach(note => {
+			(chordNotes[chord] || []).forEach(note => {
 
 				const string = Number(note.string);
 				const fret = Number(note.fret);
 				const order = Number(note.order);
 
-				if (string >= 0 && string < noteMap.length && fret >= 0 && fret < noteMap[string].length) {
+				if (
+					string >= 0 &&
+					string < noteMap.length &&
+					fret >= 0 &&
+					fret < noteMap[string].length
+				) {
 
 					chordItems.push({
 						chord: chord,
@@ -1992,7 +1984,12 @@ function buildOrderedChords() {
 				const startString = Number(barre.startString);
 				const order = Number(barre.order);
 
-				if (fret < 0 || fret >= 25 || startString < 0 || startString >= noteMap.length) return;
+				if (
+					fret < 0 ||
+					fret >= 25 ||
+					startString < 0 ||
+					startString >= noteMap.length
+				) return;
 
 				const barreItems = [];
 
@@ -2007,7 +2004,7 @@ function buildOrderedChords() {
 					// DEL MISMO ACORDE Y CUERDA
 					// --------------------------------
 
-					const explicitNote = chordNotes[chord].find(note => {
+					const explicitNote = (chordNotes[chord] || []).find(note => {
 
 						return Number(note.string) === string;
 
@@ -2017,13 +2014,19 @@ function buildOrderedChords() {
 
 						const explicitFret = Number(explicitNote.fret);
 
-						if (explicitFret >= 0 && explicitFret < noteMap[string].length) {
+						if (
+							explicitFret >= 0 &&
+							explicitFret < noteMap[string].length
+						) {
 
 							const explicitOrder = Number(explicitNote.order);
 
 							const explicitIndex = chordItems.findIndex(item => {
 
-								return item.string === string && item.order === explicitOrder;
+								return (
+									item.string === string &&
+									item.order === explicitOrder
+								);
 
 							});
 
@@ -2086,7 +2089,9 @@ function buildOrderedChords() {
 				// Si los dos elementos pertenecen
 				// a un bloque de barre, por cuerda
 
-				if (a.isBarreBlock && b.isBarreBlock) return b.string - a.string;
+				if (a.isBarreBlock && b.isBarreBlock) {
+					return b.string - a.string;
+				}
 
 				// Los demás elementos siguen
 				// su order original
@@ -2564,6 +2569,11 @@ function delChord() {
 
 	loadArrayNotas();
 
+	drawFretboard();
+	drawNotes();
+
+	if (isScoreVisible) scoreRender();
+
 }
 
 function convertNote(note, notation = "latin") {
@@ -2588,81 +2598,12 @@ function convertNote(note, notation = "latin") {
 
 }
 
-function getTextColor(backgroundColor) {
+function keyHasFlats() {
 
-    const hex = backgroundColor.replace("#", "");
+	const scale = scales[cmbKey.value];
 
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
+	if (!scale) return false;
 
-    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-
-    return brightness > 155 ? "#000" : "#fff";
-}
-
-function getNoteText(x,y,text,isNut = false){
-
-	if(chkNoteNames.checked){
-
-		let { string, fret } = getCellFromMouse(x, y);
-
-		if (isNut) fret--;
-
-		if (chkNoteFlat.checked){
-			text = fretboardMapNotesFlats[string][fret];
-		}else{
-
-			text = fretboardMapNotes[string][fret];
-		}
-
-		text = convertNote(text, cmbNoteNames.value);
-
-	}
-
-	return text;
-
-}
-
-
-function createLibrary(fileName) {
-
-	const lines = [];
-
-	lines.push('<?xml version="1.0" encoding="UTF-8"?>');
-
-	lines.push(
-		`<projects ` +
-		`version="1.0" ` +
-		`name="${fileName}" ` +
-		`desc="">`
-	);
-
-	lines.push(`</projects>`);
-
-	const xmlContent = lines.join("\n");
-
-	const blob = new Blob(
-		[xmlContent],
-		{ type: "application/xml;charset=utf-8" }
-	);
-
-	const url = URL.createObjectURL(blob);
-
-	const link = document.createElement("a");
-
-	link.href = url;
-
-	link.download = fileName + ".xml";
-
-	document.body.appendChild(link);
-
-	link.click();
-
-	document.body.removeChild(link);
-
-	URL.revokeObjectURL(url);
-
-	return true;
+	return scale.some(note => note.includes("b"));
 
 }

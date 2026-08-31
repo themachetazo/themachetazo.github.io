@@ -996,6 +996,421 @@ function drawVertical() {
 
 }
 
+
+function drawRealisticString(x1, y1, x2, y2, lineWidth) {
+
+	const isBlank = fretboardStyle === "blank";
+
+	const shadowColor = !isBlank
+		? "rgba(20,10,5,0.45)"
+		: "rgba(0,0,0,0.35)";
+
+	const bodyColor = !isBlank
+		? "rgba(190,105,42,1)"
+		: "rgba(70,70,70,0.85)";
+
+	const highlightColor = !isBlank
+		? "rgba(255,205,135,0.80)"
+		: "rgba(255,255,255,0.45)";
+
+	const vertical = (x1 === x2);
+
+	//------------------------------------------------
+	// Sombra paralela
+	//------------------------------------------------
+
+	ctx.save();
+
+	ctx.shadowColor = shadowColor;
+	ctx.shadowBlur = Math.max(2, lineWidth * 0.9);
+
+	if (vertical) {
+
+		ctx.shadowOffsetX = 1.4;
+		ctx.shadowOffsetY = 0.8;
+
+	} else {
+
+		ctx.shadowOffsetX = 0.8;
+		ctx.shadowOffsetY = 1.4;
+
+	}
+
+	ctx.beginPath();
+	ctx.strokeStyle = bodyColor;
+	ctx.lineWidth = lineWidth;
+	ctx.lineCap = "round";
+
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2, y2);
+
+	ctx.stroke();
+
+	ctx.restore();
+
+	//------------------------------------------------
+	// Cuerpo de la cuerda
+	//------------------------------------------------
+
+	ctx.beginPath();
+	ctx.strokeStyle = bodyColor;
+	ctx.lineWidth = lineWidth;
+	ctx.lineCap = "round";
+
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2, y2);
+
+	ctx.stroke();
+
+	//------------------------------------------------
+	// Reflejo superior
+	//------------------------------------------------
+
+	ctx.beginPath();
+	ctx.strokeStyle = highlightColor;
+	ctx.lineWidth = Math.max(0.45, lineWidth * 0.22);
+	ctx.lineCap = "round";
+
+	if (vertical) {
+
+		ctx.moveTo(
+			x1 - lineWidth * 0.18,
+			y1
+		);
+
+		ctx.lineTo(
+			x2 - lineWidth * 0.18,
+			y2
+		);
+
+	} else {
+
+		ctx.moveTo(
+			x1,
+			y1 - lineWidth * 0.18
+		);
+
+		ctx.lineTo(
+			x2,
+			y2 - lineWidth * 0.18
+		);
+
+	}
+
+	ctx.stroke();
+
+}
+
+function drawRealisticNut() {
+
+	const nutThickness = Math.max(6, stringSpace * 0.34);
+	const nutRadius = Math.min(3, nutThickness / 2);
+
+	ctx.save();
+
+	ctx.lineCap = "round";
+	ctx.lineJoin = "round";
+
+	const nutFill = "#e8dfc9";
+	const nutShadow = "rgba(40,28,18,0.45)";
+	const nutHighlight = "rgba(255,255,255,0.72)";
+	const slotColor = "rgba(78,58,38,0.62)";
+
+	ctx.shadowColor = nutShadow;
+	ctx.shadowBlur = 3;
+
+	switch (rotation) {
+
+		case 0:
+		case 270:
+			ctx.shadowOffsetX = 1;
+			ctx.shadowOffsetY = 1;
+			break;
+
+		case 180:
+		case 90:
+			ctx.shadowOffsetX = -1;
+			ctx.shadowOffsetY = -1;
+			break;
+
+	}
+
+	switch (rotation) {
+
+		//------------------------------------------------
+		// Vertical (cejuela arriba)
+		//------------------------------------------------
+
+		case 0: {
+
+			const x = boardleft - nutRadius;
+			const y = boardtop - nutThickness / 2;
+			const width = boardWidth + nutRadius * 2;
+			const height = nutThickness;
+
+			ctx.beginPath();
+
+			ctx.moveTo(x + nutRadius, y);
+			ctx.lineTo(x + width - nutRadius, y);
+			ctx.quadraticCurveTo(x + width, y, x + width, y + nutRadius);
+			ctx.lineTo(x + width, y + height - nutRadius);
+			ctx.quadraticCurveTo(x + width, y + height, x + width - nutRadius, y + height);
+			ctx.lineTo(x + nutRadius, y + height);
+			ctx.quadraticCurveTo(x, y + height, x, y + height - nutRadius);
+			ctx.lineTo(x, y + nutRadius);
+			ctx.quadraticCurveTo(x, y, x + nutRadius, y);
+
+			ctx.closePath();
+
+			ctx.fillStyle = nutFill;
+			ctx.fill();
+
+			ctx.shadowColor = "transparent";
+
+			// Brillo superior
+			ctx.beginPath();
+			ctx.moveTo(x + nutRadius, y + nutThickness * 0.28);
+			ctx.lineTo(x + width - nutRadius, y + nutThickness * 0.28);
+			ctx.strokeStyle = nutHighlight;
+			ctx.lineWidth = Math.max(0.7, nutThickness * 0.13);
+			ctx.stroke();
+
+			// Ranuras
+			for (let s = 0; s < stringCount; s++) {
+
+				const stringX = boardright - s * stringSpace;
+
+				ctx.beginPath();
+				ctx.moveTo(stringX, y + nutThickness * 0.18);
+				ctx.lineTo(stringX, y + nutThickness * 0.82);
+				ctx.strokeStyle = slotColor;
+				ctx.lineWidth = Math.max(0.7, 1 + s * 0.14);
+				ctx.stroke();
+
+			}
+
+			break;
+		}
+
+		//------------------------------------------------
+		// Horizontal (cejuela izquierda)
+		//------------------------------------------------
+
+		case 270: {
+
+			const x = boardleft - nutThickness / 2;
+			const y = boardtop - nutRadius;
+			const width = nutThickness;
+			const height = boardHeight + nutRadius * 2;
+
+			ctx.beginPath();
+
+			ctx.moveTo(x + nutRadius, y);
+			ctx.lineTo(x + width - nutRadius, y);
+			ctx.quadraticCurveTo(x + width, y, x + width, y + nutRadius);
+			ctx.lineTo(x + width, y + height - nutRadius);
+			ctx.quadraticCurveTo(x + width, y + height, x + width - nutRadius, y + height);
+			ctx.lineTo(x + nutRadius, y + height);
+			ctx.quadraticCurveTo(x, y + height, x, y + height - nutRadius);
+			ctx.lineTo(x, y + nutRadius);
+			ctx.quadraticCurveTo(x, y, x + nutRadius, y);
+
+			ctx.closePath();
+
+			ctx.fillStyle = nutFill;
+			ctx.fill();
+
+			ctx.shadowColor = "transparent";
+
+			ctx.beginPath();
+			ctx.moveTo(x + nutThickness * 0.28, y + nutRadius);
+			ctx.lineTo(x + nutThickness * 0.28, y + height - nutRadius);
+			ctx.strokeStyle = nutHighlight;
+			ctx.lineWidth = Math.max(0.7, nutThickness * 0.13);
+			ctx.stroke();
+
+			for (let s = 0; s < stringCount; s++) {
+
+				const stringY = boardtop + s * stringSpace;
+
+				ctx.beginPath();
+				ctx.moveTo(x + nutThickness * 0.18, stringY);
+				ctx.lineTo(x + nutThickness * 0.82, stringY);
+				ctx.strokeStyle = slotColor;
+				ctx.lineWidth = Math.max(0.7, 1 + s * 0.14);
+				ctx.stroke();
+
+			}
+
+			break;
+		}
+
+		//------------------------------------------------
+		// Vertical (cejuela abajo)
+		//------------------------------------------------
+
+		case 180: {
+
+			const x = boardleft - nutRadius;
+			const y = boardbottom - nutThickness / 2;
+			const width = boardWidth + nutRadius * 2;
+			const height = nutThickness;
+
+			ctx.beginPath();
+
+			ctx.moveTo(x + nutRadius, y);
+			ctx.lineTo(x + width - nutRadius, y);
+			ctx.quadraticCurveTo(x + width, y, x + width, y + nutRadius);
+			ctx.lineTo(x + width, y + height - nutRadius);
+			ctx.quadraticCurveTo(x + width, y + height, x + width - nutRadius, y + height);
+			ctx.lineTo(x + nutRadius, y + height);
+			ctx.quadraticCurveTo(x, y + height, x, y + height - nutRadius);
+			ctx.lineTo(x, y + nutRadius);
+			ctx.quadraticCurveTo(x, y, x + nutRadius, y);
+
+			ctx.closePath();
+
+			ctx.fillStyle = nutFill;
+			ctx.fill();
+
+			ctx.shadowColor = "transparent";
+
+			// Brillo inferior
+			ctx.beginPath();
+			ctx.moveTo(x + nutRadius, y + nutThickness * 0.72);
+			ctx.lineTo(x + width - nutRadius, y + nutThickness * 0.72);
+			ctx.strokeStyle = nutHighlight;
+			ctx.lineWidth = Math.max(0.7, nutThickness * 0.13);
+			ctx.stroke();
+
+			for (let s = 0; s < stringCount; s++) {
+
+				const stringX = boardleft + s * stringSpace;
+
+				ctx.beginPath();
+				ctx.moveTo(stringX, y + nutThickness * 0.18);
+				ctx.lineTo(stringX, y + nutThickness * 0.82);
+				ctx.strokeStyle = slotColor;
+				ctx.lineWidth = Math.max(0.7, 1 + s * 0.14);
+				ctx.stroke();
+
+			}
+
+			break;
+		}
+
+		//------------------------------------------------
+		// Horizontal (cejuela derecha)
+		//------------------------------------------------
+
+		case 90: {
+
+			const x = boardright - nutThickness / 2;
+			const y = boardtop - nutRadius;
+			const width = nutThickness;
+			const height = boardHeight + nutRadius * 2;
+
+			ctx.beginPath();
+
+			ctx.moveTo(x + nutRadius, y);
+			ctx.lineTo(x + width - nutRadius, y);
+			ctx.quadraticCurveTo(x + width, y, x + width, y + nutRadius);
+			ctx.lineTo(x + width, y + height - nutRadius);
+			ctx.quadraticCurveTo(x + width, y + height, x + width - nutRadius, y + height);
+			ctx.lineTo(x + nutRadius, y + height);
+			ctx.quadraticCurveTo(x, y + height, x, y + height - nutRadius);
+			ctx.lineTo(x, y + nutRadius);
+			ctx.quadraticCurveTo(x, y, x + nutRadius, y);
+
+			ctx.closePath();
+
+			ctx.fillStyle = nutFill;
+			ctx.fill();
+
+			ctx.shadowColor = "transparent";
+
+			// Brillo derecho
+			ctx.beginPath();
+			ctx.moveTo(x + nutThickness * 0.72, y + nutRadius);
+			ctx.lineTo(x + nutThickness * 0.72, y + height - nutRadius);
+			ctx.strokeStyle = nutHighlight;
+			ctx.lineWidth = Math.max(0.7, nutThickness * 0.13);
+			ctx.stroke();
+
+			for (let s = 0; s < stringCount; s++) {
+
+				const stringY = boardbottom - s * stringSpace;
+
+				ctx.beginPath();
+				ctx.moveTo(x + nutThickness * 0.18, stringY);
+				ctx.lineTo(x + nutThickness * 0.82, stringY);
+				ctx.strokeStyle = slotColor;
+				ctx.lineWidth = Math.max(0.7, 1 + s * 0.14);
+				ctx.stroke();
+
+			}
+
+			break;
+		}
+
+	}
+
+	ctx.restore();
+
+}
+
+function drawFret(x1, y1, x2, y2, fretWidth) {
+
+	// Cuerpo metálico
+	ctx.beginPath();
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2, y2);
+
+	ctx.strokeStyle = "#666";
+	ctx.lineWidth = fretWidth;
+	ctx.stroke();
+
+	// Reflejo metálico
+	ctx.beginPath();
+
+	if (x1 === x2) {
+
+		// Traste vertical
+		ctx.moveTo(
+			x1 - fretWidth * 0.18,
+			y1
+		);
+
+		ctx.lineTo(
+			x2 - fretWidth * 0.18,
+			y2
+		);
+
+	} else {
+
+		// Traste horizontal
+		ctx.moveTo(
+			x1,
+			y1 - fretWidth * 0.18
+		);
+
+		ctx.lineTo(
+			x2,
+			y2 - fretWidth * 0.18
+		);
+
+	}
+
+	ctx.strokeStyle = "rgba(255,255,255,0.75)";
+	ctx.lineWidth = Math.max(
+		0.7,
+		fretWidth * 0.22
+	);
+
+	ctx.stroke();
+
+}
+
 function roundedRectPath(x, y, width, height, radius) {
 
 	const r = Math.min(
@@ -1063,57 +1478,6 @@ function roundedRectPath(x, y, width, height, radius) {
 
 }
 
-function drawFret(x1, y1, x2, y2, fretWidth) {
-
-	// Cuerpo metálico
-	ctx.beginPath();
-	ctx.moveTo(x1, y1);
-	ctx.lineTo(x2, y2);
-
-	ctx.strokeStyle = "#666";
-	ctx.lineWidth = fretWidth;
-	ctx.stroke();
-
-	// Reflejo metálico
-	ctx.beginPath();
-
-	if (x1 === x2) {
-
-		// Traste vertical
-		ctx.moveTo(
-			x1 - fretWidth * 0.18,
-			y1
-		);
-
-		ctx.lineTo(
-			x2 - fretWidth * 0.18,
-			y2
-		);
-
-	} else {
-
-		// Traste horizontal
-		ctx.moveTo(
-			x1,
-			y1 - fretWidth * 0.18
-		);
-
-		ctx.lineTo(
-			x2,
-			y2 - fretWidth * 0.18
-		);
-
-	}
-
-	ctx.strokeStyle = "rgba(255,255,255,0.75)";
-	ctx.lineWidth = Math.max(
-		0.7,
-		fretWidth * 0.22
-	);
-
-	ctx.stroke();
-
-}
 
 // ============================================================
 // GEOMETRÍA DEL DIAPASÓN
@@ -1484,6 +1848,10 @@ function getFretCenter(fret) {
 
 }
 
+// ============================================================
+// INTERACCIÓN CON RATÓN
+// ============================================================
+
 function getCellCenter(string, fret) {
 
 	const fretCenter = getFretCenter(fret);
@@ -1549,10 +1917,6 @@ function getCellCenter(string, fret) {
 	}
 
 }
-
-// ============================================================
-// INTERACCIÓN CON RATÓN
-// ============================================================
 
 function getCellFromMouse(x, y) {
 
@@ -1799,368 +2163,6 @@ function getNutColor() {
 	return "rgba(0, 0, 0, 0.85)";
 }
 
-function drawRealisticString(x1, y1, x2, y2, lineWidth) {
-
-	const isBlank = fretboardStyle === "blank";
-
-	const shadowColor = !isBlank
-		? "rgba(20,10,5,0.45)"
-		: "rgba(0,0,0,0.35)";
-
-	const bodyColor = !isBlank
-		? "rgba(190,105,42,1)"
-		: "rgba(70,70,70,0.85)";
-
-	const highlightColor = !isBlank
-		? "rgba(255,205,135,0.80)"
-		: "rgba(255,255,255,0.45)";
-
-	const vertical = (x1 === x2);
-
-	//------------------------------------------------
-	// Sombra paralela
-	//------------------------------------------------
-
-	ctx.save();
-
-	ctx.shadowColor = shadowColor;
-	ctx.shadowBlur = Math.max(2, lineWidth * 0.9);
-
-	if (vertical) {
-
-		ctx.shadowOffsetX = 1.4;
-		ctx.shadowOffsetY = 0.8;
-
-	} else {
-
-		ctx.shadowOffsetX = 0.8;
-		ctx.shadowOffsetY = 1.4;
-
-	}
-
-	ctx.beginPath();
-	ctx.strokeStyle = bodyColor;
-	ctx.lineWidth = lineWidth;
-	ctx.lineCap = "round";
-
-	ctx.moveTo(x1, y1);
-	ctx.lineTo(x2, y2);
-
-	ctx.stroke();
-
-	ctx.restore();
-
-	//------------------------------------------------
-	// Cuerpo de la cuerda
-	//------------------------------------------------
-
-	ctx.beginPath();
-	ctx.strokeStyle = bodyColor;
-	ctx.lineWidth = lineWidth;
-	ctx.lineCap = "round";
-
-	ctx.moveTo(x1, y1);
-	ctx.lineTo(x2, y2);
-
-	ctx.stroke();
-
-	//------------------------------------------------
-	// Reflejo superior
-	//------------------------------------------------
-
-	ctx.beginPath();
-	ctx.strokeStyle = highlightColor;
-	ctx.lineWidth = Math.max(0.45, lineWidth * 0.22);
-	ctx.lineCap = "round";
-
-	if (vertical) {
-
-		ctx.moveTo(
-			x1 - lineWidth * 0.18,
-			y1
-		);
-
-		ctx.lineTo(
-			x2 - lineWidth * 0.18,
-			y2
-		);
-
-	} else {
-
-		ctx.moveTo(
-			x1,
-			y1 - lineWidth * 0.18
-		);
-
-		ctx.lineTo(
-			x2,
-			y2 - lineWidth * 0.18
-		);
-
-	}
-
-	ctx.stroke();
-
-}
-
-function drawRealisticNut() {
-
-	const nutThickness = Math.max(6, stringSpace * 0.34);
-	const nutRadius = Math.min(3, nutThickness / 2);
-
-	ctx.save();
-
-	ctx.lineCap = "round";
-	ctx.lineJoin = "round";
-
-	const nutFill = "#e8dfc9";
-	const nutShadow = "rgba(40,28,18,0.45)";
-	const nutHighlight = "rgba(255,255,255,0.72)";
-	const slotColor = "rgba(78,58,38,0.62)";
-
-	ctx.shadowColor = nutShadow;
-	ctx.shadowBlur = 3;
-
-	switch (rotation) {
-
-		case 0:
-		case 270:
-			ctx.shadowOffsetX = 1;
-			ctx.shadowOffsetY = 1;
-			break;
-
-		case 180:
-		case 90:
-			ctx.shadowOffsetX = -1;
-			ctx.shadowOffsetY = -1;
-			break;
-
-	}
-
-	switch (rotation) {
-
-		//------------------------------------------------
-		// Vertical (cejuela arriba)
-		//------------------------------------------------
-
-		case 0: {
-
-			const x = boardleft - nutRadius;
-			const y = boardtop - nutThickness / 2;
-			const width = boardWidth + nutRadius * 2;
-			const height = nutThickness;
-
-			ctx.beginPath();
-
-			ctx.moveTo(x + nutRadius, y);
-			ctx.lineTo(x + width - nutRadius, y);
-			ctx.quadraticCurveTo(x + width, y, x + width, y + nutRadius);
-			ctx.lineTo(x + width, y + height - nutRadius);
-			ctx.quadraticCurveTo(x + width, y + height, x + width - nutRadius, y + height);
-			ctx.lineTo(x + nutRadius, y + height);
-			ctx.quadraticCurveTo(x, y + height, x, y + height - nutRadius);
-			ctx.lineTo(x, y + nutRadius);
-			ctx.quadraticCurveTo(x, y, x + nutRadius, y);
-
-			ctx.closePath();
-
-			ctx.fillStyle = nutFill;
-			ctx.fill();
-
-			ctx.shadowColor = "transparent";
-
-			// Brillo superior
-			ctx.beginPath();
-			ctx.moveTo(x + nutRadius, y + nutThickness * 0.28);
-			ctx.lineTo(x + width - nutRadius, y + nutThickness * 0.28);
-			ctx.strokeStyle = nutHighlight;
-			ctx.lineWidth = Math.max(0.7, nutThickness * 0.13);
-			ctx.stroke();
-
-			// Ranuras
-			for (let s = 0; s < stringCount; s++) {
-
-				const stringX = boardright - s * stringSpace;
-
-				ctx.beginPath();
-				ctx.moveTo(stringX, y + nutThickness * 0.18);
-				ctx.lineTo(stringX, y + nutThickness * 0.82);
-				ctx.strokeStyle = slotColor;
-				ctx.lineWidth = Math.max(0.7, 1 + s * 0.14);
-				ctx.stroke();
-
-			}
-
-			break;
-		}
-
-		//------------------------------------------------
-		// Horizontal (cejuela izquierda)
-		//------------------------------------------------
-
-		case 270: {
-
-			const x = boardleft - nutThickness / 2;
-			const y = boardtop - nutRadius;
-			const width = nutThickness;
-			const height = boardHeight + nutRadius * 2;
-
-			ctx.beginPath();
-
-			ctx.moveTo(x + nutRadius, y);
-			ctx.lineTo(x + width - nutRadius, y);
-			ctx.quadraticCurveTo(x + width, y, x + width, y + nutRadius);
-			ctx.lineTo(x + width, y + height - nutRadius);
-			ctx.quadraticCurveTo(x + width, y + height, x + width - nutRadius, y + height);
-			ctx.lineTo(x + nutRadius, y + height);
-			ctx.quadraticCurveTo(x, y + height, x, y + height - nutRadius);
-			ctx.lineTo(x, y + nutRadius);
-			ctx.quadraticCurveTo(x, y, x + nutRadius, y);
-
-			ctx.closePath();
-
-			ctx.fillStyle = nutFill;
-			ctx.fill();
-
-			ctx.shadowColor = "transparent";
-
-			ctx.beginPath();
-			ctx.moveTo(x + nutThickness * 0.28, y + nutRadius);
-			ctx.lineTo(x + nutThickness * 0.28, y + height - nutRadius);
-			ctx.strokeStyle = nutHighlight;
-			ctx.lineWidth = Math.max(0.7, nutThickness * 0.13);
-			ctx.stroke();
-
-			for (let s = 0; s < stringCount; s++) {
-
-				const stringY = boardtop + s * stringSpace;
-
-				ctx.beginPath();
-				ctx.moveTo(x + nutThickness * 0.18, stringY);
-				ctx.lineTo(x + nutThickness * 0.82, stringY);
-				ctx.strokeStyle = slotColor;
-				ctx.lineWidth = Math.max(0.7, 1 + s * 0.14);
-				ctx.stroke();
-
-			}
-
-			break;
-		}
-
-		//------------------------------------------------
-		// Vertical (cejuela abajo)
-		//------------------------------------------------
-
-		case 180: {
-
-			const x = boardleft - nutRadius;
-			const y = boardbottom - nutThickness / 2;
-			const width = boardWidth + nutRadius * 2;
-			const height = nutThickness;
-
-			ctx.beginPath();
-
-			ctx.moveTo(x + nutRadius, y);
-			ctx.lineTo(x + width - nutRadius, y);
-			ctx.quadraticCurveTo(x + width, y, x + width, y + nutRadius);
-			ctx.lineTo(x + width, y + height - nutRadius);
-			ctx.quadraticCurveTo(x + width, y + height, x + width - nutRadius, y + height);
-			ctx.lineTo(x + nutRadius, y + height);
-			ctx.quadraticCurveTo(x, y + height, x, y + height - nutRadius);
-			ctx.lineTo(x, y + nutRadius);
-			ctx.quadraticCurveTo(x, y, x + nutRadius, y);
-
-			ctx.closePath();
-
-			ctx.fillStyle = nutFill;
-			ctx.fill();
-
-			ctx.shadowColor = "transparent";
-
-			// Brillo inferior
-			ctx.beginPath();
-			ctx.moveTo(x + nutRadius, y + nutThickness * 0.72);
-			ctx.lineTo(x + width - nutRadius, y + nutThickness * 0.72);
-			ctx.strokeStyle = nutHighlight;
-			ctx.lineWidth = Math.max(0.7, nutThickness * 0.13);
-			ctx.stroke();
-
-			for (let s = 0; s < stringCount; s++) {
-
-				const stringX = boardleft + s * stringSpace;
-
-				ctx.beginPath();
-				ctx.moveTo(stringX, y + nutThickness * 0.18);
-				ctx.lineTo(stringX, y + nutThickness * 0.82);
-				ctx.strokeStyle = slotColor;
-				ctx.lineWidth = Math.max(0.7, 1 + s * 0.14);
-				ctx.stroke();
-
-			}
-
-			break;
-		}
-
-		//------------------------------------------------
-		// Horizontal (cejuela derecha)
-		//------------------------------------------------
-
-		case 90: {
-
-			const x = boardright - nutThickness / 2;
-			const y = boardtop - nutRadius;
-			const width = nutThickness;
-			const height = boardHeight + nutRadius * 2;
-
-			ctx.beginPath();
-
-			ctx.moveTo(x + nutRadius, y);
-			ctx.lineTo(x + width - nutRadius, y);
-			ctx.quadraticCurveTo(x + width, y, x + width, y + nutRadius);
-			ctx.lineTo(x + width, y + height - nutRadius);
-			ctx.quadraticCurveTo(x + width, y + height, x + width - nutRadius, y + height);
-			ctx.lineTo(x + nutRadius, y + height);
-			ctx.quadraticCurveTo(x, y + height, x, y + height - nutRadius);
-			ctx.lineTo(x, y + nutRadius);
-			ctx.quadraticCurveTo(x, y, x + nutRadius, y);
-
-			ctx.closePath();
-
-			ctx.fillStyle = nutFill;
-			ctx.fill();
-
-			ctx.shadowColor = "transparent";
-
-			// Brillo derecho
-			ctx.beginPath();
-			ctx.moveTo(x + nutThickness * 0.72, y + nutRadius);
-			ctx.lineTo(x + nutThickness * 0.72, y + height - nutRadius);
-			ctx.strokeStyle = nutHighlight;
-			ctx.lineWidth = Math.max(0.7, nutThickness * 0.13);
-			ctx.stroke();
-
-			for (let s = 0; s < stringCount; s++) {
-
-				const stringY = boardbottom - s * stringSpace;
-
-				ctx.beginPath();
-				ctx.moveTo(x + nutThickness * 0.18, stringY);
-				ctx.lineTo(x + nutThickness * 0.82, stringY);
-				ctx.strokeStyle = slotColor;
-				ctx.lineWidth = Math.max(0.7, 1 + s * 0.14);
-				ctx.stroke();
-
-			}
-
-			break;
-		}
-
-	}
-
-	ctx.restore();
-
-}
-
 //==================================================
 // DRAW NOTES
 //==================================================
@@ -2364,52 +2366,6 @@ function drawBarres() {
 
 }
 
-function addOrReplaceBarre(cell, chord) {
-
-	// Elimina cualquier cejilla existente en ese traste
-	barreNotes = barreNotes.filter(barre => {
-		return barre.fret !== cell.fret;
-	});
-
-	// Elimina notas normales que quedarían cubiertas por la cejilla
-	notes = notes.filter(note => {
-
-		if (note.fret !== cell.fret) {
-			return true;
-		}
-
-		// La cejilla ocupa desde la cuerda 0 hasta la cuerda pulsada
-		return note.string > cell.string;
-
-	});
-
-	barreNotes.push({
-		fret: cell.fret,
-		startString: cell.string,
-		color: colorPicker.value,
-		text: noteText.value.trim(),
-		chord: chord,
-		order: noteOrder
-	});
-
-}
-
-function removeBarreAtCell(string, fret) {
-
-	barreNotes = barreNotes.filter(barre => {
-
-		if (barre.fret !== fret) {
-			return true;
-		}
-
-		// La cejilla ocupa desde la cuerda 0 hasta startString.
-		// Se borra si se pulsa cualquier cuerda ocupada por ella.
-		return string > barre.startString;
-
-	});
-
-}
-
 function drawMarker(x, y, note, isNut = false) {
 
 	if (!note || !note.color) return;
@@ -2437,10 +2393,6 @@ function drawMarker(x, y, note, isNut = false) {
 
 	const text = getNoteText(x, y, note.text, isNut);
 
-	// --------------------------------
-	// Tamaño de fuente
-	// --------------------------------
-
 	let fontSize = radius * 1.15;
 
 	ctx.font = `bold ${fontSize}px Segoe UI`;
@@ -2454,15 +2406,8 @@ function drawMarker(x, y, note, isNut = false) {
 		ctx.font = `bold ${fontSize}px Segoe UI`;
 	}
 
-	// --------------------------------
-	// Texto
-	// --------------------------------
+	ctx.fillText(text,x,y + fontSize * 0.03);
 
-	ctx.fillText(
-		text,
-		x,
-		y + fontSize * 0.03
-	);
 }
 
 function drawHoverMarker() {
@@ -2506,8 +2451,7 @@ function drawNutHover() {
 		return;
 	}
 
-	// Si ya existe una nota en el NUT,
-	// tampoco dibujamos el hover.
+	// Si ya existe una nota en el NUT, tampoco dibujamos el hover.
 	if (nutNotes[hoverNut]) {
 		return;
 	}
@@ -2636,19 +2580,6 @@ function undo() {
 
 }
 
-function eraseNote(cell) {
-
-	notes = notes.filter(note => {
-
-		return !(
-			note.string === cell.string &&
-			note.fret === cell.fret
-		);
-
-	});
-
-}
-
 function updateHoverCell(e) {
 
 	if (isMobile || (editMode !== "note" && editMode !== "barre")) {
@@ -2726,5 +2657,49 @@ function updateHoverNut(e) {
 
 	drawFretboard();
 	drawNotes();
+
+}
+
+function getTextColor(backgroundColor) {
+
+    const hex = backgroundColor.replace("#", "");
+
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+    return brightness > 155 ? "#000" : "#fff";
+}
+
+function getNoteText(x, y, text, isNut = false) {
+
+	if (chkNoteNames.checked) {
+
+		let { string, fret } = getCellFromMouse(x, y);
+
+		if (isNut) fret--;
+
+		const scale = scales[cmbKey.value];
+
+		const useFlats = scale?.some(note => note.includes("b"));
+
+		if (useFlats) {
+			text = fretboardMapNotesFlats[string][fret];
+		} else {
+			text = fretboardMapNotes[string][fret];
+		}
+
+		// B → Cb en tonalidad de Gb
+		if (cmbKey.value === "Gb") {
+			text = text.replace(/^B(\d+)$/, "Cb$1");
+		}
+
+		text = convertNote(text, cmbNoteNames.value);
+
+	}
+
+	return text;
 
 }

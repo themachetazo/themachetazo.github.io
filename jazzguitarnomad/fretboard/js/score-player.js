@@ -68,8 +68,6 @@ function parseXMLToNotesArray(project) {
 
 }
 
-
-//Funcion para organizar cómo se va a tocar la secuencia o acorde
 function organizeSequence(direction, playLast = true) {
 
 	sequenceToPlay.length = 0;
@@ -500,6 +498,481 @@ function setInstrument(name) {
 //
 ////////////////////////////////////////////////////////////
 
+async function vexTab_render() {
+
+    // Esperar a que VexTab genere el SVG
+    while (!document.querySelector(".vextab-auto svg")) {
+        await new Promise(r => setTimeout(r, 50));
+    }
+
+    const div = document.querySelector(".vextab-auto .vex-canvas");
+    const svg = div.querySelector("svg");
+
+    if (!svg) throw new Error("No se ha generado el SVG de VexTab.");
+
+    const year = new Date().getFullYear();
+
+    if (chkScoreTitle.checked){
+
+        vexTab_createHeaderFooter(svg,titleText.value.trim() || "Sin título",`${year} - ${scoreFooter}`);
+
+    }
+
+    // Dejar únicamente el SVG dentro del contenedor
+    div.innerHTML = svg.outerHTML;
+
+    //Pintado de las notas
+    // Obtener el SVG REAL que ahora está dentro del DOM
+    const renderedSvg = div.querySelector("svg");
+
+    // Inicializar el pintado sobre el SVG visible
+    scorePaint_initScorePlayback(renderedSvg);
+
+}
+
+function vexTab_generateVexTab(data,key = "C",time = "4/4",figure = 1,mode = "sequence") {
+
+	figure = parseInt(figure,10);
+
+	const [numerator,denominator] = time.split("/").map(Number);
+
+	const durationMap = {
+		1:":q",
+		2:":8",
+		4:":16"
+	};
+
+	const duration = denominator === 8 ? ":8" : durationMap[figure];
+
+	const notesPerBar = denominator === 8 ? numerator : numerator * figure;
+
+	//----------------------------------------------------------
+	// Configuración de notación
+	//----------------------------------------------------------
+
+	let notation = true;
+	let tablature = true;
+
+	if (cmbScoreStaves.value === "notation") {
+		notation = true;
+		tablature = false;
+	}
+	else if (cmbScoreStaves.value === "tablature") {
+		notation = false;
+		tablature = true;
+	}
+
+	//----------------------------------------------------------
+	// Preparar notas
+	//----------------------------------------------------------
+
+	const items = !data || data.length === 0
+		? []
+		: mode === "sequence"
+			? [...data]
+			: vexTab_groupChords(data);
+
+	//----------------------------------------------------------
+	// Escala
+	//----------------------------------------------------------
+
+	let scoreWidth = 1400;
+	let scale = vexTab_calcScale(scoreWidth);
+
+	//----------------------------------------------------------
+	// Si no hay datos
+	//----------------------------------------------------------
+
+	let result = "";
+
+	if (items.length === 0) {
+
+		result += `options scale=${scale} stave-distance=${parseInt(sliderScoreStaveDistance.value,10)}\n`;
+		result += "tab-stems=true tab-stem-direction=up\n";
+		result += `tabstave notation=${notation} tablature=${tablature} key=${key} time=${time} clef=treble\n`;
+		result += `options space=${parseInt(sliderScoreStaveMargin.value,10)}\n`;
+
+		return result;
+
+	}
+
+	//----------------------------------------------------------
+	// Completar último compás
+	//----------------------------------------------------------
+
+	vexTab_completeLastBar(items,notesPerBar);
+
+	const bars = vexTab_splitIntoBars(items,notesPerBar);
+
+	const barStrings = bars.map(bar =>
+		vexTab_renderBar(bar,figure,time)
+	);
+
+	//----------------------------------------------------------
+	// Compases por sistema
+	//----------------------------------------------------------
+
+	let barsPerSystem;
+
+	if (denominator === 4) {
+
+		if ([2,3,4].includes(numerator)) {
+
+			if (figure === 1) barsPerSystem = 8;
+			else if (figure === 2) barsPerSystem = 4;
+			else if (figure === 4) barsPerSystem = 2;
+
+		}
+		else if ([5,7].includes(numerator)) {
+
+			if (figure === 2) barsPerSystem = 2;
+			else if (figure === 4) barsPerSystem = 1;
+
+		}
+
+	}
+	else if (denominator === 8) {
+
+		if ([6,9].includes(numerator)) barsPerSystem = 2;
+		else if (numerator === 12) barsPerSystem = 1;
+
+	}
+
+	if (!barsPerSystem) barsPerSystem = 4;
+
+	//----------------------------------------------------------
+	// Datos generales
+	//----------------------------------------------------------
+
+	const totalFigures = items.length;
+
+	//----------------------------------------------------------
+	// UNA SOLA LÍNEA
+	//----------------------------------------------------------
+
+	if (cmbScoreLayout.value === "horizontal") {
+
+		const calcWidth = vexTab_calcWidth(figure,totalFigures,notesPerBar);
+
+		scoreWidth = calcWidth > 1440 ? calcWidth : 1400;
+
+		scale = vexTab_calcScale(scoreWidth);
+
+		result += `options width=${parseInt(scoreWidth,10)} space=40 scale=${scale} stave-distance=${parseInt(sliderScoreStaveDistance.value,10)}\n`;
+		result += "tab-stems=true tab-stem-direction=up\n";
+		result += `tabstave notation=${notation} tablature=${tablature} key=${key} time=${time} clef=treble\n`;
+		result += `notes ${duration} ${barStrings.join(" | ")}`;
+
+		if (cmbPlayerRepeats.value > 1) {
+			result += ` =:|\n`;
+		} else {
+			result += ` =|=\n`;
+		}
+
+		result += `options space=${parseInt(sliderScoreStaveMargin.value,10)}\n`;
+
+	}
+
+	//----------------------------------------------------------
+	// VARIOS SISTEMAS
+	//----------------------------------------------------------
+
+	else {
+
+		scale = vexTab_calcScale(scoreWidth);
+
+		result += `options width=${parseInt(scoreWidth,10)} space=40 scale=${scale} stave-distance=${parseInt(sliderScoreStaveDistance.value,10)}\n`;
+		result += "tab-stems=true tab-stem-direction=up\n";
+
+		for (let i = 0; i < barStrings.length; i += barsPerSystem) {
+
+			const systemBars = barStrings.slice(i,i + barsPerSystem);
+
+			result += `tabstave notation=${notation} tablature=${tablature} key=${key} time=${time} clef=treble\n`;
+			result += `notes ${duration} ${systemBars.join(" | ")}`;
+
+			if (i + barsPerSystem >= barStrings.length) {
+
+				if (cmbPlayerRepeats.value > 1) {
+					result += ` =:|\n`;
+				} else {
+					result += ` =|=\n`;
+				}
+
+			}
+			else {
+
+				result += " |\n";
+
+			}
+
+			result += `options space=${parseInt(sliderScoreStaveMargin.value,10)}\n`;
+
+		}
+
+	}
+
+	return result;
+
+}
+
+function vexTab_convertStringFretToNotes(vexTabText, mode = "sequence") {
+
+	const noteMap = fretboardMapNotesFlats;
+
+	// ------------------------------------------------
+	// CONVERTIR TRASTE/CUERDA
+	// ------------------------------------------------
+
+	function convertPosition(value) {
+
+		const match = value.match(/^(\d+)\/(\d+)$/);
+
+		if (!match) return null;
+
+		const fret = Number(match[1]);
+		const string = Number(match[2]) - 1;
+
+		if (
+			string < 0 ||
+			string >= noteMap.length ||
+			fret < 0 ||
+			fret >= noteMap[string].length
+		) {
+			return null;
+		}
+
+		const note = noteMap[string][fret];
+		const matchNote = note.match(/^([A-G])([#b]?)(\d+)$/);
+
+		if (!matchNote) return null;
+
+		let [, name, accidental, octave] = matchNote;
+
+		// ------------------------------------------------
+		// AJUSTAR NOTA SEGÚN LA TONALIDAD
+		// ------------------------------------------------
+
+		if (cmbKey.value === "Gb" && name === "B" && accidental === "") {
+
+			name = "C";
+			accidental = "b";
+
+			octave++;
+
+		}
+
+		return {
+			name: name.replace("b", "@"),
+			octave: Number(octave) + 1
+		};
+	}
+
+	// ------------------------------------------------
+	// CONVERTIR SECUENCIA
+	// ------------------------------------------------
+
+	function convertSequence(sequence) {
+
+		const positions = sequence.match(/\d+\/\d+/g);
+
+		if (!positions) return sequence;
+
+		const notes = positions.map(convertPosition);
+
+		if (notes.some(note => !note)) return sequence;
+
+		return notes.map((note, index) => {
+
+			const next = notes[index + 1];
+
+			const octaveChanged =
+				!next || next.octave !== note.octave;
+
+			return note.name +
+				(octaveChanged ? "/" + note.octave : "");
+
+		}).join("-");
+	}
+
+	// ------------------------------------------------
+	// CONVERTIR ACORDE
+	// ------------------------------------------------
+
+	function convertChord(chord) {
+
+		return chord.replace(/\d+\/\d+/g, value => {
+
+			const note = convertPosition(value);
+
+			if (!note) return value;
+
+			return `${note.name}/${note.octave}`;
+
+		});
+	}
+
+	// ------------------------------------------------
+	// PROCESAR LÍNEA NOTES
+	// ------------------------------------------------
+
+	function processNotesLine(line) {
+
+		const prefix = line.match(/^(\s*notes\s+)/);
+
+		if (!prefix) return line;
+
+		const content = line.substring(prefix[1].length);
+
+		const bars = content.split("|");
+
+		const processedBars = bars.map(bar => {
+
+			// ----------------------------------------
+			// ACORDES
+			// ----------------------------------------
+
+			bar = bar.replace(/\(([^()]*)\)/g, (match, chordContent) => {
+
+				return "(" + convertChord(chordContent) + ")";
+
+			});
+
+			// ----------------------------------------
+			// SECUENCIAS
+			// ----------------------------------------
+
+			bar = bar.replace(
+				/\d+\/\d+(?:\s+\d+\/\d+)*/g,
+				match => convertSequence(match)
+			);
+
+			return bar;
+
+		});
+
+		return prefix[1] + processedBars.join("|");
+	}
+
+	// ------------------------------------------------
+	// PROCESAR TODAS LAS LÍNEAS NOTES
+	// ------------------------------------------------
+
+	return vexTabText
+		.split("\n")
+		.map(line =>
+			line.trimStart().startsWith("notes ")
+				? processNotesLine(line)
+				: line
+		)
+		.join("\n");
+
+}
+
+
+function vexTab_createHeaderFooter(svg, titulo = "", pie = "") {
+
+    const ns = "http://www.w3.org/2000/svg";
+
+    // Márgenes
+    const margenSuperiorExterior = 30;
+    const espacioTituloPartitura = 100;
+
+    const espacioPartituraPie = 25;
+    const margenInferiorExterior = 15;
+
+    const espacioSuperior = titulo ? margenSuperiorExterior + espacioTituloPartitura : 0;
+    const espacioInferior = pie ? espacioPartituraPie + margenInferiorExterior : 0;
+
+    // Obtener viewBox
+    let vb = svg.getAttribute("viewBox").split(/\s+/).map(Number);
+
+    // Mantener la escala
+    const alturaOriginalViewBox = vb[3];
+    const alturaOriginalSVG = parseFloat(svg.getAttribute("height"));
+    const factor = alturaOriginalSVG / alturaOriginalViewBox;
+
+    // Ampliar el viewBox
+    vb[3] += espacioSuperior + espacioInferior;
+    svg.setAttribute("viewBox", vb.join(" "));
+
+    // Ajustar altura física
+    const nuevaAltura = vb[3] * factor;
+
+    svg.setAttribute("height", nuevaAltura);
+    svg.style.height = nuevaAltura + "px";
+
+    //----------------------------------------------------------
+    // Desplazar la partitura
+    //----------------------------------------------------------
+
+    if (titulo) {
+
+        const grupo = document.createElementNS(ns, "g");
+        grupo.setAttribute("transform", `translate(0,${espacioSuperior})`);
+
+        while (svg.firstChild) {
+            grupo.appendChild(svg.firstChild);
+        }
+
+        svg.appendChild(grupo);
+
+    }
+
+    //----------------------------------------------------------
+    // Posición del título y pie
+    //----------------------------------------------------------
+
+    const horizontal = cmbScoreLayout.value === "horizontal";
+
+    const margenIzquierdo = 30;
+
+    const posX = horizontal ? margenIzquierdo : vb[2] / 2;
+    const anchor = horizontal ? "start" : "middle";
+
+    //----------------------------------------------------------
+    // Título
+    //----------------------------------------------------------
+
+    if (titulo) {
+
+        const title = document.createElementNS(ns, "text");
+
+        title.setAttribute("x", posX);
+        title.setAttribute("y", margenSuperiorExterior + 22);
+        title.setAttribute("text-anchor", anchor);
+        title.setAttribute("font-family", "Segoe UI");
+        title.setAttribute("font-size", 46);
+
+        title.textContent = titulo;
+
+        svg.appendChild(title);
+
+    }
+
+    //----------------------------------------------------------
+    // Pie
+    //----------------------------------------------------------
+
+    if (pie) {
+
+        const footer = document.createElementNS(ns, "text");
+
+        footer.setAttribute("x", posX);
+        footer.setAttribute("y", vb[3] - margenInferiorExterior);
+        footer.setAttribute("text-anchor", anchor);
+        footer.setAttribute("font-family", "Segoe UI");
+        footer.setAttribute("font-size", 18);
+
+        footer.textContent = pie;
+
+        svg.appendChild(footer);
+
+    }
+
+}
+
+
 function vexTab_completeLastBar(items, notesPerBar) {
 
     while (items.length % notesPerBar !== 0) {
@@ -725,455 +1198,6 @@ function vexTab_calcScale(scoreWidth){
 
 }
 
-function vexTab_convertStringFretToNotes(vexTabText, mode = "sequence") {
-
-	const noteMap = fretboardMapNotesFlats;
-
-	// ------------------------------------------------
-	// CONVERTIR TRASTE/CUERDA
-	// ------------------------------------------------
-
-	function convertPosition(value) {
-
-		const match = value.match(/^(\d+)\/(\d+)$/);
-
-		if (!match) return null;
-
-		const fret = Number(match[1]);
-		const string = Number(match[2]) - 1;
-
-		if (string < 0 || string >= noteMap.length || fret < 0 || fret >= noteMap[string].length) {
-			return null;
-		}
-
-		const note = noteMap[string][fret];
-		const matchNote = note.match(/^([A-G])([#b]?)(\d+)$/);
-
-		if (!matchNote) return null;
-
-		const [, name, accidental, octave] = matchNote;
-
-		return {
-			name: (name + accidental).replace("b", "@"),
-			octave: Number(octave) + 1
-		};
-	}
-
-	// ------------------------------------------------
-	// CONVERTIR SECUENCIA
-	// ------------------------------------------------
-
-	function convertSequence(sequence) {
-
-		const positions = sequence.match(/\d+\/\d+/g);
-
-		if (!positions) return sequence;
-
-		const notes = positions.map(convertPosition);
-
-		if (notes.some(note => !note)) return sequence;
-
-		return notes.map((note, index) => {
-
-			const next = notes[index + 1];
-
-			const octaveChanged = !next || next.octave !== note.octave;
-
-			return note.name + (octaveChanged ? "/" + note.octave : "");
-
-		}).join("-");
-	}
-
-	// ------------------------------------------------
-	// CONVERTIR ACORDE
-	// ------------------------------------------------
-
-	function convertChord(chord) {
-
-		return chord.replace(/\d+\/\d+/g, value => {
-
-			const note = convertPosition(value);
-
-			if (!note) return value;
-
-			return `${note.name}/${note.octave}`;
-
-		});
-	}
-
-	// ------------------------------------------------
-	// PROCESAR LÍNEA NOTES
-	// ------------------------------------------------
-
-	function processNotesLine(line) {
-
-		const prefix = line.match(/^(\s*notes\s+)/);
-
-		if (!prefix) return line;
-
-		const content = line.substring(prefix[1].length);
-
-		const bars = content.split("|");
-
-		const processedBars = bars.map(bar => {
-
-			// ----------------------------------------
-			// ACORDES
-			// ----------------------------------------
-
-			bar = bar.replace(/\(([^()]*)\)/g, (match, chordContent) => {
-
-				return "(" + convertChord(chordContent) + ")";
-
-			});
-
-			// ----------------------------------------
-			// SECUENCIAS
-			// ----------------------------------------
-
-			bar = bar.replace(/\d+\/\d+(?:\s+\d+\/\d+)*/g, match => {
-
-				return convertSequence(match);
-
-			});
-
-			return bar;
-
-		});
-
-		return prefix[1] + processedBars.join("|");
-	}
-
-	// ------------------------------------------------
-	// PROCESAR TODAS LAS LÍNEAS NOTES
-	// ------------------------------------------------
-
-	return vexTabText
-		.split("\n")
-		.map(line => line.trimStart().startsWith("notes ") ? processNotesLine(line) : line)
-		.join("\n");
-}
-
-function vexTab_generateVexTab(data,key = "C",time = "4/4",figure = 1,mode = "sequence") {
-
-	figure = parseInt(figure,10);
-
-	const [numerator,denominator] = time.split("/").map(Number);
-
-	const durationMap = {
-		1:":q",
-		2:":8",
-		4:":16"
-	};
-
-	const duration = denominator === 8 ? ":8" : durationMap[figure];
-
-	const notesPerBar = denominator === 8 ? numerator : numerator * figure;
-
-	//----------------------------------------------------------
-	// Configuración de notación
-	//----------------------------------------------------------
-
-	let notation = true;
-	let tablature = true;
-
-	if (cmbScoreStaves.value === "notation") {
-		notation = true;
-		tablature = false;
-	}
-	else if (cmbScoreStaves.value === "tablature") {
-		notation = false;
-		tablature = true;
-	}
-
-	//----------------------------------------------------------
-	// Preparar notas
-	//----------------------------------------------------------
-
-	const items = !data || data.length === 0
-		? []
-		: mode === "sequence"
-			? [...data]
-			: vexTab_groupChords(data);
-
-	//----------------------------------------------------------
-	// Escala
-	//----------------------------------------------------------
-
-	let scoreWidth = 1400;
-	let scale = vexTab_calcScale(scoreWidth);
-
-	//----------------------------------------------------------
-	// Si no hay datos
-	//----------------------------------------------------------
-
-	let result = "";
-
-	if (items.length === 0) {
-
-		result += `options scale=${scale} stave-distance=${parseInt(sliderScoreStaveDistance.value,10)}\n`;
-		result += "tab-stems=true tab-stem-direction=up\n";
-		result += `tabstave notation=${notation} tablature=${tablature} key=${key} time=${time} clef=treble\n`;
-		result += `options space=${parseInt(sliderScoreStaveMargin.value,10)}\n`;
-
-		return result;
-
-	}
-
-	//----------------------------------------------------------
-	// Completar último compás
-	//----------------------------------------------------------
-
-	vexTab_completeLastBar(items,notesPerBar);
-
-	const bars = vexTab_splitIntoBars(items,notesPerBar);
-
-	const barStrings = bars.map(bar =>
-		vexTab_renderBar(bar,figure,time)
-	);
-
-	//----------------------------------------------------------
-	// Compases por sistema
-	//----------------------------------------------------------
-
-	let barsPerSystem;
-
-	if (denominator === 4) {
-
-		if ([2,3,4].includes(numerator)) {
-
-			if (figure === 1) barsPerSystem = 8;
-			else if (figure === 2) barsPerSystem = 4;
-			else if (figure === 4) barsPerSystem = 2;
-
-		}
-		else if ([5,7].includes(numerator)) {
-
-			if (figure === 2) barsPerSystem = 2;
-			else if (figure === 4) barsPerSystem = 1;
-
-		}
-
-	}
-	else if (denominator === 8) {
-
-		if ([6,9].includes(numerator)) barsPerSystem = 2;
-		else if (numerator === 12) barsPerSystem = 1;
-
-	}
-
-	if (!barsPerSystem) barsPerSystem = 4;
-
-	//----------------------------------------------------------
-	// Datos generales
-	//----------------------------------------------------------
-
-	const totalFigures = items.length;
-
-	//----------------------------------------------------------
-	// UNA SOLA LÍNEA
-	//----------------------------------------------------------
-
-	if (cmbScoreLayout.value === "horizontal") {
-
-		const calcWidth = vexTab_calcWidth(figure,totalFigures,notesPerBar);
-
-		scoreWidth = calcWidth > 1440 ? calcWidth : 1400;
-
-		scale = vexTab_calcScale(scoreWidth);
-
-		result += `options width=${parseInt(scoreWidth,10)} space=40 scale=${scale} stave-distance=${parseInt(sliderScoreStaveDistance.value,10)}\n`;
-		result += "tab-stems=true tab-stem-direction=up\n";
-		result += `tabstave notation=${notation} tablature=${tablature} key=${key} time=${time} clef=treble\n`;
-		result += `notes ${duration} ${barStrings.join(" | ")}`;
-
-		if (cmbPlayerRepeats.value > 1) {
-			result += ` =:|\n`;
-		} else {
-			result += ` =|=\n`;
-		}
-
-		result += `options space=${parseInt(sliderScoreStaveMargin.value,10)}\n`;
-
-	}
-
-	//----------------------------------------------------------
-	// VARIOS SISTEMAS
-	//----------------------------------------------------------
-
-	else {
-
-		scale = vexTab_calcScale(scoreWidth);
-
-		result += `options width=${parseInt(scoreWidth,10)} space=40 scale=${scale} stave-distance=${parseInt(sliderScoreStaveDistance.value,10)}\n`;
-		result += "tab-stems=true tab-stem-direction=up\n";
-
-		for (let i = 0; i < barStrings.length; i += barsPerSystem) {
-
-			const systemBars = barStrings.slice(i,i + barsPerSystem);
-
-			result += `tabstave notation=${notation} tablature=${tablature} key=${key} time=${time} clef=treble\n`;
-			result += `notes ${duration} ${systemBars.join(" | ")}`;
-
-			if (i + barsPerSystem >= barStrings.length) {
-
-				if (cmbPlayerRepeats.value > 1) {
-					result += ` =:|\n`;
-				} else {
-					result += ` =|=\n`;
-				}
-
-			}
-			else {
-
-				result += " |\n";
-
-			}
-
-			result += `options space=${parseInt(sliderScoreStaveMargin.value,10)}\n`;
-
-		}
-
-	}
-
-	return result;
-
-}
-
-async function vexTab_render() {
-
-    // Esperar a que VexTab genere el SVG
-    while (!document.querySelector(".vextab-auto svg")) {
-        await new Promise(r => setTimeout(r, 50));
-    }
-
-    const div = document.querySelector(".vextab-auto .vex-canvas");
-    const svg = div.querySelector("svg");
-
-    if (!svg) throw new Error("No se ha generado el SVG de VexTab.");
-
-    const year = new Date().getFullYear();
-
-    if (chkScoreTitle.checked){
-
-        vexTab_createHeaderFooter(svg,titleText.value.trim() || "Sin título",`${year} - ${scoreFooter}`);
-
-    }
-
-    // Dejar únicamente el SVG dentro del contenedor
-    div.innerHTML = svg.outerHTML;
-
-    //Pintado de las notas
-    // Obtener el SVG REAL que ahora está dentro del DOM
-    const renderedSvg = div.querySelector("svg");
-
-    // Inicializar el pintado sobre el SVG visible
-    scorePaint_initScorePlayback(renderedSvg);
-
-}
-
-function vexTab_createHeaderFooter(svg, titulo = "", pie = "") {
-
-    const ns = "http://www.w3.org/2000/svg";
-
-    // Márgenes
-    const margenSuperiorExterior = 30;
-    const espacioTituloPartitura = 100;
-
-    const espacioPartituraPie = 25;
-    const margenInferiorExterior = 15;
-
-    const espacioSuperior = titulo ? margenSuperiorExterior + espacioTituloPartitura : 0;
-    const espacioInferior = pie ? espacioPartituraPie + margenInferiorExterior : 0;
-
-    // Obtener viewBox
-    let vb = svg.getAttribute("viewBox").split(/\s+/).map(Number);
-
-    // Mantener la escala
-    const alturaOriginalViewBox = vb[3];
-    const alturaOriginalSVG = parseFloat(svg.getAttribute("height"));
-    const factor = alturaOriginalSVG / alturaOriginalViewBox;
-
-    // Ampliar el viewBox
-    vb[3] += espacioSuperior + espacioInferior;
-    svg.setAttribute("viewBox", vb.join(" "));
-
-    // Ajustar altura física
-    const nuevaAltura = vb[3] * factor;
-
-    svg.setAttribute("height", nuevaAltura);
-    svg.style.height = nuevaAltura + "px";
-
-    //----------------------------------------------------------
-    // Desplazar la partitura
-    //----------------------------------------------------------
-
-    if (titulo) {
-
-        const grupo = document.createElementNS(ns, "g");
-        grupo.setAttribute("transform", `translate(0,${espacioSuperior})`);
-
-        while (svg.firstChild) {
-            grupo.appendChild(svg.firstChild);
-        }
-
-        svg.appendChild(grupo);
-
-    }
-
-    //----------------------------------------------------------
-    // Posición del título y pie
-    //----------------------------------------------------------
-
-    const horizontal = cmbScoreLayout.value === "horizontal";
-
-    const margenIzquierdo = 30;
-
-    const posX = horizontal ? margenIzquierdo : vb[2] / 2;
-    const anchor = horizontal ? "start" : "middle";
-
-    //----------------------------------------------------------
-    // Título
-    //----------------------------------------------------------
-
-    if (titulo) {
-
-        const title = document.createElementNS(ns, "text");
-
-        title.setAttribute("x", posX);
-        title.setAttribute("y", margenSuperiorExterior + 22);
-        title.setAttribute("text-anchor", anchor);
-        title.setAttribute("font-family", "Segoe UI");
-        title.setAttribute("font-size", 46);
-
-        title.textContent = titulo;
-
-        svg.appendChild(title);
-
-    }
-
-    //----------------------------------------------------------
-    // Pie
-    //----------------------------------------------------------
-
-    if (pie) {
-
-        const footer = document.createElementNS(ns, "text");
-
-        footer.setAttribute("x", posX);
-        footer.setAttribute("y", vb[3] - margenInferiorExterior);
-        footer.setAttribute("text-anchor", anchor);
-        footer.setAttribute("font-family", "Segoe UI");
-        footer.setAttribute("font-size", 18);
-
-        footer.textContent = pie;
-
-        svg.appendChild(footer);
-
-    }
-
-}
-
 async function vexTab_saveSVGFiles() {
 
     try {
@@ -1367,9 +1391,9 @@ async function svg_scoreToPNG(canvas, fileName = "partitura.png") {
 
 async function scoreRender() {
 
-	let vexTabText = vexTab_generateVexTab(scoreArray,cmbTonalidad.value,cmbBar.value,cmbFigure.value,cmbProjectType.value);
+	let vexTabText = vexTab_generateVexTab(scoreArray,cmbKey.value,cmbBar.value,cmbFigure.value,cmbProjectType.value);
 
-	if (chkNoteFlat.checked && cmbScoreStaves.value !== "tablature") vexTabText = vexTab_convertStringFretToNotes(vexTabText);
+	//if (chkNoteAccidentals.checked && cmbScoreStaves.value !== "tablature") vexTabText = vexTab_convertStringFretToNotes(vexTabText);
 
 	vexTab_container.classList.remove("layout-left","layout-center");
 
