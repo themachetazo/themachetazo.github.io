@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Fretboard</title>
 
-	<link rel="icon" href="img/fretboard.ico" type="image/x-icon">
+	<link rel="icon" href="img/logo.ico" type="image/x-icon">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 	<link rel="stylesheet" href="styles.css">
 </head>
@@ -94,7 +94,7 @@
 						<span>LIBRERÍA</span>
 						<div class="toolRow">
 							<button type="button" id="btnCreate" title="Crear librería"><i class="fa-solid fa-file-circle-plus"></i><span>Crear</span></button>
-							<button type="button" id="btnOpenProjects" title="Abrir librería de proyectos"><i class="fa-solid fa-folder-plus"></i><span>Abrir</span></button>
+							<button type="button" id="btnOpen" title="Abrir librería de proyectos"><i class="fa-solid fa-folder-plus"></i><span>Abrir</span></button>
 						</div>
 					</div>
 
@@ -246,23 +246,17 @@
 					</div>
 
 					<div class="toolbarTop-Controls" id="topNoteNames">
-						<span>NOTAS</span>
+						<span>NOTACIÓN</span>
 						<div class="toolRow">
-							<span>Notación</span>
 							<select id="cmbNoteNames">
 							    <option value="latin">Latina</option>
 							    <option value="anglo" selected>Anglosajona</option>
 							</select>
 						</div>
 						<div class="toolRow">
-							<label class="lblToggle" title="Mostrar notas">
-								<span class="lblToggleText">Mostrar</span>
+							<label class="lblToggle" title="Mostrar nombre de notas">
+								<span class="lblToggleText">Notas</span>
 								<input id="chkNoteNames" type="checkbox">
-								<span class="lblToggleSpan"></span>
-							</label>
-							<label class="lblToggle" title="Sostenidos/Bemoles">
-								<span class="lblToggleText" id="noteFlat">♯ / ♭</span>
-								<input id="chkNoteFlat" type="checkbox">
 								<span class="lblToggleSpan"></span>
 							</label>
 						</div>
@@ -477,19 +471,19 @@
 						</div>
 						<div class="toolRow">
 							<span>Tonalidad</span>
-							<select id="cmbTonalidad">
-								<option value="C" selected>C</option>
-								<option value="Db">Db</option>
-								<option value="D">D</option>
-								<option value="Eb">Eb</option>
-								<option value="E">E</option>
-								<option value="F">F</option>
-								<option value="Gb">Gb</option>
-								<option value="G">G</option>
-								<option value="Ab">Ab</option>
-								<option value="A">A</option>
-								<option value="Bb">Bb</option>
-								<option value="B">B</option>
+							<select id="cmbKey">
+								<option value="C" selected>C / Am</option>
+								<option value="Db">Db / Bbm</option>
+								<option value="D">D / Bm</option>
+								<option value="Eb">Eb / Cm</option>
+								<option value="E">E / C#m</option>
+								<option value="F">F / Dm</option>
+								<option value="Gb">Gb / Ebm</option>
+								<option value="G">G / Em</option>
+								<option value="Ab">Ab / Fm</option>
+								<option value="A">A / F#m</option>
+								<option value="Bb">Bb / Gm</option>
+								<option value="B">B / G#m</option>
 							</select>
 						</div>
 					</div>
@@ -690,7 +684,7 @@
 			<a href="#"><i class="fa-solid fa-globe"></i>Página web</a>
 			<a href="#"><i class="fa-solid fa-graduation-cap"></i>Aula Virtual</a>
 			<a href="#"><i class="fa-brands fa-youtube"></i>YouTube</a>
-			<a href="#"><i class="fa-brands fa-github"></i>GitHub</a>
+			<!--<a href="#"><i class="fa-brands fa-github"></i>GitHub</a>-->
 		</div>
 
 		<div class="footerDivs">

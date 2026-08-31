@@ -533,15 +533,11 @@ html {
 
 	overflow:auto;
 
-	background-color:#F5F0E6;
+	background-color:#fff;
 
-	border:1px solid #FFFFFF;
+	border:1px solid #000;
 
 	border-radius:2px;
-
-	box-shadow:
-		0 0 8px rgba(255,248,235,0.85),
-		0 0 16px rgba(255,248,235,0.45);
 
 }
 
@@ -1109,17 +1105,13 @@ html {
 #brandLogo,
 #footerBrandLogo,
 #spinnerLogo {
-	width: 50px;
+	width: 44px;
 	height: 50px;
-
+	opacity:0.8;
 	object-fit: cover;
 	border-radius: 4px;
 }
 
-#spinnerLogo {
-	width: 80px;
-	height: 80px;
-}
 
 .brandTitle {
 
@@ -1642,7 +1634,7 @@ html {
 
 	gap:8px;
 
-	min-height:125px;
+	min-height:110px;
 
 	padding:10px;
 
@@ -1900,9 +1892,7 @@ html {
 }
 
 .toolbarTop-Controls select:not(:disabled):hover{
-
 	cursor:pointer;
-
 }
 
 .toolbarTop-Controls select:focus-visible {
