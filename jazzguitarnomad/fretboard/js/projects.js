@@ -254,6 +254,8 @@ async function openXMLProjectsFile() {
 
 		renderProject();
 
+		if (menuOpen !== "projects") setMenu("projects");
+
 		return true;
 
 	} catch (error) {

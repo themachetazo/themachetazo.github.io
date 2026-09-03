@@ -151,7 +151,7 @@ function setUserState(){
 
 		if (user !== null){
 
-			const currentUser = users.find(item => item.username === user);
+			const currentUser = users.find(item => item.IDUser === user);
 	
 			if (currentUser) {
 
@@ -181,9 +181,9 @@ function setUserState(){
 		subtituleText.textContent = "Fretboard Designer";
 	}
 
-	if (!isAdmin && user !== null) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + user + ".xml";
+	if (!isAdmin && user !== null) xmlProjects = dataURL_Library + user + ".xml";
 
-	if (lib !== null && isUserActive) xmlProjects = xmlProjects.substring(0,xmlProjects.indexOf("/") + 1) + lib + ".xml";
+	if (lib !== null && isUserActive) xmlProjects = dataURL_Library + lib + ".xml";
 
 }
 
@@ -237,7 +237,9 @@ function configureUserControls(){
 				}else{
 					btnUser.querySelector("i").className = "fa-solid fa-user-tie";
 				}
-				txtUserTitle.textContent = userName;
+
+				const txt = userName.includes(" ") ? userName.substring(0, userName.indexOf(" ")) : texto;
+				txtUserTitle.textContent = txt;
 
 			}
 
@@ -382,7 +384,8 @@ function setMenu(m){
 		topBuffer,
 		topAudio,
 		topLibraryInfo,
-		topProjectGuest
+		topProjectGuest,
+		topUser
 
 	].forEach(control => control.classList.add("isHidden"));
 
@@ -393,6 +396,7 @@ function setMenu(m){
 			btnProyectos.classList.add("active");
 
 			showMenuControls(
+				topUser,
 				topProject,
 				topLibraryInfo,
 				topCategory,
@@ -531,7 +535,7 @@ async function initializeProjects() {
     // INFORMACION DE LIBRERIA
     // --------------------------------
 
-    setLibraryInfo(xmlProjects.substring(xmlProjects.indexOf("/") + 1));
+    setLibraryInfo(xmlProjects);
 
     // --------------------------------
     // NO HAY BIBLIOTECA
@@ -614,10 +618,11 @@ async function initializeProjects() {
 
 function initializeEmptyProject() {
 
-    currentProjectId = generateIDKey();
+	currentProjectId = generateIDKey();
 
-    resetControlsValues("init");
+	resetControlsValues("init");
 
+	if (user === null) workspaceTitleText.style.display = "none";
 }
 
 function setProjectTypeControlsDisabled(){
@@ -639,7 +644,9 @@ function setProjectTypeControlsDisabled(){
 	btnFretboardVisible.disabled = projectType === "fretboard";
 	btnScoreVisible.disabled = projectType === "fretboard";
 
-	if (isUserActive) btnPlayStop.disabled = projectType === "fretboard";
+	if (isUserActive) {
+		btnPlayStop.disabled = projectType === "fretboard";
+	}
 
 	if (appMode === "Guest" && projectType === "fretboard"){
 
@@ -659,16 +666,14 @@ function setProjectTypeControlsDisabled(){
 
 function setLibraryInfo(fileName){
 
-	const appUrl = window.location.href.substring(0,window.location.href.lastIndexOf("/") + 1);
-
 	projectPanelHeaderTitle.textContent = libraryName === "" ? "Sin Nombre" : libraryName;
 
 	let txtInfo = "";
 
-	if (isAdmin){
-		txtInfo = txtInfo + "<i><a href='" + appUrl;
-		if (xmlType !== "Server") txtInfo = txtInfo + "projects/";
-		txtInfo = txtInfo + xmlProjects + "' target='_blank'>Librería " + fileName.replace(/\.xml$/, "") + "</a></i><br>";
+	if (isAdmin && xmlType === "Server"){
+		txtInfo = txtInfo + "<i><a href='";
+		txtInfo = txtInfo + xmlProjects + "' target='_blank'>Librería " + fileName.replace(dataURL_Library, "") + "</a></i><br>";
+		txtInfo = txtInfo + "</a></i><br>";
 	}
 
 	if (libraryDesc !== "") txtInfo = txtInfo + libraryDesc;
@@ -699,7 +704,7 @@ async function loadXML(type,file) {
 
 			case "user":
 
-				users = parseUsersXml(xml);
+				users = await parseUsersXml(xml);
 
 				break;
 
@@ -756,30 +761,14 @@ function parseXML(xmlText) {
 
 }
 
-function parseUsersXml(xml) {
-
-	const u = [...xml.querySelectorAll("user")].map(node => ({
-
-		id: node.getAttribute("id"),
-		username: node.getAttribute("username"),
-		name: node.getAttribute("name"),
-		email: node.getAttribute("email"),
-		pass: node.getAttribute("pass"),
-		permits: node.getAttribute("permits"),
-		active: node.getAttribute("active") === "true",
-		alta: node.getAttribute("alta")
-	}));
-
-	return u;
-
-}
-
 function resetControlsValues(state){
 
 	if (state === "init"){
 
 		orientation = isMobile ? "vertical" : "horizontal";
 		isScoreVisible = isMobile ? false : true;
+		projectType = "sequence";
+
 	}
 
 	if (state !== "loadProject"){
@@ -790,7 +779,6 @@ function resetControlsValues(state){
 		projectBar = 4;
 		projectFigure = 1;
 		scoreScale = "auto";
-		projectType = "sequence";
 		countBars = 0;
 		repetitionSequence = 2;
 		isFretboardVisible = true;
@@ -809,10 +797,15 @@ function resetControlsValues(state){
 		scoreLayout = "vertical";
 
 /*
-		isScoreVisible = false;
 		fretboardStyle = "maple";
 		currentInstrument = "piano";
 */
+
+	}
+
+	if (state === "newProject"){
+
+		projectType = cmbProjectType.value;
 
 	}
 
@@ -848,11 +841,7 @@ function resetControlsValues(state){
 	}
 	sliderScoreZoom.title = sliderScoreZoom.value + "%";
 
-	cmbProjectType.value = projectType;
-
 	cmbTipoSecuencia.value = tipoSecuencia;
-
-	cmbChords.value = 0;
 
 	cmbCountIn.value = countBars;
 
@@ -907,13 +896,12 @@ function resetControlsValues(state){
 		barreNotes = [];
 		nutNotes = Array(stringCount).fill(null);
 
-		aSequence = buildOrderedSequence();
+		noteOrder = 0;
 
-		aChords = buildOrderedChords();
+		aSequence = [];
+		aChords = [];
 
 		loadArrayNotas();
-
-		noteOrder = 0;
 
 		btnPlayStop.disabled = true;
 
@@ -923,11 +911,15 @@ function resetControlsValues(state){
 
 	}
 
-	changeProjectType(projectType);
+	cmbProjectType.value = projectType;
+
+	changeProjectType();
 
 	setEditMode("view");
 
 	setOrientation(orientation);
+
+	if (projectType === "fretboard") isScoreVisible = false;
 
 	setWorkspaceLayout();
 
@@ -935,7 +927,7 @@ function resetControlsValues(state){
 
 }
 
-function changeProjectType(oldType) {
+function changeProjectType() {
 
 	setProjectTypeControlsDisabled();
 
@@ -947,6 +939,7 @@ function changeProjectType(oldType) {
 			btnNewChord.disabled = true;
 			btnDelChord.disabled = true;
 
+			isScoreVisible = false;
 			setWorkspaceLayout();
 
 			break;
@@ -1627,500 +1620,236 @@ function buildOrderedSequence() {
 
 	const result = [];
 
-	// --------------------------------
-	// MAPA DE NOTAS SEGÚN NOTACIÓN
-	// --------------------------------
-
 	const noteMap = keyHasFlats() ? fretboardMapNotesFlats : fretboardMapNotes;
 
-	// --------------------------------
-	// NOTAS DEL MÁSTIL
-	// --------------------------------
-
+	// Notas normales
 	notes.forEach(note => {
 
 		const string = Number(note.string);
 		const fret = Number(note.fret);
 		const order = Number(note.order);
 
-		if (string >= 0 && string < noteMap.length && fret >= 0 && fret < noteMap[string].length) {
+		if (string < 0 ||
+			string >= noteMap.length ||
+			fret < 0 ||
+			fret >= noteMap[string].length ||
+			!Number.isFinite(order)
+		) return;
 
-			result.push({
-				type: "note",
-				string: string,
-				fret: fret,
-				note: noteMap[string][fret],
-				order: order
-			});
-
-		}
+		result.push({
+			type: "note",
+			string: string,
+			fret: fret,
+			note: noteMap[string][fret],
+			order: order
+		});
 
 	});
 
-	// --------------------------------
-	// NOTAS DE LA CEJUELA
-	// --------------------------------
-
+	// Notas de la cejuela
 	nutNotes.forEach((note, string) => {
 
 		if (!note) return;
 
-		if (string >= 0 && string < noteMap.length) {
+		const order = Number(note.order);
 
-			result.push({
-				type: "note",
-				string: string,
-				fret: 0,
-				note: noteMap[string][0],
-				order: Number(note.order)
-			});
+		if (
+			string < 0 ||
+			string >= noteMap.length ||
+			!Number.isFinite(order)
+		) return;
 
-		}
+		result.push({
+			type: "note",
+			string: string,
+			fret: 0,
+			note: noteMap[string][0],
+			order: order
+		});
 
 	});
 
-	// --------------------------------
-	// CEJILLAS
-	// --------------------------------
-
+	// Cejillas
 	barreNotes.forEach(barre => {
 
 		const fret = Number(barre.fret);
 		const startString = Number(barre.startString);
 		const order = Number(barre.order);
 
-		if (fret < 0 || fret >= 25 || startString < 0 || startString >= noteMap.length) return;
+		if (
+			fret < 0 ||
+			startString < 0 ||
+			startString >= noteMap.length ||
+			!Number.isFinite(order)
+		) return;
 
 		const barreItems = [];
 
-		// --------------------------------
-		// CONSTRUIR BLOQUE DE LA CEJILLA
-		// --------------------------------
-
 		for (let string = startString; string >= 0; string--) {
 
-			// --------------------------------
-			// BUSCAR NOTA QUE ANULA LA CEJILLA
-			// --------------------------------
-
-			const overridingNote = notes
-				.filter(note => {
-
-					return Number(note.string) === string && Number(note.order) > order;
-
-				})
-				.sort((a, b) => {
-
-					return Number(a.order) - Number(b.order);
-
-				})
-				[0];
-
-			// --------------------------------
-			// SI EXISTE UNA NOTA EXPLÍCITA
-			// QUE ANULA LA CEJILLA
-			// --------------------------------
-
-			if (overridingNote) {
-
-				const explicitFret = Number(overridingNote.fret);
-				const explicitOrder = Number(overridingNote.order);
-
-				if (explicitFret >= 0 && explicitFret < noteMap[string].length) {
-
-					const explicitIndex = result.findIndex(item => {
-
-						return item.type === "note" && item.string === string && item.order === explicitOrder;
-
-					});
-
-					if (explicitIndex !== -1) {
-
-						const explicitItem = result.splice(explicitIndex, 1)[0];
-
-						barreItems.push({
-
-							type: "barreNote",
-							string: string,
-							fret: explicitFret,
-							note: noteMap[string][explicitFret],
-							order: explicitOrder
-
-						});
-
-					}
-
-				}
-
-				continue;
-
-			}
-
-			// --------------------------------
-			// GENERAR NOTA DE LA CEJILLA
-			// --------------------------------
+			if (fret >= noteMap[string].length) continue;
 
 			barreItems.push({
-
-				type: "barreNote",
+				type: "note",
 				string: string,
 				fret: fret,
 				note: noteMap[string][fret],
 				order: order
-
 			});
 
 		}
 
-		// --------------------------------
-		// ORDENAR BLOQUE DE LA CEJILLA
-		// GRAVE → AGUDO
-		// --------------------------------
-
-		barreItems.sort((a, b) => {
-
-			return b.string - a.string;
-
-		});
-
-		// --------------------------------
-		// AÑADIR CEJILLA COMO BLOQUE
-		// --------------------------------
-
 		result.push({
-
 			type: "barre",
 			order: order,
 			items: barreItems
-
 		});
 
 	});
 
-	// --------------------------------
-	// ORDENAR ELEMENTOS PRINCIPALES
-	// --------------------------------
+	// Ordenamos las acciones originales
+	result.sort((a, b) => a.order - b.order);
 
-	result.sort((a, b) => {
-
-		return a.order - b.order;
-
-	});
-
-	// --------------------------------
-	// CONSTRUIR RESULTADO FINAL
-	// --------------------------------
-
+	// Reconstruimos el orden REAL de las notas finales
 	const finalResult = [];
+
+	let currentOrder = 1;
 
 	result.forEach(item => {
 
-		// --------------------------------
-		// BLOQUE DE CEJILLA
-		// --------------------------------
-
 		if (item.type === "barre") {
 
+			// Cada nota de la cejilla consume un order
 			item.items.forEach(barreItem => {
 
 				finalResult.push({
-
 					string: barreItem.string,
 					fret: barreItem.fret,
-					note: barreItem.note
-
+					note: barreItem.note,
+					order: currentOrder
 				});
+
+				currentOrder++;
 
 			});
 
 			return;
-
 		}
 
-		// --------------------------------
-		// NOTA NORMAL
-		// --------------------------------
-
+		// Nota normal
 		finalResult.push({
-
 			string: item.string,
 			fret: item.fret,
-			note: item.note
-
+			note: item.note,
+			order: currentOrder
 		});
+
+		currentOrder++;
 
 	});
 
 	return finalResult;
-
 }
 
 function buildOrderedChords() {
-
-	const result = [];
-
-	// --------------------------------
-	// MAPA DE NOTAS SEGÚN NOTACIÓN
-	// --------------------------------
-
 	const noteMap = keyHasFlats() ? fretboardMapNotesFlats : fretboardMapNotes;
+	const chords = new Map();
 
-	// --------------------------------
-	// AGRUPAR NOTAS EXPLÍCITAS
-	// --------------------------------
-
-	const chordNotes = {};
-
+	// Agrupar notas sueltas por acorde
 	notes.forEach(note => {
-
 		const chord = Number(note.chord);
-
 		if (!Number.isInteger(chord)) return;
 
-		if (!chordNotes[chord]) chordNotes[chord] = [];
+		if (!chords.has(chord)) chords.set(chord, []);
 
-		chordNotes[chord].push(note);
-
+		chords.get(chord).push({
+			chord,
+			string: Number(note.string),
+			fret: Number(note.fret)
+		});
 	});
 
-	// --------------------------------
-	// AGRUPAR NUT NOTES
-	// --------------------------------
-
+	// Añadir nutNotes
 	nutNotes.forEach((note, string) => {
-
 		if (!note) return;
 
 		const chord = Number(note.chord);
-
 		if (!Number.isInteger(chord)) return;
 
-		if (!chordNotes[chord]) chordNotes[chord] = [];
+		if (!chords.has(chord)) chords.set(chord, []);
 
-		chordNotes[chord].push({
-			string: string,
-			fret: 0,
-			chord: chord,
-			order: note.order
+		chords.get(chord).push({
+			chord,
+			string,
+			fret: 0
 		});
-
 	});
 
-	// --------------------------------
-	// AGRUPAR BARRES
-	// --------------------------------
-
-	const chordBarres = {};
-
+	// Construir las notas correspondientes a las barreNotes
 	barreNotes.forEach(barre => {
-
 		const chord = Number(barre.chord);
+		const fret = Number(barre.fret);
+		const startString = Number(barre.startString);
 
 		if (!Number.isInteger(chord)) return;
+		if (!Number.isInteger(fret)) return;
+		if (!Number.isInteger(startString)) return;
 
-		if (!chordBarres[chord]) chordBarres[chord] = [];
+		if (!chords.has(chord)) chords.set(chord, []);
 
-		chordBarres[chord].push(barre);
-
+		for (let string = startString; string >= 0; string--) {
+			chords.get(chord).push({
+				chord,
+				string,
+				fret
+			});
+		}
 	});
 
-	// --------------------------------
-	// OBTENER TODOS LOS ACORDES
-	// --------------------------------
+	const result = [];
 
-	const chords = new Set([
-		...Object.keys(chordNotes),
-		...Object.keys(chordBarres)
-	]);
+	// Procesar cada acorde independientemente
+	[...chords.entries()]
+		.sort((a, b) => a[0] - b[0])
+		.forEach(([chord, chordNotes]) => {
 
-	// --------------------------------
-	// PROCESAR CADA ACORDE
-	// --------------------------------
+			// En cada cuerda solamente puede sonar una nota.
+			// Si hay varias, queda la del traste más alto.
+			const strings = new Map();
 
-	[...chords]
-		.map(Number)
-		.sort((a, b) => a - b)
-		.forEach(chord => {
+			chordNotes.forEach(note => {
+				const string = note.string;
+				const fret = note.fret;
 
-			const chordItems = [];
+				if (!Number.isInteger(string) || !Number.isInteger(fret)) return;
+				if (string < 0 || string >= noteMap.length) return;
+				if (fret < 0 || fret >= noteMap[string].length) return;
 
-			// --------------------------------
-			// NOTAS EXPLÍCITAS
-			// --------------------------------
+				const current = strings.get(string);
 
-			(chordNotes[chord] || []).forEach(note => {
-
-				const string = Number(note.string);
-				const fret = Number(note.fret);
-				const order = Number(note.order);
-
-				if (
-					string >= 0 &&
-					string < noteMap.length &&
-					fret >= 0 &&
-					fret < noteMap[string].length
-				) {
-
-					chordItems.push({
-						chord: chord,
-						string: string,
-						fret: fret,
-						note: noteMap[string][fret],
-						order: order,
-						isBarreBlock: false
+				if (!current || fret > current.fret) {
+					strings.set(string, {
+						chord,
+						string,
+						fret,
+						note: noteMap[string][fret]
 					});
-
 				}
-
 			});
 
-			// --------------------------------
-			// BARRES
-			// --------------------------------
+			// Grave → agudo
+			const orderedNotes = [...strings.values()]
+				.sort((a, b) => b.string - a.string);
 
-			(chordBarres[chord] || []).forEach(barre => {
-
-				const fret = Number(barre.fret);
-				const startString = Number(barre.startString);
-				const order = Number(barre.order);
-
-				if (
-					fret < 0 ||
-					fret >= 25 ||
-					startString < 0 ||
-					startString >= noteMap.length
-				) return;
-
-				const barreItems = [];
-
-				// --------------------------------
-				// GENERAR NOTAS DE LA BARRE
-				// --------------------------------
-
-				for (let string = startString; string >= 0; string--) {
-
-					// --------------------------------
-					// BUSCAR NOTA EXPLÍCITA
-					// DEL MISMO ACORDE Y CUERDA
-					// --------------------------------
-
-					const explicitNote = (chordNotes[chord] || []).find(note => {
-
-						return Number(note.string) === string;
-
-					});
-
-					if (explicitNote) {
-
-						const explicitFret = Number(explicitNote.fret);
-
-						if (
-							explicitFret >= 0 &&
-							explicitFret < noteMap[string].length
-						) {
-
-							const explicitOrder = Number(explicitNote.order);
-
-							const explicitIndex = chordItems.findIndex(item => {
-
-								return (
-									item.string === string &&
-									item.order === explicitOrder
-								);
-
-							});
-
-							if (explicitIndex !== -1) {
-
-								const explicitItem = chordItems.splice(explicitIndex, 1)[0];
-
-								explicitItem.isBarreBlock = true;
-
-								barreItems.push(explicitItem);
-
-							}
-
-						}
-
-						continue;
-
-					}
-
-					// --------------------------------
-					// CREAR NOTA GENERADA POR BARRE
-					// --------------------------------
-
-					barreItems.push({
-						chord: chord,
-						string: string,
-						fret: fret,
-						note: noteMap[string][fret],
-						order: order,
-						isBarreBlock: true
-					});
-
-				}
-
-				// --------------------------------
-				// ORDENAR BLOQUE DE LA BARRE
-				// GRAVE → AGUDO
-				// --------------------------------
-
-				barreItems.sort((a, b) => {
-
-					return b.string - a.string;
-
-				});
-
-				// --------------------------------
-				// AÑADIR BLOQUE
-				// --------------------------------
-
-				chordItems.push(...barreItems);
-
-			});
-
-			// --------------------------------
-			// ORDEN GENERAL
-			// --------------------------------
-
-			chordItems.sort((a, b) => {
-
-				// Si los dos elementos pertenecen
-				// a un bloque de barre, por cuerda
-
-				if (a.isBarreBlock && b.isBarreBlock) {
-					return b.string - a.string;
-				}
-
-				// Los demás elementos siguen
-				// su order original
-
-				return a.order - b.order;
-
-			});
-
-			// --------------------------------
-			// AÑADIR AL RESULTADO
-			// --------------------------------
-
-			result.push(...chordItems);
-
+			result.push(...orderedNotes);
 		});
-
-	// --------------------------------
-	// ELIMINAR DATOS INTERNOS
-	// --------------------------------
 
 	return result.map(item => ({
-
 		chord: item.chord,
 		string: item.string,
 		fret: item.fret,
 		note: item.note
-
 	}));
-
 }
 
 function loadArrayNotas() {
@@ -2446,6 +2175,7 @@ function delChord() {
 	// --------------------------------
 
 	if (selectedIndex <= 0) {
+		alert("No esta permitido eliminar el primer acorde.")
 		return;
 	}
 
@@ -2467,9 +2197,7 @@ function delChord() {
 
 			return {
 				...note,
-				chord: chord > selectedChord
-					? chord - 1
-					: chord
+				chord: chord > selectedChord ? chord - 1 : chord
 			};
 
 		});
@@ -2490,9 +2218,7 @@ function delChord() {
 
 			return {
 				...barre,
-				chord: chord > selectedChord
-					? chord - 1
-					: chord
+				chord: chord > selectedChord ? chord - 1 : chord
 			};
 
 		});
@@ -2550,10 +2276,7 @@ function delChord() {
 
 	if (cmbChords.options.length > 0) {
 
-		const newIndex = Math.min(
-			selectedIndex,
-			cmbChords.options.length - 1
-		);
+		const newIndex = Math.min(selectedIndex,cmbChords.options.length - 1);
 
 		cmbChords.selectedIndex = newIndex;
 
@@ -2563,9 +2286,9 @@ function delChord() {
 	// CARGAR NOTAS MUSICALES
 	// --------------------------------
 
-	aSequence = buildOrderedSequence();
-
 	aChords = buildOrderedChords();
+
+console.log(aChords);
 
 	loadArrayNotas();
 
@@ -2605,5 +2328,267 @@ function keyHasFlats() {
 	if (!scale) return false;
 
 	return scale.some(note => note.includes("b"));
+
+}
+
+function rendertNotesArrays(){
+
+	if (cmbProjectType.value !== "chord"){
+		aSequence = buildOrderedSequence();
+	}else{
+		aChords = buildOrderedChords();
+	}
+
+	loadArrayNotas();
+
+	drawFretboard();
+	drawNotes();
+
+	if (isScoreVisible) scoreRender();
+
+}
+
+function chordNoteExists(string,fret,chord) {
+
+	return aChords.some(note =>
+		note.string === string &&
+		note.fret === fret &&
+		note.chord === Number(chord)
+	);
+
+}
+
+async function encryptUser(email, password) {
+
+	const encoder = new TextEncoder();
+
+	const keyMaterial = await crypto.subtle.importKey(
+		"raw",
+		encoder.encode(password),
+		"PBKDF2",
+		false,
+		["deriveKey"]
+	);
+
+	const salt = crypto.getRandomValues(new Uint8Array(16));
+
+	const key = await crypto.subtle.deriveKey(
+		{
+			name: "PBKDF2",
+			salt,
+			iterations: 100000,
+			hash: "SHA-256"
+		},
+		keyMaterial,
+		{
+			name: "AES-GCM",
+			length: 256
+		},
+		false,
+		["encrypt", "decrypt"]
+	);
+
+	const iv = crypto.getRandomValues(new Uint8Array(12));
+
+	const encrypted = await crypto.subtle.encrypt(
+		{
+			name: "AES-GCM",
+			iv
+		},
+		key,
+		encoder.encode(email)
+	);
+
+	// Convertir a Base64 para poder transportarlo
+	const data = new Uint8Array([
+		...salt,
+		...iv,
+		...new Uint8Array(encrypted)
+	]);
+
+	return btoa(String.fromCharCode(...data));
+}
+
+async function decryptUser(encryptedData, password) {
+
+	try {
+
+		const encoder = new TextEncoder();
+		const decoder = new TextDecoder();
+
+		const data = Uint8Array.from(
+			atob(encryptedData),
+			c => c.charCodeAt(0)
+		);
+
+		const salt = data.slice(0, 16);
+		const iv = data.slice(16, 28);
+		const encrypted = data.slice(28);
+
+		const keyMaterial = await crypto.subtle.importKey(
+			"raw",
+			encoder.encode(password),
+			"PBKDF2",
+			false,
+			["deriveKey"]
+		);
+
+		const key = await crypto.subtle.deriveKey(
+			{
+				name: "PBKDF2",
+				salt,
+				iterations: 100000,
+				hash: "SHA-256"
+			},
+			keyMaterial,
+			{
+				name: "AES-GCM",
+				length: 256
+			},
+			false,
+			["decrypt"]
+		);
+
+		const decrypted = await crypto.subtle.decrypt(
+			{
+				name: "AES-GCM",
+				iv
+			},
+			key,
+			encrypted
+		);
+
+		return decoder.decode(decrypted);
+
+	} catch (error) {
+
+		return null;
+
+	}
+
+}
+
+async function parseUsersXml(xml) {
+
+	const usersNode = xml.querySelector("users");
+
+	xmlUsersVersion = usersNode.getAttribute("version") || "1.0";
+
+	const u = await Promise.all(
+
+		[...xml.querySelectorAll("user")].map(async node => ({
+
+			IDUser: node.getAttribute("IDUser"),
+			name: node.getAttribute("name"),
+			email: node.getAttribute("email"),
+			permits: node.getAttribute("permits"),
+			active: node.getAttribute("active") === "true",
+			alta: node.getAttribute("alta"),
+			baja: node.getAttribute("baja")
+
+		}))
+
+	);
+
+	return u;
+
+}
+
+async function addUser(name, email) {
+
+	try {
+
+		// Comprobar que existe el array
+		if (!Array.isArray(users)) {
+
+			users = [];
+
+		}
+
+		const encrypted = await encryptUser(email, k);
+
+		const date = new Date();
+
+		const alta = String(date.getDate()).padStart(2, "0") + "/" + String(date.getMonth() + 1).padStart(2, "0") + "/" + date.getFullYear();
+
+		const userData = {
+
+			IDUser: generateIDKey(),
+			name: name,
+			email: encrypted,
+			permits: "",
+			active: true,
+			alta: alta,
+			baja: ""
+
+		};
+
+		users.push(userData);
+
+		saveUsersXml();
+
+		showAlert("Usuario '" + name + "', con email '" + email + "' creado.","success");
+
+	} catch (error) {
+
+		showAlert("No se pudo crear el usuario","error");
+
+	}
+
+}
+
+function saveUsersXml() {
+
+	try {
+
+		xmlUsersVersion = (parseFloat(xmlUsersVersion) + 0.1).toFixed(1);
+
+		let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+
+		xml += '<users version="' + escapeXml(xmlUsersVersion) + '">\n';
+
+		users.forEach(user => {
+
+			xml += '\t<user';
+
+			xml += ' IDUser="' + escapeXml(user.IDUser) + '"';
+			xml += ' name="' + escapeXml(user.name) + '"';
+			xml += ' email="' + escapeXml(user.email) + '"';
+			xml += ' active="' + user.active + '"';
+			xml += ' permits="' + escapeXml(user.permits) + '"';
+			xml += ' alta="' + escapeXml(user.alta) + '"';
+			xml += ' baja="' + escapeXml(user.baja) + '"';
+
+			xml += ' />\n';
+
+		});
+
+		xml += '</users>';
+
+		const blob = new Blob(
+			[xml],
+			{ type: "application/xml" }
+		);
+
+		const url = URL.createObjectURL(blob);
+
+		const a = document.createElement("a");
+
+		a.href = url;
+		a.download = "users.xml";
+
+		a.click();
+
+		URL.revokeObjectURL(url);
+
+		return true;
+
+	} catch (error) {
+
+		console.error("Error al guardar users.xml:", error);
+
+		return false;
+
+	}
 
 }

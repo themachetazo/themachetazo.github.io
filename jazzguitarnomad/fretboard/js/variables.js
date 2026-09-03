@@ -1,6 +1,223 @@
 "use strict";
 
 /*==================================================
+	URLs
+==================================================*/
+
+/*
+//Local
+alert(window.location.href.substring(0,window.location.href.lastIndexOf("/") + 1));
+alert(window.location.href.includes("file:///"));
+*/
+
+const dataURL = "https://themachetazo.github.io/jazzguitarnomad/fretboard/";
+
+const dataURL_Library = dataURL + "projects/";
+const dataURL_Images = dataURL + "img/";
+const dataURL_Users = dataURL;
+
+const dataURL_Samples = "https://themachetazo.github.io/jazzguitarnomad/samples/";
+
+/*==================================================
+	CONFIGURACIÓN GENERAL DE LA APLICACIÓN
+==================================================*/
+
+let isMobile = false;
+let isTouchDevice = false;
+
+const stringCount = 6;
+
+const maxMediaScreenWidth = 768;
+let screenRotated = screen.orientation.angle;
+
+let menuOpen = "";
+
+let editMode = "view";
+
+let projectTitle = "Proyecto nuevo sin título";
+let displayMode = true;
+let fretCount = 10;
+let orientation = "horizontal";
+let rotation = 0; /* vertical: 0 / 180, horizontal: 90 / 270 */
+let rotated = false;
+let projectBar = 4;
+let projectFigure = 1;
+let scoreScale = "auto";
+let projectType = "sequence";
+let countBars = 0;
+let repetitionSequence = 2;
+let isFretboardVisible = true;
+let isScoreVisible = false;
+let currentInstrument = "piano";
+let tipoSecuencia = "up";
+let fretNumbers = 1;
+let showFretNumbers = true;
+let bpm = 90;
+let key = "C";
+let scoreStaves = "all";
+let scoreLayout = "vertical";
+let swing = false;
+let metronomeOn = true;
+let inlays = true;
+let notation = "";
+
+let topControlsWasOpen = true;
+let libraryWasClosed = false;
+
+
+/*==================================================
+	USUARIOS Y PROYECTOS
+==================================================*/
+
+let appMode = "Designer";
+
+let users = [];
+let user;
+let userName;
+let xmlUsers = dataURL_Users + "users.xml";
+let xmlUsersVersion = "1.0";
+let isUserActive = true;
+
+let isAdmin = false;
+
+let lib = null;
+
+let projectsLoaded = false;
+
+let projects = [];
+let projectsFileHandle = null;
+
+let currentProjectId = null;
+
+let projectModified = false;
+
+let categories = [];
+
+let xmlProjects = dataURL_Library + "default.xml";
+
+let xmlVersion = "1.0";
+let xmlType = "Server";
+
+let libraryName = "Sin Nombre";
+let libraryDesc = "Descripción";
+
+let k = "admin";
+
+/*==================================================
+	IMÁGENES
+==================================================*/
+
+let fretboardStyle = "maple";
+
+const fretboardImages = {
+	maple: dataURL_Images + "maple.png",
+	rosewood: dataURL_Images + "rosewood.png"
+};
+
+let neckImageLoaded = false;
+const neckImage = new Image();
+
+
+/*==================================================
+	GEOMETRÍA Y MEDIDAS DEL DIAPASÓN
+==================================================*/
+
+const HORIZONTAL_WIDTH = 850;
+const HORIZONTAL_HEIGHT = 105;
+const VERTICAL_WIDTH = HORIZONTAL_HEIGHT;
+const VERTICAL_HEIGHT = HORIZONTAL_WIDTH;
+
+const MIN_NECK_LENGTH = 420;
+const MAX_NECK_LENGTH = 1320;
+
+const PIXELS_PER_FRET = 55;
+
+const marginX = 12;
+const marginBottom = 12;
+
+let stringSpace;
+let fretSpace;
+
+let boardleft = 12;
+let boardtop = 12;
+let boardright;
+let boardbottom;
+let boardWidth;
+let boardHeight;
+
+let imageLeft;
+let imageTop;
+let imageWidth;
+let imageHeight;
+
+let neckBleed;
+let neckRadius;
+
+let fretboardBackground = null;
+
+
+/*==================================================
+	NOTAS
+==================================================*/
+
+let noteOrder = 0;
+
+let hoverCell = null;
+let hoverNut = null;
+
+let notes = [];
+let nutNotes = Array(stringCount).fill(null); //array con una posición por cada cuerda
+let barreNotes = [];
+
+let aSequence = [];
+let aChords = [];
+
+let NOTAS = [];
+let ACORDES = [];
+
+let sequenceXMLNotes = []; //Notes y nutNotes
+let chordsXMLNotes = []; //Barres de cejillas
+let sequenceToPlay = []; //Secuencia de notas Final a tocar
+let chordsToPlay = []; //Secuencia de acordes Final a tocar
+
+let history = [];
+const maxHistory = 50;
+
+/*==================================================
+	PLAYER y SCORE
+==================================================*/
+
+const EVENT_X_TOLERANCE = 12;
+const SCORE_SYSTEM_Y_TOLERANCE = 150;
+const SCORE_PROGRESS_BAR_WIDTH = 2;
+const SCORE_PROGRESS_BAR_MARGIN = 8;
+
+let scoreSystems = [];
+let scoreEvents = [];
+let scoreEventIndex = 0;
+let scoreSvg = null;
+let scoreIsReady = false;
+let scoreProgressBar = null;
+let scoreCurrentSystem = -1;
+const scoreNoteColor = "blue";
+const scoreScrollColor = "green";
+
+let scoreArray = [];
+let scoreFooter = "www.jazzguitarnomad.com";
+
+let firstTick = true;
+
+let metronome = null;
+let player = null;
+
+let instruments = null;
+let instrument = null;
+
+let isPlaying = false;
+let isPlayingBuffer = false;
+
+
+/*==================================================
 	REFERENCIAS DOM: LAYOUT, LOADING
 ==================================================*/
 
@@ -134,6 +351,7 @@ const btnRotate = document.getElementById("btnRotate");
 	REFERENCIAS DOM: PROYECTOS
 ==================================================*/
 
+const btnNewUser = document.getElementById("btnNewUser");
 const btnCreate = document.getElementById("btnCreate");
 const btnOpen = document.getElementById("btnOpen");
 const btnNewProject = document.getElementById("btnNewProject");
@@ -246,203 +464,8 @@ const btnScoreVisible = document.getElementById("btnScoreVisible");
 
 
 /*==================================================
-	USUARIOS Y PROYECTOS
-==================================================*/
-
-let isMobile = false;
-let isTouchDevice = false;
-
-let appMode = "Designer";
-
-let lib = null;
-
-let users = [];
-let user;
-let userName;
-let xmlUsers = "users.xml";
-let isUserActive = true;
-
-let isAdmin = false;
-
-let projectsLoaded = false;
-
-let projects = [];
-let projectsFileHandle = null;
-
-let currentProjectId = null;
-
-let projectModified = false;
-
-let categories = [];
-
-let xmlProjects = "projects/default.xml";
-let xmlVersion = "1.0";
-let xmlType = "Server";
-
-let libraryName = "Sin Nombre";
-let libraryDesc = "Descripción";
-
-
-/*==================================================
-	CONFIGURACIÓN GENERAL DE LA APLICACIÓN
-==================================================*/
-
-const stringCount = 6;
-
-const maxMediaScreenWidth = 768;
-let screenRotated = screen.orientation.angle;
-
-let menuOpen = "";
-
-let editMode = "view";
-
-let projectTitle = "Proyecto nuevo sin título";
-let displayMode = true;
-let fretCount = 10;
-let orientation = "horizontal";
-let rotation = 0; /* vertical: 0 / 180, horizontal: 90 / 270 */
-let rotated = false;
-let projectBar = 4;
-let projectFigure = 1;
-let scoreScale = "auto";
-let projectType = "sequence";
-let countBars = 0;
-let repetitionSequence = 2;
-let isFretboardVisible = true;
-let isScoreVisible = false;
-let currentInstrument = "piano";
-let tipoSecuencia = "up";
-let fretNumbers = 1;
-let showFretNumbers = true;
-let bpm = 90;
-let key = "C";
-let scoreStaves = "all";
-let scoreLayout = "vertical";
-let swing = false;
-let metronomeOn = true;
-let inlays = true;
-let notation = "";
-
-let topControlsWasOpen = true;
-let libraryWasClosed = false;
-
-/*==================================================
-	GEOMETRÍA Y MEDIDAS DEL DIAPASÓN
-==================================================*/
-
-const HORIZONTAL_WIDTH = 850;
-const HORIZONTAL_HEIGHT = 105;
-const VERTICAL_WIDTH = HORIZONTAL_HEIGHT;
-const VERTICAL_HEIGHT = HORIZONTAL_WIDTH;
-
-const MIN_NECK_LENGTH = 420;
-const MAX_NECK_LENGTH = 1320;
-
-const PIXELS_PER_FRET = 55;
-
-const marginX = 12;
-const marginBottom = 12;
-
-let stringSpace;
-let fretSpace;
-
-let boardleft = 12;
-let boardtop = 12;
-let boardright;
-let boardbottom;
-let boardWidth;
-let boardHeight;
-
-let imageLeft;
-let imageTop;
-let imageWidth;
-let imageHeight;
-
-let neckBleed;
-let neckRadius;
-
-
-/*==================================================
-	IMÁGENES
-==================================================*/
-
-let fretboardStyle = "maple";
-
-const fretboardImages = {
-	maple: "img/fretboard-maple.png",
-	rosewood: "img/fretboard-rosewood.png"
-};
-
-let neckImageLoaded = false;
-const neckImage = new Image();
-
-
-/*==================================================
-	NOTAS
-==================================================*/
-
-let noteOrder = 0;
-
-let hoverCell = null;
-let hoverNut = null;
-
-let notes = [];
-let nutNotes = Array(stringCount).fill(null); //array con una posición por cada cuerda
-let barreNotes = [];
-
-let aSequence = [];
-let aChords = [];
-
-let NOTAS = [];
-let ACORDES = [];
-
-let sequenceXMLNotes = []; //Notes y nutNotes
-let chordsXMLNotes = []; //Barres de cejillas
-let sequenceToPlay = []; //Secuencia de notas Final a tocar
-let chordsToPlay = []; //Secuencia de acordes Final a tocar
-
-let history = [];
-const maxHistory = 50;
-
-/*==================================================
-	PLAYER y SCORE
-==================================================*/
-
-const EVENT_X_TOLERANCE = 12;
-const SCORE_SYSTEM_Y_TOLERANCE = 150;
-const SCORE_PROGRESS_BAR_WIDTH = 2;
-const SCORE_PROGRESS_BAR_MARGIN = 8;
-
-let scoreSystems = [];
-let scoreEvents = [];
-let scoreEventIndex = 0;
-let scoreSvg = null;
-let scoreIsReady = false;
-let scoreProgressBar = null;
-let scoreCurrentSystem = -1;
-const scoreNoteColor = "blue";
-const scoreScrollColor = "green";
-
-let scoreArray = [];
-let scoreFooter = "www.jazzguitarnomad.com";
-
-let firstTick = true;
-
-let metronome = null;
-let player = null;
-
-let instruments = null;
-let instrument = null;
-
-let isPlaying = false;
-let isPlayingBuffer = false;
-
-
-/*==================================================
 	INSTRUMENTOS
 ==================================================*/
-
-const samplesURL = "https://themachetazo.github.io/jazzguitarnomad/samples/";
 
 const instrumentDefs = {
 
@@ -497,7 +520,7 @@ const instrumentDefs = {
 
         release: 0.05,
 
-        baseUrl: samplesURL + "piano/"
+        baseUrl: dataURL_Samples + "piano/"
 
     },
 
@@ -538,7 +561,7 @@ const instrumentDefs = {
 
         release: 0.10,
 
-        baseUrl: samplesURL + "cguitar/"
+        baseUrl: dataURL_Samples + "cguitar/"
 
     }
 

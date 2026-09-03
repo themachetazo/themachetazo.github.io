@@ -349,6 +349,78 @@ class MusicPlayer {
 	}
 
 	////////////////////////////////////////////////////////////
+	// PLAY TEMPORAL
+	////////////////////////////////////////////////////////////
+
+	async playNoteFor(note, duration = 2) {
+
+		this.stop(false);
+
+		this.playing = true;
+
+		try {
+
+			await Tone.start();
+
+			this.instrument.triggerAttack(note);
+
+			await new Promise(resolve => {
+
+				setTimeout(resolve, duration * 1000);
+
+			});
+
+			this.instrument.triggerRelease(note);
+
+		} catch (error) {
+
+			console.error("Error al reproducir la nota:", error);
+
+		}
+
+		this.playing = false;
+
+	}
+
+	async playChordFor(chord, duration = 2) {
+
+		this.stop(false);
+
+		this.playing = true;
+
+		try {
+
+			await Tone.start();
+
+			chord.forEach(note => {
+
+				this.instrument.triggerAttack(note);
+
+			});
+
+			await new Promise(resolve => {
+
+				setTimeout(resolve, duration * 1000);
+
+			});
+
+			chord.forEach(note => {
+
+				this.instrument.triggerRelease(note);
+
+			});
+
+		} catch (error) {
+
+			console.error("Error al reproducir el acorde:", error);
+
+		}
+
+		this.playing = false;
+
+	}
+
+	////////////////////////////////////////////////////////////
 	// STOP
 	////////////////////////////////////////////////////////////
 

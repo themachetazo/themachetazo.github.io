@@ -9,6 +9,8 @@ function loadFretboardImage() {
 
 	return new Promise((resolve, reject) => {
 
+		neckImage.crossOrigin = "Anonymous";
+
 		neckImage.onload = () => {
 
 			neckImageLoaded = true;
@@ -213,13 +215,7 @@ function drawFretboard() {
 			ctx.lineWidth = i * 1.5;
 			ctx.strokeStyle = `rgba(255,248,235,${0.03 * i})`;
 
-			roundedRectPath(
-				imageLeft,
-				imageTop,
-				imageWidth,
-				imageHeight,
-				neckRadius
-			);
+			roundedRectPath(imageLeft,imageTop,imageWidth,imageHeight,neckRadius);
 
 			ctx.stroke();
 
@@ -366,6 +362,20 @@ function drawFretboard() {
 		drawStringNumbers();
 
 	}
+
+	//------------------------------------------------
+	// Guardamos todo el dibujo
+	//------------------------------------------------
+
+	fretboardBackground = ctx.getImageData(0,0,canvas.width,canvas.height);
+
+}
+
+function restoreFretboardBackground() {
+
+	if (!fretboardBackground) return;
+
+	ctx.putImageData(fretboardBackground,0,0);
 
 }
 
@@ -993,111 +1003,6 @@ function drawVertical() {
 		}
 
 	}
-
-}
-
-
-function drawRealisticString(x1, y1, x2, y2, lineWidth) {
-
-	const isBlank = fretboardStyle === "blank";
-
-	const shadowColor = !isBlank
-		? "rgba(20,10,5,0.45)"
-		: "rgba(0,0,0,0.35)";
-
-	const bodyColor = !isBlank
-		? "rgba(190,105,42,1)"
-		: "rgba(70,70,70,0.85)";
-
-	const highlightColor = !isBlank
-		? "rgba(255,205,135,0.80)"
-		: "rgba(255,255,255,0.45)";
-
-	const vertical = (x1 === x2);
-
-	//------------------------------------------------
-	// Sombra paralela
-	//------------------------------------------------
-
-	ctx.save();
-
-	ctx.shadowColor = shadowColor;
-	ctx.shadowBlur = Math.max(2, lineWidth * 0.9);
-
-	if (vertical) {
-
-		ctx.shadowOffsetX = 1.4;
-		ctx.shadowOffsetY = 0.8;
-
-	} else {
-
-		ctx.shadowOffsetX = 0.8;
-		ctx.shadowOffsetY = 1.4;
-
-	}
-
-	ctx.beginPath();
-	ctx.strokeStyle = bodyColor;
-	ctx.lineWidth = lineWidth;
-	ctx.lineCap = "round";
-
-	ctx.moveTo(x1, y1);
-	ctx.lineTo(x2, y2);
-
-	ctx.stroke();
-
-	ctx.restore();
-
-	//------------------------------------------------
-	// Cuerpo de la cuerda
-	//------------------------------------------------
-
-	ctx.beginPath();
-	ctx.strokeStyle = bodyColor;
-	ctx.lineWidth = lineWidth;
-	ctx.lineCap = "round";
-
-	ctx.moveTo(x1, y1);
-	ctx.lineTo(x2, y2);
-
-	ctx.stroke();
-
-	//------------------------------------------------
-	// Reflejo superior
-	//------------------------------------------------
-
-	ctx.beginPath();
-	ctx.strokeStyle = highlightColor;
-	ctx.lineWidth = Math.max(0.45, lineWidth * 0.22);
-	ctx.lineCap = "round";
-
-	if (vertical) {
-
-		ctx.moveTo(
-			x1 - lineWidth * 0.18,
-			y1
-		);
-
-		ctx.lineTo(
-			x2 - lineWidth * 0.18,
-			y2
-		);
-
-	} else {
-
-		ctx.moveTo(
-			x1,
-			y1 - lineWidth * 0.18
-		);
-
-		ctx.lineTo(
-			x2,
-			y2 - lineWidth * 0.18
-		);
-
-	}
-
-	ctx.stroke();
 
 }
 
@@ -2163,9 +2068,29 @@ function getNutColor() {
 	return "rgba(0, 0, 0, 0.85)";
 }
 
+
 //==================================================
 // DRAW NOTES
 //==================================================
+
+function drawNotes() {
+
+	drawBarres();
+
+	notes.forEach(note => {
+
+		const p = getCellCenter(note.string, note.fret);
+
+		drawMarker(p.x, p.y, note);
+
+	});
+
+	drawNutNotes();
+
+	drawNutHover();
+	drawHoverMarker();
+
+}
 
 function drawNutNotes() {
 
@@ -2533,25 +2458,6 @@ function drawNutHover() {
 	ctx.stroke();
 
 	ctx.restore();
-
-}
-
-function drawNotes() {
-
-	drawBarres();
-
-	notes.forEach(note => {
-
-		const p = getCellCenter(note.string, note.fret);
-
-		drawMarker(p.x, p.y, note);
-
-	});
-
-	drawNutNotes();
-
-	drawNutHover();
-	drawHoverMarker();
 
 }
 
