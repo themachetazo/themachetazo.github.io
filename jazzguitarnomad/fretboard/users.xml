@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<users version="1.1">
-	<user id="1" username="1234" name="soy1234" email="e@e.es" pass="" active="true" permits="" alta="20/08/2026" />
-	<user id="2" username="nato" name="soynato" email="e@e.es" pass="" active="true" permits="" alta="20/08/2026" />
-	<user id="3" username="usr" name="soyusr" email="e@e.es" pass="" active="false" permits="" alta="20/08/2026" />
+<users version="1.0">
+	<user username="o37fgk" name="pepito" email="oL+0EUmwFjxHnBaZt6vR1xao00DKUeoSzYBo6ItfkKJluzeXl0ACh+PBen0AVUXG8nM/7PqlShJbHMSMuR8=" active="true" permits="" alta="03/09/2026" baja="" />
 </users>
