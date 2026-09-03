@@ -50,7 +50,7 @@
 				<button type="button" id="btnProyectos" class="menuButton"><i class="fa-solid fa-folder-open"></i>PROYECTOS</button>
 				<button type="button" id="btnEdicion" class="menuButton active"><i class="fa-solid fa-pen"></i>EDITAR</button>
 				<button type="button" id="btnFretboard" class="menuButton"><i class="fa-solid fa-guitar"></i>MÁSTIL</button>
-				<button type="button" id="btnScore" class="menuButton"><i class="fa-solid fa-sliders"></i>PARTITURA</button>
+				<button type="button" id="btnScore" class="menuButton"><i class="fa-solid fa-music"></i>PARTITURA</button>
 				<button type="button" id="btnPlayer" class="menuButton"><i class="fa-solid fa-radio"></i>PLAYER</button>
 				<button type="button" id="btnMetronome" class="menuButton"><i class="fa-solid fa-stopwatch"></i>METRÓNOMO</button>
 				<button type="button" id="btnAudio" class="menuButton"><i class="fa-solid fa-file-audio"></i>AUDIO</button>
@@ -70,7 +70,7 @@
 					<button type="button" id="btnProyectosPopup" data-menu="projects"><i class="fa-solid fa-folder-open"></i>PROYECTOS</button>
 					<button type="button" id="btnEdicionPopup" data-menu="edit"><i class="fa-solid fa-pen"></i>EDICIÓN</button>
 					<button type="button" id="btnFretboardPopup" data-menu="fretboard"><i class="fa-solid fa-guitar"></i>MÁSTIL</button>
-					<button type="button" id="btnScorePopup" data-menu="score"><i class="fa-solid fa-sliders"></i>PARTITURA</button>
+					<button type="button" id="btnScorePopup" data-menu="score"><i class="fa-solid fa-music"></i>PARTITURA</button>
 					<button type="button" id="btnPlayerPopup" data-menu="player"><i class="fa-solid fa-radio"></i>PLAYER</button>
 					<button type="button" id="btnMetronomePopup" data-menu="metronome"><i class="fa-solid fa-stopwatch"></i>METRÓNOMO</button>
 					<button type="button" id="btnAudioPopup" data-menu="audio"><i class="fa-solid fa-file-audio"></i>AUDIO</button>
@@ -90,11 +90,18 @@
 			<div id="topControls">
 				<div id="toolbarTop">
 
+					<div class="toolbarTop-Controls" id="topUser">
+						<span>USUARIO</span>
+						<div class="toolRow">
+							<button type="button" id="btnNewUser" title="Nuevo usuario"><i class="fa-solid fa-user-plus"></i><span>Nuevo</span></button>
+						</div>
+					</div>
+
 					<div class="toolbarTop-Controls" id="topLibrary">
 						<span>LIBRERÍA</span>
 						<div class="toolRow">
 							<button type="button" id="btnCreate" title="Crear librería"><i class="fa-solid fa-file-circle-plus"></i><span>Crear</span></button>
-							<button type="button" id="btnOpen" title="Abrir librería de proyectos"><i class="fa-solid fa-folder-plus"></i><span>Abrir</span></button>
+							<button type="button" id="btnOpen" title="Abrir librería de proyectos (Ctrl+A)"><i class="fa-solid fa-folder-plus"></i><span>Abrir</span></button>
 						</div>
 					</div>
 
@@ -111,8 +118,8 @@
 					<div class="toolbarTop-Controls" id="topProject">
 						<span>ACCIONES</span>
 						<div class="toolRow">
-							<button type="button" id="btnNewProject" title="Nuevo proyecto"><i class="fa-solid fa-file"></i><span>Nuevo</span></button>
-							<button type="button" id="btnSaveProject" title="Guardar proyecto"><i class="fa-solid fa-floppy-disk"></i><span>Guardar</span></button>
+							<button type="button" id="btnNewProject" title="Nuevo proyecto (Ctrl+P)"><i class="fa-solid fa-file"></i><span>Nuevo</span></button>
+							<button type="button" id="btnSaveProject" title="Guardar proyecto (Ctrl+S)"><i class="fa-solid fa-floppy-disk"></i><span>Guardar</span></button>
 							<button type="button" id="btnDelProject" title="Eliminar proyecto"><i class="fa-solid fa-trash-can"></i><span>Eliminar</span></button>
 						</div>
 					</div>
@@ -129,7 +136,7 @@
 								<span class="lblToggleSpan"></span>
 							</label>
 							<label class="lblToggle" title="Mostrar título en partitura">
-								<span class="lblToggleText"><i class="fa-solid fa-sliders"></i></span>
+								<span class="lblToggleText"><i class="fa-solid fa-music"></i></span>
 								<input id="chkScoreTitle" type="checkbox">
 								<span class="lblToggleSpan"></span>
 							</label>
@@ -175,8 +182,8 @@
 					<div class="toolbarTop-Controls" id="topEdit">
 						<span>ESCRIBIR</span>
 						<div class="toolRow">
-							<button type="button" id="btnEdit" title="Escribir nota"><i class="fa-solid fa-pen"></i><span>Nota</span></button>
-							<button type="button" id="btnBarre" title="Escribir nejilla"><i class="fa-solid fa-grip-lines"></i><span>Cejilla</span></button>
+							<button type="button" id="btnEdit" title="Escribir nota (Ctrl+E)"><i class="fa-solid fa-pen"></i><span>Nota</span></button>
+							<button type="button" id="btnBarre" title="Escribir cejilla"><i class="fa-solid fa-grip-lines"></i><span>Cejilla</span></button>
 						</div>
 					</div>
 
@@ -184,7 +191,7 @@
 						<span>BORRAR</span>
 						<div class="toolRow">
 							<button type="button" id="btnErase" title="Borrar nota"><i class="fa-solid fa-eraser"></i><span>Borrar</span></button>
-							<button type="button" id="btnUndo" title="Deshacer escritura"><i class="fa-solid fa-rotate-left"></i><span>Deshacer</span></button>
+							<button type="button" id="btnUndo" title="Deshacer escritura (Ctrl+Z)"><i class="fa-solid fa-rotate-left"></i><span>Deshacer</span></button>
 						</div>
 					</div>
 
@@ -580,7 +587,7 @@
 				<button type="button" id="btnPlayStop" class="buttonPlay" title="Reproducir" disabled><i class="fa-solid fa-play"></i><span>Play</span></button>
 				<button type="button" id="btnShowProjectPanel" title="Ver librería"><i class="fa-solid fa-folder-tree"></i><span>Proyectos</span></button>
 				<button type="button" id="btnFretboardVisible" title="Ver mástil"><i class="fa-solid fa-guitar"></i><span>Fretboard</span></button>
-				<button type="button" id="btnScoreVisible" title="Ver partitura"><i class="fa-solid fa-sliders"></i><span>Partitura</span></button>
+				<button type="button" id="btnScoreVisible" title="Ver partitura"><i class="fa-solid fa-music"></i><span>Partitura</span></button>
 				<button type="button" id="btnVertical" class="active" title="Cambiar orientación"><i class="fa-solid fa-arrows-up-down"></i><span>Vertical</span></button>
 				<button type="button" id="btnHorizontal" title="Cambiar orientación"><i class="fa-solid fa-arrows-left-right"></i><span>Horizontal</span></button>
 			</div>

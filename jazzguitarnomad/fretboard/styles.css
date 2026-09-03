@@ -1513,7 +1513,7 @@ html {
 
 #btnUser{
 
-	width:auto;
+	width: 55px;
 	height:48px;
 
 	padding:2px 2px;
@@ -1550,11 +1550,12 @@ html {
 
 	font-size:11px;
 	line-height:10px;
-
-	white-space:nowrap;
-
+	display: block;
+	max-width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
-
 
 /* ===========================
    CONTROLES SUPERIORES
