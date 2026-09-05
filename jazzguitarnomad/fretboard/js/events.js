@@ -4,7 +4,17 @@
 // DOCUMENT EVENTS
 //==================================================
 
-window.addEventListener("load",initializeApp);
+document.addEventListener("DOMContentLoaded", () => {
+
+	setTheme(currentTheme);
+
+});
+
+window.addEventListener("load", () => {
+
+	initializeApp();
+
+});
 
 window.addEventListener("resize", () => {
 
@@ -50,6 +60,8 @@ document.addEventListener("keydown", e => {
 	if (!isUserActive || isPlaying) return;
 
 	if (e.code === "Space") {
+
+		if (videoContainer.style.display === "flex") return;
 
 		e.preventDefault();
 
@@ -201,6 +213,39 @@ document.addEventListener("playerBeat", (e) => {
 
 		case "tick":
 
+			if (isFretboardVisible) {
+
+				// Restaurar mástil + notas con opacidad
+				if (fretboardPlaybackBackground) ctx.putImageData(fretboardPlaybackBackground,0,0);
+
+				// Pintar cada nota o acorde
+				if (projectType === "sequence") {
+
+					const note = scoreArray[sequenceIndex];
+
+					if (note) drawPlayingMarker(note.x,note.y);
+
+				}else if (projectType === "chord") {
+
+					const chord = scoreArray.find(note => note.chord === sequenceIndex);
+
+					if (chord) {
+
+						scoreArray.filter(note => note.chord === chord.chord)
+							.forEach(note => {
+
+								drawPlayingMarker(note.x,note.y);
+
+							});
+
+					}
+
+				}
+
+				sequenceIndex++;
+
+			}
+
 			if (beat === 1 && subBeat === 1) {
 
 				if (firstTick) {
@@ -225,11 +270,18 @@ document.addEventListener("playerBeat", (e) => {
 			countBars = 1;
 			firstTick = true;
 
+			sequenceIndex = 0;
+
 			if (isScoreVisible) scorePaint_stop();
 
 			break;
 
 		case "stop":
+
+			if (isFretboardVisible) {
+				drawFretboard();
+				drawNotes();
+			}
 
 			if (isScoreVisible) scorePaint_stop();
 
@@ -238,6 +290,11 @@ document.addEventListener("playerBeat", (e) => {
 			break;
 
 		case "end":
+
+			if (isFretboardVisible) {
+				drawFretboard();
+				drawNotes();
+			}
 
 			if (isScoreVisible) scorePaint_stop();
 
@@ -294,7 +351,6 @@ canvas.addEventListener("mouseleave", () => {
 
 	if (editMode !== "view") {
 
-		drawFretboard();
 		drawNotes();
 	}
 
@@ -311,7 +367,6 @@ canvas.addEventListener("mousemove", (e) => {
 			hoverCell = null;
 			hoverNut = null;
 
-			drawFretboard();
 			drawNotes();
 
 		}
@@ -348,7 +403,7 @@ canvas.addEventListener("click", (e) => {
 
 		if (editMode === "note") {
 			
-			player.playNoteFor(fretboardMapNotes[nutString][0], 1);
+			if (chkEditSound.checked && displayMode) player.playNoteFor(fretboardMapNotes[nutString][0], 1);
 
 			// En acordes no permitir dos veces la misma nota.
 			if (cmbProjectType.value === "chord" && chordNoteExists(nutString,0,chord)) return;
@@ -383,7 +438,13 @@ canvas.addEventListener("click", (e) => {
 
 		noteText.value = "";
 
-		rendertNotesArrays();
+		renderNotesArrays();
+
+		//Hacer sonar el acorde
+		if (chkEditSound.checked && displayMode && cmbProjectType.value === "chord"){
+			const chordToPlay = aChords.filter(item => item.chord === parseInt(cmbChords.value, 10)).map(item => item.note);		
+			if (chordToPlay.length > 0) player.playChordFor(chordToPlay, 1);
+		}
 
 		return;
 
@@ -399,7 +460,7 @@ canvas.addEventListener("click", (e) => {
 
 		case "barre":
 
-			if (cmbProjectType.value !== "chord") player.playNoteFor(fretboardMapNotes[cell.string][cell.fret], 1);
+			if (chkEditSound.checked && displayMode && cmbProjectType.value !== "chord") player.playNoteFor(fretboardMapNotes[cell.string][cell.fret], 1);
 
 			noteOrder++;
 
@@ -444,7 +505,7 @@ canvas.addEventListener("click", (e) => {
 
 		case "note":
 
-			if (cmbProjectType.value !== "chord") player.playNoteFor(fretboardMapNotes[cell.string][cell.fret], 1);
+			if (chkEditSound.checked && displayMode && cmbProjectType.value !== "chord") player.playNoteFor(fretboardMapNotes[cell.string][cell.fret], 1);
 
 			// Solo los acordes impiden repetir una nota. En secuencias se permite repetirla.
 			if (cmbProjectType.value === "chord" && chordNoteExists(cell.string,cell.fret,chord)) return;
@@ -525,12 +586,12 @@ canvas.addEventListener("click", (e) => {
 
 	noteText.value = "";
 
-	rendertNotesArrays();
+	renderNotesArrays();
 
 	//Hacer sonar el acorde
-	if (cmbProjectType.value === "chord"){
+	if (chkEditSound.checked && displayMode && cmbProjectType.value === "chord"){
 		const chordToPlay = aChords.filter(item => item.chord === parseInt(cmbChords.value, 10)).map(item => item.note);		
-		player.playChordFor(chordToPlay, 2);
+		if (chordToPlay.length > 0) player.playChordFor(chordToPlay, 1);
 	}
 
 });
@@ -544,7 +605,6 @@ canvas.addEventListener("click", (e) => {
 cmbNoteNames.addEventListener("change",()=>{
 
 	if (isFretboardVisible) {
-		drawFretboard();
 		drawNotes();
 	}
 
@@ -553,24 +613,17 @@ cmbNoteNames.addEventListener("change",()=>{
 chkNoteNames.addEventListener("change",()=>{
 
 	if (isFretboardVisible) {
-		drawFretboard();
 		drawNotes();
 	}
 
 });
 
 btnNewChord.addEventListener("click", () => {
-
 	addChord();
-
 });
 
 btnDelChord.addEventListener("click", () => {
-
 	delChord();
-
-	if (isScoreVisible) scoreRender();
-
 });
 
 btnScoreDownloadImage.addEventListener("click", () => {
@@ -622,8 +675,8 @@ btnMetronome.addEventListener("click", () => {
 	setMenu("metronome");
 });
 
-btnAudio.addEventListener("click", () => {
-	setMenu("audio");
+btnMultimedia.addEventListener("click", () => {
+	setMenu("multimedia");
 });
 
 btnMenuSelector.addEventListener("click", () => {
@@ -669,10 +722,7 @@ titleText.addEventListener("input", () => {
 
 	workspaceTitleText.textContent = projectTitle;
 
-	if (isFretboardVisible) {
-		drawFretboard();
-		drawNotes();
-	}
+	if (isFretboardVisible) resizeCanvas();
 
 	if (isScoreVisible) scoreRender();
 
@@ -680,10 +730,7 @@ titleText.addEventListener("input", () => {
 
 chkShowTitle.addEventListener("change", () => {
 
-	if (isFretboardVisible) {
-		drawFretboard();
-		drawNotes();
-	}
+	if (isFretboardVisible) resizeCanvas();
 
 });
 
@@ -703,14 +750,11 @@ chkScoreTitleViewMode.addEventListener("change", function () {
 
 });
 
-showNumber.addEventListener("change", () => {
+chkShowNumber.addEventListener("change", () => {
 
 	showFretNumbers = !showFretNumbers;
 
-	if (isFretboardVisible) {
-		drawFretboard();
-		drawNotes();
-	}
+	if (isFretboardVisible) resizeCanvas();
 
 });
 
@@ -792,7 +836,7 @@ btnNewProject.addEventListener("click", () => {
 
 	if (newProject()){
 
-		rendertNotesArrays();
+		renderNotesArrays();
 
 		showAlert("Nuevo proyecto creado.", "info");
 
@@ -879,28 +923,26 @@ btnHorizontal.addEventListener("click", () => {
 
 btnDisplay.addEventListener("click", () => {
 
-    displayMode = !displayMode;
+	displayMode = !displayMode;
 
-    btnDisplay.classList.toggle("active", displayMode);
+	btnDisplay.classList.toggle("active", displayMode);
 
-    chkInlays.checked = Boolean(displayMode);
-    chkInlays.disabled = Boolean(!displayMode);
+	setDisplayModeControlsDisabled();
 
-    btnLessNumberFrets.disabled = Boolean(displayMode);
-    numberFrets.disabled = Boolean(displayMode);
-    btnMoreNumberFrets.disabled = Boolean(displayMode);
+	if (!displayMode) setWorkspaceLayout();
 
-    chkNoteNames.checked = false;
-
-    drawFretboard();
-    drawNotes();
+	if (isFretboardVisible) resizeCanvas();
 
 });
 
 chkInlays.addEventListener("change", function () {
 
-    drawFretboard();
-    drawNotes();
+    if (isFretboardVisible) {
+
+	drawFretboard();
+	drawNotes();
+
+    }
 
 });
 
@@ -1091,7 +1133,6 @@ cmbFigure.addEventListener("change", function () {
 cmbKey.addEventListener("change", function () {
 
 	if (isFretboardVisible){
-		drawFretboard();
 		drawNotes();
 	}
 
@@ -1103,74 +1144,35 @@ cmbProjectType.addEventListener("change", function () {
 
 	const oldType = projectType;
 
-	if (!newProject()) {
+	if (newProject()) {
 
-		this.value = oldType;
+		renderNotesArrays();
+	
+		setPlayerValues();
 
 	}else{
 
-		rendertNotesArrays();
+		this.value = oldType;
 
 	}
-
-/*
-	const oldType = projectType;
-	const newType = this.value;
-
-	if ((oldType === "chord" && newType !== "chord") || (oldType !== "chord" && newType === "chord")) {
-
-		if (!newProject()) {
-
-			this.value = oldType;
-
-			return;
-
-		}
-
-	} else {
-
-		// --------------------------------
-		// NO ES TIPO CHORD
-		// --------------------------------
-
-		notes.forEach(note => {
-			note.chord = "";
-		});
-
-		barreNotes.forEach(barre => {
-			barre.chord = "";
-		});
-
-		nutNotes.forEach(note => {
-			if (note) note.chord = "";
-		});
-
-		resetComboChords();
-
-		if (newType === "fretboard") {
-		
-			isScoreVisible = false;
-
-			setWorkspaceLayout();
-
-		}
-
-	}
-
-	projectType = newType;
-
-	this.value = newType;
-
-	changeProjectType();
-
-	resetNotesArrays();
-*/
 
 });
 
 cmbTipoSecuencia.addEventListener("change", function () {
 
 	tipoSecuencia = cmbTipoSecuencia.value;
+
+	if (tipoSecuencia === "up" || tipoSecuencia === "down") chkDireccion.checked = false;
+
+	loadArrayNotas();
+
+	if (isScoreVisible) scoreRender();
+
+});
+
+chkDireccion.addEventListener("change", function () {
+
+	direccion = this.checked;
 
 	loadArrayNotas();
 
@@ -1423,4 +1425,182 @@ btnNewUser.addEventListener("click", () => {
 		}
 	}
 
+});
+
+btnUser.addEventListener("click", () => {
+
+	if (isAdmin){
+
+		currentTheme = currentTheme === "dark" ? "light" : "dark";
+
+		setTheme(currentTheme);
+
+		if (isFretboardVisible) resizeCanvas();
+
+	}
+
+});
+
+btnAbrirVideo.addEventListener("click", async () => {
+
+	videoContainer.style.display = "flex";
+
+	try {
+
+		localStream = await navigator.mediaDevices.getUserMedia({
+			video: true,
+			audio: true
+		});
+
+		localVideo.srcObject = localStream;
+
+	} catch (err) {
+
+		alert("No se pudo acceder a la cámara o micrófono.");
+		console.error(err);
+
+	}
+
+});
+
+btnVideoClose.addEventListener("click", () => {
+
+	videoContainer.style.display = "none"
+
+	btnAudioMute.classList.remove("active");
+	btnVideoMute.classList.remove("active");
+	btnVideoMirror.classList.remove("active");
+
+	btnVideoRecord.innerHTML = "<i class='fa-solid fa-circle'></i><span>Grabar</span>";
+
+	if (localVideo.srcObject) {
+
+		localVideo.srcObject.getTracks().forEach(track => track.stop());
+
+		localVideo.srcObject = null;
+
+	}
+
+});
+
+btnAudioMute.addEventListener("click", () => {
+
+	if (!localStream) return;
+
+	const audioTrack = localStream.getAudioTracks()[0];
+
+	if (!audioTrack) return;
+
+	audioTrack.enabled = !audioTrack.enabled;
+
+	btnAudioMute.classList.toggle("active", !audioTrack.enabled);
+
+	const icon = btnAudioMute.querySelector("i");
+
+	icon.classList.toggle("fa-microphone-slash", !audioTrack.enabled);
+	icon.classList.toggle("fa-microphone", audioTrack.enabled);
+
+});
+
+btnVideoMute.addEventListener("click", () => {
+
+	if (!localStream) return;
+
+	const videoTrack = localStream.getVideoTracks()[0];
+
+	if (!videoTrack) return;
+
+	videoTrack.enabled = !videoTrack.enabled;
+
+	btnVideoMute.classList.toggle("active", !videoTrack.enabled);
+
+	const icon = btnVideoMute.querySelector("i");
+
+	icon.classList.toggle("fa-video-slash", !videoTrack.enabled);
+	icon.classList.toggle("fa-video", videoTrack.enabled);
+
+});
+
+btnVideoMirror.addEventListener("click", () => {
+
+	btnVideoMirror.classList.toggle("active");
+
+	localVideo.style.transform = btnVideoMirror.classList.contains("active") ? "scaleX(-1)" : "scaleX(1)";
+
+});
+
+btnVideoRecord.addEventListener("click", () => {
+
+	if (!localStream) {
+
+		alert("Primero debes iniciar la cámara.");
+		return;
+
+	}
+
+	// --------------------------------
+	// INICIAR GRABACIÓN
+	// --------------------------------
+
+	if (!mediaRecorder || mediaRecorder.state === "inactive") {
+
+		recordedChunks = [];
+
+		mediaRecorder = new MediaRecorder(localStream, {
+			mimeType: "video/webm"
+		});
+
+		mediaRecorder.ondataavailable = event => {
+
+			if (event.data.size > 0) {
+
+				recordedChunks.push(event.data);
+
+			}
+
+		};
+
+		mediaRecorder.onstop = () => {
+
+			const blob = new Blob(recordedChunks, {
+				type: "video/webm"
+			});
+
+			const url = URL.createObjectURL(blob);
+
+			const a = document.createElement("a");
+
+			a.href = url;
+			a.download = workspaceTitleText.textContent + ".webm";
+
+			a.click();
+
+			URL.revokeObjectURL(url);
+
+		};
+
+		mediaRecorder.start();
+
+		btnVideoRecord.innerHTML = "<i class='fa-solid fa-circle'></i><span>Pausar</span>";
+
+		btnVideoClose.disabled = true;
+
+	} else {
+
+		// --------------------------------
+		// DETENER GRABACIÓN
+		// --------------------------------
+
+		mediaRecorder.stop();
+
+		btnVideoRecord.innerHTML = "<i class='fa-solid fa-circle'></i><span>Grabar</span>";
+
+		btnVideoClose.disabled = false;
+
+	}
+
+});
+
+btnAddVideo.addEventListener("click", () => {
+	
 });

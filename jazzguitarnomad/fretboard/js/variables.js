@@ -50,6 +50,7 @@ let isFretboardVisible = true;
 let isScoreVisible = false;
 let currentInstrument = "piano";
 let tipoSecuencia = "up";
+let direccion = false;
 let fretNumbers = 1;
 let showFretNumbers = true;
 let bpm = 90;
@@ -64,6 +65,41 @@ let notation = "";
 let topControlsWasOpen = true;
 let libraryWasClosed = false;
 
+const themes = {
+
+	dark: {
+		"--color-main-text": "#d5d5d5",
+		"--color-hightlight": "#1268A8",
+		"--color-dark-background": "#262626",
+		"--color-light-background": "#353333",
+		"--color-tools": "#413F3F",
+		"--color-border": "rgba(255,255,255,0.12)",
+		"--color-red": "#c62828",
+		"--color-text": "#ffffff",
+		"--color-back": "#000000",
+		"--color-medium": "#777777",
+		"--color-disabled": "#D5D5D5",
+		"--color-logo": "#FFF"
+	},
+
+	light: {
+		"--color-main-text": "#2A2A2A",
+		"--color-hightlight": "#4CAF70",
+		"--color-dark-background": "#DDDDDD",
+		"--color-light-background": "#F2F2F2",
+		"--color-tools": "#E6E6E6",
+		"--color-border": "rgba(0,0,0,0.18)",
+		"--color-red": "#C62828",
+		"--color-text": "#1A1A1A",
+		"--color-back": "#FFFFFF",
+		"--color-medium": "#777777",
+		"--color-disabled": "#A5A5A5",
+		"--color-logo": "#000"
+	}
+
+};
+
+let currentTheme = "dark";
 
 /*==================================================
 	USUARIOS Y PROYECTOS
@@ -117,6 +153,9 @@ const fretboardImages = {
 let neckImageLoaded = false;
 const neckImage = new Image();
 
+const brandLogo = document.getElementById("brandLogo");
+const footerBrandLogo = document.getElementById("footerBrandLogo");
+
 
 /*==================================================
 	GEOMETRÍA Y MEDIDAS DEL DIAPASÓN
@@ -154,7 +193,9 @@ let neckBleed;
 let neckRadius;
 
 let fretboardBackground = null;
+let fretboardPlaybackBackground = null;
 
+let sequenceIndex = 0;
 
 /*==================================================
 	NOTAS
@@ -228,8 +269,6 @@ const loadingText = document.getElementById("loadingText");
 const loadingProgressBar = document.getElementById("loadingProgressBar");
 const loadingSpinner = document.getElementById("loadingSpinner");
 
-const subtituleText = document.getElementById("subtituleText");
-
 const appAlert = document.getElementById("appAlert");
 const alertIcon = document.getElementById("alertIcon");
 const alertMessage = document.getElementById("alertMessage");
@@ -243,6 +282,9 @@ let alertTimeout;
 
 const mainMenu = document.getElementById("mainMenu");
 
+const brand = document.getElementById("brand");
+const topBar = document.getElementById("topBar");
+
 const topControlsContainer = document.getElementById("topControlsContainer");
 
 const btnUser = document.getElementById("btnUser");
@@ -254,7 +296,7 @@ const btnFretboard = document.getElementById("btnFretboard");
 const btnPlayer = document.getElementById("btnPlayer");
 const btnScore = document.getElementById("btnScore");
 const btnMetronome = document.getElementById("btnMetronome");
-const btnAudio = document.getElementById("btnAudio");
+const btnMultimedia = document.getElementById("btnMultimedia");
 
 const btnProyectosPopup = document.getElementById("btnProyectosPopup");
 const btnEdicionPopup = document.getElementById("btnEdicionPopup");
@@ -262,7 +304,7 @@ const btnFretboardPopup = document.getElementById("btnFretboardPopup");
 const btnPlayerPopup = document.getElementById("btnPlayerPopup");
 const btnScorePopup = document.getElementById("btnScorePopup");
 const btnMetronomePopup = document.getElementById("btnMetronomePopup");
-const btnAudioPopup = document.getElementById("btnAudioPopup");
+const btnMultimediaPopup = document.getElementById("btnMultimediaPopup");
 
 const btnMenuSelector = document.getElementById("btnMenuSelector");
 const menuPopup = document.getElementById("menuPopup");
@@ -296,6 +338,8 @@ const numberFrets = document.getElementById("numberFrets");
 const btnLessNumberFrets = document.getElementById("btnLessNumberFrets");
 const btnMoreNumberFrets = document.getElementById("btnMoreNumberFrets");
 
+const chkShowNumber = document.getElementById("chkShowNumber");
+
 const cmbDiapason = document.getElementById("cmbDiapason");
 const chkInlays = document.getElementById("chkInlays");
 
@@ -324,9 +368,11 @@ const topPlayStop = document.getElementById("topPlayStop");
 const topMetronome = document.getElementById("topMetronome");
 const topTempo = document.getElementById("topTempo");
 const topForm = document.getElementById("topForm");
+const topDireccion = document.getElementById("topDireccion");
 const topTimeSignature = document.getElementById("topTimeSignature");
 const topBuffer = document.getElementById("topBuffer");
 const topAudio = document.getElementById("topAudio");
+const topVideo = document.getElementById("topVideo");
 const topScoreDownload = document.getElementById("topScoreDownload");
 const topChords = document.getElementById("topChords");
 const topTitleViewMode = document.getElementById("topTitleViewMode");
@@ -412,11 +458,12 @@ const chkNoteNames = document.getElementById("chkNoteNames");
 const chkNoteAccidentals = document.getElementById("chkNoteAccidentals");
 
 const cmbProjectType = document.getElementById("cmbProjectType");
+const cmbTipoSecuencia = document.getElementById("cmbTipoSecuencia");
+const chkDireccion = document.getElementById("chkDireccion");
 
 const cmbBar = document.getElementById("cmbBar");
 const cmbFigure = document.getElementById("cmbFigure");
 const cmbKey = document.getElementById("cmbKey");
-const cmbTipoSecuencia = document.getElementById("cmbTipoSecuencia");
 
 const sliderBpm = document.getElementById("sliderBpm");
 
@@ -428,11 +475,6 @@ const player_repeatInfo = document.getElementById("player_repeatInfo");
 const metronome_Info = document.getElementById("metronome_Info");
 
 const btnPlayStop = document.getElementById("btnPlayStop");
-
-const btnRenderBuffer = document.getElementById("btnRenderBuffer");
-const player_bufferState = document.getElementById("player_bufferState");
-const cmbAudioFormat = document.getElementById("cmbAudioFormat");
-const btnSaveAudio = document.getElementById("btnSaveAudio");
 
 const cmbCountIn = document.getElementById("cmbCountIn");
 
@@ -461,6 +503,33 @@ const cmbScoreLayout = document.getElementById("cmbScoreLayout");
 const sliderScoreStaveDistance = document.getElementById("sliderScoreStaveDistance");
 const sliderScoreStaveMargin = document.getElementById("sliderScoreStaveMargin");
 const btnScoreVisible = document.getElementById("btnScoreVisible");
+
+const chkEditSound = document.getElementById("chkEditSound");
+
+/*==================================================
+	MULTIMEDIA
+==================================================*/
+
+const btnRenderBuffer = document.getElementById("btnRenderBuffer");
+const player_bufferState = document.getElementById("player_bufferState");
+const cmbAudioFormat = document.getElementById("cmbAudioFormat");
+const btnSaveAudio = document.getElementById("btnSaveAudio");
+
+const btnAbrirVideo = document.getElementById("btnAbrirVideo");
+const btnAddVideo = document.getElementById("btnAddVideo");
+
+const videoContainer = document.getElementById("videoContainer");
+const btnAudioMute = document.getElementById("btnAudioMute");
+const btnVideoMute = document.getElementById("btnVideoMute");
+const btnVideoRecord = document.getElementById("btnVideoRecord");
+const btnVideoMirror = document.getElementById("btnVideoMirror");
+const btnVideoClose = document.getElementById("btnVideoClose");
+
+const localVideo = document.getElementById("localVideo");
+
+let localStream;
+let mediaRecorder;
+let recordedChunks = [];
 
 
 /*==================================================

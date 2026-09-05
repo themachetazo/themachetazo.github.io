@@ -41,6 +41,7 @@ async function loadProject(project) {
 
 	scoreScale = project.settings?.scoreScale;
 	tipoSecuencia = project.settings?.tipoSecuencia ?? "up";
+	direccion = parseBoolean(project.settings?.direccion, false);
 	countBars = project.settings?.countBars ?? 0;
 	repetitionSequence = project.settings?.repetitionSequence ?? 2;
 	currentInstrument = project.settings?.currentInstrument ?? "piano";
@@ -100,18 +101,6 @@ async function loadProject(project) {
 		}
 
 	});
-
-	// --------------------------------
-	// ARRAYS MUSICALES
-	// --------------------------------
-
-	noteOrder = getMaxOrder();
-
-	aSequence = buildOrderedSequence();
-
-	aChords = buildOrderedChords();
-
-	loadArrayNotas();
 
 	// --------------------------------
 	// CONFIGURACION APP
@@ -339,6 +328,7 @@ function parseProjectsXml(xml) {
 				bar: getSetting("bar","4/4"),
 				scoreScale: getSetting("scoreScale","auto"),
 				tipoSecuencia: getSetting("tipoSecuencia","up"),
+				direccion: getSetting("direccion",false),
 				countBars: getSetting("countBars",1),
 				repetitionSequence: getSetting("repetitionSequence",1),
 				isFretboardVisible: getSetting("isFretboardVisible",true),
@@ -444,6 +434,7 @@ function getCurrentProject() {
 			bar: cmbBar.value,
 			scoreScale: scoreScale,
 			tipoSecuencia: cmbTipoSecuencia.value,
+			direccion: chkDireccion.checked,
 			countBars: cmbCountIn.value,
 			repetitionSequence: cmbPlayerRepeats.value,
 			isFretboardVisible: isFretboardVisible,
@@ -451,7 +442,7 @@ function getCurrentProject() {
 			currentInstrument: cmbSamplerInstrument.value,
 			fretCount: sliderFrets.value,
 			fretNumbers: numFrets.value,
-			showFretNumbers: showNumber.checked,
+			showFretNumbers: chkShowNumber.checked,
 			bpm: sliderBpm.value,
 			key: cmbKey.value,
 			scoreStaves: cmbScoreStaves.value,
@@ -560,6 +551,7 @@ function projectToXml(project, indent = "\t") {
 	lines.push(`${indent}\t\t<bar>${project.settings.bar}</bar>`);
 	lines.push(`${indent}\t\t<scoreScale>${project.settings.scoreScale}</scoreScale>`);
 	lines.push(`${indent}\t\t<tipoSecuencia>${project.settings.tipoSecuencia}</tipoSecuencia>`);
+	lines.push(`${indent}\t\t<direccion>${project.settings.direccion}</direccion>`);
 	lines.push(`${indent}\t\t<countBars>${project.settings.countBars}</countBars>`);
 	lines.push(`${indent}\t\t<repetitionSequence>${project.settings.repetitionSequence}</repetitionSequence>`);
 	lines.push(`${indent}\t\t<isFretboardVisible>${project.settings.isFretboardVisible}</isFretboardVisible>`);
@@ -753,9 +745,9 @@ function renderProjectsLibrary() {
 
 				await selectProject(currentProject);
 
-				if (menuOpen !== "edit") setMenu("edit");
-
 				renderProject();
+
+				if (menuOpen !== "edit") setMenu("edit");
 
 			});
 
@@ -847,6 +839,10 @@ async function selectProject(project) {
 	updateSelectedProjectButton();
 
 	await loadProject(project);
+
+	noteOrder = getMaxOrder();
+
+	renderNotesArrays();
 
 }
 
@@ -997,7 +993,6 @@ function generateIDKey() {
 //    return crypto.getRandomValues(new BigUint64Array(1))[0].toString();
 //    return crypto.getRandomValues(new Uint32Array(1))[0].toString();
 //	return (crypto.getRandomValues(new Uint32Array(1))[0] % 10000).toString().padStart(4, "0");
-
 //	return crypto.randomUUID().replaceAll("-", "");
 
 	return crypto.getRandomValues(new Uint32Array(1))[0].toString(36);

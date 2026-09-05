@@ -62,61 +62,29 @@ function resizeCanvas() {
 		// Números de trastes
 		//------------------------------------------------
 
-		if (rotation === 0) {
+		if (rotation === 0) leftMargin = Math.max(leftMargin, 40);
 
-			leftMargin = Math.max(leftMargin, 40);
+		if (rotation === 180) rightMargin = Math.max(rightMargin, 40);
 
-		}
+		if (rotation === 270) bottomMargin = Math.max(bottomMargin, 40);
 
-		if (rotation === 180) {
-
-			rightMargin = Math.max(rightMargin, 40);
-
-		}
-
-		if (rotation === 270) {
-
-			bottomMargin = Math.max(bottomMargin, 40);
-
-		}
-
-		if (rotation === 90) {
-
-			topMargin = Math.max(topMargin, 40);
-
-		}
+		if (rotation === 90) topMargin = Math.max(topMargin, 40);
 
 		//------------------------------------------------
 		// Números de cuerdas
 		//------------------------------------------------
 
-		if (rotation === 0 || rotation === 90) {
+		if (rotation === 0 || rotation === 90) topMargin = Math.max(topMargin, 40);
 
-			topMargin = Math.max(topMargin, 40);
-
-		}
-
-		if (rotation === 180 || rotation === 270) {
-
-			bottomMargin = Math.max(bottomMargin, 40);
-
-		}
+		if (rotation === 180 || rotation === 270) bottomMargin = Math.max(bottomMargin, 40);
 
 		//------------------------------------------------
 		// Margen lateral para números de cuerdas
 		//------------------------------------------------
 
-		if (rotation === 90) {
+		if (rotation === 90) rightMargin = Math.max(rightMargin, 40);
 
-			rightMargin = Math.max(rightMargin, 40);
-
-		}
-
-		if (rotation === 270) {
-
-			leftMargin = Math.max(leftMargin, 40);
-
-		}
+		if (rotation === 270) leftMargin = Math.max(leftMargin, 40);
 
 	}
 
@@ -175,12 +143,9 @@ function drawFretboard() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	// Fondo del canvas
+	const colorBack = getComputedStyle(document.documentElement).getPropertyValue("--color-dark-background").trim();
 
-	if (fretboardStyle == "blank") {
-		ctx.fillStyle = "#FFFFFF";
-	} else {
-		ctx.fillStyle = "#262626";
-	}
+	ctx.fillStyle = colorBack;
 
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -213,7 +178,14 @@ function drawFretboard() {
 		for (let i = 5; i >= 1; i--) {
 
 			ctx.lineWidth = i * 1.5;
-			ctx.strokeStyle = `rgba(255,248,235,${0.03 * i})`;
+
+			const colorLogo = getComputedStyle(document.documentElement).getPropertyValue("--color-logo").trim().replace("#", "");
+
+			if (colorLogo === "FFF"){
+				ctx.strokeStyle = `rgba(255,248,235,${0.03 * i})`;
+			}else{
+				ctx.strokeStyle = `rgba(0,0,0,${0.03 * i})`;
+			}
 
 			roundedRectPath(imageLeft,imageTop,imageWidth,imageHeight,neckRadius);
 
@@ -338,12 +310,10 @@ function drawFretboard() {
 
 		} while (ctx.measureText(title).width > boardWidth - 10 && fontSize > 10);
 
+		const colorText = getComputedStyle(document.documentElement).getPropertyValue("--color-text").trim();
 
-		if (fretboardStyle == "blank") {
-			ctx.fillStyle = "#000";
-		} else {
-			ctx.fillStyle = "#FFF";
-		}
+		ctx.fillStyle = colorText;
+
 		ctx.textAlign = "left";
 		ctx.textBaseline = "middle";
 
@@ -397,22 +367,13 @@ function drawHorizontal() {
 
 		const x = boardleft + getFretPosition(fret);
 
-		const fretWidth = Math.max(
-			2,
-			stringSpace * 0.10
-		);
+		const fretWidth = Math.max(2,stringSpace * 0.10);
 
 		const margin = fretWidth / 2;
 
 		if (fretboardStyle === "blank") {
 
-			drawFret(
-				x,
-				boardtop,
-				x,
-				boardbottom,
-				fretWidth
-			);
+			drawFret(x,boardtop,x,boardbottom,fretWidth);
 
 		} else {
 
@@ -467,10 +428,7 @@ function drawHorizontal() {
 			ctx.moveTo(x - fretWidth * 0.15, y1);
 			ctx.lineTo(x - fretWidth * 0.15, y2);
 
-			ctx.lineWidth = Math.max(
-				0.35,
-				fretWidth * 0.16
-			);
+			ctx.lineWidth = Math.max(0.35,fretWidth * 0.16);
 
 			ctx.strokeStyle = "rgba(255,255,255,0.55)";
 			ctx.stroke();
@@ -482,10 +440,7 @@ function drawHorizontal() {
 			ctx.moveTo(x + fretWidth * 0.30, y1);
 			ctx.lineTo(x + fretWidth * 0.30, y2);
 
-			ctx.lineWidth = Math.max(
-				0.35,
-				fretWidth * 0.12
-			);
+			ctx.lineWidth = Math.max(0.35,fretWidth * 0.12);
 
 			ctx.strokeStyle = "rgba(30,30,30,0.45)";
 			ctx.stroke();
@@ -498,11 +453,7 @@ function drawHorizontal() {
 
 	if (displayMode) {
 
-		drawInlays(
-			boardleft,
-			boardtop,
-			stringSpace
-		);
+		drawInlays(boardleft,boardtop,stringSpace);
 
 	}
 
@@ -518,10 +469,7 @@ function drawHorizontal() {
 
 	for (let s = 0; s < stringCount; s++) {
 
-		const index =
-			reverseStrings
-				? stringCount - 1 - s
-				: s;
+		const index = reverseStrings ? stringCount - 1 - s : s;
 
 		const y = boardtop + index * stringSpace;
 
@@ -599,10 +547,7 @@ function drawHorizontal() {
 			ctx.moveTo(x1, y - stringWidth * 0.22);
 			ctx.lineTo(x2, y - stringWidth * 0.22);
 
-			ctx.lineWidth = Math.max(
-				0.25,
-				stringWidth * 0.16
-			);
+			ctx.lineWidth = Math.max(0.25,stringWidth * 0.16);
 
 			ctx.strokeStyle = "rgba(255,255,255,0.65)";
 			ctx.stroke();
@@ -614,10 +559,7 @@ function drawHorizontal() {
 			ctx.moveTo(x1, y + stringWidth * 0.12);
 			ctx.lineTo(x2, y + stringWidth * 0.12);
 
-			ctx.lineWidth = Math.max(
-				0.2,
-				stringWidth * 0.10
-			);
+			ctx.lineWidth = Math.max(0.2,stringWidth * 0.10);
 
 			ctx.strokeStyle = "rgba(40,40,40,0.35)";
 			ctx.stroke();
@@ -635,23 +577,11 @@ function drawHorizontal() {
 
 	if (!displayMode) {
 
-		const fretWidth = Math.max(
-			2,
-			stringSpace * 0.10
-		);
+		const fretWidth = Math.max(2,stringSpace * 0.10);
 
-		const nutX =
-			rotation === 270
-				? boardleft
-				: boardright;
+		const nutX = rotation === 270 ? boardleft : boardright;
 
-		drawFret(
-			nutX,
-			boardtop,
-			nutX,
-			boardbottom,
-			fretWidth
-		);
+		drawFret(nutX,boardtop,nutX,boardbottom,fretWidth);
 
 	} else {
 
@@ -663,15 +593,9 @@ function drawHorizontal() {
 			ctx.lineWidth = nutWidth;
 			ctx.strokeStyle = getNutColor();
 
-			const x1 =
-				rotation === 270
-					? boardleft
-					: boardright;
+			const x1 = rotation === 270 ? boardleft : boardright;
 
-			const x2 =
-				rotation === 270
-					? boardleft + gap
-					: boardright - gap;
+			const x2 = rotation === 270 ? boardleft + gap : boardright - gap;
 
 			ctx.beginPath();
 			ctx.moveTo(x1, boardtop);
@@ -712,22 +636,13 @@ function drawVertical() {
 
 		const y = boardtop + getFretPosition(fret);
 
-		const fretWidth = Math.max(
-			2,
-			stringSpace * 0.10
-		);
+		const fretWidth = Math.max(2,stringSpace * 0.10);
 
 		const margin = fretWidth / 2;
 
 		if (fretboardStyle === "blank") {
 
-			drawFret(
-				boardleft,
-				y,
-				boardright,
-				y,
-				fretWidth
-			);
+			drawFret(boardleft,y,boardright,y,fretWidth);
 
 		} else {
 
@@ -782,10 +697,7 @@ function drawVertical() {
 			ctx.moveTo(x1, y - fretWidth * 0.15);
 			ctx.lineTo(x2, y - fretWidth * 0.15);
 
-			ctx.lineWidth = Math.max(
-				0.35,
-				fretWidth * 0.16
-			);
+			ctx.lineWidth = Math.max(0.35,fretWidth * 0.16);
 
 			ctx.strokeStyle = "rgba(255,255,255,0.55)";
 			ctx.stroke();
@@ -797,10 +709,7 @@ function drawVertical() {
 			ctx.moveTo(x1, y + fretWidth * 0.30);
 			ctx.lineTo(x2, y + fretWidth * 0.30);
 
-			ctx.lineWidth = Math.max(
-				0.35,
-				fretWidth * 0.12
-			);
+			ctx.lineWidth = Math.max(0.35,fretWidth * 0.12);
 
 			ctx.strokeStyle = "rgba(30,30,30,0.45)";
 			ctx.stroke();
@@ -813,11 +722,7 @@ function drawVertical() {
 
 	if (displayMode) {
 
-		drawInlays(
-			boardleft,
-			boardtop,
-			stringSpace
-		);
+		drawInlays(boardleft,boardtop,stringSpace);
 
 	}
 
@@ -825,17 +730,11 @@ function drawVertical() {
 	// Cuerdas
 	//------------------------------------------------
 
-	const stringBleed = Math.max(
-		3,
-		stringSpace * 0.10
-	);
+	const stringBleed = Math.max(3,stringSpace * 0.10);
 
 	for (let s = 0; s < stringCount; s++) {
 
-		const index =
-			reverseStrings
-				? s
-				: stringCount - 1 - s;
+		const index = reverseStrings ? s : stringCount - 1 - s;
 
 		const x = boardleft + index * stringSpace;
 
@@ -913,10 +812,7 @@ function drawVertical() {
 			ctx.moveTo(x - stringWidth * 0.22, y1);
 			ctx.lineTo(x - stringWidth * 0.22, y2);
 
-			ctx.lineWidth = Math.max(
-				0.25,
-				stringWidth * 0.16
-			);
+			ctx.lineWidth = Math.max(0.25,stringWidth * 0.16);
 
 			ctx.strokeStyle = "rgba(255,255,255,0.65)";
 			ctx.stroke();
@@ -928,10 +824,7 @@ function drawVertical() {
 			ctx.moveTo(x + stringWidth * 0.12, y1);
 			ctx.lineTo(x + stringWidth * 0.12, y2);
 
-			ctx.lineWidth = Math.max(
-				0.2,
-				stringWidth * 0.10
-			);
+			ctx.lineWidth = Math.max(0.2,stringWidth * 0.10);
 
 			ctx.strokeStyle = "rgba(40,40,40,0.35)";
 			ctx.stroke();
@@ -953,18 +846,9 @@ function drawVertical() {
 			stringSpace * 0.10
 		);
 
-		const nutY =
-			rotation === 0
-				? boardtop
-				: boardbottom;
+		const nutY = rotation === 0 ? boardtop : boardbottom;
 
-		drawFret(
-			boardleft,
-			nutY,
-			boardright,
-			nutY,
-			fretWidth
-		);
+		drawFret(boardleft,nutY,boardright,nutY,fretWidth);
 
 	} else {
 
@@ -976,15 +860,9 @@ function drawVertical() {
 			ctx.lineWidth = nutWidth;
 			ctx.strokeStyle = getNutColor();
 
-			const y1 =
-				rotation === 0
-					? boardtop
-					: boardbottom;
+			const y1 = rotation === 0 ? boardtop : boardbottom;
 
-			const y2 =
-				rotation === 0
-					? boardtop + gap
-					: boardbottom - gap;
+			const y2 = rotation === 0 ? boardtop + gap : boardbottom - gap;
 
 			ctx.beginPath();
 			ctx.moveTo(boardleft, y1);
@@ -1281,36 +1159,21 @@ function drawFret(x1, y1, x2, y2, fretWidth) {
 	if (x1 === x2) {
 
 		// Traste vertical
-		ctx.moveTo(
-			x1 - fretWidth * 0.18,
-			y1
-		);
+		ctx.moveTo(x1 - fretWidth * 0.18,y1);
 
-		ctx.lineTo(
-			x2 - fretWidth * 0.18,
-			y2
-		);
+		ctx.lineTo(x2 - fretWidth * 0.18,y2);
 
 	} else {
 
 		// Traste horizontal
-		ctx.moveTo(
-			x1,
-			y1 - fretWidth * 0.18
-		);
+		ctx.moveTo(x1,y1 - fretWidth * 0.18);
 
-		ctx.lineTo(
-			x2,
-			y2 - fretWidth * 0.18
-		);
+		ctx.lineTo(x2,y2 - fretWidth * 0.18);
 
 	}
 
 	ctx.strokeStyle = "rgba(255,255,255,0.75)";
-	ctx.lineWidth = Math.max(
-		0.7,
-		fretWidth * 0.22
-	);
+	ctx.lineWidth = Math.max(0.7,fretWidth * 0.22);
 
 	ctx.stroke();
 
@@ -1318,125 +1181,20 @@ function drawFret(x1, y1, x2, y2, fretWidth) {
 
 function roundedRectPath(x, y, width, height, radius) {
 
-	const r = Math.min(
-		radius,
-		width / 2,
-		height / 2
-	);
+	const r = Math.min(radius, width / 2, height / 2);
 
 	ctx.beginPath();
 
-	ctx.moveTo(
-		x + r,
-		y
-	);
-
-	ctx.lineTo(
-		x + width - r,
-		y
-	);
-
-	ctx.quadraticCurveTo(
-		x + width,
-		y,
-		x + width,
-		y + r
-	);
-
-	ctx.lineTo(
-		x + width,
-		y + height - r
-	);
-
-	ctx.quadraticCurveTo(
-		x + width,
-		y + height,
-		x + width - r,
-		y + height
-	);
-
-	ctx.lineTo(
-		x + r,
-		y + height
-	);
-
-	ctx.quadraticCurveTo(
-		x,
-		y + height,
-		x,
-		y + height - r
-	);
-
-	ctx.lineTo(
-		x,
-		y + r
-	);
-
-	ctx.quadraticCurveTo(
-		x,
-		y,
-		x + r,
-		y
-	);
-
+	ctx.moveTo(x + r, y);
+	ctx.lineTo(x + width - r, y);
+	ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+	ctx.lineTo(x + width, y + height - r);
+	ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+	ctx.lineTo(x + r, y + height);
+	ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+	ctx.lineTo(x, y + r);
+	ctx.quadraticCurveTo(x, y, x + r, y);
 	ctx.closePath();
-
-}
-
-
-// ============================================================
-// GEOMETRÍA DEL DIAPASÓN
-// ============================================================
-
-function getFretPosition(fret) {
-
-	// Longitud útil del mástil
-	const neckLength =
-		(rotation === 90 || rotation === 270)
-			? boardWidth
-			: boardHeight;
-
-	let position;
-
-	//------------------------------------------------
-	// Modo sin escala (trastes equidistantes)
-	//------------------------------------------------
-
-	if (!displayMode) {
-
-		position = (neckLength / fretCount) * fret;
-
-	} else {
-
-		//------------------------------------------------
-		// Escala temperada real
-		//------------------------------------------------
-
-		const scaleLength = 648;
-
-		const realPosition =
-			scaleLength -
-			(scaleLength / Math.pow(2, fret / 12));
-
-		const lastFretPosition =
-			scaleLength -
-			(scaleLength / Math.pow(2, fretCount / 12));
-
-		position = (realPosition / lastFretPosition) * neckLength;
-
-	}
-
-	//------------------------------------------------
-	// Invertir el sentido del mástil
-	//------------------------------------------------
-
-	if (rotation === 180 || rotation === 90) {
-
-		position = neckLength - position;
-
-	}
-
-	return position;
 
 }
 
@@ -1450,20 +1208,16 @@ function drawInlays(left, top, stringSpace) {
 	if (!chkInlays.checked) return;
 
 	const marks = [3, 5, 7, 9, 12, 15, 17, 19, 21, 24];
-
 	const radius = 6;
 
 	ctx.fillStyle = getInlayColor();
 
 	const horizontal = rotation === 90 || rotation === 270;
-
 	const reverseStrings = rotation === 180 || rotation === 90;
 
 	marks.forEach(fret => {
 
-		if (fret > fretCount) {
-			return;
-		}
+		if (fret > fretCount) return;
 
 		const fretCenter = getFretCenter(fret);
 
@@ -1473,21 +1227,11 @@ function drawInlays(left, top, stringSpace) {
 		if (horizontal) {
 
 			x = left + fretCenter;
-
-			y = top + (
-				reverseStrings
-					? (stringCount - 1 - 2.5) * stringSpace
-					: 2.5 * stringSpace
-			);
+			y = top + (reverseStrings ? (stringCount - 1 - 2.5) * stringSpace : 2.5 * stringSpace);
 
 		} else {
 
-			x = left + (
-				reverseStrings
-					? 2.5 * stringSpace
-					: (stringCount - 1 - 2.5) * stringSpace
-			);
-
+			x = left + (reverseStrings ? 2.5 * stringSpace : (stringCount - 1 - 2.5) * stringSpace);
 			y = top + fretCenter;
 
 		}
@@ -1500,70 +1244,28 @@ function drawInlays(left, top, stringSpace) {
 
 			if (horizontal) {
 
-				const y1 = top + (
-					reverseStrings
-						? (stringCount - 1 - 1.5) * stringSpace
-						: 1.5 * stringSpace
-				);
-
-				const y2 = top + (
-					reverseStrings
-						? (stringCount - 1 - 3.5) * stringSpace
-						: 3.5 * stringSpace
-				);
+				const y1 = top + (reverseStrings ? (stringCount - 1 - 1.5) * stringSpace : 1.5 * stringSpace);
+				const y2 = top + (reverseStrings ? (stringCount - 1 - 3.5) * stringSpace : 3.5 * stringSpace);
 
 				ctx.beginPath();
-				ctx.arc(
-					x,
-					y1,
-					radius,
-					0,
-					Math.PI * 2
-				);
+				ctx.arc(x, y1, radius, 0, Math.PI * 2);
 				ctx.fill();
 
 				ctx.beginPath();
-				ctx.arc(
-					x,
-					y2,
-					radius,
-					0,
-					Math.PI * 2
-				);
+				ctx.arc(x, y2, radius, 0, Math.PI * 2);
 				ctx.fill();
 
 			} else {
 
-				const x1 = left + (
-					reverseStrings
-						? 1.5 * stringSpace
-						: (stringCount - 1 - 1.5) * stringSpace
-				);
-
-				const x2 = left + (
-					reverseStrings
-						? 3.5 * stringSpace
-						: (stringCount - 1 - 3.5) * stringSpace
-				);
+				const x1 = left + (reverseStrings ? 1.5 * stringSpace : (stringCount - 1 - 1.5) * stringSpace);
+				const x2 = left + (reverseStrings ? 3.5 * stringSpace : (stringCount - 1 - 3.5) * stringSpace);
 
 				ctx.beginPath();
-				ctx.arc(
-					x1,
-					y,
-					radius,
-					0,
-					Math.PI * 2
-				);
+				ctx.arc(x1, y, radius, 0, Math.PI * 2);
 				ctx.fill();
 
 				ctx.beginPath();
-				ctx.arc(
-					x2,
-					y,
-					radius,
-					0,
-					Math.PI * 2
-				);
+				ctx.arc(x2, y, radius, 0, Math.PI * 2);
 				ctx.fill();
 
 			}
@@ -1571,13 +1273,7 @@ function drawInlays(left, top, stringSpace) {
 		} else {
 
 			ctx.beginPath();
-			ctx.arc(
-				x,
-				y,
-				radius,
-				0,
-				Math.PI * 2
-			);
+			ctx.arc(x, y, radius, 0, Math.PI * 2);
 			ctx.fill();
 
 		}
@@ -1590,11 +1286,9 @@ function drawFretNumbers() {
 
 	ctx.save();
 
-	if (fretboardStyle == "blank") {
-		ctx.fillStyle = "#000";
-	} else {
-		ctx.fillStyle = "#FFF";
-	}
+	const colorText = getComputedStyle(document.documentElement).getPropertyValue("--color-text").trim();
+
+	ctx.fillStyle = colorText;
 
 	ctx.font = "12px Segoe UI";
 	ctx.textBaseline = "middle";
@@ -1603,9 +1297,7 @@ function drawFretNumbers() {
 
 	if (!displayMode) {
 
-		numIni = numberFrets.value == null || numberFrets.value === ""
-			? 1
-			: parseInt(numberFrets.value);
+		numIni = numberFrets.value == null || numberFrets.value === "" ? 1 : parseInt(numberFrets.value);
 
 	}
 
@@ -1615,9 +1307,7 @@ function drawFretNumbers() {
 
 		ctx.textAlign = "center";
 
-		const y = rotation === 90
-			? boardtop - 18
-			: boardbottom + 18;
+		const y = rotation === 90 ? boardtop - 18 : boardbottom + 18;
 
 		for (let fret = 1; fret <= fretCount; fret++) {
 
@@ -1631,9 +1321,7 @@ function drawFretNumbers() {
 
 		ctx.textAlign = rotation === 0 ? "right" : "left";
 
-		const x = rotation === 0
-			? boardleft - 18
-			: boardright + 18;
+		const x = rotation === 0 ? boardleft - 18 : boardright + 18;
 
 		for (let fret = 1; fret <= fretCount; fret++) {
 
@@ -1653,11 +1341,9 @@ function drawStringNumbers() {
 
 	ctx.save();
 
-	if (fretboardStyle == "blank") {
-		ctx.fillStyle = "#000";
-	} else {
-		ctx.fillStyle = "#FFF";
-	}
+	const colorText = getComputedStyle(document.documentElement).getPropertyValue("--color-text").trim();
+
+	ctx.fillStyle = colorText;
 
 	ctx.font = "12px Segoe UI";
 	ctx.textAlign = "center";
@@ -1724,356 +1410,59 @@ function drawStringNumbers() {
 
 }
 
-function getFretFromPosition(position) {
-
-	for (let fret = 1; fret <= fretCount; fret++) {
-
-		const start = getFretPosition(fret - 1);
-		const end = getFretPosition(fret);
-
-		if (
-			position >= Math.min(start, end) &&
-			position <= Math.max(start, end)
-		) {
-			return fret;
-		}
-
-	}
-
-	return null;
-
-}
-
-function getFretCenter(fret) {
-
-	const start = getFretPosition(fret - 1);
-	const end = getFretPosition(fret);
-
-	return (start + end) / 2;
-
-}
-
-// ============================================================
-// INTERACCIÓN CON RATÓN
-// ============================================================
-
-function getCellCenter(string, fret) {
-
-	const fretCenter = getFretCenter(fret);
-
-	switch (rotation) {
-
-		//------------------------------------------------
-		// Vertical (cejuela arriba)
-		//------------------------------------------------
-
-		case 0:
-
-			return {
-
-				x: boardleft + (stringCount - 1 - string) * stringSpace,
-
-				y: boardtop + fretCenter
-
-			};
-
-		//------------------------------------------------
-		// Horizontal (cejuela izquierda)
-		//------------------------------------------------
-
-		case 270:
-
-			return {
-
-				x: boardleft + fretCenter,
-
-				y: boardtop + string * stringSpace
-
-			};
-
-		//------------------------------------------------
-		// Vertical (cejuela abajo)
-		//------------------------------------------------
-
-		case 180:
-
-			return {
-
-				x: boardleft + string * stringSpace,
-
-				y: boardtop + fretCenter
-
-			};
-
-		//------------------------------------------------
-		// Horizontal (cejuela derecha)
-		//------------------------------------------------
-
-		case 90:
-
-			return {
-
-				x: boardleft + fretCenter,
-
-				y: boardtop + (stringCount - 1 - string) * stringSpace
-
-			};
-
-	}
-
-}
-
-function getCellFromMouse(x, y) {
-
-	const minX = boardleft;
-	const maxX = boardright;
-
-	const minY = boardtop - stringSpace / 2;
-	const maxY = boardbottom + stringSpace / 2;
-
-	if (
-		x < minX ||
-		x > maxX ||
-		y < minY ||
-		y > maxY
-	) {
-		return null;
-	}
-
-	let string;
-	let fret;
-
-	switch (rotation) {
-
-		//------------------------------------------------
-		// Vertical (cejuela arriba)
-		//------------------------------------------------
-
-		case 0:
-
-			string = Math.round(
-				(x - boardleft) / stringSpace
-			);
-
-			string = stringCount - 1 - string;
-
-			fret = getFretFromPosition(
-				y - boardtop
-			);
-
-			break;
-
-		//------------------------------------------------
-		// Horizontal (cejuela izquierda)
-		//------------------------------------------------
-
-		case 270:
-
-			string = Math.round(
-				(y - boardtop) / stringSpace
-			);
-
-			fret = getFretFromPosition(
-				x - boardleft
-			);
-
-			break;
-
-		//------------------------------------------------
-		// Vertical (cejuela abajo)
-		//------------------------------------------------
-
-		case 180:
-
-			string = Math.round(
-				(x - boardleft) / stringSpace
-			);
-
-			fret = getFretFromPosition(
-				y - boardtop
-			);
-
-			break;
-
-		//------------------------------------------------
-		// Horizontal (cejuela derecha)
-		//------------------------------------------------
-
-		case 90:
-
-			string = Math.round(
-				(y - boardtop) / stringSpace
-			);
-
-			string = stringCount - 1 - string;
-
-			fret = getFretFromPosition(
-				x - boardleft
-			);
-
-			break;
-
-	}
-
-	if (fret === null) {
-		return null;
-	}
-
-	string = Math.max(
-		0,
-		Math.min(stringCount - 1, string)
-	);
-
-	return {
-		string,
-		fret
-	};
-
-}
-
-function getNutStringFromMouse(x, y) {
-
-	switch (rotation) {
-
-		//------------------------------------------------
-		// Vertical (cejuela arriba)
-		//------------------------------------------------
-
-		case 0: {
-
-			if (y > boardtop + 8)
-				return null;
-
-			let string = Math.round(
-				(x - boardleft) / stringSpace
-			);
-
-			string = stringCount - 1 - string;
-
-			if (string < 0 || string >= stringCount)
-				return null;
-
-			return string;
-
-		}
-
-		//------------------------------------------------
-		// Horizontal (cejuela izquierda)
-		//------------------------------------------------
-
-		case 270: {
-
-			if (x > boardleft + 8)
-				return null;
-
-			let string = Math.round(
-				(y - boardtop) / stringSpace
-			);
-
-			if (string < 0 || string >= stringCount)
-				return null;
-
-			return string;
-
-		}
-
-		//------------------------------------------------
-		// Vertical (cejuela abajo)
-		//------------------------------------------------
-
-		case 180: {
-
-			if (y < boardbottom - 8)
-				return null;
-
-			let string = Math.round(
-				(x - boardleft) / stringSpace
-			);
-
-			if (string < 0 || string >= stringCount)
-				return null;
-
-			return string;
-
-		}
-
-		//------------------------------------------------
-		// Horizontal (cejuela derecha)
-		//------------------------------------------------
-
-		case 90: {
-
-			if (x < boardright - 8)
-				return null;
-
-			let string = Math.round(
-				(y - boardtop) / stringSpace
-			);
-
-			string = stringCount - 1 - string;
-
-			if (string < 0 || string >= stringCount)
-				return null;
-
-			return string;
-
-		}
-
-	}
-
-	return null;
-
-}
-
-function getDynamicNeckLength() {
-
-	const calculatedLength = fretCount * PIXELS_PER_FRET;
-
-	return Math.max(
-		MIN_NECK_LENGTH,
-		Math.min(MAX_NECK_LENGTH, calculatedLength)
-	);
-
-}
-
-
-// ============================================================
-// UTILIDADES DE COLOR
-// ============================================================
-
-function getStringColor() {
-
-	if (fretboardStyle === "blank") {
-		return "rgba(70, 70, 70, 0.85)";
-	}
-
-	return "rgba(205, 127, 50, 0.95)";	
-}
-
-function getInlayColor() {
-
-	if (fretboardStyle === "rosewood") {
-		return "rgba(245, 245, 245, 0.5)";
-	}
-
-	return "rgba(0, 0, 0, 0.40)";
-}
-
-function getNutColor() {
-
-	if (fretboardStyle === "rosewood") {
-		return "rgba(218, 160, 95, 0.98)";
-	}
-
-	return "rgba(0, 0, 0, 0.85)";
-}
-
 
 //==================================================
 // DRAW NOTES
 //==================================================
 
+
+function drawNotesAlpha(opacity = 1) {
+
+	restoreFretboardBackground();
+
+	drawBarres(opacity);
+
+	notes.forEach(note => {
+
+		const p = getCellCenter(note.string, note.fret);
+
+		drawMarker(p.x, p.y, note, false, opacity);
+
+	});
+
+	drawNutNotes(opacity);
+
+	// Guardar el estado completo: mástil + notas con opacidad
+	fretboardPlaybackBackground = ctx.getImageData(0,0,canvas.width,canvas.height);
+
+}
+
+function drawPlayingMarker(x, y) {
+
+	ctx.save();
+
+	ctx.globalAlpha = 1;
+
+	const radius = stringSpace * 0.39;
+	const border = Math.max(0.6, radius * 0.05);
+
+	ctx.beginPath();
+	ctx.arc(x, y, radius, 0, Math.PI * 2);
+
+	ctx.fillStyle = "#FFF";
+	ctx.fill();
+
+	ctx.strokeStyle = "#000";
+	ctx.lineWidth = border;
+	ctx.stroke();
+
+	ctx.restore();
+
+}
+
 function drawNotes() {
+
+	restoreFretboardBackground();
 
 	drawBarres();
 
@@ -2081,7 +1470,7 @@ function drawNotes() {
 
 		const p = getCellCenter(note.string, note.fret);
 
-		drawMarker(p.x, p.y, note);
+		drawMarker(p.x, p.y, note, false);
 
 	});
 
@@ -2092,7 +1481,132 @@ function drawNotes() {
 
 }
 
-function drawNutNotes() {
+function drawBarres(opacity = 1) {
+
+	for (const barre of barreNotes) {
+
+		drawBarre(barre,opacity);
+
+	}
+
+}
+
+function drawBarre(barre, opacity = 1) {
+
+	const firstString = 0;
+	const lastString = barre.startString;
+
+	const markerRadius = Math.min(stringSpace * 0.34, 14);
+
+	const barThickness = markerRadius * 2;
+
+	const border = Math.max(0.6,markerRadius * 0.05);
+
+	const fillColor = String(barre.color).toLowerCase();
+
+	const textColor = getTextColor(fillColor);
+
+	ctx.save();
+
+	ctx.globalAlpha = opacity;
+
+	ctx.lineCap = "round";
+	ctx.lineJoin = "round";
+
+	ctx.shadowColor = "rgba(0,0,0,0.28)";
+	ctx.shadowBlur = 2;
+	ctx.shadowOffsetX = 1;
+	ctx.shadowOffsetY = 1;
+
+	//------------------------------------------------
+	// Posición
+	//------------------------------------------------
+
+	const p1 = getCellCenter(firstString,barre.fret);
+
+	const p2 = getCellCenter(lastString,barre.fret);
+
+	const x1 = p1.x;
+	const y1 = p1.y;
+
+	const x2 = p2.x;
+	const y2 = p2.y;
+
+	//------------------------------------------------
+	// Barra
+	//------------------------------------------------
+
+	if (opacity < 1) {
+
+		ctx.beginPath();
+		ctx.strokeStyle = barre.color;
+		ctx.lineWidth = barThickness;
+		ctx.moveTo(x1, y1);
+		ctx.lineTo(x2, y2);
+		ctx.stroke();
+
+	}else{
+
+		ctx.beginPath();
+		ctx.strokeStyle = "#000";
+		ctx.lineWidth = barThickness + border * 2;
+		ctx.moveTo(x1, y1);
+		ctx.lineTo(x2, y2);
+		ctx.stroke();
+
+		ctx.beginPath();
+		ctx.strokeStyle = barre.color;
+		ctx.lineWidth = barThickness;
+		ctx.moveTo(x1, y1);
+		ctx.lineTo(x2, y2);
+		ctx.stroke();
+
+	}
+
+	//------------------------------------------------
+	// Texto
+	//------------------------------------------------
+
+	const textPosition = getCellCenter(barre.startString,barre.fret);
+
+	const textX = textPosition.x;
+	const textY = textPosition.y;
+
+	const text = getNoteText(textX,textY,barre.text);
+
+	ctx.shadowColor = "transparent";
+	ctx.fillStyle = textColor;
+	ctx.textAlign = "center";
+	ctx.textBaseline = "middle";
+
+	//------------------------------------------------
+	// Tamaño de fuente
+	//------------------------------------------------
+
+	let fontSize = markerRadius * 1.45;
+
+	ctx.font = `bold ${fontSize}px Segoe UI`;
+
+	const maxWidth = barThickness * 0.85;
+
+	while (ctx.measureText(text).width > maxWidth && fontSize > 5) {
+
+		fontSize -= 0.5;
+
+		ctx.font = `bold ${fontSize}px Segoe UI`;
+	}
+
+	//------------------------------------------------
+	// Dibujar texto
+	//------------------------------------------------
+
+	ctx.fillText(text,textX,textY + fontSize * 0.03);
+
+	ctx.restore();
+
+}
+
+function drawNutNotes(opacity = 1) {
 
 	const gap = 5;
 
@@ -2100,8 +1614,7 @@ function drawNutNotes() {
 
 		const note = nutNotes[s];
 
-		if (!note)
-			continue;
+		if (!note) continue;
 
 		let x;
 		let y;
@@ -2154,146 +1667,19 @@ function drawNutNotes() {
 
 		}
 
-		drawMarker(x,y,note,true);
+		drawMarker(x,y,note,true,opacity);
 
 	}
 
 }
 
-function drawBarre(barre) {
+function drawMarker(x, y, note, isNut = false, opacity = 1) {
 
-	const firstString = 0;
-	const lastString = barre.startString;
-
-	const markerRadius = Math.min(stringSpace * 0.34, 14);
-
-	const barThickness = markerRadius * 2;
-
-	const border = Math.max(
-		0.6,
-		markerRadius * 0.05
-	);
-
-	const fillColor = String(barre.color).toLowerCase();
-
-	const textColor = getTextColor(fillColor);
+	if (!note || !note.color) return;
 
 	ctx.save();
 
-	ctx.lineCap = "round";
-	ctx.lineJoin = "round";
-
-	ctx.shadowColor = "rgba(0,0,0,0.28)";
-	ctx.shadowBlur = 2;
-	ctx.shadowOffsetX = 1;
-	ctx.shadowOffsetY = 1;
-
-	//------------------------------------------------
-	// Posición
-	//------------------------------------------------
-
-	const p1 = getCellCenter(
-		firstString,
-		barre.fret
-	);
-
-	const p2 = getCellCenter(
-		lastString,
-		barre.fret
-	);
-
-	const x1 = p1.x;
-	const y1 = p1.y;
-
-	const x2 = p2.x;
-	const y2 = p2.y;
-
-	//------------------------------------------------
-	// Barra
-	//------------------------------------------------
-
-	ctx.beginPath();
-	ctx.strokeStyle = "#000";
-	ctx.lineWidth = barThickness + border * 2;
-	ctx.moveTo(x1, y1);
-	ctx.lineTo(x2, y2);
-	ctx.stroke();
-
-	ctx.beginPath();
-	ctx.strokeStyle = barre.color;
-	ctx.lineWidth = barThickness;
-	ctx.moveTo(x1, y1);
-	ctx.lineTo(x2, y2);
-	ctx.stroke();
-
-	//------------------------------------------------
-	// Texto
-	//------------------------------------------------
-
-	const textPosition = getCellCenter(
-		barre.startString,
-		barre.fret
-	);
-
-	const textX = textPosition.x;
-	const textY = textPosition.y;
-
-	const text = getNoteText(
-		textX,
-		textY,
-		barre.text
-	);
-
-	ctx.shadowColor = "transparent";
-	ctx.fillStyle = textColor;
-	ctx.textAlign = "center";
-	ctx.textBaseline = "middle";
-
-	//------------------------------------------------
-	// Tamaño de fuente
-	//------------------------------------------------
-
-	let fontSize = markerRadius * 1.45;
-
-	ctx.font = `bold ${fontSize}px Segoe UI`;
-
-	// Ancho disponible dentro de la barra
-	const maxWidth = barThickness * 0.85;
-
-	while (ctx.measureText(text).width > maxWidth && fontSize > 5) {
-
-		fontSize -= 0.5;
-
-		ctx.font = `bold ${fontSize}px Segoe UI`;
-	}
-
-	//------------------------------------------------
-	// Dibujar texto
-	//------------------------------------------------
-
-	ctx.fillText(
-		text,
-		textX,
-		textY + fontSize * 0.03
-	);
-
-	ctx.restore();
-
-}
-
-function drawBarres() {
-
-	for (const barre of barreNotes) {
-
-		drawBarre(barre);
-
-	}
-
-}
-
-function drawMarker(x, y, note, isNut = false) {
-
-	if (!note || !note.color) return;
+	ctx.globalAlpha = opacity;
 
 	const radius = stringSpace * 0.39;
 	const border = Math.max(0.6, radius * 0.05);
@@ -2304,9 +1690,13 @@ function drawMarker(x, y, note, isNut = false) {
 	ctx.fillStyle = note.color;
 	ctx.fill();
 
-	ctx.strokeStyle = "#000";
-	ctx.lineWidth = border;
-	ctx.stroke();
+	if (opacity >= 1) {
+
+		ctx.strokeStyle = "#000";
+		ctx.lineWidth = border;
+		ctx.stroke();
+
+	}
 
 	const fillColor = String(note.color).toLowerCase();
 
@@ -2331,7 +1721,9 @@ function drawMarker(x, y, note, isNut = false) {
 		ctx.font = `bold ${fontSize}px Segoe UI`;
 	}
 
-	ctx.fillText(text,x,y + fontSize * 0.03);
+	ctx.fillText(text, x, y + fontSize * 0.03);
+
+	ctx.restore();
 
 }
 
@@ -2442,13 +1834,7 @@ function drawNutHover() {
 	ctx.globalAlpha = 0.35;
 
 	ctx.beginPath();
-	ctx.arc(
-		x,
-		y,
-		radius,
-		0,
-		Math.PI * 2
-	);
+	ctx.arc(x,y,radius,0,Math.PI * 2);
 
 	ctx.fillStyle = colorPicker.value;
 	ctx.fill();
@@ -2460,6 +1846,375 @@ function drawNutHover() {
 	ctx.restore();
 
 }
+
+
+// ============================================================
+// GEOMETRÍA DEL DIAPASÓN
+// ============================================================
+
+function getFretPosition(fret) {
+
+	// Longitud útil del mástil
+	const neckLength = (rotation === 90 || rotation === 270) ? boardWidth : boardHeight;
+
+	let position;
+
+	//------------------------------------------------
+	// Modo sin escala (trastes equidistantes)
+	//------------------------------------------------
+
+	if (!displayMode) {
+
+		position = (neckLength / fretCount) * fret;
+
+	} else {
+
+		//------------------------------------------------
+		// Escala temperada real
+		//------------------------------------------------
+
+		const scaleLength = 648;
+
+		const realPosition = scaleLength - (scaleLength / Math.pow(2, fret / 12));
+
+		const lastFretPosition = scaleLength - (scaleLength / Math.pow(2, fretCount / 12));
+
+		position = (realPosition / lastFretPosition) * neckLength;
+
+	}
+
+	//------------------------------------------------
+	// Invertir el sentido del mástil
+	//------------------------------------------------
+
+	if (rotation === 180 || rotation === 90) {
+
+		position = neckLength - position;
+
+	}
+
+	return position;
+
+}
+
+function getFretFromPosition(position) {
+
+	for (let fret = 1; fret <= fretCount; fret++) {
+
+		const start = getFretPosition(fret - 1);
+		const end = getFretPosition(fret);
+
+		if (position >= Math.min(start, end) && position <= Math.max(start, end)) {
+			return fret;
+		}
+
+	}
+
+	return null;
+
+}
+
+function getFretCenter(fret) {
+
+	const start = getFretPosition(fret - 1);
+	const end = getFretPosition(fret);
+
+	return (start + end) / 2;
+
+}
+
+// ============================================================
+// INTERACCIÓN CON RATÓN
+// ============================================================
+
+
+function getNotePosition(string, fret) {
+
+	if (fret === 0) {
+
+		const gap = 5;
+
+		switch (rotation) {
+
+			case 0:
+
+				return {
+					x: boardleft + (stringCount - 1 - string) * stringSpace,
+					y: boardtop + gap / 2
+				};
+
+			case 270:
+
+				return {
+					x: boardleft + gap / 2,
+					y: boardtop + string * stringSpace
+				};
+
+			case 180:
+
+				return {
+					x: boardleft + string * stringSpace,
+					y: boardbottom - gap / 2
+				};
+
+			case 90:
+
+				return {
+					x: boardright - gap / 2,
+					y: boardtop + (stringCount - 1 - string) * stringSpace
+				};
+
+		}
+
+	}
+
+	return getCellCenter(string, fret);
+
+}
+
+function getCellCenter(string, fret) {
+
+	const fretCenter = getFretCenter(fret);
+
+	switch (rotation) {
+
+		//------------------------------------------------
+		// Vertical (cejuela arriba)
+		//------------------------------------------------
+
+		case 0:
+
+			return {
+				x: boardleft + (stringCount - 1 - string) * stringSpace,
+				y: boardtop + fretCenter
+			};
+
+		//------------------------------------------------
+		// Horizontal (cejuela izquierda)
+		//------------------------------------------------
+
+		case 270:
+
+			return {
+				x: boardleft + fretCenter,
+				y: boardtop + string * stringSpace
+			};
+
+		//------------------------------------------------
+		// Vertical (cejuela abajo)
+		//------------------------------------------------
+
+		case 180:
+
+			return {
+				x: boardleft + string * stringSpace,
+				y: boardtop + fretCenter
+			};
+
+		//------------------------------------------------
+		// Horizontal (cejuela derecha)
+		//------------------------------------------------
+
+		case 90:
+
+			return {
+				x: boardleft + fretCenter,
+				y: boardtop + (stringCount - 1 - string) * stringSpace
+			};
+
+	}
+
+}
+
+function getCellFromMouse(x, y) {
+
+	const minX = boardleft;
+	const maxX = boardright;
+	const minY = boardtop - stringSpace / 2;
+	const maxY = boardbottom + stringSpace / 2;
+
+	if (x < minX || x > maxX || y < minY || y > maxY) return null;
+
+	let string;
+	let fret;
+
+	switch (rotation) {
+
+		//------------------------------------------------
+		// Vertical (cejuela arriba)
+		//------------------------------------------------
+
+		case 0:
+
+			string = Math.round((x - boardleft) / stringSpace);
+			string = stringCount - 1 - string;
+			fret = getFretFromPosition(y - boardtop);
+
+			break;
+
+		//------------------------------------------------
+		// Horizontal (cejuela izquierda)
+		//------------------------------------------------
+
+		case 270:
+
+			string = Math.round((y - boardtop) / stringSpace);
+			fret = getFretFromPosition(x - boardleft);
+
+			break;
+
+		//------------------------------------------------
+		// Vertical (cejuela abajo)
+		//------------------------------------------------
+
+		case 180:
+
+			string = Math.round((x - boardleft) / stringSpace);
+			fret = getFretFromPosition(y - boardtop);
+
+			break;
+
+		//------------------------------------------------
+		// Horizontal (cejuela derecha)
+		//------------------------------------------------
+
+		case 90:
+
+			string = Math.round((y - boardtop) / stringSpace);
+			string = stringCount - 1 - string;
+			fret = getFretFromPosition(x - boardleft);
+
+			break;
+
+	}
+
+	if (fret === null) return null;
+
+	string = Math.max(0, Math.min(stringCount - 1, string));
+
+	return {
+		string,
+		fret
+	};
+
+}
+
+function getNutStringFromMouse(x, y) {
+
+	switch (rotation) {
+
+		//------------------------------------------------
+		// Vertical (cejuela arriba)
+		//------------------------------------------------
+
+		case 0: {
+
+			if (y > boardtop + 8) return null;
+
+			let string = Math.round((x - boardleft) / stringSpace);
+			string = stringCount - 1 - string;
+
+			if (string < 0 || string >= stringCount) return null;
+
+			return string;
+
+		}
+
+		//------------------------------------------------
+		// Horizontal (cejuela izquierda)
+		//------------------------------------------------
+
+		case 270: {
+
+			if (x > boardleft + 8) return null;
+
+			let string = Math.round((y - boardtop) / stringSpace);
+
+			if (string < 0 || string >= stringCount) return null;
+
+			return string;
+
+		}
+
+		//------------------------------------------------
+		// Vertical (cejuela abajo)
+		//------------------------------------------------
+
+		case 180: {
+
+			if (y < boardbottom - 8) return null;
+
+			let string = Math.round((x - boardleft) / stringSpace);
+
+			if (string < 0 || string >= stringCount) return null;
+
+			return string;
+
+		}
+
+		//------------------------------------------------
+		// Horizontal (cejuela derecha)
+		//------------------------------------------------
+
+		case 90: {
+
+			if (x < boardright - 8) return null;
+
+			let string = Math.round((y - boardtop) / stringSpace);
+			string = stringCount - 1 - string;
+
+			if (string < 0 || string >= stringCount) return null;
+
+			return string;
+
+		}
+
+	}
+
+	return null;
+
+}
+
+function getDynamicNeckLength() {
+
+	const calculatedLength = fretCount * PIXELS_PER_FRET;
+
+	return Math.max(MIN_NECK_LENGTH,Math.min(MAX_NECK_LENGTH, calculatedLength));
+
+}
+
+
+// ============================================================
+// UTILIDADES DE COLOR
+// ============================================================
+
+function getStringColor() {
+
+	if (fretboardStyle === "blank") {
+		return "rgba(70, 70, 70, 0.85)";
+	}
+
+	return "rgba(205, 127, 50, 0.95)";	
+}
+
+function getInlayColor() {
+
+	if (fretboardStyle === "rosewood") {
+		return "rgba(245, 245, 245, 0.5)";
+	}
+
+	return "rgba(0, 0, 0, 0.40)";
+}
+
+function getNutColor() {
+
+	if (fretboardStyle === "rosewood") {
+		return "rgba(218, 160, 95, 0.98)";
+	}
+
+	return "rgba(0, 0, 0, 0.85)";
+}
+
 
 function undo() {
 
@@ -2473,7 +2228,6 @@ function undo() {
 	nutNotes = lastState.nutNotes;
 	barreNotes = lastState.barreNotes ?? [];
 
-	drawFretboard();
 	drawNotes();
 
 	aSequence = buildOrderedSequence();
@@ -2494,7 +2248,6 @@ function updateHoverCell(e) {
 
 			hoverCell = null;
 
-			drawFretboard();
 			drawNotes();
 
 		}
@@ -2503,10 +2256,7 @@ function updateHoverCell(e) {
 
 	}
 
-	const cell = getCellFromMouse(
-		e.offsetX,
-		e.offsetY
-	);
+	const cell = getCellFromMouse(e.offsetX,e.offsetY);
 
 	const sameCell =
 		hoverCell &&
@@ -2525,7 +2275,6 @@ function updateHoverCell(e) {
 
 	hoverCell = cell;
 
-	drawFretboard();
 	drawNotes();
 
 }
@@ -2541,7 +2290,6 @@ function updateHoverNut(e) {
 
 			hoverNut = null;
 
-			drawFretboard();
 			drawNotes();
 
 		}
@@ -2561,7 +2309,6 @@ function updateHoverNut(e) {
 
 	hoverNut = nut;
 
-	drawFretboard();
 	drawNotes();
 
 }
@@ -2604,8 +2351,32 @@ function getNoteText(x, y, text, isNut = false) {
 
 		text = convertNote(text, cmbNoteNames.value);
 
+		// Quitar número de octava
+		text = text.replace(/\d+$/, "");
 	}
 
 	return text;
+
+}
+
+function convertNote(note, notation = "latin") {
+
+    if (notation === "anglo") {
+        return note;
+    }
+
+    const notes = {
+        "C": "Do",
+        "D": "Re",
+        "E": "Mi",
+        "F": "Fa",
+        "G": "Sol",
+        "A": "La",
+        "B": "Si"
+    };
+
+    return note.replace(/^([A-G])([#♯b♭]?)(\d+)$/, (_, name, accidental, octave) => {
+        return notes[name] + accidental + octave;
+    });
 
 }

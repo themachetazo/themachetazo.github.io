@@ -124,6 +124,26 @@ async function initializeApp() {
 
 }
 
+function setTheme(mode) {
+
+	const root = document.documentElement;
+	const theme = themes[mode];
+
+	if (!theme) return;
+
+	for (const [variable, value] of Object.entries(theme)) {
+
+		root.style.setProperty(variable, value);
+
+	}
+
+	const urlLogo = dataURL_Images + "logo-" + (mode === "dark" ? "FFF" : "000") + ".png";
+
+	brandLogo.src = urlLogo;
+	footerBrandLogo.src = urlLogo;
+
+}
+
 function getURLParams(){
 
 	const params = new URLSearchParams(window.location.search);
@@ -178,7 +198,7 @@ function setUserState(){
 
 	}else{
 		user = "admin";
-		subtituleText.textContent = "Fretboard Designer";
+
 	}
 
 	if (!isAdmin && user !== null) xmlProjects = dataURL_Library + user + ".xml";
@@ -198,6 +218,7 @@ function configureUserControls(){
 		topTitle.style.display = "none";
 		topCategory.style.display = "none";
 		topShare.style.display = "none";
+		topVideo.style.display = "none";
 
 		btnProyectos.style.display = "none";
 		btnProyectosPopup.style.display = "none";
@@ -261,8 +282,8 @@ function configureUserControls(){
 			btnPlayerPopup.disabled = false;
 			btnMetronome.style.display = "none";
 			btnMetronomePopup.style.display = "none";
-			btnAudio.style.display = "none";
-			btnAudioPopup.style.display = "none";
+			btnMultimedia.style.display = "none";
+			btnMultimediaPopup.style.display = "none";
 
 			btnMenuSelector.disabled = false;
 
@@ -285,10 +306,17 @@ function configureUserControls(){
 		topProjectGuest.style.display = "none";
 		topTitleViewMode.style.display = "none";
 
+		topVideo.style.display = "";
+
 		btnUser.classList.remove("user");
 		btnUser.classList.add("admin");
 		btnUser.querySelector("i").className = "fa-solid fa-user-shield";
+		btnUser.style.cursor = "pointer";
+
 		txtUserTitle.textContent = "Admin";
+
+		btnAbrirVideo.disabled = false;
+		btnAddVideo.disabled = false;
 
 	}
 
@@ -347,7 +375,7 @@ function setMenu(m){
 	btnPlayer.classList.remove("active");
 	btnScore.classList.remove("active");
 	btnMetronome.classList.remove("active");
-	btnAudio.classList.remove("active");
+	btnMultimedia.classList.remove("active");
 
 	[
 		topProject,
@@ -371,6 +399,7 @@ function setMenu(m){
 		topTempo,
 		topTimeSignature,
 		topForm,
+		topDireccion,
 		topScoreStaves,
 		topScoreScale,
 		topScoreMargin,
@@ -383,6 +412,7 @@ function setMenu(m){
 		topMetronomeControls,
 		topBuffer,
 		topAudio,
+		topVideo,
 		topLibraryInfo,
 		topProjectGuest,
 		topUser
@@ -418,7 +448,6 @@ function setMenu(m){
 				topEdit,
 				topUndo,
 				topColor,
-				topNoteNames,
 				topForm,
 				topChords,
 				topProjectGuest
@@ -438,8 +467,8 @@ function setMenu(m){
 				topDiapason,
 				topFrets,
 				topNumbers,
-				topOrientation,
-				topFretboardDownload
+				topNoteNames,
+				topOrientation
 			);
 
 			menuSelectorText.textContent = "MÁSTIL";
@@ -470,17 +499,33 @@ function setMenu(m){
 
 			showMenuControls(
 				topTitleViewMode,
-				topTempo,
 				topTimeSignature,
+				topDireccion,
 				topScoreStaves,
 				topScoreScale,
 				topScroll,
-				topScoreMargin,
-				topScoreDownload
+				topScoreMargin
 			);
 
 			menuSelectorText.textContent = "PARTITURA";
 			menuSelectorIcon.className = "fa-solid fa-music";
+
+			break;
+
+		case "multimedia":
+
+			btnMultimedia.classList.add("active");
+
+			showMenuControls(
+				topFretboardDownload,
+				topScoreDownload,
+				topBuffer,
+				topAudio,
+				topVideo
+			);
+
+			menuSelectorText.textContent = "MULTIMEDIA";
+			menuSelectorIcon.className = "fa-solid fa-photo-film";
 
 			break;
 
@@ -500,19 +545,6 @@ function setMenu(m){
 
 			break;
 
-		case "audio":
-
-			btnAudio.classList.add("active");
-
-			showMenuControls(
-				topBuffer,
-				topAudio
-			);
-
-			menuSelectorText.textContent = "AUDIO";
-			menuSelectorIcon.className = "fa-solid fa-file-audio";
-
-			break;
 	}
 
 	openTopControls();
@@ -625,45 +657,6 @@ function initializeEmptyProject() {
 	if (user === null) workspaceTitleText.style.display = "none";
 }
 
-function setProjectTypeControlsDisabled(){
-
-	cmbTipoSecuencia.disabled = projectType === "fretboard";
-	chkMetronomeOn.disabled = projectType === "fretboard";
-
-	cmbChords.disabled = projectType !== "chord" ? true : false;
-	btnNewChord.disabled = projectType !== "chord" ? true : false;
-	btnDelChord.disabled = projectType !== "chord" ? true : false;
-
-	btnScore.disabled = projectType === "fretboard";
-	btnScorePopup.disabled = projectType === "fretboard";
-	btnPlayer.disabled = projectType === "fretboard";
-	btnPlayerPopup.disabled = projectType === "fretboard";
-	btnAudio.disabled = projectType === "fretboard";
-	btnAudioPopup.disabled = projectType === "fretboard";
-
-	btnFretboardVisible.disabled = projectType === "fretboard";
-	btnScoreVisible.disabled = projectType === "fretboard";
-
-	if (isUserActive) {
-		btnPlayStop.disabled = projectType === "fretboard";
-	}
-
-	if (appMode === "Guest" && projectType === "fretboard"){
-
-		btnScore.disabled = true;
-		btnScorePopup.disabled = true;
-		btnPlayer.disabled = true;
-		btnPlayerPopup.disabled = true;
-		btnAudio.disabled = true;
-		btnAudioPopup.disabled = true;
-
-		btnPlayStop.disabled = true;
-		btnFretboardVisible.disabled = true;
-		btnScoreVisible.disabled = true;
-	}
-
-}
-
 function setLibraryInfo(fileName){
 
 	projectPanelHeaderTitle.textContent = libraryName === "" ? "Sin Nombre" : libraryName;
@@ -774,7 +767,6 @@ function resetControlsValues(state){
 	if (state !== "loadProject"){
 
 		projectTitle = "";
-		displayMode = true;
 		fretCount = 10;
 		projectBar = 4;
 		projectFigure = 1;
@@ -784,17 +776,19 @@ function resetControlsValues(state){
 		isFretboardVisible = true;
 		key = "C";
 		tipoSecuencia = "up";
+		direccion = false;
 		swing = false;
 		metronomeOn = true;
+		displayMode = true;
 		inlays = true;
 		fretNumbers = 1;
 		showFretNumbers = true;
 		bpm = 90;
 		scoreStaves = "all";
+		scoreLayout = "vertical";
 		notation = "";
 		rotation = 0;
 		rotated = false;
-		scoreLayout = "vertical";
 
 /*
 		fretboardStyle = "maple";
@@ -819,11 +813,6 @@ function resetControlsValues(state){
 	numFrets.value = fretCount;
 	sliderFrets.value = fretCount;
 	sliderFrets.title = fretCount;
-
-	btnDisplay.classList.toggle("active", displayMode);
-	chkInlays.disabled = displayMode === false;
-	chkInlays.disabled = !isUserActive;
-	chkInlays.checked = displayMode ? inlays : false;
 
 	cmbDiapason.value = fretboardStyle;
 
@@ -850,7 +839,7 @@ function resetControlsValues(state){
 	cmbSamplerInstrument.value = currentInstrument;
 
 	numberFrets.value = fretNumbers;
-	showNumber.checked = showFretNumbers;
+	chkShowNumber.checked = showFretNumbers;
 
 	numBpm.value = bpm;
 	sliderBpm.value = bpm;
@@ -884,10 +873,6 @@ function resetControlsValues(state){
 	btnNewCategory.disabled = false;
 	btnDelCategory.disabled = false;
 
-	chkNoteNames.checked = notation;
-
-	if (notation !== "") cmbNoteNames.value  = notation;
-
 	if (state !== "loadProject"){
 
 		resetComboChords();
@@ -915,11 +900,20 @@ function resetControlsValues(state){
 
 	changeProjectType();
 
+	btnDisplay.classList.toggle("active", displayMode);
+
+	setDisplayModeControlsDisabled();
+
+	chkInlays.disabled = displayMode === false;
+	chkInlays.disabled = !isUserActive;
+	chkInlays.checked = displayMode ? inlays : false;
+
+	chkNoteNames.checked = notation;
+	if (notation !== "") cmbNoteNames.value  = notation;
+
 	setEditMode("view");
 
 	setOrientation(orientation);
-
-	if (projectType === "fretboard") isScoreVisible = false;
 
 	setWorkspaceLayout();
 
@@ -964,6 +958,130 @@ function changeProjectType() {
 
 }
 
+function setControlsEnabled(enabled) {
+
+    const controls = document.querySelectorAll(
+        "input, select, button"
+    );
+
+    controls.forEach(control => {
+        control.disabled = !enabled;
+    });
+
+    document.querySelectorAll("#topControlsContainer span").forEach(span => {
+	span.style.opacity = enabled ? 1 : "0.55";
+    });
+
+    if (enabled) {
+	setProjectTypeControlsDisabled();
+
+	setDisplayModeControlsDisabled();
+    }
+
+}
+
+function setProjectTypeControlsDisabled(){
+
+	cmbTipoSecuencia.disabled = projectType === "fretboard";
+
+	chkMetronomeOn.disabled = projectType === "fretboard";
+
+	cmbChords.disabled = projectType !== "chord";
+	btnNewChord.disabled = projectType !== "chord";
+	btnDelChord.disabled = projectType !== "chord";
+
+	btnScore.disabled = projectType === "fretboard";
+	btnScorePopup.disabled = projectType === "fretboard";
+	btnPlayer.disabled = projectType === "fretboard";
+	btnPlayerPopup.disabled = projectType === "fretboard";
+
+	btnRenderBuffer.disabled = projectType === "fretboard";
+	cmbAudioFormat.disabled = projectType === "fretboard";
+	btnSaveAudio.disabled = projectType === "fretboard";
+	btnCopyCanvas.disabled = projectType === "fretboard";
+	btnDownloadCanvas.disabled = projectType === "fretboard";
+	btnScoreDownloadImage.disabled = projectType === "fretboard";
+
+/*
+	if (isAdmin){
+		btnAbrirVideo.disabled = projectType !== "video";
+		btnAddVideo.disabled = projectType !== "video";
+	}
+*/
+
+	btnFretboardVisible.disabled = projectType === "fretboard";
+	btnScoreVisible.disabled = projectType === "fretboard";
+
+	if (isUserActive) {
+		btnPlayStop.disabled = projectType === "fretboard";
+	}
+
+	if (appMode === "Guest" && projectType === "fretboard"){
+
+		btnScore.disabled = true;
+		btnScorePopup.disabled = true;
+		btnPlayer.disabled = true;
+		btnPlayerPopup.disabled = true;
+
+		btnRenderBuffer.disabled = true;
+		cmbAudioFormat.disabled = true;
+		btnSaveAudio.disabled = true;
+		btnCopyCanvas.disabled = true;
+		btnDownloadCanvas.disabled = true;
+		btnScoreDownloadImage.disabled = true;
+
+		btnPlayStop.disabled = true;
+		btnFretboardVisible.disabled = true;
+		btnScoreVisible.disabled = true;
+	}
+
+}
+
+function setDisplayModeControlsDisabled(){
+
+	btnPlayStop.disabled = Boolean(!displayMode);
+	btnPlayer.disabled = projectType === "fretboard" || Boolean(!displayMode);
+	btnPlayerPopup.disabled = projectType === "fretboard" || Boolean(!displayMode);
+	btnScore.disabled = projectType === "fretboard" || Boolean(!displayMode);
+	btnScorePopup.disabled = projectType === "fretboard" || Boolean(!displayMode);
+
+	if (isAdmin){
+		btnRenderBuffer.disabled = projectType === "fretboard" || Boolean(!displayMode);
+		cmbAudioFormat.disabled = projectType === "fretboard" || Boolean(!displayMode);
+		btnSaveAudio.disabled = projectType === "fretboard" || Boolean(!displayMode);
+		btnCopyCanvas.disabled = projectType === "fretboard" || Boolean(!displayMode);
+		btnDownloadCanvas.disabled = projectType === "fretboard" || Boolean(!displayMode);
+		btnScoreDownloadImage.disabled = projectType === "fretboard" || Boolean(!displayMode);
+/*
+		btnAbrirVideo.disabled = projectType !== "video";
+		btnAddVideo.disabled = projectType !== "video";
+*/
+	}else{
+		btnMultimedia.disabled = Boolean(!displayMode);
+		btnMultimediaPopup.disabled = Boolean(!displayMode);
+	}
+
+	chkInlays.disabled = Boolean(!displayMode);
+
+	btnLessNumberFrets.disabled = Boolean(displayMode);
+	numberFrets.disabled = Boolean(displayMode);
+	btnMoreNumberFrets.disabled = Boolean(displayMode);
+
+	chkNoteNames.disabled = Boolean(!displayMode);
+
+	btnScoreVisible.disabled = Boolean(!displayMode);
+
+	if (!displayMode) {
+
+		chkInlays.checked = false;
+		chkNoteNames.checked = false;
+
+		isScoreVisible = false;
+
+	}
+
+}
+
 function updateTopBarMenu() {
 
 	const topBarWidth = topBar.clientWidth;
@@ -999,6 +1117,8 @@ function updateTopBarMenu() {
 
 		mainMenu.style.display = "flex";
 
+		brandName.style.display = "none";
+
 		btnMenuSelector.style.display = "none";
 
 		menuPopup.classList.remove("isOpen");
@@ -1006,6 +1126,8 @@ function updateTopBarMenu() {
 	} else {
 
 		mainMenu.style.display = "none";
+
+		brandName.style.display = "flex";
 
 		btnMenuSelector.style.display = "flex";
 
@@ -1026,24 +1148,6 @@ function updateFretNumberControls() {
 		numberFrets.value = maxFirstFret;
 
 	}
-
-}
-
-function setControlsEnabled(enabled) {
-
-    const controls = document.querySelectorAll(
-        "input, select, button"
-    );
-
-    controls.forEach(control => {
-        control.disabled = !enabled;
-    });
-
-    document.querySelectorAll("#topControlsContainer span").forEach(span => {
-	span.style.opacity = enabled ? 1 : "0.55";
-    });
-
-    if (enabled) setProjectTypeControlsDisabled();
 
 }
 
@@ -1213,6 +1317,8 @@ function setEditMode(newMode) {
 				noteText.value = "";
 				noteText.focus({ preventScroll: true });
 			}
+
+			closeProjectsPanel();
 
 			break;
 
@@ -1498,7 +1604,7 @@ function downloadCanvas() {
 
     const link = document.createElement("a");
 
-    const titulo = workspaceTitleText.value;
+    const titulo = workspaceTitleText.textContent;
 
     link.download = titulo + ".png";
 
@@ -1581,467 +1687,6 @@ function showAlert(message, type = "success", duration = 2500) {
 		appAlert.classList.remove("show");
 
 	}, duration);
-
-}
-
-function getMaxOrder() {
-
-	let maxOrder = -1;
-
-	notes.forEach(note => {
-
-		if (note && Number(note.order) > maxOrder) {
-			maxOrder = Number(note.order);
-		}
-
-	});
-
-	barreNotes.forEach(barre => {
-
-		if (barre && Number(barre.order) > maxOrder) {
-			maxOrder = Number(barre.order);
-		}
-
-	});
-
-	nutNotes.forEach(note => {
-
-		if (note && Number(note.order) > maxOrder) {
-			maxOrder = Number(note.order);
-		}
-
-	});
-
-	return maxOrder + 1;
-
-}
-
-function buildOrderedSequence() {
-
-	const result = [];
-
-	const noteMap = keyHasFlats() ? fretboardMapNotesFlats : fretboardMapNotes;
-
-	// Notas normales
-	notes.forEach(note => {
-
-		const string = Number(note.string);
-		const fret = Number(note.fret);
-		const order = Number(note.order);
-
-		if (string < 0 ||
-			string >= noteMap.length ||
-			fret < 0 ||
-			fret >= noteMap[string].length ||
-			!Number.isFinite(order)
-		) return;
-
-		result.push({
-			type: "note",
-			string: string,
-			fret: fret,
-			note: noteMap[string][fret],
-			order: order
-		});
-
-	});
-
-	// Notas de la cejuela
-	nutNotes.forEach((note, string) => {
-
-		if (!note) return;
-
-		const order = Number(note.order);
-
-		if (
-			string < 0 ||
-			string >= noteMap.length ||
-			!Number.isFinite(order)
-		) return;
-
-		result.push({
-			type: "note",
-			string: string,
-			fret: 0,
-			note: noteMap[string][0],
-			order: order
-		});
-
-	});
-
-	// Cejillas
-	barreNotes.forEach(barre => {
-
-		const fret = Number(barre.fret);
-		const startString = Number(barre.startString);
-		const order = Number(barre.order);
-
-		if (
-			fret < 0 ||
-			startString < 0 ||
-			startString >= noteMap.length ||
-			!Number.isFinite(order)
-		) return;
-
-		const barreItems = [];
-
-		for (let string = startString; string >= 0; string--) {
-
-			if (fret >= noteMap[string].length) continue;
-
-			barreItems.push({
-				type: "note",
-				string: string,
-				fret: fret,
-				note: noteMap[string][fret],
-				order: order
-			});
-
-		}
-
-		result.push({
-			type: "barre",
-			order: order,
-			items: barreItems
-		});
-
-	});
-
-	// Ordenamos las acciones originales
-	result.sort((a, b) => a.order - b.order);
-
-	// Reconstruimos el orden REAL de las notas finales
-	const finalResult = [];
-
-	let currentOrder = 1;
-
-	result.forEach(item => {
-
-		if (item.type === "barre") {
-
-			// Cada nota de la cejilla consume un order
-			item.items.forEach(barreItem => {
-
-				finalResult.push({
-					string: barreItem.string,
-					fret: barreItem.fret,
-					note: barreItem.note,
-					order: currentOrder
-				});
-
-				currentOrder++;
-
-			});
-
-			return;
-		}
-
-		// Nota normal
-		finalResult.push({
-			string: item.string,
-			fret: item.fret,
-			note: item.note,
-			order: currentOrder
-		});
-
-		currentOrder++;
-
-	});
-
-	return finalResult;
-}
-
-function buildOrderedChords() {
-	const noteMap = keyHasFlats() ? fretboardMapNotesFlats : fretboardMapNotes;
-	const chords = new Map();
-
-	// Agrupar notas sueltas por acorde
-	notes.forEach(note => {
-		const chord = Number(note.chord);
-		if (!Number.isInteger(chord)) return;
-
-		if (!chords.has(chord)) chords.set(chord, []);
-
-		chords.get(chord).push({
-			chord,
-			string: Number(note.string),
-			fret: Number(note.fret)
-		});
-	});
-
-	// Añadir nutNotes
-	nutNotes.forEach((note, string) => {
-		if (!note) return;
-
-		const chord = Number(note.chord);
-		if (!Number.isInteger(chord)) return;
-
-		if (!chords.has(chord)) chords.set(chord, []);
-
-		chords.get(chord).push({
-			chord,
-			string,
-			fret: 0
-		});
-	});
-
-	// Construir las notas correspondientes a las barreNotes
-	barreNotes.forEach(barre => {
-		const chord = Number(barre.chord);
-		const fret = Number(barre.fret);
-		const startString = Number(barre.startString);
-
-		if (!Number.isInteger(chord)) return;
-		if (!Number.isInteger(fret)) return;
-		if (!Number.isInteger(startString)) return;
-
-		if (!chords.has(chord)) chords.set(chord, []);
-
-		for (let string = startString; string >= 0; string--) {
-			chords.get(chord).push({
-				chord,
-				string,
-				fret
-			});
-		}
-	});
-
-	const result = [];
-
-	// Procesar cada acorde independientemente
-	[...chords.entries()]
-		.sort((a, b) => a[0] - b[0])
-		.forEach(([chord, chordNotes]) => {
-
-			// En cada cuerda solamente puede sonar una nota.
-			// Si hay varias, queda la del traste más alto.
-			const strings = new Map();
-
-			chordNotes.forEach(note => {
-				const string = note.string;
-				const fret = note.fret;
-
-				if (!Number.isInteger(string) || !Number.isInteger(fret)) return;
-				if (string < 0 || string >= noteMap.length) return;
-				if (fret < 0 || fret >= noteMap[string].length) return;
-
-				const current = strings.get(string);
-
-				if (!current || fret > current.fret) {
-					strings.set(string, {
-						chord,
-						string,
-						fret,
-						note: noteMap[string][fret]
-					});
-				}
-			});
-
-			// Grave → agudo
-			const orderedNotes = [...strings.values()]
-				.sort((a, b) => b.string - a.string);
-
-			result.push(...orderedNotes);
-		});
-
-	return result.map(item => ({
-		chord: item.chord,
-		string: item.string,
-		fret: item.fret,
-		note: item.note
-	}));
-}
-
-function loadArrayNotas() {
-
-	NOTAS = [];
-	ACORDES = [];
-	scoreArray = [];
-
-	const sequenceUp = [...aSequence];
-	const sequenceDown = [...aSequence].reverse();
-
-	// --------------------------------
-	// AGRUPAR ACORDES
-	// --------------------------------
-
-	const chordGroups = [];
-
-	let currentChord = null;
-
-	for (const item of aChords) {
-
-		if (item.chord !== currentChord) {
-
-			currentChord = item.chord;
-
-			chordGroups.push([]);
-
-		}
-
-		chordGroups[chordGroups.length - 1].push(item);
-
-	}
-
-	// --------------------------------
-	// COPIAS DE LOS GRUPOS
-	// --------------------------------
-
-	const chordsUp = [...chordGroups];
-
-	const chordsDown = [...chordGroups].reverse();
-
-	// --------------------------------
-	// CONSTRUIR RECORRIDO DE ACORDES
-	// --------------------------------
-
-	let chordSequence = [];
-
-	switch (tipoSecuencia) {
-
-		// --------------------------------
-		// GRAVE → AGUDO
-		// --------------------------------
-
-		case "up":
-
-			chordSequence = [
-				...chordsUp
-			];
-
-			break;
-
-
-		// --------------------------------
-		// AGUDO → GRAVE
-		// --------------------------------
-
-		case "down":
-
-			chordSequence = [
-				...chordsDown
-			];
-
-			break;
-
-
-		// --------------------------------
-		// GRAVE → AGUDO → GRAVE
-		// --------------------------------
-
-		case "up-down":
-
-			chordSequence = [
-				...chordsUp,
-				...chordsDown
-			];
-
-			break;
-
-
-		// --------------------------------
-		// AGUDO → GRAVE → AGUDO
-		// --------------------------------
-
-		case "down-up":
-
-			chordSequence = [
-				...chordsDown,
-				...chordsUp
-			];
-
-			break;
-
-	}
-
-	// --------------------------------
-	// SCORE ARRAY
-	// --------------------------------
-
-	if (projectType === "sequence") {
-
-		switch (tipoSecuencia) {
-
-			case "up":
-
-				scoreArray = [
-					...sequenceUp
-				];
-
-				break;
-
-			case "down":
-
-				scoreArray = [
-					...sequenceDown
-				];
-
-				break;
-
-			case "up-down":
-
-				scoreArray = [
-					...sequenceUp,
-					...sequenceDown
-				];
-
-				break;
-
-			case "down-up":
-
-				scoreArray = [
-					...sequenceDown,
-					...sequenceUp
-				];
-
-				break;
-
-		}
-
-	}
-
-	else {
-
-		// --------------------------------
-		// SCORE DE ACORDES
-		// --------------------------------
-
-		scoreArray = [];
-
-		chordSequence.forEach((group, index) => {
-
-			group.forEach(item => {
-
-				scoreArray.push({
-
-					chord: index,
-					string: item.string,
-					fret: item.fret,
-					note: item.note
-
-				});
-
-			});
-
-		});
-
-	}
-
-	// --------------------------------
-	// NOTAS
-	// --------------------------------
-
-	NOTAS = scoreArray.map(item => item.note);
-
-	// --------------------------------
-	// ACORDES
-	// --------------------------------
-
-	ACORDES = chordSequence.map(group => {
-
-		return group.map(item => item.note);
-
-	});
 
 }
 
@@ -2286,38 +1931,7 @@ function delChord() {
 	// CARGAR NOTAS MUSICALES
 	// --------------------------------
 
-	aChords = buildOrderedChords();
-
-console.log(aChords);
-
-	loadArrayNotas();
-
-	drawFretboard();
-	drawNotes();
-
-	if (isScoreVisible) scoreRender();
-
-}
-
-function convertNote(note, notation = "latin") {
-
-    if (notation === "anglo") {
-        return note;
-    }
-
-    const notes = {
-        "C": "Do",
-        "D": "Re",
-        "E": "Mi",
-        "F": "Fa",
-        "G": "Sol",
-        "A": "La",
-        "B": "Si"
-    };
-
-    return note.replace(/^([A-G])([#♯b♭]?)(\d+)$/, (_, name, accidental, octave) => {
-        return notes[name] + accidental + octave;
-    });
+	renderNotesArrays();
 
 }
 
@@ -2331,7 +1945,12 @@ function keyHasFlats() {
 
 }
 
-function rendertNotesArrays(){
+function renderNotesArrays(){
+
+	if (isFretboardVisible) {
+		resizeCanvas();
+		scrollToFretboardNut();
+	}
 
 	if (cmbProjectType.value !== "chord"){
 		aSequence = buildOrderedSequence();
@@ -2340,9 +1959,6 @@ function rendertNotesArrays(){
 	}
 
 	loadArrayNotas();
-
-	drawFretboard();
-	drawNotes();
 
 	if (isScoreVisible) scoreRender();
 
@@ -2527,7 +2143,12 @@ async function addUser(name, email) {
 
 		saveUsersXml();
 
-		showAlert("Usuario '" + name + "', con email '" + email + "' creado.","success");
+		const created = createLibrary(name);
+
+		showAlert(created
+			? "Usuario '" + name + "', con email '" + email + "' y librería creados."
+			: "Usuario '" + name + "', con email '" + email + "' creado. No se pudo crear la librería.",
+			created ? "success" : "error");
 
 	} catch (error) {
 

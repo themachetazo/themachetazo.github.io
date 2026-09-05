@@ -5,14 +5,6 @@
 //
 ////////////////////////////////////////////////////////////
 
-//Como leer el array para el sonido
-/*
-const notes = sequenceToPlay.map(item => item.note);
-Resultado:["E4", "F2", "E3", "A4", "F4", "F#3"]
-notes[1] - > "F2"
-*/
-
-//Funcion leer XML y crear array
 function parseXMLToNotesArray(project) {
 
 	sequenceXMLNotes.length = 0;
@@ -63,6 +55,510 @@ function parseXMLToNotesArray(project) {
 			});
 
 		}
+
+	});
+
+}
+
+function getMaxOrder() {
+
+	let maxOrder = -1;
+
+	notes.forEach(note => {
+
+		if (note && Number(note.order) > maxOrder) {
+			maxOrder = Number(note.order);
+		}
+
+	});
+
+	barreNotes.forEach(barre => {
+
+		if (barre && Number(barre.order) > maxOrder) {
+			maxOrder = Number(barre.order);
+		}
+
+	});
+
+	nutNotes.forEach(note => {
+
+		if (note && Number(note.order) > maxOrder) {
+			maxOrder = Number(note.order);
+		}
+
+	});
+
+	return maxOrder + 1;
+
+}
+
+function buildOrderedSequence() {
+
+	const result = [];
+
+	const noteMap = keyHasFlats() ? fretboardMapNotesFlats : fretboardMapNotes;
+
+	// Notas normales
+	notes.forEach(note => {
+
+		const string = Number(note.string);
+		const fret = Number(note.fret);
+		const order = Number(note.order);
+
+		if (string < 0 ||
+			string >= noteMap.length ||
+			fret < 0 ||
+			fret >= noteMap[string].length ||
+			!Number.isFinite(order)
+		) return;
+
+		result.push({
+			type: "note",
+			string: string,
+			fret: fret,
+			note: noteMap[string][fret],
+			order: order
+		});
+
+	});
+
+	// Notas de la cejuela
+	nutNotes.forEach((note, string) => {
+
+		if (!note) return;
+
+		const order = Number(note.order);
+
+		if (
+			string < 0 ||
+			string >= noteMap.length ||
+			!Number.isFinite(order)
+		) return;
+
+		result.push({
+			type: "note",
+			string: string,
+			fret: 0,
+			note: noteMap[string][0],
+			order: order
+		});
+
+	});
+
+	// Cejillas
+	barreNotes.forEach(barre => {
+
+		const fret = Number(barre.fret);
+		const startString = Number(barre.startString);
+		const order = Number(barre.order);
+
+		if (
+			fret < 0 ||
+			startString < 0 ||
+			startString >= noteMap.length ||
+			!Number.isFinite(order)
+		) return;
+
+		const barreItems = [];
+
+		for (let string = startString; string >= 0; string--) {
+
+			if (fret >= noteMap[string].length) continue;
+
+			barreItems.push({
+				type: "note",
+				string: string,
+				fret: fret,
+				note: noteMap[string][fret],
+				order: order
+			});
+
+		}
+
+		result.push({
+			type: "barre",
+			order: order,
+			items: barreItems
+		});
+
+	});
+
+	// Ordenamos las acciones originales
+	result.sort((a, b) => a.order - b.order);
+
+	// Reconstruimos el orden REAL de las notas finales
+	const finalResult = [];
+
+	let currentOrder = 1;
+
+	result.forEach(item => {
+
+		if (item.type === "barre") {
+
+			// Cada nota de la cejilla consume un order
+			item.items.forEach(barreItem => {
+
+				finalResult.push({
+					string: barreItem.string,
+					fret: barreItem.fret,
+					note: barreItem.note,
+					order: currentOrder
+				});
+
+				currentOrder++;
+
+			});
+
+			return;
+		}
+
+		// Nota normal
+		finalResult.push({
+			string: item.string,
+			fret: item.fret,
+			note: item.note,
+			order: currentOrder
+		});
+
+		currentOrder++;
+
+	});
+
+	// Añadimos la posición de cada nota en el mástil
+	finalResult.forEach(item => {
+
+		const p = getNotePosition(item.string, item.fret);
+
+		item.x = p.x;
+		item.y = p.y;
+
+	});
+
+	return finalResult;
+}
+
+function buildOrderedChords() {
+
+	const noteMap = keyHasFlats() ? fretboardMapNotesFlats : fretboardMapNotes;
+	const chords = new Map();
+
+	// Agrupar notas sueltas por acorde
+	notes.forEach(note => {
+		const chord = Number(note.chord);
+		if (!Number.isInteger(chord)) return;
+
+		if (!chords.has(chord)) chords.set(chord, []);
+
+		chords.get(chord).push({
+			chord,
+			string: Number(note.string),
+			fret: Number(note.fret)
+		});
+	});
+
+	// Añadir nutNotes
+	nutNotes.forEach((note, string) => {
+		if (!note) return;
+
+		const chord = Number(note.chord);
+		if (!Number.isInteger(chord)) return;
+
+		if (!chords.has(chord)) chords.set(chord, []);
+
+		chords.get(chord).push({
+			chord,
+			string,
+			fret: 0
+		});
+	});
+
+	// Construir las notas correspondientes a las barreNotes
+	barreNotes.forEach(barre => {
+		const chord = Number(barre.chord);
+		const fret = Number(barre.fret);
+		const startString = Number(barre.startString);
+
+		if (!Number.isInteger(chord)) return;
+		if (!Number.isInteger(fret)) return;
+		if (!Number.isInteger(startString)) return;
+
+		if (!chords.has(chord)) chords.set(chord, []);
+
+		for (let string = startString; string >= 0; string--) {
+			chords.get(chord).push({
+				chord,
+				string,
+				fret
+			});
+		}
+	});
+
+	const result = [];
+
+	// Procesar cada acorde independientemente
+	[...chords.entries()]
+		.sort((a, b) => a[0] - b[0])
+		.forEach(([chord, chordNotes]) => {
+
+			// En cada cuerda solamente puede sonar una nota.
+			// Si hay varias, queda la del traste más alto.
+			const strings = new Map();
+
+			chordNotes.forEach(note => {
+				const string = note.string;
+				const fret = note.fret;
+
+				if (!Number.isInteger(string) || !Number.isInteger(fret)) return;
+				if (string < 0 || string >= noteMap.length) return;
+				if (fret < 0 || fret >= noteMap[string].length) return;
+
+				const current = strings.get(string);
+
+				if (!current || fret > current.fret) {
+					strings.set(string, {
+						chord,
+						string,
+						fret,
+						note: noteMap[string][fret]
+					});
+				}
+			});
+
+			// Grave → agudo
+			const orderedNotes = [...strings.values()]
+				.sort((a, b) => b.string - a.string);
+
+			result.push(...orderedNotes);
+		});
+
+	// Añadir posición de cada nota en el mástil
+	return result.map(item => {
+
+		const p = getNotePosition(item.string, item.fret);
+
+		return {
+			chord: item.chord,
+			string: item.string,
+			fret: item.fret,
+			note: item.note,
+			x: p.x,
+			y: p.y
+		};
+
+	});
+}
+
+function loadArrayNotas() {
+
+	NOTAS = [];
+	ACORDES = [];
+	scoreArray = [];
+
+	const sequenceUp = [...aSequence];
+	const sequenceDown = [...aSequence].reverse();
+
+	// --------------------------------
+	// AGRUPAR ACORDES
+	// --------------------------------
+
+	const chordGroups = [];
+
+	let currentChord = null;
+
+	for (const item of aChords) {
+
+		if (item.chord !== currentChord) {
+
+			currentChord = item.chord;
+
+			chordGroups.push([]);
+
+		}
+
+		chordGroups[chordGroups.length - 1].push(item);
+
+	}
+
+	// --------------------------------
+	// COPIAS DE LOS GRUPOS
+	// --------------------------------
+
+	const chordsUp = [...chordGroups];
+
+	const chordsDown = [...chordGroups].reverse();
+
+	// --------------------------------
+	// CONSTRUIR RECORRIDO DE ACORDES
+	// --------------------------------
+
+	let chordSequence = [];
+
+	switch (tipoSecuencia) {
+
+		// --------------------------------
+		// GRAVE → AGUDO
+		// --------------------------------
+
+		case "up":
+
+			chordSequence = [
+				...chordsUp
+			];
+
+			break;
+
+
+		// --------------------------------
+		// AGUDO → GRAVE
+		// --------------------------------
+
+		case "down":
+
+			chordSequence = [
+				...chordsDown
+			];
+
+			break;
+
+
+		// --------------------------------
+		// GRAVE → AGUDO → GRAVE
+		// --------------------------------
+
+		case "up-down":
+
+			chordSequence = direccion
+				? [
+					...chordsUp,
+					...chordsDown
+				]
+				: [
+					...chordsUp,
+					...chordsDown.slice(1)
+				];
+
+			break;
+
+
+		// --------------------------------
+		// AGUDO → GRAVE → AGUDO
+		// --------------------------------
+
+		case "down-up":
+
+			chordSequence = direccion
+				? [
+					...chordsDown,
+					...chordsUp
+				]
+				: [
+					...chordsDown,
+					...chordsUp.slice(1)
+				];
+
+			break;
+
+	}
+
+	// --------------------------------
+	// SCORE ARRAY
+	// --------------------------------
+
+	if (projectType === "sequence") {
+
+		switch (tipoSecuencia) {
+
+			case "up":
+
+				scoreArray = [
+					...sequenceUp
+				];
+
+				break;
+
+
+			case "down":
+
+				scoreArray = [
+					...sequenceDown
+				];
+
+				break;
+
+
+			case "up-down":
+
+				scoreArray = direccion
+					? [
+						...sequenceUp,
+						...sequenceDown
+					]
+					: [
+						...sequenceUp,
+						...sequenceDown.slice(1)
+					];
+
+				break;
+
+
+			case "down-up":
+
+				scoreArray = direccion
+					? [
+						...sequenceDown,
+						...sequenceUp
+					]
+					: [
+						...sequenceDown,
+						...sequenceUp.slice(1)
+					];
+
+				break;
+
+		}
+
+	} else {
+
+		// --------------------------------
+		// SCORE DE ACORDES
+		// --------------------------------
+
+		scoreArray = [];
+
+		chordSequence.forEach((group, index) => {
+
+			group.forEach(item => {
+
+				scoreArray.push({
+
+					chord: index,
+					string: item.string,
+					fret: item.fret,
+					note: item.note,
+					x: item.x,
+					y: item.y
+
+				});
+
+			});
+
+		});
+
+	}
+
+	// --------------------------------
+	// NOTAS
+	// --------------------------------
+
+	NOTAS = scoreArray.map(item => item.note);
+
+	// --------------------------------
+	// ACORDES
+	// --------------------------------
+
+	ACORDES = chordSequence.map(group => {
+
+		return group.map(item => item.note);
 
 	});
 
@@ -234,6 +730,8 @@ function setPlayerValues(){
 
 async function playMusic(){
 
+	sequenceIndex = 0;
+
 	resetPlaybackTimeline();
 
 	if (!isPlaying) {
@@ -265,6 +763,8 @@ async function playMusic(){
 
 		libraryWasClosed = workspaceProjectsPanel.classList.contains("panelHidden");
 		closeProjectsPanel();
+
+		if (isFretboardVisible) drawNotesAlpha(0.4);
 
 		await Tone.start();
 
@@ -514,7 +1014,7 @@ async function vexTab_render() {
 
     if (chkScoreTitle.checked){
 
-        vexTab_createHeaderFooter(svg,titleText.value.trim() || "Sin título",`${year} - ${scoreFooter}`);
+        vexTab_createHeaderFooter(svg,titleText.value.trim() || "Sin Título",`${year} - ${scoreFooter}`);
 
     }
 
