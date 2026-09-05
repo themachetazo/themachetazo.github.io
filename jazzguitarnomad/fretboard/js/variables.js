@@ -546,6 +546,7 @@ const btnVideoClose = document.getElementById("btnVideoClose");
 
 const localVideo = document.getElementById("localVideo");
 
+const videoTitle = document.getElementById("videoTitle");
 
 /*==================================================
 	INSTRUMENTOS

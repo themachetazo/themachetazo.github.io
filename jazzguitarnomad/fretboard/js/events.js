@@ -1555,6 +1555,16 @@ btnVideoMirror.addEventListener("click", () => {
 
 btnVideoRecord.addEventListener("click", () => {
 
+	if (videoTitle.value.trim() === "") {
+
+		alert("Introduce un título.");
+
+		videoTitle.focus();
+
+		return;
+
+	}
+
 	if (btnVideoRecord.textContent.includes("Grabar")){
 		btnVideoRecord.classList.remove("buttonPlay");
 		btnVideoRecord.classList.add("buttonStop");

@@ -852,9 +852,7 @@ async function getCameraAndMicrophone() {
 
 		recordingStream.addTrack(videoTrack);
 
-		recordingStream.addTrack(
-			audioDestination.stream.getAudioTracks()[0]
-		);
+		recordingStream.addTrack(audioDestination.stream.getAudioTracks()[0]);
 
 		// --------------------------------
 		// DIBUJAR CÁMARA
@@ -1009,7 +1007,7 @@ function recordVideo(){
 			const a = document.createElement("a");
 
 			a.href = url;
-			a.download = workspaceTitleText.textContent + ".webm";
+			a.download = videoTitle.value.trim() + ".webm";
 
 			a.click();
 
@@ -1019,8 +1017,7 @@ function recordVideo(){
 
 		mediaRecorder.start();
 
-		btnVideoRecord.innerHTML =
-			"<i class='fa-solid fa-circle'></i><span>Pausar</span>";
+		btnVideoRecord.innerHTML = "<i class='fa-solid fa-circle'></i><span>Pausar</span>";
 
 		btnVideoClose.disabled = true;
 
@@ -1028,8 +1025,7 @@ function recordVideo(){
 
 		mediaRecorder.stop();
 
-		btnVideoRecord.innerHTML =
-			"<i class='fa-solid fa-circle'></i><span>Grabar</span>";
+		btnVideoRecord.innerHTML = "<i class='fa-solid fa-circle'></i><span>Grabar</span>";
 
 		btnVideoClose.disabled = false;
 
