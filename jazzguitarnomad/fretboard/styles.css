@@ -5,6 +5,7 @@
 	--color-main-text:#d5d5d5;
 	--color-hightlight:#1268A8;
 	--color-dark-background:#262626;
+	--color-fretboard-background:#262626;
 	--color-light-background:#353333;
 	--color-tools:#413F3F;
 	--color-border:rgba(255,255,255,0.12);
@@ -16,20 +17,7 @@
 	--color-logo:#FFF;
 
 	/*Claro*/
-/*
-	--color-main-text:#2A2A2A;
-	--color-hightlight:#4CAF70;
-	--color-dark-background: #DDDDDD;
-	--color-light-background:#F2F2F2;
-	--color-tools:#E6E6E6;
-	--color-border:rgba(0,0,0,0.25);
-	--color-red:#C62828;
-	--color-text:#1A1A1A;
-	--color-back:#FFFFFF;
-	--color-medium:#777777;
-	--color-disabled:#A5A5A5;
-	--color-logo:#000;
-*/
+	/* Cargado dinámicamente desde JS*/
 
 }
 
@@ -467,7 +455,7 @@ html {
 
 	cursor:pointer;
 
-	box-shadow:0 0 10px var(--color-red);
+	box-shadow:0 0 10px var(--color-dark-background);
 
 	z-index:9999;
 
@@ -599,7 +587,7 @@ html {
 	min-width:0;
 	min-height:0;
 
-	background:var(--color-dark-background);
+	background:var(--color-fretboard-background);
 
 	border-top:1px solid var(--color-border);
 	border-bottom:1px solid var(--color-back);
@@ -1947,7 +1935,8 @@ html {
 
 }
 
-.toolbarTop-Controls select{
+.toolbarTop-Controls select,
+.video-controls select{
 
 	height:30px;
 	min-width:110px;
@@ -1978,14 +1967,16 @@ html {
 }
 
 
-.toolbarTop-Controls select:hover{
+.toolbarTop-Controls select:hover,
+.video-controls select:hover{
 
 	background-color:var(--color-dark-background);
 
 }
 
 
-.toolbarTop-Controls select:focus{
+.toolbarTop-Controls select:focus,
+.video-controls select:focus{
 
 	border-color:var(--color-hightlight);
 
@@ -1994,7 +1985,8 @@ html {
 }
 
 
-.toolbarTop-Controls select option{
+.toolbarTop-Controls select option,
+.video-controls select option{
 
 	background-color:var(--color-tools);
 
@@ -2005,7 +1997,8 @@ html {
 }
 
 
-.toolbarTop-Controls select option:checked{
+.toolbarTop-Controls select option:checked,
+.video-controls select option:checked{
 
 	background-color:var(--color-main-text);
 
@@ -2015,7 +2008,8 @@ html {
 
 }
 
-.toolbarTop-Controls select option:hover{
+.toolbarTop-Controls select option:hover,
+.video-controls select option:hover{
 
 	background-color:var(--color-hightlight);
 
@@ -2033,7 +2027,8 @@ html {
 	cursor:pointer;
 }
 
-.toolbarTop-Controls select:focus-visible {
+.toolbarTop-Controls select:focus-visible,
+.video-controls select:focus-visible{
 	outline: 2px solid var(--color-main-text);
 	outline-offset: 2px;
 }
@@ -2356,8 +2351,7 @@ input[type="range"] {
 	border: 1px solid var(--color-back) !important;
 }
 
-.buttonStop,
-#btnVideoRecord{
+.buttonStop{
 
 	background:var(--color-red) !important;
 	color:#fff !important;
@@ -3128,5 +3122,160 @@ input[type="range"] {
 
 	}
 
+
+}
+
+/* ============================================================
+   VÍDEO EN MÓVILES
+   ============================================================ */
+
+@media (max-width: 700px) {
+
+	#videoContainer {
+
+		width:100%;
+		height:100%;
+
+		padding:0;
+
+	}
+
+	.video-window {
+
+		width:100%;
+		max-width:none;
+		height:100%;
+
+		padding:10px;
+
+		border:0;
+		border-radius:0;
+
+		box-shadow:none;
+
+	}
+
+	.video-window .close-btn {
+
+		width:30px;
+		height:30px;
+
+		margin-bottom:5px;
+
+	}
+
+	#localVideo {
+
+		width:100%;
+		height:auto;
+
+		aspect-ratio:16 / 9;
+
+		object-fit:contain;
+
+	}
+
+	.video-controls {
+
+		width:100%;
+
+		margin-top:10px;
+
+		gap:8px;
+
+	}
+
+	.video-cameras {
+
+		width:100%;
+
+		display:grid;
+
+		grid-template-columns:auto 1fr;
+
+		align-items:center;
+
+		gap:6px 8px;
+
+	}
+
+	.video-cameras select {
+
+		width:100%;
+		min-width:0;
+
+	}
+
+	.video-microphones {
+
+		width:100%;
+
+		display:flex;
+
+		justify-content:center;
+
+		flex-wrap:wrap;
+
+		gap:8px;
+
+	}
+
+}
+
+
+/* ============================================================
+   MÓVIL HORIZONTAL
+   ============================================================ */
+
+@media (max-width:700px) and (orientation:landscape) {
+
+	.video-window {
+
+		padding:8px;
+
+	}
+
+	#localVideo {
+
+		width:100%;
+
+		max-height:calc(100vh - 125px);
+
+		aspect-ratio:16 / 9;
+
+		object-fit:contain;
+
+	}
+
+	.video-controls {
+
+		margin-top:6px;
+
+	}
+
+	.video-cameras {
+
+		display:flex;
+
+		flex-wrap:nowrap;
+
+		justify-content:center;
+
+	}
+
+	.video-cameras select {
+
+		width:auto;
+		flex:1;
+
+		min-width:0;
+
+	}
+
+	.video-microphones {
+
+		flex-wrap:nowrap;
+
+	}
 
 }

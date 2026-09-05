@@ -13,7 +13,7 @@
 
 	<!-- LOADING SCREEN -->
 	<div id="loadingScreen">
-		<img id="spinnerLogo" src="img/logo-FFF.png" alt="Nomad Jazz Guitar">
+		<img id="spinnerLogo" src="img/logo-FFF.png">
 		<h1>Nomad Jazz Guitar</h1>
 		<div id="loadingSpinner"></div>
 		<div id="loadingText"></div>
@@ -36,10 +36,16 @@
 			<video id="localVideo" autoplay playsinline muted></video>
 
 			<div class="video-controls">
-				<button type="button" id="btnAudioMute"><i class="fa-solid fa-microphone"></i><span>Mute</span></button>
-				<button type="button" id="btnVideoMute"><i class="fa-solid fa-video"></i><span>Apagar</span></button>
-				<button type="button" id="btnVideoMirror"><i class="fa-solid fa-arrows-rotate"></i><span>Voltear</span></button>
-				<button type="button" id="btnVideoRecord"><i class="fa-solid fa-circle"></i><span>Grabar</span></button>
+				<div class="video-cameras">
+					<span>Cámaras: </span><select id="cmbCamera"></select>
+					<span>Micrófonos: </span><select id="cmbMicrophone"></select>
+				</div>
+				<div class="video-microphones">
+					<button type="button" id="btnAudioMute"><i class="fa-solid fa-microphone"></i><span>Mute</span></button>
+					<button type="button" id="btnVideoMute"><i class="fa-solid fa-video"></i><span>Apagar</span></button>
+					<button type="button" id="btnVideoMirror"><i class="fa-solid fa-arrows-rotate"></i><span>Voltear</span></button>
+					<button type="button" id="btnVideoRecord" class="buttonPlay"><i class="fa-solid fa-circle"></i><span>Grabar</span></button>
+				</div>
 			</div>
 		</div>
 	</div><!-- Fin videoContainer -->
@@ -52,7 +58,7 @@
 		<header id="topBar">
 
 			<div id="brand">
-				<a href="#" title="Nomad Jazz Guitar"><img id="brandLogo" src="img/logo-FFF.png" alt="Nomad Jazz Guitar"></a>
+				<a href="#" title="Nomad Jazz Guitar"><img id="brandLogo" src="img/logo-FFF.png"></a>
 				<div id="brandName">
 					<span class="brandTitle"><a href="#">Nomad Jazz Guitar</a></span>
 					<span id="subtituleText" class="brandSubtitle">Fretboard</span>
@@ -238,7 +244,17 @@
 					</div>
 
 					<div class="toolbarTop-Controls" id="topForm">
-						<span>TIPOLOGÍA</span>
+						<span>TIPO PROYECTO</span>
+						<div class="toolRow">
+							<select id="cmbFretboardType">
+							    <option value="fretboard" selected>Fretboard</option>
+							    <option value="video">Vídeo</option>
+							    <option value="audio">Audio</option>
+							    <option value="score">Partitura</option>
+							    <option value="pdf">PDF</option>
+							    <option value="html">HTML</option>
+							</select>
+						</div>
 						<div class="toolRow">
 							<select id="cmbProjectType">
 							    <option value="fretboard">Mástil</option>
@@ -717,7 +733,7 @@
 	<footer id="footer">
 
 		<div class="footerDivs">
-			<a href="#"><img id="footerBrandLogo" src="img/logo-FFF.png" alt="Nomad Jazz Guitar"></a>
+			<a href="#"><img id="footerBrandLogo" src="img/logo-FFF.png"></a>
 			<strong>SÍGUENOS</strong>
 			<div class="footerSocial">
 				<a href="#"><i class="fa-brands fa-facebook"></i></a>
@@ -763,11 +779,11 @@
 	<script src="js/lib/lame.min.js"></script> <!--mp3-->
 	<script src="js/lib/vextab.div.dev.js"></script> <!--score-->
 
-	<script src="js/audio.js"></script> <!--buffer & audio-->
 	<script src="js/CMetronome.js"></script> <!--metronome-->
 	<script src="js/CMusicPlayer.js"></script> <!--player-->
 
 	<script src="js/variables.js"></script>
+	<script src="js/multimedia.js"></script>
 	<script src="js/fretboard.js"></script>
 	<script src="js/projects.js"></script>
 	<script src="js/main.js"></script>
