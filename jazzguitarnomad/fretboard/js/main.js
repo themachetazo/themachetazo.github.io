@@ -42,6 +42,7 @@ async function initializeApp() {
 
 		}
 
+
 		// PLAYER ----------------------
 
 		if (!(appMode === "Guest" && projectType === "fretboard")){
@@ -67,7 +68,7 @@ async function initializeApp() {
 
 		}
 
-
+/*
 		// NOTAS ----------------------
 
 		if (!(appMode === "Guest" && projectType === "fretboard")){
@@ -81,7 +82,7 @@ async function initializeApp() {
 			loadArrayNotas();
 
 		}
-
+*/
 
 		// MÁSTIL ----------------------
 
@@ -90,8 +91,6 @@ async function initializeApp() {
 			setLoadingProgress(80, "Renderizando mástil...");
 
 			resizeCanvas();
-
-			scrollToFretboardNut();
 
 		}
 
@@ -116,7 +115,7 @@ async function initializeApp() {
 
 	} catch (error) {
 
-		console.error("Error durante la carga:",error);
+		console.error("Error durante la carga: ",error);
 
 		setErrorLoadingProgress(error);
 
@@ -611,7 +610,7 @@ async function initializeProjects() {
 
         } else {
 
-            showAlert("No se encontró el proyecto '" + currentProjectId + "'","error");
+            console.log("No se encontró el proyecto '" + currentProjectId + "'","error");
 
             initializeEmptyProject();
 
@@ -647,7 +646,6 @@ async function initializeProjects() {
 
 }
 
-
 function initializeEmptyProject() {
 
 	currentProjectId = generateIDKey();
@@ -655,26 +653,6 @@ function initializeEmptyProject() {
 	resetControlsValues("init");
 
 	if (user === null) workspaceTitleText.style.display = "none";
-}
-
-function setLibraryInfo(fileName){
-
-	projectPanelHeaderTitle.textContent = libraryName === "" ? "Sin Nombre" : libraryName;
-
-	let txtInfo = "";
-
-	if (isAdmin && xmlType === "Server"){
-		txtInfo = txtInfo + "<i><a href='";
-		txtInfo = txtInfo + xmlProjects + "' target='_blank'>Librería " + fileName.replace(dataURL_Library, "") + "</a></i><br>";
-		txtInfo = txtInfo + "</a></i><br>";
-	}
-
-	if (libraryDesc !== "") txtInfo = txtInfo + libraryDesc;
-
-	projectPanelInfo.innerHTML = txtInfo;
-
-	if (txtInfo === "") projectPanelInfo.style.display = "none";
-
 }
 
 async function loadXML(type,file) {
@@ -934,6 +912,7 @@ function changeProjectType() {
 			btnDelChord.disabled = true;
 
 			isScoreVisible = false;
+
 			setWorkspaceLayout();
 
 			break;
@@ -982,25 +961,27 @@ function setControlsEnabled(enabled) {
 
 function setProjectTypeControlsDisabled(){
 
-	cmbTipoSecuencia.disabled = projectType === "fretboard";
+	const disabled = projectType === "fretboard";
 
-	chkMetronomeOn.disabled = projectType === "fretboard";
+	cmbTipoSecuencia.disabled = disabled;
+
+	chkMetronomeOn.disabled = disabled;
 
 	cmbChords.disabled = projectType !== "chord";
-	btnNewChord.disabled = projectType !== "chord";
-	btnDelChord.disabled = projectType !== "chord";
+	btnNewChord.disabled = cmbChords.disabled;
+	btnDelChord.disabled = cmbChords.disabled;
 
-	btnScore.disabled = projectType === "fretboard";
-	btnScorePopup.disabled = projectType === "fretboard";
-	btnPlayer.disabled = projectType === "fretboard";
-	btnPlayerPopup.disabled = projectType === "fretboard";
+	btnScore.disabled = disabled;
+	btnScorePopup.disabled = disabled;
+	btnPlayer.disabled = disabled;
+	btnPlayerPopup.disabled = disabled;
 
-	btnRenderBuffer.disabled = projectType === "fretboard";
-	cmbAudioFormat.disabled = projectType === "fretboard";
-	btnSaveAudio.disabled = projectType === "fretboard";
-	btnCopyCanvas.disabled = projectType === "fretboard";
-	btnDownloadCanvas.disabled = projectType === "fretboard";
-	btnScoreDownloadImage.disabled = projectType === "fretboard";
+	btnRenderBuffer.disabled = disabled;
+	cmbAudioFormat.disabled = disabled;
+	btnSaveAudio.disabled = disabled;
+	btnCopyCanvas.disabled = disabled;
+	btnDownloadCanvas.disabled = disabled;
+	btnScoreDownloadImage.disabled = disabled;
 
 /*
 	if (isAdmin){
@@ -1009,14 +990,14 @@ function setProjectTypeControlsDisabled(){
 	}
 */
 
-	btnFretboardVisible.disabled = projectType === "fretboard";
-	btnScoreVisible.disabled = projectType === "fretboard";
+//	btnFretboardVisible.disabled = disabled;
+	btnScoreVisible.disabled = disabled;
 
 	if (isUserActive) {
-		btnPlayStop.disabled = projectType === "fretboard";
+		btnPlayStop.disabled = disabled;
 	}
 
-	if (appMode === "Guest" && projectType === "fretboard"){
+	if (appMode === "Guest" && disabled){
 
 		btnScore.disabled = true;
 		btnScorePopup.disabled = true;
@@ -1039,19 +1020,21 @@ function setProjectTypeControlsDisabled(){
 
 function setDisplayModeControlsDisabled(){
 
+	const disabled = projectType === "fretboard" || Boolean(!displayMode);
+
 	btnPlayStop.disabled = Boolean(!displayMode);
-	btnPlayer.disabled = projectType === "fretboard" || Boolean(!displayMode);
-	btnPlayerPopup.disabled = projectType === "fretboard" || Boolean(!displayMode);
-	btnScore.disabled = projectType === "fretboard" || Boolean(!displayMode);
-	btnScorePopup.disabled = projectType === "fretboard" || Boolean(!displayMode);
+	btnPlayer.disabled = disabled;
+	btnPlayerPopup.disabled = disabled;
+	btnScore.disabled = disabled;
+	btnScorePopup.disabled = disabled;
 
 	if (isAdmin){
-		btnRenderBuffer.disabled = projectType === "fretboard" || Boolean(!displayMode);
-		cmbAudioFormat.disabled = projectType === "fretboard" || Boolean(!displayMode);
-		btnSaveAudio.disabled = projectType === "fretboard" || Boolean(!displayMode);
-		btnCopyCanvas.disabled = projectType === "fretboard" || Boolean(!displayMode);
-		btnDownloadCanvas.disabled = projectType === "fretboard" || Boolean(!displayMode);
-		btnScoreDownloadImage.disabled = projectType === "fretboard" || Boolean(!displayMode);
+		btnRenderBuffer.disabled = disabled;
+		cmbAudioFormat.disabled = disabled;
+		btnSaveAudio.disabled = disabled;
+		btnCopyCanvas.disabled = disabled;
+		btnDownloadCanvas.disabled = disabled;
+		btnScoreDownloadImage.disabled = disabled;
 /*
 		btnAbrirVideo.disabled = projectType !== "video";
 		btnAddVideo.disabled = projectType !== "video";
@@ -1069,7 +1052,7 @@ function setDisplayModeControlsDisabled(){
 
 	chkNoteNames.disabled = Boolean(!displayMode);
 
-	btnScoreVisible.disabled = Boolean(!displayMode);
+	btnScoreVisible.disabled = disabled;
 
 	if (!displayMode) {
 
@@ -1343,41 +1326,6 @@ function setEditMode(newMode) {
 function showMenuControls(...controls){
 
 	controls.forEach(control => control.classList.remove("isHidden"));
-
-}
-
-function setFretboardStyle(style) {
-
-	fretboardStyle = style;
-	neckImageLoaded = false;
-
-	if (fretboardStyle !== "blank") {
-
-		loadFretboardImage()
-			.then(() => {
-
-				drawFretboard();
-				drawNotes();
-
-			})
-			.catch(error => {
-
-				console.error(error);
-
-				fretboardStyle = "blank";
-				cmbDiapason.value = fretboardStyle;
-
-				drawFretboard();
-				drawNotes();
-
-			});
-
-	} else {
-
-		drawFretboard();
-		drawNotes();
-
-	}
 
 }
 
@@ -1931,7 +1879,9 @@ function delChord() {
 	// CARGAR NOTAS MUSICALES
 	// --------------------------------
 
-	renderNotesArrays();
+	aChords = buildOrderedChords();
+
+	loadArrayNotas();
 
 }
 
@@ -1945,12 +1895,133 @@ function keyHasFlats() {
 
 }
 
-function renderNotesArrays(){
+function loadFretboardImage() {
 
-	if (isFretboardVisible) {
-		resizeCanvas();
-		scrollToFretboardNut();
+	return new Promise((resolve, reject) => {
+
+		neckImage.crossOrigin = "Anonymous";
+
+		neckImage.onload = () => {
+
+			neckImageLoaded = true;
+
+			resolve();
+
+		};
+
+		neckImage.onerror = () => {
+
+			neckImageLoaded = false;
+
+			reject(new Error(`No se pudo cargar la imagen del diapasón: ${neckImage.src}`));
+
+		};
+
+		neckImage.src = fretboardImages[fretboardStyle];
+
+	});
+
+}
+
+function resizeCanvas() {
+
+	const isHorizontal = rotation === 90 || rotation === 270;
+
+	let leftMargin = marginX;
+	let rightMargin = marginX;
+	let topMargin = 12;
+	let bottomMargin = marginBottom;
+
+	//------------------------------------------------
+	// Título
+	//------------------------------------------------
+
+	if (chkShowTitle.checked) {
+
+		topMargin = 42;
+
 	}
+
+	//------------------------------------------------
+	// Números
+	//------------------------------------------------
+
+	if (showFretNumbers) {
+
+		//------------------------------------------------
+		// Números de trastes
+		//------------------------------------------------
+
+		if (rotation === 0) leftMargin = Math.max(leftMargin, 40);
+
+		if (rotation === 180) rightMargin = Math.max(rightMargin, 40);
+
+		if (rotation === 270) bottomMargin = Math.max(bottomMargin, 40);
+
+		if (rotation === 90) topMargin = Math.max(topMargin, 40);
+
+		//------------------------------------------------
+		// Números de cuerdas
+		//------------------------------------------------
+
+		if (rotation === 0 || rotation === 90) topMargin = Math.max(topMargin, 40);
+
+		if (rotation === 180 || rotation === 270) bottomMargin = Math.max(bottomMargin, 40);
+
+		//------------------------------------------------
+		// Margen lateral para números de cuerdas
+		//------------------------------------------------
+
+		if (rotation === 90) rightMargin = Math.max(rightMargin, 40);
+
+		if (rotation === 270) leftMargin = Math.max(leftMargin, 40);
+
+	}
+
+	//------------------------------------------------
+	// Título + números superiores
+	//------------------------------------------------
+
+	if (chkShowTitle.checked && showFretNumbers && (rotation === 0 || rotation === 90)) {
+
+		topMargin = 68;
+
+	}
+
+	//------------------------------------------------
+	// Dimensiones del mástil
+	//------------------------------------------------
+
+	const neckLength = getDynamicNeckLength();
+
+	if (isHorizontal) {
+
+		boardWidth = neckLength;
+		boardHeight = HORIZONTAL_HEIGHT;
+
+	} else {
+
+		boardWidth = VERTICAL_WIDTH;
+		boardHeight = neckLength;
+
+	}
+
+	//------------------------------------------------
+	// Canvas
+	//------------------------------------------------
+
+	canvas.width = Math.round(boardWidth + leftMargin + rightMargin);
+	canvas.height = Math.round(boardHeight + topMargin + bottomMargin);
+
+	boardleft = leftMargin;
+	boardtop = topMargin;
+
+	boardright = boardleft + boardWidth;
+	boardbottom = boardtop + boardHeight;
+
+	//------------------------------------------------
+	// Notas
+	//------------------------------------------------
 
 	if (cmbProjectType.value !== "chord"){
 		aSequence = buildOrderedSequence();
@@ -1960,7 +2031,15 @@ function renderNotesArrays(){
 
 	loadArrayNotas();
 
-	if (isScoreVisible) scoreRender();
+	//------------------------------------------------
+	// Pintado
+	//------------------------------------------------
+
+	drawFretboard();
+
+	drawNotes();
+
+	scrollToFretboardNut();
 
 }
 

@@ -842,8 +842,6 @@ async function selectProject(project) {
 
 	noteOrder = getMaxOrder();
 
-	renderNotesArrays();
-
 }
 
 async function saveCurrentProject() {
@@ -1203,12 +1201,7 @@ async function renderProject(){
 
 	if (fretboardStyle !== "blank") await loadFretboardImage();
 
-	if (isFretboardVisible) {
-
-		resizeCanvas();
-
-		scrollToFretboardNut();
-	}
+	if (isFretboardVisible) resizeCanvas();
 
 	if (isScoreVisible) scoreRender();
 
@@ -1253,5 +1246,25 @@ function createLibrary(fileName) {
 	URL.revokeObjectURL(url);
 
 	return true;
+
+}
+
+function setLibraryInfo(fileName){
+
+	projectPanelHeaderTitle.textContent = libraryName === "" ? "Sin Nombre" : libraryName;
+
+	let txtInfo = "";
+
+	if (isAdmin && xmlType === "Server"){
+		txtInfo = txtInfo + "<i><a href='";
+		txtInfo = txtInfo + xmlProjects + "' target='_blank'>Librería " + fileName.replace(dataURL_Library, "") + "</a></i><br>";
+		txtInfo = txtInfo + "</a></i><br>";
+	}
+
+	if (libraryDesc !== "") txtInfo = txtInfo + libraryDesc;
+
+	projectPanelInfo.innerHTML = txtInfo;
+
+	if (txtInfo === "") projectPanelInfo.style.display = "none";
 
 }

@@ -59,9 +59,9 @@ document.addEventListener("keydown", e => {
 
 	if (!isUserActive || isPlaying) return;
 
-	if (e.code === "Space") {
+	if (videoContainer.style.display === "flex") return;
 
-		if (videoContainer.style.display === "flex") return;
+	if (e.code === "Space") {
 
 		e.preventDefault();
 
@@ -438,7 +438,15 @@ canvas.addEventListener("click", (e) => {
 
 		noteText.value = "";
 
-		renderNotesArrays();
+		if (cmbProjectType.value !== "chord"){
+			aSequence = buildOrderedSequence();
+		}else{
+			aChords = buildOrderedChords();
+		}
+
+		loadArrayNotas();
+
+		if (isScoreVisible) scoreRender();
 
 		//Hacer sonar el acorde
 		if (chkEditSound.checked && displayMode && cmbProjectType.value === "chord"){
@@ -586,7 +594,15 @@ canvas.addEventListener("click", (e) => {
 
 	noteText.value = "";
 
-	renderNotesArrays();
+	if (cmbProjectType.value !== "chord"){
+		aSequence = buildOrderedSequence();
+	}else{
+		aChords = buildOrderedChords();
+	}
+
+	loadArrayNotas();
+
+	if (isScoreVisible) scoreRender();
 
 	//Hacer sonar el acorde
 	if (chkEditSound.checked && displayMode && cmbProjectType.value === "chord"){
@@ -704,7 +720,36 @@ menuPopup.querySelectorAll("button").forEach(button=>{
 
 cmbDiapason.addEventListener("change", () => {
 
-	setFretboardStyle(cmbDiapason.value);
+	fretboardStyle = this.value;
+	neckImageLoaded = false;
+
+	if (fretboardStyle !== "blank") {
+
+		loadFretboardImage()
+			.then(() => {
+
+				drawFretboard();
+				drawNotes();
+
+			})
+			.catch(error => {
+
+				console.error(error);
+
+				fretboardStyle = "blank";
+				cmbDiapason.value = fretboardStyle;
+
+				drawFretboard();
+				drawNotes();
+
+			});
+
+	} else {
+
+		drawFretboard();
+		drawNotes();
+
+	}
 
 });
 
@@ -836,7 +881,7 @@ btnNewProject.addEventListener("click", () => {
 
 	if (newProject()){
 
-		renderNotesArrays();
+		renderProject();
 
 		showAlert("Nuevo proyecto creado.", "info");
 
@@ -886,10 +931,7 @@ btnRotate.addEventListener("click", () => {
 
 	rotateFretboard();
 
-	if (isFretboardVisible) {
-		resizeCanvas();
-		scrollToFretboardNut();
-	}
+	if (isFretboardVisible) resizeCanvas();
 
 	if (isScoreVisible) scoreRender();
 
@@ -899,10 +941,7 @@ btnVertical.addEventListener("click", () => {
 
 	setOrientation("vertical");
 
-	if (isFretboardVisible) {
-		resizeCanvas();
-		scrollToFretboardNut();
-	}
+	if (isFretboardVisible) resizeCanvas();
 
 	if (isScoreVisible) scoreRender();
 
@@ -912,10 +951,7 @@ btnHorizontal.addEventListener("click", () => {
 
 	setOrientation("horizontal");
 
-	if (isFretboardVisible) {
-		resizeCanvas();
-		scrollToFretboardNut();
-	}
+	if (isFretboardVisible) resizeCanvas();
 
 	if (isScoreVisible) scoreRender();
 
@@ -1145,10 +1181,8 @@ cmbProjectType.addEventListener("change", function () {
 	const oldType = projectType;
 
 	if (newProject()) {
-
-		renderNotesArrays();
 	
-		setPlayerValues();
+		renderProject();
 
 	}else{
 
@@ -1381,13 +1415,7 @@ btnFretboardVisible.addEventListener("click", () => {
 
 	setWorkspaceLayout();
 
-	if (isFretboardVisible) {
-
-		resizeCanvas();
-
-		scrollToFretboardNut();
-	
-	}
+	if (isFretboardVisible) resizeCanvas();
 
 	if (isScoreVisible) scoreRender();
 });
@@ -1443,21 +1471,17 @@ btnUser.addEventListener("click", () => {
 
 btnAbrirVideo.addEventListener("click", async () => {
 
-	videoContainer.style.display = "flex";
+	const media = await getCameraAndMicrophone();
 
-	try {
+	if (media) {
 
-		localStream = await navigator.mediaDevices.getUserMedia({
-			video: true,
-			audio: true
-		});
+//		getMultimediaDevicesInfo(media);
+
+		videoContainer.style.display = "flex";
+
+		localStream = media.stream;
 
 		localVideo.srcObject = localStream;
-
-	} catch (err) {
-
-		alert("No se pudo acceder a la cámara o micrófono.");
-		console.error(err);
 
 	}
 
@@ -1531,76 +1555,32 @@ btnVideoMirror.addEventListener("click", () => {
 
 btnVideoRecord.addEventListener("click", () => {
 
-	if (!localStream) {
-
-		alert("Primero debes iniciar la cámara.");
-		return;
-
+	if (btnVideoRecord.textContent.includes("Grabar")){
+		btnVideoRecord.classList.remove("buttonPlay");
+		btnVideoRecord.classList.add("buttonStop");
+		btnVideoMirror.disabled = true;
+	}else{
+		btnVideoRecord.classList.add("buttonPlay");
+		btnVideoRecord.classList.remove("buttonStop");
+		btnVideoMirror.disabled = false;
 	}
 
-	// --------------------------------
-	// INICIAR GRABACIÓN
-	// --------------------------------
+	recordVideo();
 
-	if (!mediaRecorder || mediaRecorder.state === "inactive") {
+});
 
-		recordedChunks = [];
+cmbCamera.addEventListener("change", () => {
 
-		mediaRecorder = new MediaRecorder(localStream, {
-			mimeType: "video/webm"
-		});
+	changeCamera();
 
-		mediaRecorder.ondataavailable = event => {
+});
 
-			if (event.data.size > 0) {
+cmbMicrophone.addEventListener("change", () => {
 
-				recordedChunks.push(event.data);
-
-			}
-
-		};
-
-		mediaRecorder.onstop = () => {
-
-			const blob = new Blob(recordedChunks, {
-				type: "video/webm"
-			});
-
-			const url = URL.createObjectURL(blob);
-
-			const a = document.createElement("a");
-
-			a.href = url;
-			a.download = workspaceTitleText.textContent + ".webm";
-
-			a.click();
-
-			URL.revokeObjectURL(url);
-
-		};
-
-		mediaRecorder.start();
-
-		btnVideoRecord.innerHTML = "<i class='fa-solid fa-circle'></i><span>Pausar</span>";
-
-		btnVideoClose.disabled = true;
-
-	} else {
-
-		// --------------------------------
-		// DETENER GRABACIÓN
-		// --------------------------------
-
-		mediaRecorder.stop();
-
-		btnVideoRecord.innerHTML = "<i class='fa-solid fa-circle'></i><span>Grabar</span>";
-
-		btnVideoClose.disabled = false;
-
-	}
+	changeMicrophone();
 
 });
 
 btnAddVideo.addEventListener("click", () => {
-	
+alert(1);	
 });

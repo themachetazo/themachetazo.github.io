@@ -65,6 +65,8 @@ let notation = "";
 let topControlsWasOpen = true;
 let libraryWasClosed = false;
 
+let currentTheme = "dark";
+
 const themes = {
 
 	dark: {
@@ -86,6 +88,7 @@ const themes = {
 		"--color-main-text": "#2A2A2A",
 		"--color-hightlight": "#4CAF70",
 		"--color-dark-background": "#DDDDDD",
+		"--color-fretboard-background": "#FFFFFF",
 		"--color-light-background": "#F2F2F2",
 		"--color-tools": "#E6E6E6",
 		"--color-border": "rgba(0,0,0,0.18)",
@@ -99,7 +102,6 @@ const themes = {
 
 };
 
-let currentTheme = "dark";
 
 /*==================================================
 	USUARIOS Y PROYECTOS
@@ -216,11 +218,6 @@ let aChords = [];
 let NOTAS = [];
 let ACORDES = [];
 
-let sequenceXMLNotes = []; //Notes y nutNotes
-let chordsXMLNotes = []; //Barres de cejillas
-let sequenceToPlay = []; //Secuencia de notas Final a tocar
-let chordsToPlay = []; //Secuencia de acordes Final a tocar
-
 let history = [];
 const maxHistory = 50;
 
@@ -257,6 +254,25 @@ let instrument = null;
 let isPlaying = false;
 let isPlayingBuffer = false;
 
+
+/*==================================================
+	MULTIMEDIA
+==================================================*/
+
+let audioBuffer = null;
+let audioPlayer = null;
+
+let recordingStream = null;
+let recordingCanvas = null;
+let recordingContext = null;
+
+let audioContext = null;
+let audioDestination = null;
+let microphoneSource = null;
+
+let localStream;
+let mediaRecorder;
+let recordedChunks = [];
 
 /*==================================================
 	REFERENCIAS DOM: LAYOUT, LOADING
@@ -507,13 +523,16 @@ const btnScoreVisible = document.getElementById("btnScoreVisible");
 const chkEditSound = document.getElementById("chkEditSound");
 
 /*==================================================
-	MULTIMEDIA
+	REFERENCIAS DOM: MULTIMEDIA
 ==================================================*/
 
 const btnRenderBuffer = document.getElementById("btnRenderBuffer");
 const player_bufferState = document.getElementById("player_bufferState");
 const cmbAudioFormat = document.getElementById("cmbAudioFormat");
 const btnSaveAudio = document.getElementById("btnSaveAudio");
+
+const cmbCamera = document.getElementById("cmbCamera");
+const cmbMicrophone = document.getElementById("cmbMicrophone");
 
 const btnAbrirVideo = document.getElementById("btnAbrirVideo");
 const btnAddVideo = document.getElementById("btnAddVideo");
@@ -526,10 +545,6 @@ const btnVideoMirror = document.getElementById("btnVideoMirror");
 const btnVideoClose = document.getElementById("btnVideoClose");
 
 const localVideo = document.getElementById("localVideo");
-
-let localStream;
-let mediaRecorder;
-let recordedChunks = [];
 
 
 /*==================================================
