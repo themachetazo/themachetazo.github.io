@@ -3,35 +3,48 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Fretboard</title>
+	<title>Nomad Jazz Guitar</title>
 
-	<link rel="icon" href="img/logo.ico" type="image/x-icon">
+	<link rel="icon" href="img/logo-000.ico" type="image/x-icon">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 	<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-	<!-- LOAD SCREEN -->
-
+	<!-- LOADING SCREEN -->
 	<div id="loadingScreen">
-		<img id="spinnerLogo" src="img/logo.png" alt="Jazz Guitar Nomad">
-		<h1>Jazz Guitar Nomad</h1>
-		<h2>Fretboard</h2>
+		<img id="spinnerLogo" src="img/logo-FFF.png" alt="Nomad Jazz Guitar">
+		<h1>Nomad Jazz Guitar</h1>
 		<div id="loadingSpinner"></div>
 		<div id="loadingText"></div>
 		<div id="loadingProgress"><div id="loadingProgressBar"></div></div>
 	</div>
 
 	<!-- PLAY FLOTANTE -->
-
 	<button type="button" id="scoreFloatingStopButton" title="Stop"><i class="fa-solid fa-stop"></i></button>
 
 	<!-- ALERT FLOTANTE -->
-
 	<div id="appAlert" class="app-alert"><i id="alertIcon" class="fa-solid"></i><span id="alertMessage"></span></div>
 
-	<!-- LAYOUT -->
+	<!-- VIDEO FLOTANTE -->
+	<div id="videoContainer">
 
+		<div class="video-window">
+
+			<button type="button" id="btnVideoClose" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+
+			<video id="localVideo" autoplay playsinline muted></video>
+
+			<div class="video-controls">
+				<button type="button" id="btnAudioMute"><i class="fa-solid fa-microphone"></i><span>Mute</span></button>
+				<button type="button" id="btnVideoMute"><i class="fa-solid fa-video"></i><span>Apagar</span></button>
+				<button type="button" id="btnVideoMirror"><i class="fa-solid fa-arrows-rotate"></i><span>Voltear</span></button>
+				<button type="button" id="btnVideoRecord"><i class="fa-solid fa-circle"></i><span>Grabar</span></button>
+			</div>
+		</div>
+	</div><!-- Fin videoContainer -->
+
+	<!-- LAYOUT -->
 	<div id="appLayout">
 
 		<!-- CABECERA SUPERIOR -->
@@ -39,9 +52,9 @@
 		<header id="topBar">
 
 			<div id="brand">
-				<a href="#"><img id="brandLogo" src="img/logo.png" alt="Jazz Guitar Nomad"></a>
+				<a href="#" title="Nomad Jazz Guitar"><img id="brandLogo" src="img/logo-FFF.png" alt="Nomad Jazz Guitar"></a>
 				<div id="brandName">
-					<span class="brandTitle"><a href="#">Jazz Guitar Nomad</a></span>
+					<span class="brandTitle"><a href="#">Nomad Jazz Guitar</a></span>
 					<span id="subtituleText" class="brandSubtitle">Fretboard</span>
 				</div>
 			</div>
@@ -51,9 +64,9 @@
 				<button type="button" id="btnEdicion" class="menuButton active"><i class="fa-solid fa-pen"></i>EDITAR</button>
 				<button type="button" id="btnFretboard" class="menuButton"><i class="fa-solid fa-guitar"></i>MÁSTIL</button>
 				<button type="button" id="btnScore" class="menuButton"><i class="fa-solid fa-music"></i>PARTITURA</button>
-				<button type="button" id="btnPlayer" class="menuButton"><i class="fa-solid fa-radio"></i>PLAYER</button>
+				<button type="button" id="btnPlayer" class="menuButton"><i class="fa-solid fa-circle-play"></i>PLAYER</button>
+				<button type="button" id="btnMultimedia" class="menuButton"><i class="fa-solid fa-photo-film"></i>MULTIMEDIA</button>
 				<button type="button" id="btnMetronome" class="menuButton"><i class="fa-solid fa-stopwatch"></i>METRÓNOMO</button>
-				<button type="button" id="btnAudio" class="menuButton"><i class="fa-solid fa-file-audio"></i>AUDIO</button>
 			</nav>
 
 			<div id="topBarActions">
@@ -71,9 +84,9 @@
 					<button type="button" id="btnEdicionPopup" data-menu="edit"><i class="fa-solid fa-pen"></i>EDICIÓN</button>
 					<button type="button" id="btnFretboardPopup" data-menu="fretboard"><i class="fa-solid fa-guitar"></i>MÁSTIL</button>
 					<button type="button" id="btnScorePopup" data-menu="score"><i class="fa-solid fa-music"></i>PARTITURA</button>
-					<button type="button" id="btnPlayerPopup" data-menu="player"><i class="fa-solid fa-radio"></i>PLAYER</button>
+					<button type="button" id="btnPlayerPopup" data-menu="player"><i class="fa-solid fa-circle-play"></i>PLAYER</button>
+					<button type="button" id="btnMultimediaPopup" data-menu="multimedia"><i class="fa-solid fa-photo-film"></i>MULTIMEDIA</button>
 					<button type="button" id="btnMetronomePopup" data-menu="metronome"><i class="fa-solid fa-stopwatch"></i>METRÓNOMO</button>
-					<button type="button" id="btnAudioPopup" data-menu="audio"><i class="fa-solid fa-file-audio"></i>AUDIO</button>
 				</div>
 
 				<button type="button" id="btnUser" class="user"><i class="fa-solid fa-user-shield"></i><span id="txtUserTitle">Usuario</span></button>
@@ -91,7 +104,7 @@
 				<div id="toolbarTop">
 
 					<div class="toolbarTop-Controls" id="topUser">
-						<span>USUARIO</span>
+						<span>USUARIOS</span>
 						<div class="toolRow">
 							<button type="button" id="btnNewUser" title="Nuevo usuario"><i class="fa-solid fa-user-plus"></i><span>Nuevo</span></button>
 						</div>
@@ -101,6 +114,8 @@
 						<span>LIBRERÍA</span>
 						<div class="toolRow">
 							<button type="button" id="btnCreate" title="Crear librería"><i class="fa-solid fa-file-circle-plus"></i><span>Crear</span></button>
+						</div>
+						<div class="toolRow">
 							<button type="button" id="btnOpen" title="Abrir librería de proyectos (Ctrl+A)"><i class="fa-solid fa-folder-plus"></i><span>Abrir</span></button>
 						</div>
 					</div>
@@ -116,7 +131,7 @@
 					</div>
 
 					<div class="toolbarTop-Controls" id="topProject">
-						<span>ACCIONES</span>
+						<span>PROYECTO</span>
 						<div class="toolRow">
 							<button type="button" id="btnNewProject" title="Nuevo proyecto (Ctrl+P)"><i class="fa-solid fa-file"></i><span>Nuevo</span></button>
 							<button type="button" id="btnSaveProject" title="Guardar proyecto (Ctrl+S)"><i class="fa-solid fa-floppy-disk"></i><span>Guardar</span></button>
@@ -175,7 +190,7 @@
 					<div class="toolbarTop-Controls" id="topProjectGuest">
 						<span>PROYECTO</span>
 						<div class="toolRow">
-							<button type="button" id="btnNewProjectGuest" title="Nuevo proyecto"><i class="fa-solid fa-file"></i><span>Nuevo</span></button>
+							<button type="button" id="btnNewProjectGuest" title="Nuevo proyecto (Ctrl+P)"><i class="fa-solid fa-file"></i><span>Nuevo</span></button>
 						</div>
 					</div>
 
@@ -183,6 +198,8 @@
 						<span>ESCRIBIR</span>
 						<div class="toolRow">
 							<button type="button" id="btnEdit" title="Escribir nota (Ctrl+E)"><i class="fa-solid fa-pen"></i><span>Nota</span></button>
+						</div>
+						<div class="toolRow">
 							<button type="button" id="btnBarre" title="Escribir cejilla"><i class="fa-solid fa-grip-lines"></i><span>Cejilla</span></button>
 						</div>
 					</div>
@@ -191,41 +208,9 @@
 						<span>BORRAR</span>
 						<div class="toolRow">
 							<button type="button" id="btnErase" title="Borrar nota"><i class="fa-solid fa-eraser"></i><span>Borrar</span></button>
+						</div>
+						<div class="toolRow">
 							<button type="button" id="btnUndo" title="Deshacer escritura (Ctrl+Z)"><i class="fa-solid fa-rotate-left"></i><span>Deshacer</span></button>
-						</div>
-					</div>
-
-					<div class="toolbarTop-Controls" id="topForm">
-						<span>FORMATO</span>
-						<div class="toolRow">
-							<span>Tipología</span>
-							<select id="cmbProjectType">
-							    <option value="fretboard">Mástil</option>
-							    <option value="sequence" selected>Secuencia</option>
-							    <option value="chord">Acorde</option>
-							</select>
-						</div>
-						<div class="toolRow">
-							<span>Dirección</span>
-							<select id="cmbTipoSecuencia">
-							    <option value="up">Up</option>
-							    <option value="down">Down</option>
-							    <option value="up-down">Up-Down</option>
-							    <option value="down-up">Down-Up</option>
-							</select>
-						</div>
-					</div>
-
-					<div class="toolbarTop-Controls" id="topChords">
-						<span>ACORDES</span>
-						<div class="toolRow">
-							<select id="cmbChords">
-							    <option value="0">Acorde 1</option>
-							</select>
-						</div>
-						<div class="toolRow">
-							<button type="button" id="btnNewChord" title="Nuevo acorde"><i class="fa-solid fa-folder-plus"></i><span></span></button>
-							<button type="button" id="btnDelChord" title="Borrar acorde"><i class="fa-solid fa-folder-minus"></i><span></span></button>
 						</div>
 					</div>
 
@@ -252,20 +237,27 @@
 						</div>
 					</div>
 
-					<div class="toolbarTop-Controls" id="topNoteNames">
-						<span>NOTACIÓN</span>
+					<div class="toolbarTop-Controls" id="topForm">
+						<span>TIPOLOGÍA</span>
 						<div class="toolRow">
-							<select id="cmbNoteNames">
-							    <option value="latin">Latina</option>
-							    <option value="anglo" selected>Anglosajona</option>
+							<select id="cmbProjectType">
+							    <option value="fretboard">Mástil</option>
+							    <option value="sequence" selected>Secuencia</option>
+							    <option value="chord">Acorde</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topChords">
+						<span>ACORDES</span>
+						<div class="toolRow">
+							<select id="cmbChords">
+							    <option value="0">Acorde 1</option>
 							</select>
 						</div>
 						<div class="toolRow">
-							<label class="lblToggle" title="Mostrar nombre de notas">
-								<span class="lblToggleText">Notas</span>
-								<input id="chkNoteNames" type="checkbox">
-								<span class="lblToggleSpan"></span>
-							</label>
+							<button type="button" id="btnNewChord" title="Nuevo acorde"><i class="fa-solid fa-folder-plus"></i><span></span></button>
+							<button type="button" id="btnDelChord" title="Borrar acorde"><i class="fa-solid fa-folder-minus"></i><span></span></button>
 						</div>
 					</div>
 
@@ -323,18 +315,42 @@
 						</div>
 						<label class="lblToggle" title="Mostrar números">
 							<span class="lblToggleText">Números</span>
-							<input id="showNumber" type="checkbox">
+							<input id="chkShowNumber" type="checkbox">
 							<span class="lblToggleSpan"></span>
 						</label>
 					</div>
 
+					<div class="toolbarTop-Controls" id="topNoteNames">
+						<span>NOTACIÓN</span>
+						<div class="toolRow">
+							<select id="cmbNoteNames">
+							    <option value="latin">Latina</option>
+							    <option value="anglo" selected>Anglosajona</option>
+							</select>
+						</div>
+						<div class="toolRow">
+							<label class="lblToggle" title="Mostrar nombre de notas">
+								<span class="lblToggleText">Notas</span>
+								<input id="chkNoteNames" type="checkbox">
+								<span class="lblToggleSpan"></span>
+							</label>
+						</div>
+					</div>
+
 					<div class="toolbarTop-Controls" id="topFretboardDownload">
-						<span>DESCARGAR</span>
+						<span>MÁSTIL</span>
 						<div class="toolRow">
 							<button type="button" id="btnCopyCanvas" title="Copiar imagen al portapapeles"><i class="fa-solid fa-copy"></i><span>Copiar</span></button>
 						</div>
 						<div class="toolRow">
 							<button type="button" id="btnDownloadCanvas" title="Guardar imagen"><i class="fa-solid fa-download"></i><span>Descargar</span></button>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topScoreDownload">
+						<span>PARTITURA</span>
+						<div class="toolRow">
+							<button id="btnScoreDownloadImage" title="Descargar PNG y SVG"><i class="fa-solid fa-download"></i><span>PNG/SVG</span></button>
 						</div>
 					</div>
 
@@ -349,6 +365,13 @@
 								<option value="cguitar">Guitarra clásica</option>
 								<option value="piano" selected>Piano</option>
 							</select>
+						</div>
+						<div class="toolRow">
+							<label class="lblToggle" title="Play en edición">
+								<span class="lblToggleText">Edit Sound</span>
+								<input id="chkEditSound" type="checkbox" checked>
+								<span class="lblToggleSpan"></span>
+							</label>
 						</div>
 					</div>
 
@@ -385,7 +408,7 @@
 							</select>
 						</div>
 						<div class="toolRow">
-							<span>Cuenta atrás</span>
+							<span>Count In</span>
 							<select id="cmbCountIn">
 								<option value="0" selected>No</option>
 								<option value="1">1 compás</option>
@@ -419,29 +442,6 @@
 						</div>
 					</div>
 
-					<div class="toolbarTop-Controls" id="topBuffer">
-						<span>BUFFER</span>
-						<div class="toolRow">
-							<button type="button" id="btnRenderBuffer" title="Render buffer"><i class="fa-solid fa-memory"></i><span>Render</span></button>
-						</div>
-						<div class="toolRow">
-							<div id="player_bufferState">Waiting...</div>
-						</div>
-					</div>
-
-					<div class="toolbarTop-Controls" id="topAudio">
-						<span>AUDIO</span>
-						<div class="toolRow">
-							<select id="cmbAudioFormat">
-								<option value="mp3" selected>MP3</option>
-								<option value="wav">WAV</option>
-							</select>
-						</div>
-						<div class="toolRow">
-							<button type="button" id="btnSaveAudio" title="Descargar Audio"><i class="fa-solid fa-download"></i><span>Descargar</span></button>
-						</div>
-					</div>
-
 					<div class="toolbarTop-Controls" id="topTimeSignature">
 						<span>COMPÁS</span>
 						<div class="toolRow">
@@ -464,6 +464,25 @@
 								<option value="2">Corchea</option>
 								<option value="4">Semicorchea</option>
 							</select>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topDireccion">
+						<span>SECUENCIA</span>
+						<div class="toolRow">
+							<select id="cmbTipoSecuencia">
+							    <option value="up">Up</option>
+							    <option value="down">Down</option>
+							    <option value="up-down">Up-Down</option>
+							    <option value="down-up">Down-Up</option>
+							</select>
+						</div>
+						<div class="toolRow">
+							<label class="lblToggle" title="Repetir última parte">
+								<span class="lblToggleText">Repetir</span>
+								<input id="chkDireccion" type="checkbox">
+								<span class="lblToggleSpan"></span>
+							</label>
 						</div>
 					</div>
 
@@ -498,7 +517,6 @@
 					<div class="toolbarTop-Controls" id="topScoreScale">
 						<span>TAMAÑO</span>
 						<div class="toolRow">
-							<span>Escala</span>
 							<select id="cmbScoreScale">
 								<option value="auto" selected>Ajustar</option>
 								<option value="zoom">Zoom</option>
@@ -538,13 +556,6 @@
 						</div>
 					</div>
 
-					<div class="toolbarTop-Controls" id="topScoreDownload">
-						<span>DESCARGAR</span>
-						<div class="toolRow">
-							<button id="btnScoreDownloadImage" title="Descargar PNG y SVG"><i class="fa-solid fa-download"></i><span>PNG/SVG</span></button>
-						</div>
-					</div>
-
 					<div class="toolbarTop-Controls" id="topMetronomeControls">
 						<span>CONTROLES</span>
 						<div class="toolRow">
@@ -569,6 +580,39 @@
 						<span>METRÓNOMO</span>
 						<div class="toolRow">
 							<button type="button" id="btnPlayStopMetronome" title="Iniciar"><i class="fa-solid fa-play"></i><span>Iniciar</span></button>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topBuffer">
+						<span>PLAYER BUFFER</span>
+						<div class="toolRow">
+							<button type="button" id="btnRenderBuffer" title="Render buffer"><i class="fa-solid fa-memory"></i><span>Render</span></button>
+						</div>
+						<div class="toolRow">
+							<div id="player_bufferState">Waiting...</div>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topAudio">
+						<span>PLAYER AUDIO</span>
+						<div class="toolRow">
+							<select id="cmbAudioFormat">
+								<option value="mp3" selected>MP3</option>
+								<option value="wav">WAV</option>
+							</select>
+						</div>
+						<div class="toolRow">
+							<button type="button" id="btnSaveAudio" title="Descargar Audio"><i class="fa-solid fa-download"></i><span>Descargar</span></button>
+						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topVideo">
+						<span>VIDEO</span>
+						<div class="toolRow">
+							<button type="button" id="btnAbrirVideo" title="Abrir panel de video" disabled><i class="fa-solid fa-video"></i><span>Grabar</span></button>
+						</div>
+						<div class="toolRow">
+							<button type="button" id="btnAddVideo" title="Añadir video al proyecto" disabled><i class="fa-solid fa-folder-plus"></i><span>Añadir</span></button>
 						</div>
 					</div>
 
@@ -673,11 +717,7 @@
 	<footer id="footer">
 
 		<div class="footerDivs">
-			<a href="#">
-				<strong>JAZZ GUITAR NOMAD</strong>
-				<br><br>
-				<img id="footerBrandLogo" src="img/logo.png" alt="Jazz Guitar Nomad">
-			</a>
+			<a href="#"><img id="footerBrandLogo" src="img/logo-FFF.png" alt="Nomad Jazz Guitar"></a>
 			<strong>SÍGUENOS</strong>
 			<div class="footerSocial">
 				<a href="#"><i class="fa-brands fa-facebook"></i></a>
@@ -703,7 +743,7 @@
 
 		<div class="footerCopyRights">
 			<br>
-			<span>© 2026 Jazz Guitar Nomad. Todos los derechos reservados.</span>
+			<span>© 2026 Nomad Jazz Guitar. Todos los derechos reservados.</span>
 			<br>
 			<div>
 				<a href="#">Privacidad</a>

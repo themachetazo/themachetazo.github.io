@@ -1,5 +1,7 @@
 
 :root{
+	/*Oscuro*/
+
 	--color-main-text:#d5d5d5;
 	--color-hightlight:#1268A8;
 	--color-dark-background:#262626;
@@ -7,6 +9,28 @@
 	--color-tools:#413F3F;
 	--color-border:rgba(255,255,255,0.12);
 	--color-red:#c62828;
+	--color-text:#ffffff;
+	--color-back:#000000;
+	--color-medium:#777777;	
+	--color-disabled:#D5D5D5;
+	--color-logo:#FFF;
+
+	/*Claro*/
+/*
+	--color-main-text:#2A2A2A;
+	--color-hightlight:#4CAF70;
+	--color-dark-background: #DDDDDD;
+	--color-light-background:#F2F2F2;
+	--color-tools:#E6E6E6;
+	--color-border:rgba(0,0,0,0.25);
+	--color-red:#C62828;
+	--color-text:#1A1A1A;
+	--color-back:#FFFFFF;
+	--color-medium:#777777;
+	--color-disabled:#A5A5A5;
+	--color-logo:#000;
+*/
+
 }
 
 * {
@@ -33,7 +57,7 @@ body {
 	font-family: "Segoe UI", Arial, sans-serif;
 	font-size: 12px;
 
-	background:#000;
+	background:var(--color-back);
 	color:var(--color-main-text);
 }
 
@@ -44,16 +68,126 @@ a {
 
 a:hover {
 	text-decoration:underline;
-	color:#FFF;
+	color:var(--color-text);
 }
 
 a:visited {
-	color:#FFF;
+	color:var(--color-text);
 }
 
 ::selection{
 	background:var(--color-hightlight);
-	color:#fff;
+	color:var(--color-text);
+}
+
+/* ==========================================================
+   VIDEO
+========================================================== */
+
+#videoContainer {
+
+	display:none;
+
+	position:fixed;
+
+	top:0;
+	left:0;
+
+	width:100%;
+	height:100%;
+
+	background:rgba(0,0,0,0.35);
+
+	justify-content:center;
+	align-items:center;
+
+	box-sizing:border-box;
+
+	z-index:9999;
+
+}
+
+.video-window {
+
+	display:flex;
+	flex-direction:column;
+
+	position:relative;
+
+	width:90%;
+	max-width:700px;
+
+	padding:10px;
+
+	background:var(--color-tools);
+	color:var(--color-main-text);
+
+	border:1px solid var(--color-border);
+	border-radius:10px;
+
+	box-sizing:border-box;
+
+	box-shadow:0 0 25px rgba(0,0,0,0.30);
+
+}
+
+.video-window .close-btn {
+
+	display:flex;
+
+	align-items:center;
+	justify-content:center;
+
+	align-self:flex-end;
+
+	width:30px;
+	height:30px;
+
+	padding:0;
+	margin:0 0 8px 0;
+
+	border:0;
+	border-radius:50%;
+
+	background:transparent;
+	color:var(--color-main-text);
+
+	cursor:pointer;
+
+}
+
+.video-window .close-btn:hover {
+
+	background:var(--color-tools);
+
+}
+
+#localVideo {
+
+	width:100%;
+	aspect-ratio:16 / 9;
+
+	display:block;
+
+	background:#000;
+
+	border-radius:6px;
+
+	object-fit:contain;/*cover;*/
+
+}
+
+.video-controls {
+
+	display:flex;
+
+	justify-content:center;
+	flex-wrap:wrap;
+
+	gap:8px;
+
+	margin-top:15px;
+
 }
 
 /* ==========================================================
@@ -109,8 +243,8 @@ html {
 
 	border-radius: 6px;
 
-	background: #fff;
-	color: #000;
+	background: var(--color-text);
+	color: var(--color-back);
 
 	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
 
@@ -222,7 +356,7 @@ html {
 
 	box-sizing:border-box;
 
-	border:4px solid #555;
+	border:4px solid var(--color-border);
 	border-top-color:var(--color-main-text);
 
 	border-radius:50%;
@@ -279,7 +413,7 @@ html {
 
 	font-size:15px;
 
-	color:#CFCFCF;
+	color:var(--color-main-text);
 
 	letter-spacing:.5px;
 
@@ -468,8 +602,8 @@ html {
 	background:var(--color-dark-background);
 
 	border-top:1px solid var(--color-border);
-	border-bottom:1px solid #000;
-	border-right:1px solid #000;
+	border-bottom:1px solid var(--color-back);
+	border-right:1px solid var(--color-back);
 	border-left:1px solid var(--color-border);
 
 }
@@ -516,8 +650,8 @@ html {
 	background:var(--color-dark-background);
 
 	border-top:1px solid var(--color-border);
-	border-bottom:1px solid #000;
-	border-right:1px solid #000;
+	border-bottom:1px solid var(--color-back);
+	border-right:1px solid var(--color-back);
 	border-left:1px solid var(--color-border);
 }
 
@@ -535,7 +669,7 @@ html {
 
 	background-color:#fff;
 
-	border:1px solid #000;
+	border:1px solid var(--color-tools);
 
 	border-radius:2px;
 
@@ -576,8 +710,8 @@ html {
 	padding:8px 10px;
 
 	border-top:1px solid var(--color-border);
-	border-bottom:1px solid #000;
-	border-right:1px solid #000;
+	border-bottom:1px solid var(--color-back);
+	border-right:1px solid var(--color-back);
 
 	background:var(--color-tools);
 
@@ -682,7 +816,7 @@ html {
 
 	background: transparent;
 
-	color: #000;
+	color: var(--color-main-text);
 
 	font-size: inherit;
 	text-align: left;
@@ -699,9 +833,9 @@ html {
 
 	border-left: 4px solid var(--color-hightlight);
 
-	background: #ccc;
+	background: var(--color-border);
 
-	color: var(--color-dark-background);
+	color: var(--color-text);
 
 	padding-left: 4px;
 
@@ -711,7 +845,8 @@ html {
 
 .projectOpenButton:not(:disabled):hover {
 
-	color: var(--color-hightlight);
+	background: var(--color-light-background);
+	color: var(--color-text);
 
 	font-weight: 700;
 
@@ -781,9 +916,9 @@ html {
 	border: 0;
 	border-radius: 5px 5px 0 0;
 
-	background: var(--color-tools);
+	background: var(--color-border);
 
-	color: inherit;
+	color: var(--color-text);
 
 	font-size: inherit;
 
@@ -795,7 +930,7 @@ html {
 .projectCategoryButton:hover {
 
 	background: var(--color-light-background);
-	color: #fff;
+	color: var(--color-text);
 
 }
 
@@ -817,9 +952,9 @@ html {
 	margin: 0;
 	padding: 4px;
 	
-	border-bottom:1px solid #000;
+	border-bottom:1px solid var(--color-back);
 
-	background: #fff;
+	background: transparent;/*var(--color-text);*/
 }
 
 .projectCategoryList.isOpen {
@@ -929,9 +1064,9 @@ html {
 
 	color:var(--color-main-text);
 
-	background:#000;
+	background:var(--color-back);
 
-	border-top:1px solid var(--color-tools);
+	border-top:1px solid var(--color-dark-background);
 
 }
 
@@ -1031,7 +1166,7 @@ html {
     width:10px;
     height:10px;
     border-radius:50%;
-    background:#777;
+    background:var(--color-medium);
     transition:.08s;
 }
 
@@ -1044,13 +1179,13 @@ html {
 }
 
 .metronome_pulse.metronome_sub{
-    background:#555;
+    background:var(--color-border);
 }
 
 .metronome_pulse.metronome_current{
     background:var(--color-hightlight) !important;
     transform:scale(1.18);
-    box-shadow:0 0 12px #fff;
+    box-shadow:0 0 12px var(--color-text);
 }
 
 
@@ -1058,37 +1193,45 @@ html {
    BARRA SUPERIOR
 =========================== */
 
-#topBar{
-
+#topBar {
     grid-area: topBar;
 
-    display:flex;
+    display: flex;
+    align-items: center;
 
-    align-items:center;
+    min-height: 60px;
+    padding: 0 8px;
 
-    min-height:60px;
+    background: var(--color-back);
 
-    padding:0 8px;
-
-    background:#000;
-
+    position: relative;
 }
 
-#brand{
+#brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
 
-	display:flex;
+#mainMenu {
+    display: flex;
+    flex-wrap: nowrap;
+    white-space: nowrap;
 
-	align-items:center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
 
-	gap:8px;
-
-	flex-shrink:0;
-
+#mainMenu button:focus-visible {
+	outline: 2px solid var(--color-main-text);
+	outline-offset: 2px;
 }
 
 #brandName{
 
-	display:flex;
+	display:none;
 
 	flex-direction:column;
 
@@ -1105,13 +1248,25 @@ html {
 #brandLogo,
 #footerBrandLogo,
 #spinnerLogo {
-	width: 44px;
-	height: 50px;
-	opacity:0.8;
+	opacity:0.9;
 	object-fit: cover;
 	border-radius: 4px;
 }
 
+#brandLogo{
+	width: 45px;
+	height: auto;
+}
+
+#footerBrandLogo{
+	width: 50px;
+	height: auto;
+}
+
+#spinnerLogo {
+	width: 80px;
+	height: auto;
+}
 
 .brandTitle {
 
@@ -1130,23 +1285,6 @@ html {
 
 	letter-spacing: 0.03em;
 
-}
-
-#mainMenu{
-
-	display:flex;
-
-	flex-wrap:nowrap;
-
-	flex-shrink:0;
-
-	white-space:nowrap;
-
-}
-
-#mainMenu button:focus-visible {
-	outline: 2px solid var(--color-main-text);
-	outline-offset: 2px;
 }
 
 .menuButton{
@@ -1183,7 +1321,7 @@ html {
 
 .menuButton:hover{
 
-    color:#fff;
+    color:var(--color-text);
     background:var(--color-tools);
 
 }
@@ -1318,7 +1456,7 @@ html {
 
 	border-radius:8px;
 
-	background:#000;
+	background:var(--color-back);
 
 	border:1px solid var(--color-tools);
 
@@ -1361,7 +1499,7 @@ html {
 #menuPopup button:hover{
 
 	background:var(--color-tools);
-	color:#fff;
+	color:var(--color-text);
 
 }
 
@@ -1435,7 +1573,7 @@ html {
 .topBarSelector:hover{
 
 	background:var(--color-tools);
-	color:#fff;
+	color:var(--color-text);
 	font-weight:700;
 
 }
@@ -1574,8 +1712,8 @@ html {
 	background:var(--color-tools);
 
 	border-top:1px solid var(--color-border);
-	border-bottom:1px solid #000;
-	border-right:1px solid #000;
+	border-bottom:1px solid var(--color-back);
+	border-right:1px solid var(--color-back);
 
 	opacity:0;
 
@@ -1695,7 +1833,7 @@ html {
 	overflow-x:hidden;
 	overflow-y:auto;
 
-	background:#000;
+	background:var(--color-back);
 
 	border-top:1px solid var(--color-border);
 	border-right:1px solid var(--color-tools);
@@ -1812,6 +1950,7 @@ html {
 .toolbarTop-Controls select{
 
 	height:30px;
+	min-width:110px;
 
 	padding:0 6px 0 6px;
 
@@ -1836,14 +1975,12 @@ html {
 		border-color .2s,
 		color .2s;
 
-	min-width:70px;
-
 }
 
 
 .toolbarTop-Controls select:hover{
 
-	background-color:#4a4848;
+	background-color:var(--color-dark-background);
 
 }
 
@@ -1872,7 +2009,7 @@ html {
 
 	background-color:var(--color-main-text);
 
-	color:#000;
+	color:var(--color-back);
 
 	font-weight:700;
 
@@ -1882,7 +2019,7 @@ html {
 
 	background-color:var(--color-hightlight);
 
-	color:#000;
+	color:var(--color-back);
 
 }
 
@@ -1990,7 +2127,8 @@ input[type="range"] {
 
 .toolbarTop-Controls button:disabled,
 #workspaceHeader button:disabled,
-.projectPanelHeader button:disabled{
+.projectPanelHeader button:disabled,
+#videoContainer button:disabled{
 	opacity:0.45;
 	cursor:not-allowed;
 
@@ -1998,11 +2136,12 @@ input[type="range"] {
 
 .toolbarTop-Controls button:not(:disabled):hover,
 #workspaceHeader button:not(:disabled):hover,
-.projectPanelHeader button:not(:disabled):hover {
+.projectPanelHeader button:not(:disabled):hover,
+#videoContainer button:not(:disabled):hover {
 
-	color:#fff;
+	color:var(--color-text);
 	background:var(--color-hightlight);
-	border:1px solid #000;
+	border:1px solid var(--color-back);
 
 	box-shadow:inset 2px 2px 4px rgba(0,0,0,.35);
 
@@ -2011,7 +2150,8 @@ input[type="range"] {
 }
 
 .toolbarTop-Controls button:focus-visible,
-#workspaceHeader button:focus-visible{
+#workspaceHeader button:focus-visible,
+#videoContainer button:focus-visible{
 
 	outline:2px solid var(--color-main-text);
 	outline-offset:2px;
@@ -2019,7 +2159,8 @@ input[type="range"] {
 }
 
 .toolbarTop-Controls button:active,
-#workspaceHeader button:active{
+#workspaceHeader button:active,
+#videoContainer button:active{
 
 	transform:scale(0.96);
 
@@ -2028,18 +2169,20 @@ input[type="range"] {
 }
 
 .toolbarTop-Controls button.active,
-#workspaceHeader button.active{
+#workspaceHeader button.active,
+#videoContainer button.active{
 
 	font-weight:700;
 
 	background:var(--color-main-text);
-	color:#000;
+	color:var(--color-back);
 
 	box-shadow:inset 2px 2px 4px rgba(0,0,0,.35);
 }
 
 .toolbarTop-Controls button i,
-#workspaceHeader button i{
+#workspaceHeader button i,
+#videoContainer button i{
 
 	width:16px;
 
@@ -2050,7 +2193,8 @@ input[type="range"] {
 }
 
 .toolbarTop-Controls button:hover i,
-#workspaceHeader button:hover i{
+#workspaceHeader button:hover i,
+#videoContainer button:hover i{
 
 	transform:none;
 
@@ -2100,6 +2244,14 @@ input[type="range"] {
 
 }
 
+#btnEdit,
+#btnBarre,
+#btnErase,
+#btnUndo,
+#btnCreate,
+#btnOpen,
+#btnAbrirVideo,
+#btnAddVideo,
 #btnSaveAudio,
 #btnRenderBuffer,
 #btnPlayStopBuffer,
@@ -2117,7 +2269,7 @@ input[type="range"] {
 	height:30px;
 
 	min-height:30px;
-	min-width:90px;
+	min-width:110px;
 
 	padding:0 10px;
 
@@ -2127,7 +2279,8 @@ input[type="range"] {
 
 }
 
-#workspaceHeader button{
+#workspaceHeader button,
+#videoContainer button{
 
 	display:inline-flex;
 
@@ -2164,16 +2317,31 @@ input[type="range"] {
 
 }
 
+#videoContainer #btnVideoClose {
+
+	width:30px;
+	min-width:30px;
+	max-width:30px;
+
+	height:30px;
+	min-height:30px;
+	max-height:30px;
+
+	padding:0;
+	margin:2px;
+
+}
+
 #btnPlayStopMetronome{
 
 	background:var(--color-main-text) !important;
-	color:#000 !important;
+	color:var(--color-back) !important;
 
 }
 
 #btnPlayStopMetronome:hover{
 	background:var(--color-hightlight) !important;
-	color:#fff !important;
+	color:var(--color-text) !important;
 }
 
 .buttonPlay{
@@ -2185,10 +2353,11 @@ input[type="range"] {
 }
 
 .buttonPlay:not(:disabled):hover{
-	border: 1px solid #000 !important;
+	border: 1px solid var(--color-back) !important;
 }
 
-.buttonStop{
+.buttonStop,
+#btnVideoRecord{
 
 	background:var(--color-red) !important;
 	color:#fff !important;
@@ -2244,12 +2413,15 @@ input[type="range"] {
 	flex: 0 0 36px;
 
 	width: 36px;
-
 	height: 20px;
 
-	border-radius: 20px;
+	box-sizing: border-box;
+
+	border-radius: 10px;
 
 	background: var(--color-dark-background);
+
+	border: 1px solid var(--color-border);
 
 	transition: background .20s ease;
 
@@ -2262,12 +2434,10 @@ input[type="range"] {
 	position: absolute;
 
 	left: 2px;
-
 	top: 2px;
 
-	width: 16px;
-
-	height: 16px;
+	width: 14px;
+	height: 14px;
 
 	border-radius: 50%;
 
@@ -2311,7 +2481,7 @@ input[type="range"] {
 
 .lblToggle input[type="checkbox"]:disabled + .lblToggleSpan {
 
-	background:#666;
+	background:var(--color-medium);
 
 	cursor:not-allowed;
 
@@ -2321,19 +2491,19 @@ input[type="range"] {
 
 .lblToggle input[type="checkbox"]:disabled + .lblToggleSpan::before {
 
-	background:#CFCFCF;
+	background:var(--color-main-text);
 
 }
 
 .lblToggle input[type="checkbox"]:disabled:checked + .lblToggleSpan {
 
-	background:#777;
+	background:var(--color-medium);
 
 }
 
 .lblToggle input[type="checkbox"]:disabled ~ .lblToggleText {
 
-	color:#9A9A9A;
+	color:var(--color-tools);
 
 	opacity:.6;
 
@@ -2358,15 +2528,8 @@ input[type="range"] {
 
 @media (max-width:1024px){
 
-	#brandLogo{
-
-		width:36px;
-		height:40px;
-
-	}
-
 	.brandTitle{
-		font-size:12px;
+		font-size:11px;
 	}
 
 	.brandSubtitle{
@@ -2377,30 +2540,12 @@ input[type="range"] {
 	   Botones superiores
 	   ========================== */
 
-	.topBarSelector{
-
-		width:62px;
-		height:48px;
-
-		padding:4px;
-
-		gap:0;
-
-	}
-
 	.topBarSelector span{
 
 		margin-top:5px;
 
 		font-size:9px;
 
-		font-weight:600;
-
-		line-height:1;
-
-		text-align:center;
-
-		white-space:nowrap;
 
 	}
 
@@ -2658,7 +2803,8 @@ input[type="range"] {
 	}
 
 	#toolbarTop .toolbarTop-Controls button,
-	#workspaceHeader button {
+	#workspaceHeader button,
+	#videoContainer button {
 
 		width: 30px;
 		height: 30px;
@@ -2675,14 +2821,16 @@ input[type="range"] {
 	}
 
 	#toolbarTop .toolbarTop-Controls button span,
-	#workspaceHeader button span {
+	#workspaceHeader button span,
+	#videoContainer button span {
 
 		display: none;
 
 	}
 
 	#toolbarTop .toolbarTop-Controls button i,
-	#workspaceHeader button i {
+	#workspaceHeader button i,
+	#videoContainer button i {
 
 		font-size: 12px;
 
@@ -2702,7 +2850,8 @@ input[type="range"] {
 	   Workspace
 	   ========================== */
 
-	#workspaceHeader {
+	#workspaceHeader, 
+	#videoContainer {
 
 		font-size: 10px;
 
@@ -2762,6 +2911,14 @@ input[type="range"] {
 	#btnRenderBuffer,
 	#btnPlayStopBuffer,
 	#btnCopyCanvas,
+	#btnEdit,
+	#btnBarre,
+	#btnErase,
+	#btnUndo,
+	#btnCreate,
+	#btnOpen,
+	#btnAbrirVideo,
+	#btnAddVideo,
 	#btnDownloadCanvas{
 		width: 30px;
 		min-width:auto;
