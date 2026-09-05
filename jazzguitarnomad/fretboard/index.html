@@ -31,9 +31,14 @@
 
 		<div class="video-window">
 
-			<button type="button" id="btnVideoClose" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+			<div class="video-head">
+				<span>Título: </span><input id="videoTitle" type="text" maxlength="60" placeholder="Sin Título">
+				<button type="button" id="btnVideoClose" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+			</div>
 
-			<video id="localVideo" autoplay playsinline muted></video>
+			<div class="video-screen">
+				<video id="localVideo" autoplay playsinline muted></video>
+			</div>
 
 			<div class="video-controls">
 				<div class="video-cameras">

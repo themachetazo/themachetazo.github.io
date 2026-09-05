@@ -95,6 +95,11 @@ a:visited {
 
 }
 
+
+/* ============================================================
+   VENTANA
+   ============================================================ */
+
 .video-window {
 
 	display:flex;
@@ -119,6 +124,44 @@ a:visited {
 
 }
 
+
+/* ============================================================
+   CABECERA
+   ============================================================ */
+
+.video-head {
+
+	display:flex;
+
+	align-items:center;
+
+	width:100%;
+
+	gap:8px;
+
+	margin-bottom:8px;
+
+}
+
+.video-head span {
+
+	white-space:nowrap;
+
+}
+
+#videoTitle {
+
+	flex:1;
+
+	min-width:0;
+
+}
+
+
+/* ============================================================
+   BOTÓN CERRAR
+   ============================================================ */
+
 .video-window .close-btn {
 
 	display:flex;
@@ -126,13 +169,13 @@ a:visited {
 	align-items:center;
 	justify-content:center;
 
-	align-self:flex-end;
+	flex-shrink:0;
 
 	width:30px;
 	height:30px;
 
 	padding:0;
-	margin:0 0 8px 0;
+	margin:0;
 
 	border:0;
 	border-radius:50%;
@@ -150,9 +193,21 @@ a:visited {
 
 }
 
+
+/* ============================================================
+   PANTALLA DE VÍDEO
+   ============================================================ */
+
+.video-screen {
+
+	width:100%;
+
+}
+
 #localVideo {
 
 	width:100%;
+
 	aspect-ratio:16 / 9;
 
 	display:block;
@@ -161,9 +216,14 @@ a:visited {
 
 	border-radius:6px;
 
-	object-fit:contain;/*cover;*/
+	object-fit:contain;
 
 }
+
+
+/* ============================================================
+   CONTROLES
+   ============================================================ */
 
 .video-controls {
 
@@ -177,6 +237,33 @@ a:visited {
 	margin-top:15px;
 
 }
+
+.video-cameras {
+
+	display:flex;
+
+	align-items:center;
+
+	flex-wrap:wrap;
+
+	gap:8px;
+
+}
+
+.video-microphones {
+
+	display:flex;
+
+	align-items:center;
+
+	justify-content:center;
+
+	flex-wrap:wrap;
+
+	gap:8px;
+
+}
+
 
 /* ==========================================================
    SCROLLBAR
@@ -1913,7 +2000,8 @@ html {
 
 }
 
-.toolbarTop-Controls input{
+.toolbarTop-Controls input,
+#videoContainer input{
 
 	height:30px;
 	width:120px;
@@ -1933,6 +2021,10 @@ html {
 	color:var(--color-main-text);
 
 
+}
+
+#videoContainer input{
+	text-align:left;
 }
 
 .toolbarTop-Controls select,
@@ -3129,14 +3221,22 @@ input[type="range"] {
    VÍDEO EN MÓVILES
    ============================================================ */
 
-@media (max-width: 700px) {
+@media (max-width:600px) {
 
 	#videoContainer {
 
-		width:100%;
-		height:100%;
+		width:100vw;
+		height:100vh;
 
 		padding:0;
+
+		justify-content:flex-start;
+		align-items:flex-start;
+
+		overflow-y:auto;
+		overflow-x:hidden;
+
+		-webkit-overflow-scrolling:touch;
 
 	}
 
@@ -3144,7 +3244,9 @@ input[type="range"] {
 
 		width:100%;
 		max-width:none;
-		height:100%;
+
+		min-height:100vh;
+		height:auto;
 
 		padding:10px;
 
@@ -3153,14 +3255,21 @@ input[type="range"] {
 
 		box-shadow:none;
 
+		flex-shrink:0;
+
 	}
 
-	.video-window .close-btn {
+	.video-head {
 
-		width:30px;
-		height:30px;
+		width:100%;
 
-		margin-bottom:5px;
+		margin-bottom:8px;
+
+	}
+
+	#videoTitle {
+
+		min-width:0;
 
 	}
 
@@ -3171,17 +3280,13 @@ input[type="range"] {
 
 		aspect-ratio:16 / 9;
 
-		object-fit:contain;
-
 	}
 
 	.video-controls {
 
 		width:100%;
 
-		margin-top:10px;
-
-		gap:8px;
+		margin-top:15px;
 
 	}
 
@@ -3202,71 +3307,6 @@ input[type="range"] {
 	.video-cameras select {
 
 		width:100%;
-		min-width:0;
-
-	}
-
-	.video-microphones {
-
-		width:100%;
-
-		display:flex;
-
-		justify-content:center;
-
-		flex-wrap:wrap;
-
-		gap:8px;
-
-	}
-
-}
-
-
-/* ============================================================
-   MÓVIL HORIZONTAL
-   ============================================================ */
-
-@media (max-width:700px) and (orientation:landscape) {
-
-	.video-window {
-
-		padding:8px;
-
-	}
-
-	#localVideo {
-
-		width:100%;
-
-		max-height:calc(100vh - 125px);
-
-		aspect-ratio:16 / 9;
-
-		object-fit:contain;
-
-	}
-
-	.video-controls {
-
-		margin-top:6px;
-
-	}
-
-	.video-cameras {
-
-		display:flex;
-
-		flex-wrap:nowrap;
-
-		justify-content:center;
-
-	}
-
-	.video-cameras select {
-
-		width:auto;
-		flex:1;
 
 		min-width:0;
 
@@ -3274,7 +3314,7 @@ input[type="range"] {
 
 	.video-microphones {
 
-		flex-wrap:nowrap;
+		width:100%;
 
 	}
 
