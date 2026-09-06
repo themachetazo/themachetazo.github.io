@@ -38,18 +38,22 @@
 
 			<div class="video-screen">
 				<video id="localVideo" autoplay playsinline muted></video>
+				<div id="audioMeter"><i class="fa-solid fa-microphone"></i><div id="audioMeterLevel"></div></div>
 			</div>
 
 			<div class="video-controls">
-				<div class="video-cameras">
-					<span>Cámaras: </span><select id="cmbCamera"></select>
-					<span>Micrófonos: </span><select id="cmbMicrophone"></select>
-				</div>
-				<div class="video-microphones">
+				<div class="video-buttons">
 					<button type="button" id="btnAudioMute"><i class="fa-solid fa-microphone"></i><span>Mute</span></button>
 					<button type="button" id="btnVideoMute"><i class="fa-solid fa-video"></i><span>Apagar</span></button>
 					<button type="button" id="btnVideoMirror"><i class="fa-solid fa-arrows-rotate"></i><span>Voltear</span></button>
 					<button type="button" id="btnVideoRecord" class="buttonPlay"><i class="fa-solid fa-circle"></i><span>Grabar</span></button>
+				</div>
+				<div class="video-devices">
+					<span>Cámaras: </span><select id="cmbCamera"></select>
+					<span>Micrófonos: </span><select id="cmbMicrophone"></select>
+				</div>
+				<div id="videoInfo" class="video-info">
+					<span>Resolución: 1920 x 1080 - 30 fps</span>
 				</div>
 			</div>
 		</div>
@@ -255,9 +259,11 @@
 							    <option value="fretboard" selected>Fretboard</option>
 							    <option value="video">Vídeo</option>
 							    <option value="audio">Audio</option>
+							    <option value="image">Imágen</option>
 							    <option value="score">Partitura</option>
 							    <option value="pdf">PDF</option>
 							    <option value="html">HTML</option>
+							    <option value="embed">Embeb</option>
 							</select>
 						</div>
 						<div class="toolRow">
@@ -699,7 +705,7 @@
 						</button>
 						<ul class="projectCategoryList" id="projectCategoryList">
 							<li class="projectItem">
-								<button type="button" class="projectOpenButton" data-project-id="b568f802474943669bb094652803af3f" title="Abrir: Título"><span class="projectTitle">Título</span></button>
+								<button type="button" class="projectOpenButton" data-project-id="b568f802474943669bb094652803af3f" title="Abrir: Título"><span class="projectTitle"><i class="fa-solid fa-music"></i>Título</span></button>
 								<button type="button" class="projectDeleteButton" title="Eliminar proyecto"><i class="fa-solid fa-trash"></i></button>
 							</li>
 						</ul>

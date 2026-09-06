@@ -1,5 +1,9 @@
 
 :root{
+
+	/* Cargado dinámicamente desde JS*/
+	/*Claro*/
+
 	/*Oscuro*/
 
 	--color-main-text:#d5d5d5;
@@ -15,9 +19,6 @@
 	--color-medium:#777777;	
 	--color-disabled:#D5D5D5;
 	--color-logo:#FFF;
-
-	/*Claro*/
-	/* Cargado dinámicamente desde JS*/
 
 }
 
@@ -95,11 +96,6 @@ a:visited {
 
 }
 
-
-/* ============================================================
-   VENTANA
-   ============================================================ */
-
 .video-window {
 
 	display:flex;
@@ -123,11 +119,6 @@ a:visited {
 	box-shadow:0 0 25px rgba(0,0,0,0.30);
 
 }
-
-
-/* ============================================================
-   CABECERA
-   ============================================================ */
 
 .video-head {
 
@@ -156,11 +147,6 @@ a:visited {
 	min-width:0;
 
 }
-
-
-/* ============================================================
-   BOTÓN CERRAR
-   ============================================================ */
 
 .video-window .close-btn {
 
@@ -193,14 +179,69 @@ a:visited {
 
 }
 
-
-/* ============================================================
-   PANTALLA DE VÍDEO
-   ============================================================ */
-
 .video-screen {
 
+	position:relative;
+
 	width:100%;
+
+}
+
+#audioMeter {
+
+	position:absolute;
+
+	left:8px;
+	bottom:8px;
+
+	display:flex;
+
+	align-items:center;
+
+	gap:5px;
+
+	width:140px;
+	height:14px;
+
+	padding:3px 5px;
+
+	background:rgba(0,0,0,0.5);
+
+	border-radius:4px;
+
+	box-sizing:border-box;
+
+	overflow:hidden;
+
+}
+
+#audioMeter i {
+
+	flex-shrink:0;
+
+	color:var(--color-main-text);
+
+}
+
+#audioMeterLevel {
+
+	width:0%;
+	height:8px;
+
+	background:var(--color-hightlight);
+
+	border-radius:4px;
+
+}
+
+#audioMeterLevel {
+
+	width:0%;
+	height:100%;
+
+	background:var(--color-hightlight);
+
+	border-radius:4px;
 
 }
 
@@ -220,29 +261,28 @@ a:visited {
 
 }
 
-
-/* ============================================================
-   CONTROLES
-   ============================================================ */
-
 .video-controls {
 
 	display:flex;
+	flex-direction:column;
 
+	align-items:center;
 	justify-content:center;
-	flex-wrap:wrap;
 
-	gap:8px;
+	gap:10px;
+
+	width:100%;
 
 	margin-top:15px;
 
 }
 
-.video-cameras {
+.video-buttons {
 
 	display:flex;
 
 	align-items:center;
+	justify-content:center;
 
 	flex-wrap:wrap;
 
@@ -250,17 +290,27 @@ a:visited {
 
 }
 
-.video-microphones {
+.video-devices {
 
 	display:flex;
 
 	align-items:center;
-
 	justify-content:center;
 
 	flex-wrap:wrap;
 
 	gap:8px;
+
+}
+
+.video-info {
+
+	display:flex;
+
+	align-items:center;
+	justify-content:center;
+
+	text-align:center;
 
 }
 
@@ -906,9 +956,9 @@ html {
 
 .projectOpenButton.active {
 
-	border-left: 4px solid var(--color-hightlight);
+	border-left: 4px solid var(--color-text);
 
-	background: var(--color-border);
+	background: var(--color-hightlight);
 
 	color: var(--color-text);
 
@@ -920,7 +970,8 @@ html {
 
 .projectOpenButton:not(:disabled):hover {
 
-	background: var(--color-light-background);
+	background: var(--color-tools);
+
 	color: var(--color-text);
 
 	font-weight: 700;
@@ -929,8 +980,6 @@ html {
 
 .projectOpenButton:disabled {
 
-	color: var(--color-tools);
-
 	cursor: not-allowed;
 
 	opacity: .55;
@@ -938,8 +987,6 @@ html {
 }
 
 .projectOpenButton:disabled:hover {
-
-	color: var(--color-tools);
 
 	font-weight: normal;
 
@@ -952,9 +999,7 @@ html {
 
 	border-left: 0;
 
-	background: transparent;
-
-	color: var(--color-tools);
+	background: var(--color-border);
 
 	padding-left: 4px;
 
@@ -970,9 +1015,15 @@ html {
 
 	padding-right: 4px;
 
+}
+.projectOpenButton #projectLocked i {
+
+	padding-right: 4px;
+
 	color: var(--color-tools);
 
 }
+
 .projectCategory {
 	border-radius: 5px;
 	overflow: hidden;
@@ -1026,10 +1077,10 @@ html {
 
 	margin: 0;
 	padding: 4px;
-	
-	border-bottom:1px solid var(--color-back);
 
-	background: transparent;/*var(--color-text);*/
+	border-radius: 0;
+
+	background: var(--color-back);
 }
 
 .projectCategoryList.isOpen {
@@ -3221,12 +3272,12 @@ input[type="range"] {
    VÍDEO EN MÓVILES
    ============================================================ */
 
-@media (max-width:600px) {
+@media (max-width:600px), (max-height:400px) {
 
 	#videoContainer {
 
 		width:100vw;
-		height:100vh;
+		height:100dvh;
 
 		padding:0;
 
@@ -3245,7 +3296,7 @@ input[type="range"] {
 		width:100%;
 		max-width:none;
 
-		min-height:100vh;
+		min-height:100dvh;
 		height:auto;
 
 		padding:10px;
@@ -3258,6 +3309,7 @@ input[type="range"] {
 		flex-shrink:0;
 
 	}
+
 
 	.video-head {
 
@@ -3282,17 +3334,7 @@ input[type="range"] {
 
 	}
 
-	.video-controls {
-
-		width:100%;
-
-		margin-top:15px;
-
-	}
-
-	.video-cameras {
-
-		width:100%;
+	.video-devices {
 
 		display:grid;
 
@@ -3300,22 +3342,17 @@ input[type="range"] {
 
 		align-items:center;
 
+		width:100%;
+
 		gap:6px 8px;
 
 	}
 
-	.video-cameras select {
+	.video-devices select {
 
 		width:100%;
 
 		min-width:0;
 
 	}
-
-	.video-microphones {
-
-		width:100%;
-
-	}
-
 }
