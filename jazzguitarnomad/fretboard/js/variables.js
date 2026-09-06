@@ -82,7 +82,8 @@ const themes = {
 		"--color-back": "#000000",
 		"--color-medium": "#777777",
 		"--color-disabled": "#D5D5D5",
-		"--color-logo": "#FFF"
+		"--color-logo": "#FFFFFF",
+		"--color-selected": "#999999"
 	},
 
 	light: {
@@ -98,7 +99,8 @@ const themes = {
 		"--color-back": "#FFFFFF",
 		"--color-medium": "#777777",
 		"--color-disabled": "#A5A5A5",
-		"--color-logo": "#000"
+		"--color-logo": "#000000",
+		"--color-selected": "#999999"
 	}
 
 };
