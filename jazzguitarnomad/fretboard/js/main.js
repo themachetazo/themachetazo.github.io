@@ -488,7 +488,7 @@ function setMenu(m){
 			);
 
 			menuSelectorText.textContent = "PLAYER";
-			menuSelectorIcon.className = "fa-solid fa-radio";
+			menuSelectorIcon.className = "fa-solid fa-circle-play";
 
 			break;
 

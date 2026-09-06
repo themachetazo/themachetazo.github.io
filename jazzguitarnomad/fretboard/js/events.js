@@ -720,7 +720,7 @@ menuPopup.querySelectorAll("button").forEach(button=>{
 
 cmbDiapason.addEventListener("change", () => {
 
-	fretboardStyle = this.value;
+	fretboardStyle = cmbDiapason.value;
 	neckImageLoaded = false;
 
 	if (fretboardStyle !== "blank") {
@@ -1475,13 +1475,14 @@ btnAbrirVideo.addEventListener("click", async () => {
 
 	if (media) {
 
-//		getMultimediaDevicesInfo(media);
-
 		videoContainer.style.display = "flex";
 
 		localStream = media.stream;
 
 		localVideo.srcObject = localStream;
+
+//		getMultimediaDevicesInfo(media);
+		updateVideoInfo();
 
 	}
 

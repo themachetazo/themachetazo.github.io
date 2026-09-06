@@ -716,6 +716,7 @@ function renderProjectsLibrary() {
 
 				const iLocker = document.createElement("i");
 
+				iLocker.id = "projectLocked";
 				iLocker.className = "fa-solid fa-lock";
 
 				openButton.appendChild(iLocker);
@@ -724,7 +725,20 @@ function renderProjectsLibrary() {
 			const titleSpan = document.createElement("span");
 
 			titleSpan.className = "projectTitle";
-			titleSpan.textContent = project.title;
+			titleSpan.innerHTML = hasMultimedia ? "<i class='fa-solid fa-photo-film'></i>" + project.title : project.title;
+
+/*
+<i class="fa-solid fa-photo-film"></i>
+<i class='fa-solid fa-guitar'></i>
+<i class="fa-solid fa-video"></i>
+<i class="fa-solid fa-compact-disc"></i>
+<i class="fa-solid fa-image"></i>
+<i class="fa-solid fa-music"></i>
+<i class="fa-solid fa-file-pdf"></i>
+<i class="fa-brands fa-code"></i>
+<i class="fa-brands fa-file-code"></i>
+<i class="fa-solid fa-link"></i>
+*/
 
 			openButton.appendChild(titleSpan);
 

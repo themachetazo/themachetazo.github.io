@@ -10,11 +10,12 @@ function drawFretboard() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	// Fondo del canvas
+/*
 	const colorBack = getComputedStyle(document.documentElement).getPropertyValue("--color-dark-background").trim();
 
 	ctx.fillStyle = colorBack;
-
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
+*/
 
 	// Sobresalido discreto de la imagen del diapasón
 

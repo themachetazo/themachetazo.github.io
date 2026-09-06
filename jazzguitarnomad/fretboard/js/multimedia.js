@@ -842,6 +842,8 @@ async function getCameraAndMicrophone() {
 
 		microphoneSource.connect(audioDestination);
 
+		startAudioMeter();
+
 		// --------------------------------
 		// STREAM DE GRABACIÓN
 		// --------------------------------
@@ -1058,9 +1060,11 @@ async function changeCamera() {
 
 		localVideo.srcObject = localStream;
 
+		updateVideoInfo();
+
 	} catch (error) {
 
-		console.error("No se pudo cambiar la cámara:", error);
+		console.error("No se pudo cambiar la cámara: ", error);
 
 	}
 
@@ -1089,6 +1093,8 @@ async function changeMicrophone() {
 
 		microphoneSource.connect(audioDestination);
 
+		startAudioMeter();
+
 		const oldMicrophone = localStream.getAudioTracks()[0];
 
 		localStream.removeTrack(oldMicrophone);
@@ -1098,10 +1104,70 @@ async function changeMicrophone() {
 
 		localVideo.srcObject = localStream;
 
+		updateVideoInfo();
+
 	} catch (error) {
 
-		console.error("No se pudo cambiar el micrófono:", error);
+		console.error("No se pudo cambiar el micrófono: ", error);
 
 	}
+
+}
+
+function updateVideoInfo() {
+
+	if (!localStream) return;
+
+	const videoTrack = localStream.getVideoTracks()[0];
+	const audioTrack = localStream.getAudioTracks()[0];
+
+	if (!videoTrack || !audioTrack) return;
+
+	const videoSettings = videoTrack.getSettings();
+	const audioSettings = audioTrack.getSettings();
+
+	videoInfo.textContent =
+		`Resolución: ${videoSettings.width} x ${videoSettings.height} - ${videoSettings.frameRate} fps | ` +
+		`Audio: ${audioSettings.sampleRate} Hz - ${audioSettings.sampleSize} bit - ${audioSettings.channelCount} canales`;
+
+}
+
+function startAudioMeter() {
+
+	if (!microphoneSource) return;
+
+	audioAnalyser = audioContext.createAnalyser();
+
+	audioAnalyser.fftSize = 256;
+
+	microphoneSource.connect(audioAnalyser);
+
+	const data = new Uint8Array(audioAnalyser.fftSize);
+
+	function updateAudioMeter() {
+
+		audioAnalyser.getByteTimeDomainData(data);
+
+		let sum = 0;
+
+		for (let i = 0; i < data.length; i++) {
+
+			const value = (data[i] - 128) / 128;
+
+			sum += value * value;
+
+		}
+
+		const rms = Math.sqrt(sum / data.length);
+
+		const level = Math.min(100, rms * 250);
+
+		audioMeterLevel.style.width = level + "%";
+
+		requestAnimationFrame(updateAudioMeter);
+
+	}
+
+	updateAudioMeter();
 
 }

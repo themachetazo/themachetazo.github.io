@@ -73,6 +73,7 @@ const themes = {
 		"--color-main-text": "#d5d5d5",
 		"--color-hightlight": "#1268A8",
 		"--color-dark-background": "#262626",
+		"--color-fretboard-background": "#262626",
 		"--color-light-background": "#353333",
 		"--color-tools": "#413F3F",
 		"--color-border": "rgba(255,255,255,0.12)",
@@ -274,6 +275,10 @@ let localStream;
 let mediaRecorder;
 let recordedChunks = [];
 
+let audioAnalyser = null;
+
+let hasMultimedia = false;
+
 /*==================================================
 	REFERENCIAS DOM: LAYOUT, LOADING
 ==================================================*/
@@ -328,6 +333,8 @@ const menuPopup = document.getElementById("menuPopup");
 const menuSelectorText = document.getElementById("menuSelectorText");
 const menuSelectorIcon = document.getElementById("menuSelectorIcon");
 
+const videoInfo = document.getElementById("videoInfo");
+const audioMeterLevel = document.getElementById("audioMeterLevel");
 
 /*==================================================
 	REFERENCIAS DOM: CONTROLES DEL DIAPASÓN
