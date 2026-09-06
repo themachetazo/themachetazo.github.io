@@ -18,7 +18,8 @@
 	--color-back:#000000;
 	--color-medium:#777777;	
 	--color-disabled:#D5D5D5;
-	--color-logo:#FFF;
+	--color-logo:#FFFFFF;
+	--color-selected:#999999;
 
 }
 
@@ -958,7 +959,7 @@ html {
 
 	border-left: 4px solid var(--color-text);
 
-	background: var(--color-hightlight);
+	background: var(--color-selected);
 
 	color: var(--color-text);
 
@@ -970,7 +971,7 @@ html {
 
 .projectOpenButton:not(:disabled):hover {
 
-	background: var(--color-tools);
+	background: var(--color-hightlight);
 
 	color: var(--color-text);
 
@@ -1131,7 +1132,7 @@ html {
 
 	background: transparent;
 
-	color: #999;
+	color: var(--color-selected);
 
 	cursor: pointer;
 
@@ -1147,7 +1148,7 @@ html {
 
 .projectDeleteButton:hover {
 
-	color:var(--color-red);
+	color:var(--color-hightlight);
 
 }
 
