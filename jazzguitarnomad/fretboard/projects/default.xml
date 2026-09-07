@@ -102,7 +102,7 @@
 		</nutNotes>
 	</project>
 
-	<project id="tw4j0" title="id" category="0001" projectType="fretboard" fretboardType="sequence">
+	<project id="tw4j0" title="id" category="0001" projectType="fretboard" fretboardType="fretboard">
 		<settings>
 			<orientation>horizontal</orientation>
 			<fretboardStyle>maple</fretboardStyle>
