@@ -464,7 +464,7 @@ function loadArrayNotas() {
 	// SCORE ARRAY
 	// --------------------------------
 
-	if (projectType === "sequence") {
+	if (fretboardType === "sequence") {
 
 		switch (tipoSecuencia) {
 
@@ -762,7 +762,7 @@ async function playMusic(){
 		closeTopControls();
 
 		libraryWasClosed = workspaceProjectsPanel.classList.contains("panelHidden");
-		closeProjectsPanel();
+		closeLibraryPanel();
 
 		if (isFretboardVisible) drawNotesAlpha(0.4);
 
@@ -773,7 +773,7 @@ async function playMusic(){
 
 		player.startWithCountIn(() => {
 
-			if (projectType == "sequence") {
+			if (fretboardType == "sequence") {
 
 				player.playSequence(NOTAS);
 
@@ -809,7 +809,7 @@ async function playMusic(){
 		if (topControlsWasOpen) openTopControls();
 		topControlsWasOpen = false;
 
-		if (!libraryWasClosed && appMode !== "Guest") openProjectsPanel();
+		if (!libraryWasClosed && appMode !== "Guest") openLibraryPanel();
 		libraryWasClosed = false;
 
 		if (chkAutoScroll.checked) {
@@ -863,7 +863,7 @@ async function metronomePlayStop(){
 
 	}
 
-	chkMetronomeOn.disabled = metronome.playing || cmbProjectType.value === "fretboard";
+	chkMetronomeOn.disabled = metronome.playing || cmbFretboardType.value === "fretboard";
 
 	btnPlayStopMetronome.focus({ focusVisible: true });
 
@@ -1891,7 +1891,7 @@ async function svg_scoreToPNG(canvas, fileName = "partitura.png") {
 
 async function scoreRender() {
 
-	let vexTabText = vexTab_generateVexTab(scoreArray,cmbKey.value,cmbBar.value,cmbFigure.value,cmbProjectType.value);
+	let vexTabText = vexTab_generateVexTab(scoreArray,cmbKey.value,cmbBar.value,cmbFigure.value,cmbFretboardType.value);
 
 	//if (chkNoteAccidentals.checked && cmbScoreStaves.value !== "tablature") vexTabText = vexTab_convertStringFretToNotes(vexTabText);
 

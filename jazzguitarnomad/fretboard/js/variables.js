@@ -43,7 +43,8 @@ let rotated = false;
 let projectBar = 4;
 let projectFigure = 1;
 let scoreScale = "auto";
-let projectType = "sequence";
+let projectType = "fretboard";
+let fretboardType = "sequence";
 let countBars = 0;
 let repetitionSequence = 2;
 let isFretboardVisible = true;
@@ -279,8 +280,6 @@ let recordedChunks = [];
 
 let audioAnalyser = null;
 
-let hasMultimedia = false;
-
 /*==================================================
 	REFERENCIAS DOM: LAYOUT, LOADING
 ==================================================*/
@@ -345,16 +344,12 @@ const audioMeterLevel = document.getElementById("audioMeterLevel");
 const fretboardPicker = document.getElementById("fretboardPicker");
 const colorPicker = document.getElementById("colorPicker");
 const colorPreview = document.getElementById("colorPreview");
-
 const noteText = document.getElementById("noteText");
 const titleText = document.getElementById("titleText");
 const chkTitle = document.getElementById("chkTitle");
 const chkTitleViewMode = document.getElementById("chkTitleViewMode");
 const chkScoreTitle = document.getElementById("chkScoreTitle");
 const chkScoreTitleViewMode = document.getElementById("chkScoreTitleViewMode");
-
-const workspaceTitleText = document.getElementById("workspaceTitleText");
-
 const numFrets = document.getElementById("numFrets");
 const btnLessFrets = document.getElementById("btnLessFrets");
 const btnMoreFrets = document.getElementById("btnMoreFrets");
@@ -362,13 +357,9 @@ const sliderFrets = document.getElementById("sliderFrets");
 const numberFrets = document.getElementById("numberFrets");
 const btnLessNumberFrets = document.getElementById("btnLessNumberFrets");
 const btnMoreNumberFrets = document.getElementById("btnMoreNumberFrets");
-
 const chkShowNumber = document.getElementById("chkShowNumber");
-
 const cmbDiapason = document.getElementById("cmbDiapason");
 const chkInlays = document.getElementById("chkInlays");
-
-const btnFretboardVisible = document.getElementById("btnFretboardVisible");
 
 
 /*==================================================
@@ -392,7 +383,7 @@ const topMidi = document.getElementById("topMidi");
 const topPlayStop = document.getElementById("topPlayStop");
 const topMetronome = document.getElementById("topMetronome");
 const topTempo = document.getElementById("topTempo");
-const topForm = document.getElementById("topForm");
+const topType = document.getElementById("topType");
 const topDireccion = document.getElementById("topDireccion");
 const topTimeSignature = document.getElementById("topTimeSignature");
 const topBuffer = document.getElementById("topBuffer");
@@ -414,8 +405,6 @@ const btnBarre = document.getElementById("btnBarre");
 const btnErase = document.getElementById("btnErase");
 const btnUndo = document.getElementById("btnUndo");
 const btnDisplay = document.getElementById("btnDisplay");
-const btnVertical = document.getElementById("btnVertical");
-const btnHorizontal = document.getElementById("btnHorizontal");
 const btnRotate = document.getElementById("btnRotate");
 
 /*==================================================
@@ -439,28 +428,37 @@ const otherProjectList = document.getElementById("otherProjectList");
 const cmbProjectCategory = document.getElementById("cmbProjectCategory");
 const btnNewCategory = document.getElementById("btnNewCategory");
 const btnDelCategory = document.getElementById("btnDelCategory");
-const btnShowProjectPanel = document.getElementById("btnShowProjectPanel");
 const btnToggleLibrary = document.getElementById("btnToggleLibrary");
 const projectPanelInfo = document.getElementById("projectPanelInfo");
 const projectPanelHeaderTitle = document.getElementById("projectPanelHeaderTitle");
 const libraryNameText = document.getElementById("libraryNameText");
 const libraryDescText = document.getElementById("libraryDescText");
-const workspaceProjectsPanel = document.getElementById("workspaceProjectsPanel");
 const btnNewChord = document.getElementById("btnNewChord");
 const btnDelChord = document.getElementById("btnDelChord");
 
+
 /*==================================================
-	REFERENCIAS DOM: CANVAS
+	REFERENCIAS DOM: WORKSPACE
 ==================================================*/
 
 const workspace = document.getElementById("workspace");
 const canvas = document.getElementById("workspaceCanvas");
 const ctx = canvas.getContext("2d");
 
+const cursor = document.getElementById("cursorTool");
+
+const workspaceMultimedia = document.getElementById("workspaceMultimedia");
 const workspaceFretboard = document.getElementById("workspaceFretboard");
 const workspaceScore = document.getElementById("workspaceScore");
+const workspaceProjectsPanel = document.getElementById("workspaceProjectsPanel");
+const workspaceTitleText = document.getElementById("workspaceTitleText");
 
-const cursor = document.getElementById("cursorTool");
+const btnPlayStop = document.getElementById("btnPlayStop");
+const btnShowProjectPanel = document.getElementById("btnShowProjectPanel");
+const btnFretboardVisible = document.getElementById("btnFretboardVisible");
+const btnScoreVisible = document.getElementById("btnScoreVisible");
+const btnVertical = document.getElementById("btnVertical");
+const btnHorizontal = document.getElementById("btnHorizontal");
 
 
 /*==================================================
@@ -483,6 +481,8 @@ const chkNoteNames = document.getElementById("chkNoteNames");
 const chkNoteAccidentals = document.getElementById("chkNoteAccidentals");
 
 const cmbProjectType = document.getElementById("cmbProjectType");
+const cmbFretboardType = document.getElementById("cmbFretboardType");
+const cmbFretboardTypeGuest = document.getElementById("cmbFretboardTypeGuest");
 const cmbTipoSecuencia = document.getElementById("cmbTipoSecuencia");
 const chkDireccion = document.getElementById("chkDireccion");
 
@@ -498,8 +498,6 @@ const workspaceTimeInfo = document.getElementById("workspaceTimeInfo");
 const workspaceMetronome = document.getElementById("workspaceMetronome");
 const player_repeatInfo = document.getElementById("player_repeatInfo");
 const metronome_Info = document.getElementById("metronome_Info");
-
-const btnPlayStop = document.getElementById("btnPlayStop");
 
 const cmbCountIn = document.getElementById("cmbCountIn");
 
@@ -527,7 +525,6 @@ const cmbScoreStaves = document.getElementById("cmbScoreStaves");
 const cmbScoreLayout = document.getElementById("cmbScoreLayout");
 const sliderScoreStaveDistance = document.getElementById("sliderScoreStaveDistance");
 const sliderScoreStaveMargin = document.getElementById("sliderScoreStaveMargin");
-const btnScoreVisible = document.getElementById("btnScoreVisible");
 
 const chkEditSound = document.getElementById("chkEditSound");
 
@@ -544,7 +541,7 @@ const cmbCamera = document.getElementById("cmbCamera");
 const cmbMicrophone = document.getElementById("cmbMicrophone");
 
 const btnAbrirVideo = document.getElementById("btnAbrirVideo");
-const btnAddVideo = document.getElementById("btnAddVideo");
+const btnAddMultimedia = document.getElementById("btnAddMultimedia");
 
 const videoContainer = document.getElementById("videoContainer");
 const btnAudioMute = document.getElementById("btnAudioMute");

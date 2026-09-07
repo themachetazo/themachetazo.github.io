@@ -21,7 +21,9 @@ async function loadProject(project) {
 	cmbProjectCategory.value = project.category ?? 1;
 	if (cmbProjectCategory.value !== project.category && categories.length > 0) cmbProjectCategory.value = categories[0].id;
 
-	projectType = project.projectType ?? "sequence";
+	projectType = project.projectType ?? "fretboard";
+
+	fretboardType = project.fretboardType ?? "sequence";
 
 	// --------------------------------
 	// SETTINGS
@@ -126,6 +128,10 @@ function newProject() {
 
 	resetControlsValues("newProject");
 
+	projectPanel.querySelector(".projectOpenButton.active")?.classList.remove("active");
+
+	showAlert("Nuevo proyecto creado.", "info");
+
 	return true;
 
 }
@@ -208,14 +214,14 @@ async function openXMLProjectsFile() {
 		// ABRIR PANEL
 		// --------------------------------
 
-		openProjectsPanel();
+		openLibraryPanel();
 
 
 		// --------------------------------
 		// RENDERIZAR LISTA
 		// --------------------------------
 
-		renderProjectsLibrary();
+		renderLibrary();
 
 		// --------------------------------
 		// ABRIR PRIMER PROYECTO
@@ -316,6 +322,8 @@ function parseProjectsXml(xml) {
 			category: projectNode.getAttribute("category"),
 
 			projectType: projectNode.getAttribute("projectType"),
+
+			fretboardType: projectNode.getAttribute("fretboardType"),
 
 			settings: {
 
@@ -423,6 +431,8 @@ function getCurrentProject() {
 		category: cmbProjectCategory.value,
 
 		projectType: cmbProjectType.value,
+
+		fretboardType: cmbFretboardType.value,
 
 		settings: {
 			orientation: orientation,
@@ -538,88 +548,119 @@ function projectToXml(project, indent = "\t") {
 		`id="${project.id}" ` +
 		`title="${escapeXml(project.title)}" ` +
 		`category="${escapeXml(project.category)}" ` +
-		`projectType="${escapeXml(project.projectType)}">`
+		`projectType="${escapeXml(project.projectType)}" ` +
+		`fretboardType="${escapeXml(project.fretboardType)}">`
 	);
 
-	lines.push(`${indent}\t<settings>`);
-	lines.push(`${indent}\t\t<orientation>${escapeXml(project.settings.orientation)}</orientation>`);
-	lines.push(`${indent}\t\t<fretboardStyle>${escapeXml(project.settings.fretboardStyle)}</fretboardStyle>`);
-	lines.push(`${indent}\t\t<fretCount>${project.settings.fretCount}</fretCount>`);
-	lines.push(`${indent}\t\t<displayMode>${project.settings.displayMode}</displayMode>`);
-	lines.push(`${indent}\t\t<inlays>${project.settings.inlays}</inlays>`);
-	lines.push(`${indent}\t\t<rotated>${project.settings.rotated}</rotated>`);
-	lines.push(`${indent}\t\t<bar>${project.settings.bar}</bar>`);
-	lines.push(`${indent}\t\t<scoreScale>${project.settings.scoreScale}</scoreScale>`);
-	lines.push(`${indent}\t\t<tipoSecuencia>${project.settings.tipoSecuencia}</tipoSecuencia>`);
-	lines.push(`${indent}\t\t<direccion>${project.settings.direccion}</direccion>`);
-	lines.push(`${indent}\t\t<countBars>${project.settings.countBars}</countBars>`);
-	lines.push(`${indent}\t\t<repetitionSequence>${project.settings.repetitionSequence}</repetitionSequence>`);
-	lines.push(`${indent}\t\t<isFretboardVisible>${project.settings.isFretboardVisible}</isFretboardVisible>`);
-	lines.push(`${indent}\t\t<isScoreVisible>${project.settings.isScoreVisible}</isScoreVisible>`);
-	lines.push(`${indent}\t\t<currentInstrument>${project.settings.currentInstrument}</currentInstrument>`);
-	lines.push(`${indent}\t\t<fretNumbers>${project.settings.fretNumbers}</fretNumbers>`);
-	lines.push(`${indent}\t\t<showFretNumbers>${project.settings.showFretNumbers}</showFretNumbers>`);
-	lines.push(`${indent}\t\t<bpm>${project.settings.bpm}</bpm>`);
-	lines.push(`${indent}\t\t<key>${project.settings.key}</key>`);
-	lines.push(`${indent}\t\t<scoreStaves>${project.settings.scoreStaves}</scoreStaves>`);
-	lines.push(`${indent}\t\t<scoreLayout>${project.settings.scoreLayout}</scoreLayout>`);
-	lines.push(`${indent}\t\t<swing>${project.settings.swing}</swing>`);
-	lines.push(`${indent}\t\t<metronomeOn>${project.settings.metronomeOn}</metronomeOn>`);
-	lines.push(`${indent}\t\t<notation>${project.settings.notation}</notation>`);
-	lines.push(`${indent}\t</settings>`);
+	if (cmbFretboardType === "fretboard"){
 
-	lines.push(`${indent}\t<notes>`);
+		lines.push(`${indent}\t<settings>`);
+		lines.push(`${indent}\t\t<orientation>${escapeXml(project.settings.orientation)}</orientation>`);
+		lines.push(`${indent}\t\t<fretboardStyle>${escapeXml(project.settings.fretboardStyle)}</fretboardStyle>`);
+		lines.push(`${indent}\t\t<fretCount>${project.settings.fretCount}</fretCount>`);
+		lines.push(`${indent}\t\t<displayMode>${project.settings.displayMode}</displayMode>`);
+		lines.push(`${indent}\t\t<inlays>${project.settings.inlays}</inlays>`);
+		lines.push(`${indent}\t\t<rotated>${project.settings.rotated}</rotated>`);
+		lines.push(`${indent}\t\t<bar>${project.settings.bar}</bar>`);
+		lines.push(`${indent}\t\t<scoreScale>${project.settings.scoreScale}</scoreScale>`);
+		lines.push(`${indent}\t\t<tipoSecuencia>${project.settings.tipoSecuencia}</tipoSecuencia>`);
+		lines.push(`${indent}\t\t<direccion>${project.settings.direccion}</direccion>`);
+		lines.push(`${indent}\t\t<countBars>${project.settings.countBars}</countBars>`);
+		lines.push(`${indent}\t\t<repetitionSequence>${project.settings.repetitionSequence}</repetitionSequence>`);
+		lines.push(`${indent}\t\t<isFretboardVisible>${project.settings.isFretboardVisible}</isFretboardVisible>`);
+		lines.push(`${indent}\t\t<isScoreVisible>${project.settings.isScoreVisible}</isScoreVisible>`);
+		lines.push(`${indent}\t\t<currentInstrument>${project.settings.currentInstrument}</currentInstrument>`);
+		lines.push(`${indent}\t\t<fretNumbers>${project.settings.fretNumbers}</fretNumbers>`);
+		lines.push(`${indent}\t\t<showFretNumbers>${project.settings.showFretNumbers}</showFretNumbers>`);
+		lines.push(`${indent}\t\t<bpm>${project.settings.bpm}</bpm>`);
+		lines.push(`${indent}\t\t<key>${project.settings.key}</key>`);
+		lines.push(`${indent}\t\t<scoreStaves>${project.settings.scoreStaves}</scoreStaves>`);
+		lines.push(`${indent}\t\t<scoreLayout>${project.settings.scoreLayout}</scoreLayout>`);
+		lines.push(`${indent}\t\t<swing>${project.settings.swing}</swing>`);
+		lines.push(`${indent}\t\t<metronomeOn>${project.settings.metronomeOn}</metronomeOn>`);
+		lines.push(`${indent}\t\t<notation>${project.settings.notation}</notation>`);
+		lines.push(`${indent}\t</settings>`);
 
-	project.notes.forEach(note => {
+	}else{
+		lines.push(`${indent}\t<settings/>`);
+	}
 
-		lines.push(
-			`${indent}\t\t<note ` +
-			`string="${note.string}" ` +
-			`fret="${note.fret}" ` +
-			`color="${escapeXml(note.color)}" ` +
-			`text="${escapeXml(note.text)}" ` + 
-			`chord="${escapeXml(note.chord)}" ` + 
-			`order="${escapeXml(note.order)}"/>`
-		);
+	if (project.notes && project.notes.length > 0) {
 
-	});
+		lines.push(`${indent}\t<notes>`);
 
-	lines.push(`${indent}\t</notes>`);
+		project.notes.forEach(note => {
 
-	lines.push(`${indent}\t<barres>`);
+			lines.push(
+				`${indent}\t\t<note ` +
+				`string="${note.string}" ` +
+				`fret="${note.fret}" ` +
+				`color="${escapeXml(note.color)}" ` +
+				`text="${escapeXml(note.text)}" ` + 
+				`chord="${escapeXml(note.chord)}" ` + 
+				`order="${escapeXml(note.order)}"/>`
+			);
 
-	project.barres.forEach(barre => {
+		});
 
-		lines.push(
-			`${indent}\t\t<barre ` +
-			`fret="${barre.fret}" ` +
-			`startString="${barre.startString}" ` +
-			`color="${escapeXml(barre.color)}" ` +
-			`text="${escapeXml(barre.text)}" ` + 
-			`chord="${escapeXml(barre.chord)}" ` + 
-			`order="${escapeXml(barre.order)}"/>`
-		);
+		lines.push(`${indent}\t</notes>`);
 
-	});
+	} else {
 
-	lines.push(`${indent}\t</barres>`);
+		lines.push(`${indent}\t<notes/>`);
 
-	lines.push(`${indent}\t<nutNotes>`);
+	}
 
-	project.nutNotes.forEach(note => {
+	if (project.barres && project.barres.length > 0) {
 
-		lines.push(
-			`${indent}\t\t<nutNote ` +
-			`string="${note.string}" ` +
-			`color="${escapeXml(note.color)}" ` +
-			`text="${escapeXml(note.text)}" ` + 
-			`chord="${escapeXml(note.chord)}" ` + 
-			`order="${escapeXml(note.order)}"/>`
-		);
+		lines.push(`${indent}\t<barres>`);
 
-	});
+		project.barres.forEach(barre => {
 
-	lines.push(`${indent}\t</nutNotes>`);
+			lines.push(
+				`${indent}\t\t<barre ` +
+				`fret="${barre.fret}" ` +
+				`startString="${barre.startString}" ` +
+				`color="${escapeXml(barre.color)}" ` +
+				`text="${escapeXml(barre.text)}" ` + 
+				`chord="${escapeXml(barre.chord)}" ` + 
+				`order="${escapeXml(barre.order)}"/>`
+			);
+
+		});
+
+		lines.push(`${indent}\t</barres>`);
+
+	} else {
+
+		lines.push(`${indent}\t<barres/>`);
+
+	}
+
+	if (project.nutNotes && project.nutNotes.length > 0) {
+
+		lines.push(`${indent}\t<nutNotes>`);
+
+		project.nutNotes.forEach(note => {
+
+			lines.push(
+				`${indent}\t\t<nutNote ` +
+				`string="${note.string}" ` +
+				`color="${escapeXml(note.color)}" ` +
+				`text="${escapeXml(note.text)}" ` + 
+				`chord="${escapeXml(note.chord)}" ` + 
+				`order="${escapeXml(note.order)}"/>`
+			);
+
+		});
+
+		lines.push(`${indent}\t</nutNotes>`);
+
+	} else {
+
+		lines.push(`${indent}\t<nutNotes/>`);
+
+	}
 
 	lines.push(`${indent}</project>`);
 
@@ -627,7 +668,7 @@ function projectToXml(project, indent = "\t") {
 
 }
 
-function renderProjectsLibrary() {
+function renderLibrary() {
 
 	// Eliminar todas las categorías actuales excepto la cabecera
 	projectPanel.querySelectorAll(".projectCategory").forEach(category => category.remove());
@@ -725,20 +766,38 @@ function renderProjectsLibrary() {
 			const titleSpan = document.createElement("span");
 
 			titleSpan.className = "projectTitle";
-			titleSpan.innerHTML = hasMultimedia ? "<i class='fa-solid fa-photo-film'></i>" + project.title : project.title;
 
-/*
-<i class="fa-solid fa-photo-film"></i>
-<i class='fa-solid fa-guitar'></i>
-<i class="fa-solid fa-video"></i>
-<i class="fa-solid fa-compact-disc"></i>
-<i class="fa-solid fa-image"></i>
-<i class="fa-solid fa-music"></i>
-<i class="fa-solid fa-file-pdf"></i>
-<i class="fa-brands fa-code"></i>
-<i class="fa-brands fa-file-code"></i>
-<i class="fa-solid fa-link"></i>
-*/
+			let iType = "<i class='fa-solid fa-guitar'></i>";
+
+			switch (cmbProjectType.value){
+
+				case "fretboard":
+					iType = "<i class='fa-solid fa-guitar'></i>";
+					break;
+				case "video":
+					iType = "<i class='fa-solid fa-video'></i>";
+					break;
+				case "audio":
+					iType = "<i class='fa-solid fa-compact-disc'></i>";
+					break;
+				case "image":
+					iType = "<i class='fa-solid fa-image'></i>";
+					break;
+				case "score":
+					iType = "<i class='fa-solid fa-music'></i>";
+					break;
+				case "pdf":
+					iType = "<i class='fa-solid fa-file-pdf'></i>";
+					break;
+				case "html":
+					iType = "<i class='fa-solid fa-code'></i>";
+					break;
+				case "embed":
+					iType = "<i class='fa-solid fa-link'></i>";
+					break;
+			}
+
+			titleSpan.innerHTML = iType + project.title;
 
 			openButton.appendChild(titleSpan);
 
@@ -884,7 +943,7 @@ async function saveCurrentProject() {
 
 		projectModified = false;
 
-		renderProjectsLibrary();
+		renderLibrary();
 
 		openProjectCategory(project.category);
 
@@ -980,7 +1039,7 @@ async function deleteProject(id) {
 	saveProjectsFile();
 
 	// Actualizar la lista
-	renderProjectsLibrary();
+	renderLibrary();
 
 	// Crear un proyecto nuevo
 	newProject();
@@ -1127,7 +1186,7 @@ function addCategory() {
 
 	refreshCategoryList();
 
-	renderProjectsLibrary();
+	renderLibrary();
 
 	cmbProjectCategory.value = category.id;
 
@@ -1197,7 +1256,7 @@ function deleteCategory() {
 
 	refreshCategoryList();
 
-	renderProjectsLibrary();
+	renderLibrary();
 
 	if (categories.length > 0) {
 		cmbProjectCategory.value = categories[0].id;

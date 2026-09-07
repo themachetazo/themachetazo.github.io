@@ -10,23 +10,25 @@ function drawFretboard() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	// Fondo del canvas
+	if (neckImageLoaded){
 /*
-	const colorBack = getComputedStyle(document.documentElement).getPropertyValue("--color-dark-background").trim();
+		const colorBack = getComputedStyle(document.documentElement).getPropertyValue("--color-dark-background").trim();
 
-	ctx.fillStyle = colorBack;
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
+		ctx.fillStyle = colorBack;
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
 */
+	}else{
+		ctx.fillStyle = "#FFFFFF";
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+	}
 
 	// Sobresalido discreto de la imagen del diapasón
-
 	neckBleed = Math.max(3, stringSpace * 0.20);
 
 	// Radio de las esquinas redondeadas
-
 	neckRadius = Math.max(5, stringSpace * 0.28);
 
 	// Medidas finales de la imagen
-
 	imageLeft = boardleft - neckBleed;
 	imageTop = boardtop - neckBleed;
 	imageWidth = boardWidth + neckBleed * 2;
@@ -178,9 +180,15 @@ function drawFretboard() {
 
 		} while (ctx.measureText(title).width > boardWidth - 10 && fontSize > 10);
 
-		const colorText = getComputedStyle(document.documentElement).getPropertyValue("--color-text").trim();
+		if (neckImageLoaded){
 
-		ctx.fillStyle = colorText;
+			const colorText = getComputedStyle(document.documentElement).getPropertyValue("--color-text").trim();
+
+			ctx.fillStyle = colorText;
+
+		}else{
+			ctx.fillStyle = "#000000";
+		}
 
 		ctx.textAlign = "left";
 		ctx.textBaseline = "middle";
@@ -1154,9 +1162,12 @@ function drawFretNumbers() {
 
 	ctx.save();
 
-	const colorText = getComputedStyle(document.documentElement).getPropertyValue("--color-text").trim();
-
-	ctx.fillStyle = colorText;
+	if (neckImageLoaded){
+		const colorText = getComputedStyle(document.documentElement).getPropertyValue("--color-text").trim();
+		ctx.fillStyle = colorText;
+	}else{
+		ctx.fillStyle = "#000000";
+	}
 
 	ctx.font = "12px Segoe UI";
 	ctx.textBaseline = "middle";
@@ -1209,9 +1220,12 @@ function drawStringNumbers() {
 
 	ctx.save();
 
-	const colorText = getComputedStyle(document.documentElement).getPropertyValue("--color-text").trim();
-
-	ctx.fillStyle = colorText;
+	if (neckImageLoaded){
+		const colorText = getComputedStyle(document.documentElement).getPropertyValue("--color-text").trim();
+		ctx.fillStyle = colorText;
+	}else{
+		ctx.fillStyle = "#000000";
+	}
 
 	ctx.font = "12px Segoe UI";
 	ctx.textAlign = "center";

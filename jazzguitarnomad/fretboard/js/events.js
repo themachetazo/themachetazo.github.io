@@ -219,13 +219,13 @@ document.addEventListener("playerBeat", (e) => {
 				if (fretboardPlaybackBackground) ctx.putImageData(fretboardPlaybackBackground,0,0);
 
 				// Pintar cada nota o acorde
-				if (projectType === "sequence") {
+				if (fretboardType === "sequence") {
 
 					const note = scoreArray[sequenceIndex];
 
 					if (note) drawPlayingMarker(note.x,note.y);
 
-				}else if (projectType === "chord") {
+				}else if (fretboardType === "chord") {
 
 					const chord = scoreArray.find(note => note.chord === sequenceIndex);
 
@@ -311,7 +311,7 @@ document.addEventListener("playerBeat", (e) => {
 			if (topControlsWasOpen) openTopControls();
 			topControlsWasOpen = false;
 
-			if (!libraryWasClosed && appMode !== "Guest") openProjectsPanel();
+			if (!libraryWasClosed && appMode !== "Guest") openLibraryPanel();
 			libraryWasClosed = false;
 
 			break;
@@ -349,10 +349,7 @@ canvas.addEventListener("mouseleave", () => {
 	hoverCell = null;
 	hoverNut = null;
 
-	if (editMode !== "view") {
-
-		drawNotes();
-	}
+	if (editMode !== "view") drawNotes();
 
 });
 
@@ -367,7 +364,7 @@ canvas.addEventListener("mousemove", (e) => {
 			hoverCell = null;
 			hoverNut = null;
 
-			drawNotes();
+			if (editMode !== "view") drawNotes();
 
 		}
 
@@ -390,7 +387,7 @@ canvas.addEventListener("click", (e) => {
 	if (editMode === "view") return;
 
 	let chord = cmbChords.value;
-	if (cmbProjectType.value !== "chord") chord = "";
+	if (cmbFretboardType.value !== "chord") chord = "";
 
 	projectModified = true;
 
@@ -406,7 +403,7 @@ canvas.addEventListener("click", (e) => {
 			if (chkEditSound.checked && displayMode) player.playNoteFor(fretboardMapNotes[nutString][0], 1);
 
 			// En acordes no permitir dos veces la misma nota.
-			if (cmbProjectType.value === "chord" && chordNoteExists(nutString,0,chord)) return;
+			if (cmbFretboardType.value === "chord" && chordNoteExists(nutString,0,chord)) return;
 
 			noteOrder++;
 
@@ -438,7 +435,7 @@ canvas.addEventListener("click", (e) => {
 
 		noteText.value = "";
 
-		if (cmbProjectType.value !== "chord"){
+		if (cmbFretboardType.value !== "chord"){
 			aSequence = buildOrderedSequence();
 		}else{
 			aChords = buildOrderedChords();
@@ -449,7 +446,7 @@ canvas.addEventListener("click", (e) => {
 		if (isScoreVisible) scoreRender();
 
 		//Hacer sonar el acorde
-		if (chkEditSound.checked && displayMode && cmbProjectType.value === "chord"){
+		if (chkEditSound.checked && displayMode && cmbFretboardType.value === "chord"){
 			const chordToPlay = aChords.filter(item => item.chord === parseInt(cmbChords.value, 10)).map(item => item.note);		
 			if (chordToPlay.length > 0) player.playChordFor(chordToPlay, 1);
 		}
@@ -468,7 +465,7 @@ canvas.addEventListener("click", (e) => {
 
 		case "barre":
 
-			if (chkEditSound.checked && displayMode && cmbProjectType.value !== "chord") player.playNoteFor(fretboardMapNotes[cell.string][cell.fret], 1);
+			if (chkEditSound.checked && displayMode && cmbFretboardType.value !== "chord") player.playNoteFor(fretboardMapNotes[cell.string][cell.fret], 1);
 
 			noteOrder++;
 
@@ -492,7 +489,7 @@ canvas.addEventListener("click", (e) => {
 			});
 
 			// En acordes, no crear una cejilla redundante si ya existe una cejilla que empieza en esa cuerda y tiene ese traste.
-			if (cmbProjectType.value === "chord" &&
+			if (cmbFretboardType.value === "chord" &&
 				barreNotes.some(barre =>
 					barre.fret === cell.fret &&
 					barre.startString === cell.string &&
@@ -513,10 +510,10 @@ canvas.addEventListener("click", (e) => {
 
 		case "note":
 
-			if (chkEditSound.checked && displayMode && cmbProjectType.value !== "chord") player.playNoteFor(fretboardMapNotes[cell.string][cell.fret], 1);
+			if (chkEditSound.checked && displayMode && cmbFretboardType.value !== "chord") player.playNoteFor(fretboardMapNotes[cell.string][cell.fret], 1);
 
 			// Solo los acordes impiden repetir una nota. En secuencias se permite repetirla.
-			if (cmbProjectType.value === "chord" && chordNoteExists(cell.string,cell.fret,chord)) return;
+			if (cmbFretboardType.value === "chord" && chordNoteExists(cell.string,cell.fret,chord)) return;
 
 			saveHistory();
 
@@ -538,13 +535,13 @@ canvas.addEventListener("click", (e) => {
 			const noteExists = notes.some(note =>
 				note.string === cell.string &&
 				note.fret === cell.fret &&
-				(cmbProjectType.value !== "chord" || Number(note.chord) === Number(chord))
+				(cmbFretboardType.value !== "chord" || Number(note.chord) === Number(chord))
 			);
 
 			const barreExists = barreNotes.some(barre =>
 				barre.fret === cell.fret &&
 				cell.string <= barre.startString &&
-				(cmbProjectType.value !== "chord" || Number(barre.chord) === Number(chord))
+				(cmbFretboardType.value !== "chord" || Number(barre.chord) === Number(chord))
 			);
 
 			if (noteExists || barreExists) {
@@ -558,7 +555,7 @@ canvas.addEventListener("click", (e) => {
 						return !(
 							note.string === cell.string &&
 							note.fret === cell.fret &&
-							(cmbProjectType.value !== "chord" || Number(note.chord) === Number(chord))
+							(cmbFretboardType.value !== "chord" || Number(note.chord) === Number(chord))
 						);
 
 					});
@@ -572,7 +569,7 @@ canvas.addEventListener("click", (e) => {
 							return true;
 						}
 
-						if (cmbProjectType.value === "chord" && Number(barre.chord) !== Number(chord)) {
+						if (cmbFretboardType.value === "chord" && Number(barre.chord) !== Number(chord)) {
 							return true;
 						}
 
@@ -594,7 +591,7 @@ canvas.addEventListener("click", (e) => {
 
 	noteText.value = "";
 
-	if (cmbProjectType.value !== "chord"){
+	if (cmbFretboardType.value !== "chord"){
 		aSequence = buildOrderedSequence();
 	}else{
 		aChords = buildOrderedChords();
@@ -605,7 +602,7 @@ canvas.addEventListener("click", (e) => {
 	if (isScoreVisible) scoreRender();
 
 	//Hacer sonar el acorde
-	if (chkEditSound.checked && displayMode && cmbProjectType.value === "chord"){
+	if (chkEditSound.checked && displayMode && cmbFretboardType.value === "chord"){
 		const chordToPlay = aChords.filter(item => item.chord === parseInt(cmbChords.value, 10)).map(item => item.note);		
 		if (chordToPlay.length > 0) player.playChordFor(chordToPlay, 1);
 	}
@@ -620,17 +617,13 @@ canvas.addEventListener("click", (e) => {
 
 cmbNoteNames.addEventListener("change",()=>{
 
-	if (isFretboardVisible) {
-		drawNotes();
-	}
+	if (isFretboardVisible) drawNotes();
 
 });
 
 chkNoteNames.addEventListener("change",()=>{
 
-	if (isFretboardVisible) {
-		drawNotes();
-	}
+	if (isFretboardVisible) drawNotes();
 
 });
 
@@ -767,9 +760,12 @@ titleText.addEventListener("input", () => {
 
 	workspaceTitleText.textContent = projectTitle;
 
-	if (isFretboardVisible) resizeCanvas();
+	if (cmbProjectType.value === "fretboard"){
 
-	if (isScoreVisible) scoreRender();
+		if (isFretboardVisible) resizeCanvas();
+
+		if (isScoreVisible) scoreRender();
+	}
 
 });
 
@@ -882,8 +878,6 @@ btnNewProject.addEventListener("click", () => {
 	if (newProject()){
 
 		renderProject();
-
-		showAlert("Nuevo proyecto creado.", "info");
 
 	}
 
@@ -1168,27 +1162,40 @@ cmbFigure.addEventListener("change", function () {
 
 cmbKey.addEventListener("change", function () {
 
-	if (isFretboardVisible){
-		drawNotes();
-	}
+	if (isFretboardVisible) drawNotes();
 
 	if (isScoreVisible) scoreRender();
 
 });
 
-cmbProjectType.addEventListener("change", function () {
+cmbProjectType.addEventListener("change", () => {
 
 	const oldType = projectType;
+
+	projectType = cmbProjectType.value;
 
 	if (newProject()) {
 	
 		renderProject();
 
 	}else{
-
-		this.value = oldType;
+		
+		cmbProjectType.value = oldType;
+		return;
 
 	}
+
+});
+
+cmbFretboardType.addEventListener("change", function () {
+
+	changeComboFretboardType(cmbFretboardType.value);
+
+});
+
+cmbFretboardTypeGuest.addEventListener("change", function () {
+
+	changeComboFretboardType(cmbFretboardTypeGuest.value);
 
 });
 
@@ -1592,6 +1599,6 @@ cmbMicrophone.addEventListener("change", () => {
 
 });
 
-btnAddVideo.addEventListener("click", () => {
+btnAddMultimedia.addEventListener("click", () => {
 alert(1);	
 });
