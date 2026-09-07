@@ -884,6 +884,45 @@ html {
 
 }
 
+#workspaceMultimedia{
+
+	grid-area:multimedia;
+
+	display:none;
+
+	min-width:0;
+	min-height:0;
+
+	overflow:auto;
+
+	background:var(--color-dark-background);
+
+}
+
+#workspace.multimedia{
+
+	grid-template-columns:1fr;
+
+	grid-template-rows:1fr;
+
+	grid-template-areas:
+		"multimedia";
+
+}
+
+#workspace.multimedia #workspaceFretboard,
+#workspace.multimedia #workspaceScore{
+
+	display:none;
+
+}
+
+#workspace.multimedia #workspaceMultimedia{
+
+	display:block;
+
+}
+
 /* ===========================
    PROJECTS PANEL
 =========================== */
@@ -1352,8 +1391,8 @@ html {
 }
 
 #mainMenu button:focus-visible {
-	outline: 2px solid var(--color-main-text);
-	outline-offset: 2px;
+	outline: 1px solid var(--color-main-text);
+	outline-offset: 1px;
 }
 
 #brandName{
@@ -2084,6 +2123,7 @@ html {
 
 	height:30px;
 	min-width:110px;
+	max-width:140px;
 
 	padding:0 6px 0 6px;
 
@@ -2178,8 +2218,8 @@ html {
 }
 
 .toolbarTop-Controls input:not([type="range"]):focus-visible {
-	outline: 2px solid var(--color-main-text);
-	outline-offset: 2px;
+	outline: 1px solid var(--color-main-text);
+	outline-offset: 1px;
 }
 
 input[type="range"] {
@@ -2292,8 +2332,8 @@ input[type="range"] {
 #workspaceHeader button:focus-visible,
 #videoContainer button:focus-visible{
 
-	outline:2px solid var(--color-main-text);
-	outline-offset:2px;
+	outline:1px solid var(--color-main-text);
+	outline-offset:1px;
 
 }
 
@@ -2389,13 +2429,12 @@ input[type="range"] {
 #btnUndo,
 #btnCreate,
 #btnOpen,
-#btnAbrirVideo,
-#btnAddVideo,
 #btnSaveAudio,
 #btnRenderBuffer,
 #btnPlayStopBuffer,
 #btnCopyCanvas,
-#btnDownloadCanvas{
+#btnDownloadCanvas,
+#btnNewProjectGuest{
 
 	display:flex;
 	flex-direction:row;
@@ -3055,9 +3094,8 @@ input[type="range"] {
 	#btnUndo,
 	#btnCreate,
 	#btnOpen,
-	#btnAbrirVideo,
-	#btnAddVideo,
-	#btnDownloadCanvas{
+	#btnDownloadCanvas,
+	#btnNewProjectGuest{
 		width: 30px;
 		min-width:auto;
 	}
@@ -3335,25 +3373,5 @@ input[type="range"] {
 
 	}
 
-	.video-devices {
 
-		display:grid;
-
-		grid-template-columns:auto 1fr;
-
-		align-items:center;
-
-		width:100%;
-
-		gap:6px 8px;
-
-	}
-
-	.video-devices select {
-
-		width:100%;
-
-		min-width:0;
-
-	}
 }

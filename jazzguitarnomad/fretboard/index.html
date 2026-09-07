@@ -49,12 +49,10 @@
 					<button type="button" id="btnVideoRecord" class="buttonPlay"><i class="fa-solid fa-circle"></i><span>Grabar</span></button>
 				</div>
 				<div class="video-devices">
-					<span>Cámaras: </span><select id="cmbCamera"></select>
-					<span>Micrófonos: </span><select id="cmbMicrophone"></select>
+					<select id="cmbCamera"></select>
+					<select id="cmbMicrophone"></select>
 				</div>
-				<div id="videoInfo" class="video-info">
-					<span>Resolución: 1920 x 1080 - 30 fps</span>
-				</div>
+				<div id="videoInfo" class="video-info"><span></span></div>
 			</div>
 		</div>
 	</div><!-- Fin videoContainer -->
@@ -184,6 +182,29 @@
 						</div>
 					</div>
 
+					<div class="toolbarTop-Controls" id="topType">
+						<span>TIPO</span>
+						<div class="toolRow">
+							<select id="cmbProjectType">
+							    <option value="fretboard" selected>Fretboard</option>
+							    <option value="video">Vídeo</option>
+							    <option value="audio">Audio</option>
+							    <option value="image">Imágen</option>
+							    <option value="score">Partitura</option>
+							    <option value="pdf">PDF</option>
+							    <option value="html">HTML</option>
+							    <option value="embed">Embeb</option>
+							</select>
+						</div>
+						<div class="toolRow">
+							<select id="cmbFretboardType">
+							    <option value="fretboard">Mástil</option>
+							    <option value="sequence" selected>Secuencia</option>
+							    <option value="chord">Acorde</option>
+							</select>
+						</div>
+					</div>
+
 					<div class="toolbarTop-Controls" id="topTitleViewMode">
 						<span>TÍTULO</span>
 						<div class="toolRow">
@@ -206,6 +227,13 @@
 						<span>PROYECTO</span>
 						<div class="toolRow">
 							<button type="button" id="btnNewProjectGuest" title="Nuevo proyecto (Ctrl+P)"><i class="fa-solid fa-file"></i><span>Nuevo</span></button>
+						</div>
+						<div class="toolRow">
+							<select id="cmbFretboardTypeGuest">
+							    <option value="fretboard">Mástil</option>
+							    <option value="sequence" selected>Secuencia</option>
+							    <option value="chord">Acorde</option>
+							</select>
 						</div>
 					</div>
 
@@ -249,29 +277,6 @@
 						<div class="toolRow">
 							<span>Texto</span>
 							<input id="noteText" type="text" maxlength="4" placeholder="A">
-						</div>
-					</div>
-
-					<div class="toolbarTop-Controls" id="topForm">
-						<span>TIPO PROYECTO</span>
-						<div class="toolRow">
-							<select id="cmbFretboardType">
-							    <option value="fretboard" selected>Fretboard</option>
-							    <option value="video">Vídeo</option>
-							    <option value="audio">Audio</option>
-							    <option value="image">Imágen</option>
-							    <option value="score">Partitura</option>
-							    <option value="pdf">PDF</option>
-							    <option value="html">HTML</option>
-							    <option value="embed">Embeb</option>
-							</select>
-						</div>
-						<div class="toolRow">
-							<select id="cmbProjectType">
-							    <option value="fretboard">Mástil</option>
-							    <option value="sequence" selected>Secuencia</option>
-							    <option value="chord">Acorde</option>
-							</select>
 						</div>
 					</div>
 
@@ -636,10 +641,14 @@
 					<div class="toolbarTop-Controls" id="topVideo">
 						<span>VIDEO</span>
 						<div class="toolRow">
-							<button type="button" id="btnAbrirVideo" title="Abrir panel de video" disabled><i class="fa-solid fa-video"></i><span>Grabar</span></button>
+							<button type="button" id="btnAbrirVideo" title="Abrir panel de video"><i class="fa-solid fa-video"></i><span>Grabar</span></button>
 						</div>
+					</div>
+
+					<div class="toolbarTop-Controls" id="topMultimedia">
+						<span>MULTIMEDIA</span>
 						<div class="toolRow">
-							<button type="button" id="btnAddVideo" title="Añadir video al proyecto" disabled><i class="fa-solid fa-folder-plus"></i><span>Añadir</span></button>
+							<button type="button" id="btnAddMultimedia" title="Añadir elemento multimedia al proyecto"><i class="fa-solid fa-folder-plus"></i><span>Añadir</span></button>
 						</div>
 					</div>
 
@@ -656,7 +665,7 @@
 
 			<div class="workspaceControls" id="workspaceControls">
 				<button type="button" id="btnPlayStop" class="buttonPlay" title="Reproducir" disabled><i class="fa-solid fa-play"></i><span>Play</span></button>
-				<button type="button" id="btnShowProjectPanel" title="Ver librería"><i class="fa-solid fa-folder-tree"></i><span>Proyectos</span></button>
+				<button type="button" id="btnShowProjectPanel" title="Ver librería"><i class="fa-solid fa-folder-open"></i><span>Proyectos</span></button>
 				<button type="button" id="btnFretboardVisible" title="Ver mástil"><i class="fa-solid fa-guitar"></i><span>Fretboard</span></button>
 				<button type="button" id="btnScoreVisible" title="Ver partitura"><i class="fa-solid fa-music"></i><span>Partitura</span></button>
 				<button type="button" id="btnVertical" class="active" title="Cambiar orientación"><i class="fa-solid fa-arrows-up-down"></i><span>Vertical</span></button>
@@ -682,7 +691,7 @@
 
 
 
-		<!-- PROJECTOS, CANVAS Y PARTITURA-->
+		<!-- PROJECTOS, MULTIMEDIA, CANVAS Y PARTITURA-->
 		<main id="workspace" class="horizontal">
 
 			<!-- PANEL MENU IZQUIERDO -->
@@ -714,6 +723,8 @@
 
 				</div>
 			</div> <!-- Fin Panel izquierdo -->
+
+			<div id="workspaceMultimedia"></div>
 
 			<div id="workspaceFretboard">
 				<canvas id="workspaceCanvas"></canvas>
