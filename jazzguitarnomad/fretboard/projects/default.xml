@@ -9,7 +9,7 @@
 		<category id="uqoca7">ID</category>
 	</categories>
 
-	<project id="d692856064174c9b89ca3425b5d73143" title="Cmaj7" category="0001" projectType="chord">
+	<project id="d692856064174c9b89ca3425b5d73143" title="Cmaj7" category="0001" projectType="fretboard" fretboardType="chord">
 		<settings>
 			<orientation>horizontal</orientation>
 			<fretboardStyle>maple</fretboardStyle>
@@ -47,13 +47,11 @@
 			<note string="1" fret="8" color="#ffcc00" text="" chord="1" order="8"/>
 			<note string="0" fret="7" color="#ffcc00" text="" chord="1" order="9"/>
 		</notes>
-		<barres>
-		</barres>
-		<nutNotes>
-		</nutNotes>
+		<barres></barres>
+		<nutNotes></nutNotes>
 	</project>
 
-	<project id="13fe802b847143fab6166c5d57222b92" title="tab" category="2345" projectType="sequence">
+	<project id="13fe802b847143fab6166c5d57222b92" title="tab" category="2345" projectType="fretboard" fretboardType="sequence">
 		<settings>
 			<orientation>horizontal</orientation>
 			<fretboardStyle>blank</fretboardStyle>
@@ -98,14 +96,13 @@
 			<note string="0" fret="3" color="#00aa00" text="" chord="" order="16"/>
 			<note string="0" fret="4" color="#00aa00" text="" chord="" order="17"/>
 		</notes>
-		<barres>
-		</barres>
+		<barres></barres>
 		<nutNotes>
 			<nutNote string="2" color="#00aa00" text="" chord="" order="9"/>
 		</nutNotes>
 	</project>
 
-	<project id="tw4j0" title="id" category="0001" projectType="sequence">
+	<project id="tw4j0" title="id" category="0001" projectType="fretboard" fretboardType="sequence">
 		<settings>
 			<orientation>horizontal</orientation>
 			<fretboardStyle>maple</fretboardStyle>
@@ -130,14 +127,11 @@
 			<scoreLayout>vertical</scoreLayout>
 			<swing>false</swing>
 			<metronomeOn>true</metronomeOn>
-			<notation></notation>
+			<notation>false</notation>
 		</settings>
-		<notes>
-		</notes>
-		<barres>
-		</barres>
-		<nutNotes>
-		</nutNotes>
+		<notes></notes>
+		<barres></barres>
+		<nutNotes></nutNotes>
 	</project>
 
 </projects>
