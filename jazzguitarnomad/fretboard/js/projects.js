@@ -1,3 +1,4 @@
+
 "use strict";
 
 // ==================================================
@@ -19,11 +20,15 @@ async function loadProject(project) {
 	projectTitle = project.title ?? "";
 
 	cmbProjectCategory.value = project.category ?? 1;
-	if (cmbProjectCategory.value !== project.category && categories.length > 0) cmbProjectCategory.value = categories[0].id;
+
+	if (cmbProjectCategory.value !== project.category && categories.length > 0) {
+		cmbProjectCategory.value = categories[0].id;
+	}
 
 	projectType = project.projectType ?? "fretboard";
 
 	fretboardType = project.fretboardType ?? "sequence";
+
 
 	// --------------------------------
 	// SETTINGS
@@ -38,6 +43,7 @@ async function loadProject(project) {
 
 	projectBar = project.settings?.bar ?? "4/4";
 	cmbBar.value = projectBar;
+
 	getBarGroups();
 	setBarGroups();
 
@@ -59,6 +65,7 @@ async function loadProject(project) {
 	metronomeOn = parseBoolean(project.settings?.metronomeOn, true);
 	notation = project.settings?.notation ?? "";
 
+
 	// --------------------------------
 	// NOTAS
 	// --------------------------------
@@ -71,6 +78,7 @@ async function loadProject(project) {
 		chord: note.chord,
 		order: note.order
 	}));
+
 
 	// --------------------------------
 	// BARRAS
@@ -85,6 +93,7 @@ async function loadProject(project) {
 		order: barre.order
 	}));
 
+
 	// --------------------------------
 	// NUT
 	// --------------------------------
@@ -94,15 +103,112 @@ async function loadProject(project) {
 	(project.nutNotes || []).forEach(note => {
 
 		if (note.string >= 0 && note.string < stringCount) {
+
 			nutNotes[note.string] = {
 				color: note.color,
 				text: note.text,
 				chord: note.chord,
 				order: note.order
 			};
+
 		}
 
 	});
+
+
+	// --------------------------------
+	// RECURSOS MULTIMEDIA
+	// --------------------------------
+
+	resources = {
+		video: [],
+		audio: [],
+		image: [],
+		score: [],
+		pdf: [],
+		document: [],
+		html: [],
+		link: [],
+		embed: []
+	};
+
+	if (project.resources && project.resources.length > 0) {
+
+		for (const resource of project.resources) {
+
+			const type = resource.type;
+
+			// --------------------------------
+			// LINK
+			// --------------------------------
+
+			if (type === "link") {
+
+				resources.link.push({
+					projectId: currentProjectId,
+					name: resource.name || "",
+					path: resource.path || "",
+					url: resource.url || "",
+					embedCode: resource.embedCode || ""
+				});
+
+				continue;
+
+			}
+
+
+			// --------------------------------
+			// EMBED
+			// --------------------------------
+
+			if (type === "embed") {
+
+				resources.embed.push({
+					projectId: currentProjectId,
+					name: resource.name || "",
+					path: resource.path || "",
+					url: resource.url || "",
+					embedCode: resource.embedCode || ""
+				});
+
+				continue;
+
+			}
+
+
+			// --------------------------------
+			// ARCHIVOS
+			// --------------------------------
+
+			if (!multimediaDirectory) continue;
+
+			try {
+
+				const folder = await multimediaDirectory.getDirectoryHandle(type);
+
+				const fileHandle = await folder.getFileHandle(
+					resource.name
+				);
+
+				const file = await fileHandle.getFile();
+
+				resources[type].push({
+					projectId: currentProjectId,
+					name: resource.name,
+					path: resource.path,
+					file: file
+				});
+
+			} catch (error) {
+
+				console.warn("No se pudo cargar el recurso: ",resource.name,error);
+
+			}
+
+		}
+
+	}
+
 
 	// --------------------------------
 	// CONFIGURACION APP
@@ -354,11 +460,37 @@ function parseProjectsXml(xml) {
 
 			},
 
+			resources: [],
+
 			notes: [],
 			barres: [],
 			nutNotes: []
 
 		};
+
+
+		// --------------------------------
+		// RECURSOS MULTIMEDIA
+		// --------------------------------
+
+		projectNode.querySelectorAll("resources > resource").forEach(resourceNode => {
+
+			project.resources.push({
+
+				type: resourceNode.getAttribute("type") || "",
+				name: resourceNode.getAttribute("name") || "",
+				path: resourceNode.getAttribute("path") || "",
+				url: resourceNode.getAttribute("url") || "",
+				embedCode: resourceNode.getAttribute("embedCode") || ""
+
+			});
+
+		});
+
+
+		// --------------------------------
+		// NOTAS
+		// --------------------------------
 
 		projectNode.querySelectorAll("notes > note").forEach(noteNode => {
 
@@ -375,6 +507,11 @@ function parseProjectsXml(xml) {
 
 		});
 
+
+		// --------------------------------
+		// BARRAS
+		// --------------------------------
+
 		projectNode.querySelectorAll("barres > barre").forEach(barreNode => {
 
 			project.barres.push({
@@ -389,6 +526,11 @@ function parseProjectsXml(xml) {
 			});
 
 		});
+
+
+		// --------------------------------
+		// NOTAS DE CEJILLA
+		// --------------------------------
 
 		projectNode.querySelectorAll("nutNotes > nutNote").forEach(nutNode => {
 
@@ -414,7 +556,7 @@ function getCurrentProject() {
 
 	const projectTitle = titleText.value.trim();
 
-	let notacion = chkNoteNames.checked ? cmbNoteNames.value : ""
+	let notacion = chkNoteNames.checked ? cmbNoteNames.value : "";
 
 	if (!projectTitle) {
 		alert("Escribe un título antes de guardar el proyecto.");
@@ -450,7 +592,6 @@ function getCurrentProject() {
 			isFretboardVisible: isFretboardVisible,
 			isScoreVisible: isScoreVisible,
 			currentInstrument: cmbSamplerInstrument.value,
-			fretCount: sliderFrets.value,
 			fretNumbers: numFrets.value,
 			showFretNumbers: chkShowNumber.checked,
 			bpm: sliderBpm.value,
@@ -461,6 +602,22 @@ function getCurrentProject() {
 			metronomeOn: chkMetronomeOn.checked,
 			notation: notacion
 		},
+
+		resources: Object.keys(resources).flatMap(type =>
+
+			resources[type]
+
+				.filter(resource => resource.projectId === currentProjectId)
+
+				.map(resource => ({
+					type: type,
+					name: resource.name,
+					path: resource.path,
+					url: resource.url,
+					embedCode: resource.embedCode
+				}))
+
+		),
 
 		notes: notes.map(note => ({
 			string: note.string,
@@ -552,7 +709,7 @@ function projectToXml(project, indent = "\t") {
 		`fretboardType="${escapeXml(project.fretboardType)}">`
 	);
 
-	if (cmbFretboardType === "fretboard"){
+	if (project.projectType === "fretboard"){
 
 		lines.push(`${indent}\t<settings>`);
 		lines.push(`${indent}\t\t<orientation>${escapeXml(project.settings.orientation)}</orientation>`);
@@ -581,8 +738,40 @@ function projectToXml(project, indent = "\t") {
 		lines.push(`${indent}\t\t<notation>${project.settings.notation}</notation>`);
 		lines.push(`${indent}\t</settings>`);
 
+		lines.push(`${indent}\t<resources/>`);
+
 	}else{
+
 		lines.push(`${indent}\t<settings/>`);
+
+
+		// --------------------------------
+		// RECURSOS MULTIMEDIA
+		// --------------------------------
+
+		lines.push(`${indent}\t<resources>`);
+
+		Object.keys(resources).forEach(type => {
+
+			resources[type].forEach(resource => {
+
+				if (resource.name && resource.name.includes("-" + project.id + ".")) {
+
+					lines.push(
+						`${indent}\t\t<resource ` +
+						`type="${escapeXml(type)}" ` +
+						`name="${escapeXml(resource.name)}" ` +
+						`path="${escapeXml(resource.path)}"/>`
+					);
+
+				}
+
+			});
+
+		});
+
+		lines.push(`${indent}\t</resources>`);
+
 	}
 
 	if (project.notes && project.notes.length > 0) {
@@ -789,11 +978,17 @@ function renderLibrary() {
 				case "pdf":
 					iType = "<i class='fa-solid fa-file-pdf'></i>";
 					break;
+				case "document":
+					iType = "<i class='fa-solid fa-file-lines'></i>";
+					break;
 				case "html":
-					iType = "<i class='fa-solid fa-code'></i>";
+					iType = "<i class='fa-solid fa-file-html'></i>";
+					break;
+				case "link":
+					iType = "<i class='fa-solid fa-link'></i>";
 					break;
 				case "embed":
-					iType = "<i class='fa-solid fa-link'></i>";
+					iType = "<i class='fa-solid fa-code'></i>";
 					break;
 			}
 
@@ -1277,6 +1472,8 @@ async function renderProject(){
 	if (isFretboardVisible) resizeCanvas();
 
 	if (isScoreVisible) scoreRender();
+
+	if (projectType !== "fretboard") await renderMultimedia();
 
 }
 

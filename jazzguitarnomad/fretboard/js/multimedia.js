@@ -1171,3 +1171,597 @@ function startAudioMeter() {
 	updateAudioMeter();
 
 }
+
+let multimediaDirectory = null;
+
+
+let resources = {
+
+	video: [],
+	audio: [],
+	image: [],
+	score: [],
+	pdf: [],
+	document: [],
+	html: [],
+	embed: []
+
+};
+
+
+// --------------------------------
+// SELECCIONAR CARPETA MULTIMEDIA
+// --------------------------------
+
+async function selectMultimediaFolder() {
+
+	try {
+
+		multimediaDirectory = await window.showDirectoryPicker();
+
+
+		// Comprobar que es la carpeta multimedia
+
+		if (multimediaDirectory.name !== "multimedia") {
+
+			alert("Debes seleccionar la carpeta 'multimedia'.");
+
+			multimediaDirectory = null;
+
+			return false;
+
+		}
+
+
+		// Crear las carpetas si no existen
+
+		const folders = [
+			"video",
+			"audio",
+			"image",
+			"score",
+			"pdf",
+			"document",
+			"html"
+		];
+
+
+		for (const folder of folders) {
+
+			await multimediaDirectory.getDirectoryHandle(
+				folder,
+				{ create: true }
+			);
+
+		}
+
+
+		return true;
+
+	} catch (error) {
+
+		console.error("Error seleccionando la carpeta multimedia:", error);
+
+		multimediaDirectory = null;
+
+		return false;
+
+	}
+
+}
+
+// --------------------------------
+// SUBIR ARCHIVOS
+// --------------------------------
+
+async function selectMultimediaFiles() {
+
+	// --------------------------------
+	// TIPOS SIN ARCHIVO
+	// --------------------------------
+
+	if (
+		projectType === "link" ||
+		projectType === "embed"
+	) {
+
+		let content;
+
+
+		// --------------------------------
+		// LINK
+		// --------------------------------
+
+		if (projectType === "link") {
+
+			content = prompt("Introduzca la URL:");
+
+		}
+
+
+		// --------------------------------
+		// EMBED
+		// --------------------------------
+
+		if (projectType === "embed") {
+
+			content = prompt("Pegue aquí el código de inserción:");
+
+		}
+
+		if (!content) return;
+
+		createMultimediaElement(
+			content.trim(),
+			projectType
+		);
+
+		return;
+
+	}
+
+
+	// --------------------------------
+	// SELECCIONAR CARPETA MULTIMEDIA
+	// --------------------------------
+
+	if (!multimediaDirectory) {
+
+		alert("Seleccione primero una carpeta de destino.");
+
+		const folderSelected = await selectMultimediaFolder();
+
+		if (!folderSelected) return;
+
+	}
+
+
+	// --------------------------------
+	// TIPOS DE ARCHIVO
+	// --------------------------------
+
+	const input = document.createElement("input");
+
+	input.type = "file";
+
+	input.multiple = true;
+
+	switch (projectType) {
+
+		case "video":
+
+			input.accept = ["video/*",".mp4",".mpeg",".mpg",".avi",".mov",".webm",".mkv",".m4v"].join(",");
+
+			break;
+
+		case "audio":
+
+			input.accept = ["audio/*",".mp3",".wav",".ogg",".oga",".m4a",".aac",".flac",".opus"].join(",");
+
+			break;
+
+		case "image":
+
+			input.accept = ["image/*",".png",".jpg",".jpeg",".gif",".bmp",".webp",".svg"].join(",");
+
+			break;
+
+		case "score":
+
+			input.accept = [".musicxml",".mxl"].join(",");
+
+			break;
+
+		case "pdf":
+
+			input.accept = [".pdf"].join(",");
+
+			break;
+
+		case "document":
+
+			input.accept = [".doc",".docx",".txt"].join(",");
+
+			break;
+
+		case "html":
+
+			input.accept = [".html",".htm"].join(",");
+
+			break;
+
+		default:
+
+			return;
+
+	}
+
+
+	// --------------------------------
+	// SELECCIONAR ARCHIVOS
+	// --------------------------------
+
+	input.addEventListener("change", async () => {
+
+		const files = Array.from(input.files);
+
+		for (const file of files) {
+
+			if (!isValidFile(file, projectType)) {
+				continue;
+			}
+
+			await saveFileToMultimedia(file, projectType);
+
+		}
+
+		console.log(resources);
+
+	});
+
+	input.click();
+
+}
+
+async function saveFileToMultimedia(file, projectType) {
+
+	try {
+
+		// --------------------------------
+		// CARPETA DEL TIPO
+		// --------------------------------
+
+		const folder = await multimediaDirectory.getDirectoryHandle(
+			projectType,
+			{ create: true }
+		);
+
+
+		// --------------------------------
+		// CREAR ARCHIVO
+		// --------------------------------
+
+		const extension = file.name.split(".").pop();
+
+		const lib = xmlProjects.substring(xmlProjects.lastIndexOf("/") + 1,xmlProjects.lastIndexOf("."));
+
+		const fileName = lib + "-" + currentProjectId + "." + extension;
+
+		const fileHandle = await folder.getFileHandle(
+			fileName,
+			{ create: true }
+		);
+
+		// --------------------------------
+		// ESCRIBIR ARCHIVO
+		// --------------------------------
+
+		const writable = await fileHandle.createWritable();
+
+		await writable.write(file);
+
+		await writable.close();
+
+
+		// --------------------------------
+		// GUARDAR REFERENCIA
+		// --------------------------------
+
+		resources[projectType].push({
+
+			name: fileName,
+
+			path: dataURL_Multimedia + projectType + "/" + fileName,
+
+			file: file
+
+		});
+
+		createMultimediaElement(file,projectType,fileName);
+
+		showAlert("Archivo guardado: " + dataURL_Multimedia + projectType + "/" + file.name, "seccess");
+
+
+	} catch (error) {
+
+		showAlert("Error guardando el archivo", "error");
+		console.log("Error guardando el archivo: " + error);
+
+	}
+
+}
+
+function isValidFile(file, projectType) {
+
+	const extension = file.name.toLowerCase().split(".").pop();
+
+	const mime = file.type.toLowerCase();
+
+	switch (projectType) {
+
+		case "video":
+
+			return mime.startsWith("video/") ||
+				["mp4","mpeg","mpg","avi","mov","webm","mkv","m4v"].includes(extension);
+
+		case "audio":
+
+			return mime.startsWith("audio/") ||
+				["mp3","wav","ogg","oga","m4a","aac","flac","opus"].includes(extension);
+
+		case "image":
+
+			return mime.startsWith("image/") ||
+				["png","jpg","jpeg","gif","bmp","webp","svg"].includes(extension);
+
+		case "score":
+
+			return ["musicxml","mxl"].includes(extension) ||
+				mime === "application/vnd.recordare.musicxml" ||
+				mime === "application/vnd.recordare.musicxml+xml";
+
+
+		case "pdf":
+
+			return extension === "pdf" ||
+				mime === "application/pdf";
+
+		case "document":
+
+			return ["doc","docx","txt"].includes(extension) ||
+				mime === "text/plain" ||
+				mime === "application/msword" ||
+				mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
+		case "html":
+
+			return ["html","htm"].includes(extension) ||
+				mime === "text/html";
+
+		default:
+
+			return false;
+
+	}
+
+}
+
+function createMultimediaElement(file, projectType, fileName) {
+
+	let element;
+
+	switch (projectType) {
+
+		case "video":
+
+			element = document.createElement("video");
+
+			element.src = URL.createObjectURL(file);
+			element.controls = true;
+
+			break;
+
+
+		case "audio":
+
+			element = document.createElement("audio");
+
+			element.src = URL.createObjectURL(file);
+			element.controls = true;
+
+			break;
+
+
+		case "image":
+
+			element = document.createElement("img");
+
+			element.src = URL.createObjectURL(file);
+			element.alt = fileName;
+
+			break;
+
+
+		case "pdf":
+
+			element = document.createElement("iframe");
+
+			element.src = URL.createObjectURL(file);
+
+			break;
+
+
+		case "document":
+
+			element = document.createElement("a");
+
+			element.href = URL.createObjectURL(file);
+
+			const extension = file.name.toLowerCase().split(".").pop();
+
+			let icon;
+
+			if (extension === "doc" || extension === "docx") {
+
+				icon = "<i class='fa-solid fa-file-word'></i>";
+
+			} else {
+
+				icon = "<i class='fa-solid fa-file-lines'></i>";
+
+			}
+
+			element.innerHTML = icon + " " + fileName;
+
+			element.target = "_blank";
+
+			break;
+
+
+		case "html":
+
+			element = document.createElement("iframe");
+
+			element.src = URL.createObjectURL(file);
+
+			break;
+
+
+		case "score":
+
+			element = document.createElement("div");
+
+			element.textContent = fileName;
+
+			break;
+
+
+		// --------------------------------
+		// LINK
+		// --------------------------------
+
+		case "link":
+
+			element = document.createElement("iframe");
+
+			element.src = file;
+
+			element.allowFullscreen = true;
+
+			break;
+
+
+		// --------------------------------
+		// EMBED
+		// --------------------------------
+
+		case "embed": {
+
+			const parser = new DOMParser();
+
+			const documentEmbed = parser.parseFromString(
+				file,
+				"text/html"
+			);
+
+			element = documentEmbed.querySelector("iframe");
+
+			if (!element) {
+
+				showAlert(
+					"El código de inserción no contiene un iframe válido.",
+					"error"
+				);
+
+				return;
+
+			}
+
+			element = element.cloneNode(true);
+
+			element.removeAttribute("width");
+			element.removeAttribute("height");
+
+			element.style.width = "100%";
+			element.style.height = "100%";
+
+			element.allowFullscreen = true;
+
+			break;
+
+		}
+
+
+		default:
+
+			return;
+
+	}
+
+
+	element.dataset.projectId = currentProjectId;
+	element.dataset.projectType = projectType;
+
+	if (fileName) {
+
+		element.dataset.fileName = fileName;
+
+	}
+
+	if (projectType === "link") {
+
+		element.dataset.url = file;
+
+	}
+
+	if (projectType === "embed") {
+
+		element.dataset.embedCode = file;
+
+	}
+
+/*
+	//Sobreescribe lo que había anteriormente
+	workspaceMultimedia.innerHTML = "";
+*/
+
+	workspaceMultimedia.appendChild(element);
+
+}
+
+async function renderMultimedia() {
+
+	workspaceMultimedia.innerHTML = "";
+
+	const project = projects.find(
+		project => project.id === currentProjectId
+	);
+
+	if (!project || !project.resources || project.resources.length === 0) {
+		return;
+	}
+
+	for (const resource of project.resources) {
+
+		switch (resource.type) {
+
+			case "video":
+			case "audio":
+			case "image":
+			case "pdf":
+			case "document":
+			case "html": {
+
+				const resourceData = resources[resource.type]?.find(
+					item => item.projectId === currentProjectId &&
+							item.name === resource.name
+				);
+
+				if (!resourceData?.file) {
+					continue;
+				}
+
+				createMultimediaElement(resourceData.file,resource.type,resource.name);
+
+				break;
+
+			}
+
+			case "link":
+
+				createMultimediaElement(resource.url,"link");
+
+				break;
+
+
+			case "embed":
+
+				createMultimediaElement(resource.embedCode,"embed");
+
+				break;
+
+		}
+
+	}
+
+}

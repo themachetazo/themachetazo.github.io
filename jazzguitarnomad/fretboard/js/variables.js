@@ -15,6 +15,7 @@ const dataURL = "https://themachetazo.github.io/jazzguitarnomad/fretboard/";
 const dataURL_Library = dataURL + "projects/";
 const dataURL_Images = dataURL + "img/";
 const dataURL_Users = dataURL;
+const dataURL_Multimedia = dataURL + "multimedia/";
 
 const dataURL_Samples = "https://themachetazo.github.io/jazzguitarnomad/samples/";
 
@@ -541,7 +542,7 @@ const cmbCamera = document.getElementById("cmbCamera");
 const cmbMicrophone = document.getElementById("cmbMicrophone");
 
 const btnAbrirVideo = document.getElementById("btnAbrirVideo");
-const btnAddMultimedia = document.getElementById("btnAddMultimedia");
+const btnUploadFile = document.getElementById("btnUploadFile");
 
 const videoContainer = document.getElementById("videoContainer");
 const btnAudioMute = document.getElementById("btnAudioMute");

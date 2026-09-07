@@ -1,3 +1,4 @@
+
 "use strict";
 
 //==================================================
@@ -829,7 +830,6 @@ btnCreate.addEventListener("click", () => {
 
 btnOpen.addEventListener("click", async () => {
 
-	// Preguntar solo si hay cambios sin guardar
 	if (projectModified) {
 
 		if (!confirm("Hay cambios sin guardar que se perderán. ¿Deseas abrir una nueva librería de proyectos?")) {
@@ -875,11 +875,7 @@ btnShare.addEventListener("click", () => {
 
 btnNewProject.addEventListener("click", () => {
 
-	if (newProject()){
-
-		renderProject();
-
-	}
+	if (newProject()) renderProject();
 
 });
 
@@ -986,7 +982,7 @@ sliderFrets.addEventListener("input", () => {
 
 	if (isFretboardVisible) resizeCanvas();
 
-//	if (fretCount > previousFretCount) scrollToFretboardNut();
+	if (fretCount > previousFretCount) scrollToFretboardNut();
 
 });
 
@@ -1007,7 +1003,7 @@ numFrets.addEventListener("change", () => {
 
 	if (isFretboardVisible) resizeCanvas();
 
-//	if (fretCount > previousFretCount) scrollToFretboardNut();
+	if (fretCount > previousFretCount) scrollToFretboardNut();
 
 });
 
@@ -1174,14 +1170,26 @@ cmbProjectType.addEventListener("change", () => {
 
 	projectType = cmbProjectType.value;
 
-	if (newProject()) {
-	
-		renderProject();
+	if (
+		(oldType === "fretboard" && projectType !== "fretboard") ||
+		(oldType !== "fretboard" && projectType === "fretboard")
+	) {
 
-	}else{
-		
-		cmbProjectType.value = oldType;
-		return;
+		if (projectType !== "fretboard") isScoreVisible = false;
+
+		if (newProject()) {
+
+			renderProject();
+
+		} else {
+
+			cmbProjectType.value = oldType;
+
+			projectType = oldType;
+
+			return;
+
+		}
 
 	}
 
@@ -1599,6 +1607,11 @@ cmbMicrophone.addEventListener("change", () => {
 
 });
 
-btnAddMultimedia.addEventListener("click", () => {
-alert(1);	
+btnUploadFile.addEventListener("click", () => {
+
+	closeLibraryPanel();
+
+	selectMultimediaFiles();
+
 });
+

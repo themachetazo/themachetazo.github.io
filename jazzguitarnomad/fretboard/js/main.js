@@ -832,6 +832,18 @@ function resetControlsValues(state){
 
 	if (state !== "loadProject"){
 
+		resources = {
+			video: [],
+			audio: [],
+			image: [],
+			score: [],
+			pdf: [],
+			document: [],
+			html: [],
+			link: [],
+			embed: []
+		};
+
 		resetComboChords();
 
 		notes = [];
@@ -953,10 +965,7 @@ function setControlsState() {
 	// PLAYER / SCORE
 	// --------------------------------
 
-	const playerScoreDisabled =
-		isFretboard ||
-		noDisplayMode ||
-		isMultimedia;
+	const playerScoreDisabled = isFretboard || noDisplayMode || isMultimedia;
 
 	btnPlayer.disabled = playerScoreDisabled;
 	btnPlayerPopup.disabled = playerScoreDisabled;
@@ -986,29 +995,21 @@ function setControlsState() {
 	// SCORE VISIBLE
 	// --------------------------------
 
-	btnScoreVisible.disabled =
-		isFretboard ||
-		noDisplayMode ||
-		isMultimedia;
+	btnScoreVisible.disabled = isFretboard || noDisplayMode || isMultimedia;
 
 
 	// --------------------------------
 	// FRETBOARD VISIBLE
 	// --------------------------------
 
-	btnFretboardVisible.disabled =
-		isFretboard && appMode === "Guest" ||
-		isMultimedia;
+	btnFretboardVisible.disabled = isFretboard && appMode === "Guest" || isMultimedia;
 
 
 	// --------------------------------
 	// AUDIO / RENDER
 	// --------------------------------
 
-	const renderDisabled =
-		isFretboard ||
-		noDisplayMode ||
-		isMultimedia;
+	const renderDisabled = isFretboard || noDisplayMode || isMultimedia;
 
 	if (isAdmin) {
 
@@ -1031,9 +1032,7 @@ function setControlsState() {
 	// CONTROLES DEL FRETBOARD
 	// --------------------------------
 
-	chkInlays.disabled =
-		noDisplayMode ||
-		!isUserActive;
+	chkInlays.disabled = noDisplayMode || !isUserActive;
 
 	chkNoteNames.disabled = noDisplayMode;
 
@@ -1060,23 +1059,18 @@ function setControlsState() {
 
 	cmbFretboardType.disabled = isMultimedia;
 
+	btnUploadFile.disabled = !isMultimedia;
 
 	// --------------------------------
 	// DESCARGAS SUPERIORES
 	// --------------------------------
 
-	topFretboardDownload.style.display =
-		isMultimedia ? "none" : "";
-
-	topScoreDownload.style.display =
-		isMultimedia ? "none" : "";
-
-	topAudio.style.display =
-		isMultimedia ? "none" : "";
-
-	topBuffer.style.display =
-		isMultimedia ? "none" : "";
-
+	btnCopyCanvas.disabled = isMultimedia;
+	btnDownloadCanvas.disabled = isMultimedia;
+	btnScoreDownloadImage.disabled = isMultimedia;
+	cmbAudioFormat.disabled = isMultimedia;
+	btnSaveAudio.disabled = isMultimedia;
+	btnRenderBuffer.disabled = isMultimedia;
 
 	// --------------------------------
 	// GUEST + FRETBOARD
@@ -1130,134 +1124,6 @@ function setControlsState() {
 	);
 
 }
-
-function setFretboardTypeControlsDisabled(){
-
-	const disabled = fretboardType === "fretboard";
-
-	cmbTipoSecuencia.disabled = disabled;
-
-	chkMetronomeOn.disabled = disabled;
-
-	cmbChords.disabled = fretboardType !== "chord";
-	btnNewChord.disabled = cmbChords.disabled;
-	btnDelChord.disabled = cmbChords.disabled;
-
-	btnScore.disabled = disabled;
-	btnScorePopup.disabled = disabled;
-	btnPlayer.disabled = disabled;
-	btnPlayerPopup.disabled = disabled;
-
-	btnRenderBuffer.disabled = disabled;
-	cmbAudioFormat.disabled = disabled;
-	btnSaveAudio.disabled = disabled;
-	btnCopyCanvas.disabled = disabled;
-	btnDownloadCanvas.disabled = disabled;
-	btnScoreDownloadImage.disabled = disabled;
-
-	btnScoreVisible.disabled = disabled;
-
-	if (isUserActive) {
-		btnPlayStop.disabled = disabled;
-	}
-
-	if (appMode === "Guest" && disabled){
-
-		btnScore.disabled = true;
-		btnScorePopup.disabled = true;
-		btnPlayer.disabled = true;
-		btnPlayerPopup.disabled = true;
-
-		btnRenderBuffer.disabled = true;
-		cmbAudioFormat.disabled = true;
-		btnSaveAudio.disabled = true;
-		btnCopyCanvas.disabled = true;
-		btnDownloadCanvas.disabled = true;
-		btnScoreDownloadImage.disabled = true;
-
-		btnPlayStop.disabled = true;
-		btnFretboardVisible.disabled = true;
-		btnScoreVisible.disabled = true;
-	}
-
-}
-
-function setDisplayModeControlsDisabled(){
-
-	const disabled = fretboardType === "fretboard" || Boolean(!displayMode);
-
-	btnPlayStop.disabled = Boolean(!displayMode);
-	btnPlayer.disabled = disabled;
-	btnPlayerPopup.disabled = disabled;
-	btnScore.disabled = disabled;
-	btnScorePopup.disabled = disabled;
-
-	if (isAdmin){
-		btnRenderBuffer.disabled = disabled;
-		cmbAudioFormat.disabled = disabled;
-		btnSaveAudio.disabled = disabled;
-		btnCopyCanvas.disabled = disabled;
-		btnDownloadCanvas.disabled = disabled;
-		btnScoreDownloadImage.disabled = disabled;
-	}else{
-		btnMultimedia.disabled = Boolean(!displayMode);
-		btnMultimediaPopup.disabled = Boolean(!displayMode);
-	}
-
-	chkInlays.disabled = Boolean(!displayMode);
-
-	btnLessNumberFrets.disabled = Boolean(displayMode);
-	numberFrets.disabled = Boolean(displayMode);
-	btnMoreNumberFrets.disabled = Boolean(displayMode);
-
-	chkNoteNames.disabled = Boolean(!displayMode);
-
-	btnScoreVisible.disabled = disabled;
-
-	if (!displayMode) {
-
-		chkInlays.checked = false;
-		chkNoteNames.checked = false;
-
-		isScoreVisible = false;
-
-	}
-
-}
-
-function setMultimediaControls(){
-
-	const disabled = cmbProjectType.value !== "fretboard";
-
-	btnEdicion.disabled = disabled;
-	btnEdicionPopup.disabled = disabled;
-	btnFretboard.disabled = disabled;
-	btnFretboardPopup.disabled = disabled;
-	btnScore.disabled = disabled;
-	btnScorePopup.disabled = disabled;
-	btnPlayer.disabled = disabled;
-	btnPlayerPopup.disabled = disabled;
-
-	topFretboardDownload.style.display = disabled ? "none" : "";
-	topScoreDownload.style.display = disabled ? "none" : "";
-	topAudio.style.display = disabled ? "none" : "";
-	topBuffer.style.display = disabled ? "none" : "";
-
-	btnPlayStop.disabled = disabled;
-	btnFretboardVisible.disabled = disabled;
-	btnScoreVisible.disabled = disabled;
-	btnVertical.disabled = disabled;
-	btnHorizontal.disabled = disabled;
-
-	chkShowTitle.disabled = disabled;
-	chkScoreTitle.disabled = disabled;
-
-	cmbFretboardType.disabled = disabled;
-
-	workspace.classList.toggle("multimedia",disabled);
-	
-}
-
 
 function updateTopBarMenu() {
 
