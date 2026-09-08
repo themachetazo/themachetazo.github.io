@@ -1716,32 +1716,29 @@ function createMultimediaElement(type, fileName) {
 
 		case "embed": {
 
-			const parser = new DOMParser();
+			if (!resourceUrl) {
 
-			const documentEmbed = parser.parseFromString(
-				resourceUrl,
-				"text/html"
-			);
-
-			element = documentEmbed.querySelector("iframe");
-
-
-			if (!element) {
-
-				showAlert("El código de inserción no contiene un iframe válido.","error");
+				showAlert("El código de inserción está vacío.","error");
 
 				return;
 
 			}
 
+			element = document.createElement("div");
 
-			element = element.cloneNode(true);
+			element.innerHTML = resourceUrl;
 
-			element.removeAttribute("width");
+			const iframe = element.querySelector("iframe");
 
-			element.removeAttribute("height");
+			if (iframe) {
 
-			element.allowFullscreen = true;
+				iframe.removeAttribute("width");
+
+				iframe.removeAttribute("height");
+
+				iframe.allowFullscreen = true;
+
+			}
 
 			break;
 
