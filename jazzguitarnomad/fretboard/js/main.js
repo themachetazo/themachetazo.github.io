@@ -33,19 +33,16 @@ async function initializeApp() {
 
 		// IMÁGENES ----------------------
 
-//		if (!(appMode === "Guest" && projectType === "fretboard")){
+		setLoadingProgress(30, "Cargando imágenes...");
 
-			setLoadingProgress(30, "Cargando imágenes...");
+		await loadFretboardImage();
 
-			await loadFretboardImage();
+		resizeCanvas();
 
-			resizeCanvas();
-
-//		}
 
 		// PLAYER ----------------------
 
-//		if (!(appMode === "Guest" && projectType === "fretboard")){
+		if (isUserActive && projectType === "fretboard")){
 
 			setLoadingProgress(40, "Cargando instrumentos...");
 
@@ -66,29 +63,37 @@ async function initializeApp() {
 
 			setPlayerValues();
 
-//		}
+		}
 
 		// MÁSTIL ----------------------
 
-//		if (!(appMode === "Guest" && projectType === "fretboard")){
+		if (projectType === "fretboard") {
 
 			setLoadingProgress(70, "Renderizando mástil...");
 
 			resizeCanvas();
 
-//		}
-
+		}
 
 		// SCORE ----------------------
 
-//		if (!(appMode === "Guest" && fretboardType === "fretboard")){
+		if (projectType === "fretboard") {
 
 			setLoadingProgress(80, "Renderizando partitura...");
 
 			if (isScoreVisible) scoreRender();
 
-//		}
+		}
 
+		// MULTIMEDIA ----------------------
+
+		if (projectType !== "fretboard"){
+
+			setLoadingProgress(90, "Renderizando multimedia...");
+
+			if (projectType !== "fretboard") await renderMultimedia();
+
+		}
 
 		// FIN ----------------------
 
@@ -594,7 +599,6 @@ async function initializeProjects() {
 
             await selectProject(project);
 
-            renderProject();
 
         } else {
 
@@ -615,8 +619,6 @@ async function initializeProjects() {
         if (firstProject) {
 
             await selectProject(firstProject);
-
-            renderProject();
 
         } else {
 
