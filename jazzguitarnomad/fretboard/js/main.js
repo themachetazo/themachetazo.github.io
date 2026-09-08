@@ -42,7 +42,7 @@ async function initializeApp() {
 
 		// PLAYER ----------------------
 
-		if (isUserActive && projectType === "fretboard")){
+		if (isUserActive && projectType === "fretboard"){
 
 			setLoadingProgress(40, "Cargando instrumentos...");
 
