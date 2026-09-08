@@ -1703,6 +1703,8 @@ function createMultimediaElement(type, fileName) {
 
 			element = document.createElement("iframe");
 
+			element.className = "iframe-link";
+
 			element.src = resourceUrl;
 
 			element.allowFullscreen = true;
@@ -1728,6 +1730,7 @@ function createMultimediaElement(type, fileName) {
 
 			element.innerHTML = resourceUrl;
 
+/*
 			const iframe = element.querySelector("iframe");
 
 			if (iframe) {
@@ -1739,6 +1742,7 @@ function createMultimediaElement(type, fileName) {
 				iframe.allowFullscreen = true;
 
 			}
+*/
 
 			break;
 
