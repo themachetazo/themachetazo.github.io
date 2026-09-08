@@ -229,17 +229,17 @@
 		<nutNotes/>
 		<resources>
 			<resource type="link" name="https://view.genially.com/6958f29aae62ec746f090675" />
-			<resource type="embed" name="https://view.genially.com/6958f29aae62ec746f090675" />
+			<resource type="iFrame" name="https://view.genially.com/6958f29aae62ec746f090675" />
 		</resources>
 	</project>
 
-	<project id="1cqve1k" title="you" category="uqoca7" projectType="embed" fretboardType="sequence">
+	<project id="1cqve1k" title="you" category="uqoca7" projectType="iFrame" fretboardType="sequence">
 		<settings/>
 		<notes/>
 		<barres/>
 		<nutNotes/>
 		<resources>
-			<resource type="embed" name="&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/TNdTvxHb9E0?si=WDTqxkWJG50Wm5Ao&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; referrerpolicy=&quot;strict-origin-when-cross-origin&quot; allowfullscreen&gt;&lt;/iframe&gt;" />
+			<resource type="iFrame" name="&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/TNdTvxHb9E0?si=WDTqxkWJG50Wm5Ao&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; referrerpolicy=&quot;strict-origin-when-cross-origin&quot; allowfullscreen&gt;&lt;/iframe&gt;" />
 		</resources>
 	</project>
 
