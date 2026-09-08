@@ -292,7 +292,7 @@ let resources = {
 	document: [],
 	html: [],
 	link: [],
-	embed: []
+	iFrame: []
 
 };
 

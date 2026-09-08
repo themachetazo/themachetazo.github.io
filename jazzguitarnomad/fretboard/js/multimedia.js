@@ -1246,13 +1246,13 @@ async function selectMultimediaFiles() {
 	// TIPOS SIN ARCHIVO
 	// --------------------------------
 
-	if (projectType === "link" || projectType === "embed") {
+	if (projectType === "link" || projectType === "iFrame") {
 
 		let content;
 
 		if (projectType === "link") content = prompt("Introduzca la URL:");
 
-		if (projectType === "embed") content = prompt("Pegue aquí el código de inserción:");
+		if (projectType === "iFrame") content = prompt("Pegue aquí el código de inserción:");
 
 		if (!content) return;
 
@@ -1510,7 +1510,7 @@ function createMultimediaElement(type, fileName) {
 
 	const realName = fileName.substring(fileName.indexOf("-", fileName.indexOf("-") + 1) + 1);
 
-	if (type === "link" || type === "embed"){
+	if (type === "link" || type === "iFrame"){
 		resourceUrl = fileName;
 	}else{
 		resourceUrl = dataURL_Multimedia + type + "/" + fileName;
@@ -1634,6 +1634,8 @@ function createMultimediaElement(type, fileName) {
 
 			element = document.createElement("iframe");
 
+			element.className = "iframe-link";
+
 			element.src = resourceUrl;
 
 			break;
@@ -1681,6 +1683,8 @@ function createMultimediaElement(type, fileName) {
 
 			element = document.createElement("iframe");
 
+			element.className = "iframe-link";
+
 			element.src = resourceUrl;
 
 			break;
@@ -1713,10 +1717,10 @@ function createMultimediaElement(type, fileName) {
 
 
 		// --------------------------------
-		// EMBED
+		// iFrame
 		// --------------------------------
 
-		case "embed": {
+		case "iFrame": {
 
 			if (!resourceUrl) {
 

@@ -886,7 +886,7 @@ function initializeArrays(){
 		document: [],
 		html: [],
 		link: [],
-		embed: []
+		iFrame: []
 	};
 
 	history = [];
