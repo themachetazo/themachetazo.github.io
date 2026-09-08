@@ -983,13 +983,12 @@ html {
 
 }
 
-#workspaceMultimedia iframe {
+#workspaceMultimedia .iframe-link {
 
 	display: block;
 
 	width: 90%;
 	height: calc(100% - 20px);
-
 	min-height: 300px;
 
 	margin: 10px auto;
