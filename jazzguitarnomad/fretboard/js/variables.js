@@ -11,8 +11,8 @@ const isLocal = window.location.protocol === "file:" || window.location.hostname
 if (isLocal) dataURL = "https://themachetazo.github.io/jazzguitarnomad/fretboard/"; //Para que funcione el pintado y guardado de la imagen del mastil en drawFretdoard en local
 
 const dataURL_Images = dataURL + "img/";
-const dataURL_Users = dataURL;
-const dataURL_Library = dataURL + "projects/";
+const dataURL_Users = "";
+const dataURL_Library = "projects/";
 const dataURL_Multimedia = dataURL_Library + "multimedia/";
 
 const dataURL_Samples = "https://themachetazo.github.io/jazzguitarnomad/samples/";
