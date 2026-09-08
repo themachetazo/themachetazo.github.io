@@ -446,6 +446,8 @@ canvas.addEventListener("click", (e) => {
 
 		loadArrayNotas();
 
+		drawNotes();
+
 		if (isScoreVisible) scoreRender();
 
 		//Hacer sonar el acorde
@@ -601,6 +603,8 @@ canvas.addEventListener("click", (e) => {
 	}
 
 	loadArrayNotas();
+
+	drawNotes();
 
 	if (isScoreVisible) scoreRender();
 
