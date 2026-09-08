@@ -1751,18 +1751,6 @@ function createMultimediaElement(type, fileName) {
 
 	}
 
-
-	element.dataset.projectId = currentProjectId;
-
-	element.dataset.projectType = type;
-
-	if (fileName) element.dataset.fileName = fileName;
-
-	if (type === "link") element.dataset.url = resourceUrl;
-
-	if (type === "embed") element.dataset.embedCode = resourceUrl;
-
-
 	workspaceMultimedia.appendChild(element);
 
 }
