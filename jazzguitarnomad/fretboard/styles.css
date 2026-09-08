@@ -7,7 +7,7 @@
 	/*Oscuro*/
 
 	--color-main-text:#d5d5d5;
-	--color-hightlight:#1268A8;
+	--color-highlight:#1268A8;
 	--color-dark-background:#262626;
 	--color-fretboard-background:#262626;
 	--color-light-background:#353333;
@@ -66,7 +66,7 @@ a:visited {
 }
 
 ::selection{
-	background:var(--color-hightlight);
+	background:var(--color-highlight);
 	color:var(--color-text);
 }
 
@@ -229,7 +229,7 @@ a:visited {
 	width:0%;
 	height:8px;
 
-	background:var(--color-hightlight);
+	background:var(--color-highlight);
 
 	border-radius:4px;
 
@@ -240,7 +240,7 @@ a:visited {
 	width:0%;
 	height:100%;
 
-	background:var(--color-hightlight);
+	background:var(--color-highlight);
 
 	border-radius:4px;
 
@@ -415,7 +415,7 @@ html {
 
 .app-alert.info i {
 
-	color: var(--color-hightlight);
+	color: var(--color-highlight);
 
 }
 
@@ -917,9 +917,23 @@ html {
 
 }
 
-#workspace.multimedia #workspaceMultimedia{
+#workspace.multimedia #workspaceMultimedia {
 
-	display:block;
+	display: flex;
+
+	flex-direction: column;
+
+	align-items: center;
+
+	width: 100%;
+
+}
+
+#workspaceMultimedia > div {
+
+	width: 100%;
+
+	text-align: center;
 
 }
 
@@ -963,6 +977,8 @@ html {
 	width: 90%;
 	max-width: 600px;
 
+	min-height: 40px;
+
 	margin: 10px auto;
 
 }
@@ -974,6 +990,8 @@ html {
 	width: 90%;
 	height: calc(100% - 20px);
 
+	min-height: 300px;
+
 	margin: 10px auto;
 
 	border: none;
@@ -982,38 +1000,51 @@ html {
 
 }
 
-#workspaceMultimedia a {
+#workspaceMultimedia .midi-player {
 
 	display: flex;
 
 	align-items: center;
 	justify-content: center;
 
-	width: 90%;
+	flex-wrap: wrap;
 
-	max-width: 400px;
+	width: 90%;
+	max-width: 600px;
 
 	margin: 10px auto;
 
-	padding: 10px 18px;
+	padding: 6px;
 
 	box-sizing: border-box;
 
-	color: var(--color--text);
-
-	border: 1px solid var(--color--border);
-
-	border-radius: 5px;
-
-	text-decoration: none;
+	gap: 6px;
 
 }
 
-#workspaceMultimedia a:hover {
-	text-decoration:underline;
+#workspaceMultimedia .midi-player button:not(:disabled):hover {
+
+	background: var(--color-highlight);
+
 }
 
+#workspaceMultimedia .midi-player button:disabled {
 
+	opacity: 0.5;
+
+	cursor: default;
+
+}
+
+#workspaceMultimedia a {
+
+	font-size: 14px;
+
+	display: inline-block;
+
+	margin: 10px 0;
+
+}
 
 /* ===========================
    PROJECTS PANEL
@@ -1102,7 +1133,7 @@ html {
 
 .projectOpenButton:not(:disabled):hover {
 
-	background: var(--color-hightlight);
+	background: var(--color-highlight);
 
 	color: var(--color-text);
 
@@ -1279,7 +1310,7 @@ html {
 
 .projectDeleteButton:hover {
 
-	color:var(--color-hightlight);
+	color:var(--color-highlight);
 
 }
 
@@ -1441,7 +1472,7 @@ html {
 }
 
 .metronome_pulse.metronome_current{
-    background:var(--color-hightlight) !important;
+    background:var(--color-highlight) !important;
     transform:scale(1.18);
     box-shadow:0 0 12px var(--color-text);
 }
@@ -1625,7 +1656,7 @@ html {
 
 .menuButton.active::after{
 
-    background:var(--color-hightlight);
+    background:var(--color-highlight);
     transform:scaleX(1);
 
 }
@@ -1897,7 +1928,7 @@ html {
 #btnMenuSelector.active{
 
 	background:var(--color-tools);
-	color:var(--color-hightlight);
+	color:var(--color-highlight);
 
 }
 
@@ -2254,9 +2285,9 @@ html {
 .toolbarTop-Controls select:focus,
 .video-controls select:focus{
 
-	border-color:var(--color-hightlight);
+	border-color:var(--color-highlight);
 
-	box-shadow:0 0 0 1px var(--color-hightlight);
+	box-shadow:0 0 0 1px var(--color-highlight);
 
 }
 
@@ -2287,7 +2318,7 @@ html {
 .toolbarTop-Controls select option:hover,
 .video-controls select option:hover{
 
-	background-color:var(--color-hightlight);
+	background-color:var(--color-highlight);
 
 	color:var(--color-back);
 
@@ -2411,7 +2442,7 @@ input[type="range"] {
 #videoContainer button:not(:disabled):hover {
 
 	color:var(--color-text);
-	background:var(--color-hightlight);
+	background:var(--color-highlight);
 	border:1px solid var(--color-back);
 
 	box-shadow:inset 2px 2px 4px rgba(0,0,0,.35);
@@ -2550,7 +2581,8 @@ input[type="range"] {
 }
 
 #workspaceHeader button,
-#videoContainer button{
+#videoContainer button,
+#workspaceMultimedia .midi-player button{
 
 	display:inline-flex;
 
@@ -2610,13 +2642,13 @@ input[type="range"] {
 }
 
 #btnPlayStopMetronome:hover{
-	background:var(--color-hightlight) !important;
+	background:var(--color-highlight) !important;
 	color:var(--color-text) !important;
 }
 
 .buttonPlay{
 
-	background:var(--color-hightlight) !important;
+	background:var(--color-highlight) !important;
 	color:var(--color-main-text);
 	border: 1px solid var(--color-main-text) !important;
 
