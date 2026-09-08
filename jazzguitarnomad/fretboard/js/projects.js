@@ -958,7 +958,7 @@ function renderLibrary() {
 
 			let iType = "<i class='fa-solid fa-guitar'></i>";
 
-			switch (cmbProjectType.value){
+			switch (project.projectType){
 
 				case "fretboard":
 					iType = "<i class='fa-solid fa-guitar'></i>";
@@ -1015,7 +1015,15 @@ function renderLibrary() {
 
 				renderProject();
 
-				if (menuOpen !== "edit") setMenu("edit");
+				if (projectType !== "fretboard") {
+
+					setMenu("multimedia");
+
+				}else{
+
+					if (menuOpen !== "edit") setMenu("edit");
+
+				}
 
 			});
 

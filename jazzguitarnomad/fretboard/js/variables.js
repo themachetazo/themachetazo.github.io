@@ -15,7 +15,7 @@ const dataURL = "https://themachetazo.github.io/jazzguitarnomad/fretboard/";
 const dataURL_Library = dataURL + "projects/";
 const dataURL_Images = dataURL + "img/";
 const dataURL_Users = dataURL;
-const dataURL_Multimedia = dataURL + "multimedia/";
+const dataURL_Multimedia = dataURL_Library + "multimedia/";
 
 const dataURL_Samples = "https://themachetazo.github.io/jazzguitarnomad/samples/";
 
