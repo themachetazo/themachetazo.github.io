@@ -4,17 +4,15 @@
 	URLs
 ==================================================*/
 
-/*
-//Local
-alert(window.location.href.substring(0,window.location.href.lastIndexOf("/") + 1));
-alert(window.location.href.includes("file:///"));
-*/
+let dataURL = "";
 
-const dataURL = "https://themachetazo.github.io/jazzguitarnomad/fretboard/";
+const isLocal = window.location.protocol === "file:" || window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 
-const dataURL_Library = dataURL + "projects/";
+if (isLocal) dataURL = "https://themachetazo.github.io/jazzguitarnomad/fretboard/"; //Para que funcione el pintado y guardado de la imagen del mastil en drawFretdoard en local
+
 const dataURL_Images = dataURL + "img/";
 const dataURL_Users = dataURL;
+const dataURL_Library = dataURL + "projects/";
 const dataURL_Multimedia = dataURL_Library + "multimedia/";
 
 const dataURL_Samples = "https://themachetazo.github.io/jazzguitarnomad/samples/";
@@ -73,7 +71,7 @@ const themes = {
 
 	dark: {
 		"--color-main-text": "#d5d5d5",
-		"--color-hightlight": "#1268A8",
+		"--color-highlight": "#1268A8",
 		"--color-dark-background": "#262626",
 		"--color-fretboard-background": "#262626",
 		"--color-light-background": "#353333",
@@ -90,7 +88,7 @@ const themes = {
 
 	light: {
 		"--color-main-text": "#2A2A2A",
-		"--color-hightlight": "#4CAF70",
+		"--color-highlight": "#4CAF70",
 		"--color-dark-background": "#DDDDDD",
 		"--color-fretboard-background": "#FFFFFF",
 		"--color-light-background": "#F2F2F2",
@@ -280,6 +278,26 @@ let mediaRecorder;
 let recordedChunks = [];
 
 let audioAnalyser = null;
+
+let multimediaDirectory = null;
+
+let resources = {
+
+	video: [],
+	audio: [],
+	midi: [],
+	image: [],
+	score: [],
+	pdf: [],
+	document: [],
+	html: [],
+	link: [],
+	embed: []
+
+};
+
+let midiData = null;
+let midiSynths = [];
 
 /*==================================================
 	REFERENCIAS DOM: LAYOUT, LOADING

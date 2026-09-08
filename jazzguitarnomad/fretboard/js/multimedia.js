@@ -1172,25 +1172,10 @@ function startAudioMeter() {
 
 }
 
-let multimediaDirectory = null;
-
-
-let resources = {
-
-	video: [],
-	audio: [],
-	image: [],
-	score: [],
-	pdf: [],
-	document: [],
-	html: [],
-	embed: []
-
-};
 
 
 // --------------------------------
-// SELECCIONAR CARPETA MULTIMEDIA
+// AÑADIR ARCHIVOS
 // --------------------------------
 
 async function selectMultimediaFolder() {
@@ -1218,6 +1203,7 @@ async function selectMultimediaFolder() {
 		const folders = [
 			"video",
 			"audio",
+			"midi",
 			"image",
 			"score",
 			"pdf",
@@ -1260,41 +1246,27 @@ async function selectMultimediaFiles() {
 	// TIPOS SIN ARCHIVO
 	// --------------------------------
 
-	if (
-		projectType === "link" ||
-		projectType === "embed"
-	) {
+	if (projectType === "link" || projectType === "embed") {
 
 		let content;
 
+		if (projectType === "link") content = prompt("Introduzca la URL:");
 
-		// --------------------------------
-		// LINK
-		// --------------------------------
-
-		if (projectType === "link") {
-
-			content = prompt("Introduzca la URL:");
-
-		}
-
-
-		// --------------------------------
-		// EMBED
-		// --------------------------------
-
-		if (projectType === "embed") {
-
-			content = prompt("Pegue aquí el código de inserción:");
-
-		}
+		if (projectType === "embed") content = prompt("Pegue aquí el código de inserción:");
 
 		if (!content) return;
 
-		createMultimediaElement(
-			content.trim(),
-			projectType
-		);
+		resources[projectType].push({
+
+			name: content.trim(),
+
+			path: content.trim(),
+
+			file: null
+
+		});
+
+		createMultimediaElement(projectType, content.trim());
 
 		return;
 
@@ -1337,6 +1309,12 @@ async function selectMultimediaFiles() {
 		case "audio":
 
 			input.accept = ["audio/*",".mp3",".wav",".ogg",".oga",".m4a",".aac",".flac",".opus"].join(",");
+
+			break;
+
+		case "midi":
+
+			input.accept = [".mid,.midi"].join(",");
 
 			break;
 
@@ -1395,7 +1373,7 @@ async function selectMultimediaFiles() {
 
 		}
 
-		console.log(resources);
+//		console.log(resources);
 
 	});
 
@@ -1403,7 +1381,7 @@ async function selectMultimediaFiles() {
 
 }
 
-async function saveFileToMultimedia(file, projectType) {
+async function saveFileToMultimedia(file, type) {
 
 	try {
 
@@ -1412,7 +1390,7 @@ async function saveFileToMultimedia(file, projectType) {
 		// --------------------------------
 
 		const folder = await multimediaDirectory.getDirectoryHandle(
-			projectType,
+			type,
 			{ create: true }
 		);
 
@@ -1421,11 +1399,12 @@ async function saveFileToMultimedia(file, projectType) {
 		// CREAR ARCHIVO
 		// --------------------------------
 
+		const name = file.name.substring(0,file.name.lastIndexOf(".")).replace(/[\s.]+/g,"-");
 		const extension = file.name.split(".").pop();
 
 		const lib = xmlProjects.substring(xmlProjects.lastIndexOf("/") + 1,xmlProjects.lastIndexOf("."));
 
-		const fileName = lib + "-" + currentProjectId + "." + extension;
+		const fileName = lib + "-" + currentProjectId + "-" + name + "." + extension;
 
 		const fileHandle = await folder.getFileHandle(
 			fileName,
@@ -1451,15 +1430,9 @@ async function saveFileToMultimedia(file, projectType) {
 
 			name: fileName,
 
-			path: dataURL_Multimedia + projectType + "/" + fileName,
-
-			file: file
-
 		});
 
-		createMultimediaElement(file,projectType,fileName);
-
-		showAlert("Archivo guardado: " + dataURL_Multimedia + projectType + "/" + file.name, "seccess");
+		createMultimediaElement(projectType,fileName);
 
 
 	} catch (error) {
@@ -1489,6 +1462,11 @@ function isValidFile(file, projectType) {
 			return mime.startsWith("audio/") ||
 				["mp3","wav","ogg","oga","m4a","aac","flac","opus"].includes(extension);
 
+		case "midi":
+
+			return mime === "audio/midi" || mime === "audio/x-midi" || 
+				["mid","midi"].includes(extension);
+
 		case "image":
 
 			return mime.startsWith("image/") ||
@@ -1499,7 +1477,6 @@ function isValidFile(file, projectType) {
 			return ["musicxml","mxl"].includes(extension) ||
 				mime === "application/vnd.recordare.musicxml" ||
 				mime === "application/vnd.recordare.musicxml+xml";
-
 
 		case "pdf":
 
@@ -1526,38 +1503,129 @@ function isValidFile(file, projectType) {
 
 }
 
-function createMultimediaElement(file, projectType, fileName) {
+function createMultimediaElement(type, fileName) {
 
 	let element;
+	let resourceUrl = "";
 
-	switch (projectType) {
+	const realName = fileName.substring(fileName.indexOf("-", fileName.indexOf("-") + 1) + 1);
+
+	if (type === "link" || type === "embed"){
+		resourceUrl = fileName;
+	}else{
+		resourceUrl = dataURL_Multimedia + type + "/" + fileName;
+	}
+
+	switch (type) {
 
 		case "video":
 
 			element = document.createElement("video");
 
-			element.src = URL.createObjectURL(file);
+			element.src = resourceUrl;
 			element.controls = true;
 
 			break;
 
 
-		case "audio":
+		case "audio": {
 
-			element = document.createElement("audio");
+			element = document.createElement("div");
 
-			element.src = URL.createObjectURL(file);
-			element.controls = true;
+			const audioLink = document.createElement("a");
+
+			audioLink.href = resourceUrl;
+			audioLink.innerHTML = "<i class='fa-solid fa-music'></i> " + (realName || "");
+			audioLink.target = "_blank";
+
+			const audio = document.createElement("audio");
+
+			audio.src = resourceUrl;
+			audio.controls = true;
+
+			element.appendChild(audioLink);
+			element.appendChild(document.createElement("br"));
+			element.appendChild(audio);
 
 			break;
+
+		}
+
+
+		case "midi": {
+
+			element = document.createElement("div");
+
+			element.className = "midi-player";
+
+			const midiLink = document.createElement("a");
+
+			midiLink.href = resourceUrl;
+			midiLink.innerHTML = "<i class='fa-solid fa-music'></i> " + (realName || "");
+			midiLink.target = "_blank";
+
+
+			const btnPlay = document.createElement("button");
+
+			btnPlay.innerHTML = "<i class='fa-solid fa-play'></i>";
+
+			btnPlay.title = "Reproducir MIDI";
+
+
+			const btnStop = document.createElement("button");
+
+			btnStop.innerHTML = "<i class='fa-solid fa-stop'></i>";
+
+			btnStop.title = "Detener MIDI";
+
+			btnStop.disabled = true;
+
+
+			btnPlay.addEventListener("click", async () => {
+
+				await playMidi(resourceUrl);
+
+				btnPlay.disabled = true;
+				btnStop.disabled = false;
+
+			});
+
+
+			btnStop.addEventListener("click", () => {
+
+				stopMidi();
+
+				btnPlay.disabled = false;
+				btnStop.disabled = true;
+
+			});
+
+
+			const midiLinkContainer = document.createElement("div");
+
+			midiLinkContainer.className = "midi-link";
+
+			midiLinkContainer.appendChild(midiLink);
+
+
+			element.appendChild(midiLinkContainer);
+
+			element.appendChild(btnPlay);
+
+			element.appendChild(btnStop);
+
+			break;
+
+		}
 
 
 		case "image":
 
 			element = document.createElement("img");
 
-			element.src = URL.createObjectURL(file);
-			element.alt = fileName;
+			element.src = resourceUrl;
+
+			element.alt = fileName || "";
 
 			break;
 
@@ -1566,18 +1634,26 @@ function createMultimediaElement(file, projectType, fileName) {
 
 			element = document.createElement("iframe");
 
-			element.src = URL.createObjectURL(file);
+			element.src = resourceUrl;
 
 			break;
 
 
-		case "document":
+		case "document": {
 
 			element = document.createElement("a");
 
-			element.href = URL.createObjectURL(file);
+			element.href = resourceUrl;
 
-			const extension = file.name.toLowerCase().split(".").pop();
+
+			let extension = "";
+
+			if (fileName) {
+
+				extension = fileName.toLowerCase().split(".").pop();
+
+			}
+
 
 			let icon;
 
@@ -1591,18 +1667,21 @@ function createMultimediaElement(file, projectType, fileName) {
 
 			}
 
-			element.innerHTML = icon + " " + fileName;
+
+			element.innerHTML = icon + " " + (realName || "");
 
 			element.target = "_blank";
 
 			break;
+
+		}
 
 
 		case "html":
 
 			element = document.createElement("iframe");
 
-			element.src = URL.createObjectURL(file);
+			element.src = resourceUrl;
 
 			break;
 
@@ -1611,7 +1690,7 @@ function createMultimediaElement(file, projectType, fileName) {
 
 			element = document.createElement("div");
 
-			element.textContent = fileName;
+			element.textContent = fileName || "";
 
 			break;
 
@@ -1624,7 +1703,7 @@ function createMultimediaElement(file, projectType, fileName) {
 
 			element = document.createElement("iframe");
 
-			element.src = file;
+			element.src = resourceUrl;
 
 			element.allowFullscreen = true;
 
@@ -1640,30 +1719,27 @@ function createMultimediaElement(file, projectType, fileName) {
 			const parser = new DOMParser();
 
 			const documentEmbed = parser.parseFromString(
-				file,
+				resourceUrl,
 				"text/html"
 			);
 
 			element = documentEmbed.querySelector("iframe");
 
+
 			if (!element) {
 
-				showAlert(
-					"El código de inserción no contiene un iframe válido.",
-					"error"
-				);
+				showAlert("El código de inserción no contiene un iframe válido.","error");
 
 				return;
 
 			}
 
+
 			element = element.cloneNode(true);
 
 			element.removeAttribute("width");
-			element.removeAttribute("height");
 
-			element.style.width = "100%";
-			element.style.height = "100%";
+			element.removeAttribute("height");
 
 			element.allowFullscreen = true;
 
@@ -1680,30 +1756,15 @@ function createMultimediaElement(file, projectType, fileName) {
 
 
 	element.dataset.projectId = currentProjectId;
-	element.dataset.projectType = projectType;
 
-	if (fileName) {
+	element.dataset.projectType = type;
 
-		element.dataset.fileName = fileName;
+	if (fileName) element.dataset.fileName = fileName;
 
-	}
+	if (type === "link") element.dataset.url = resourceUrl;
 
-	if (projectType === "link") {
+	if (type === "embed") element.dataset.embedCode = resourceUrl;
 
-		element.dataset.url = file;
-
-	}
-
-	if (projectType === "embed") {
-
-		element.dataset.embedCode = file;
-
-	}
-
-/*
-	//Sobreescribe lo que había anteriormente
-	workspaceMultimedia.innerHTML = "";
-*/
 
 	workspaceMultimedia.appendChild(element);
 
@@ -1713,55 +1774,90 @@ async function renderMultimedia() {
 
 	workspaceMultimedia.innerHTML = "";
 
-	const project = projects.find(
-		project => project.id === currentProjectId
-	);
+	const project = projects.find(project => project.id === currentProjectId);
 
-	if (!project || !project.resources || project.resources.length === 0) {
-		return;
-	}
+	if (!project || !project.resources) return;
 
-	for (const resource of project.resources) {
+	for (const type of Object.keys(project.resources)) {
 
-		switch (resource.type) {
+		for (const resource of project.resources[type]) {
 
-			case "video":
-			case "audio":
-			case "image":
-			case "pdf":
-			case "document":
-			case "html": {
-
-				const resourceData = resources[resource.type]?.find(
-					item => item.projectId === currentProjectId &&
-							item.name === resource.name
-				);
-
-				if (!resourceData?.file) {
-					continue;
-				}
-
-				createMultimediaElement(resourceData.file,resource.type,resource.name);
-
-				break;
-
-			}
-
-			case "link":
-
-				createMultimediaElement(resource.url,"link");
-
-				break;
-
-
-			case "embed":
-
-				createMultimediaElement(resource.embedCode,"embed");
-
-				break;
+			createMultimediaElement(type,resource.name);
 
 		}
 
 	}
+
+}
+
+
+////////////////////////////////////////////////////////////
+// MIDI
+////////////////////////////////////////////////////////////
+
+async function playMidi(filePath) {
+
+	await Tone.start();
+
+	// Si todavía no hemos cargado el MIDI, lo cargamos
+	if (!midiData) {
+
+		midiData = await Midi.fromUrl(filePath);
+
+		// Limpiar cualquier reproducción anterior
+		Tone.Transport.stop();
+		Tone.Transport.cancel();
+
+		// Crear un sintetizador por pista
+		midiData.tracks.forEach(track => {
+
+			if (track.notes.length === 0) {
+				return;
+			}
+
+			const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+
+			midiSynths.push(synth);
+
+			track.notes.forEach(note => {
+
+				Tone.Transport.schedule(time => {
+
+					synth.triggerAttackRelease(
+						note.name,
+						note.duration,
+						time,
+						note.velocity
+					);
+
+				}, note.time);
+
+			});
+
+		});
+
+	}
+
+	Tone.Transport.start();
+
+}
+
+function stopMidi() {
+
+	Tone.Transport.stop();
+
+	Tone.Transport.cancel();
+
+	Tone.Transport.position = 0;
+
+	midiSynths.forEach(synth => {
+
+		synth.releaseAll();
+		synth.dispose();
+
+	});
+
+	midiSynths = [];
+	midiData = null;
 
 }

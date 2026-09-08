@@ -1,3 +1,4 @@
+
 "use strict";
 
 /*============================
@@ -212,6 +213,9 @@ function configureUserControls(){
 
 			setMenu("fretboard");
 
+			btnEdicion.style.display = "none";
+			btnEdicionPopup.style.display = "none";
+
 			topFretboardDownload.style.display = "none";
 			topScoreDownload.style.display = "none";
 
@@ -241,7 +245,7 @@ function configureUserControls(){
 					btnUser.querySelector("i").className = "fa-solid fa-user-tie";
 				}
 
-				const txt = userName.includes(" ") ? userName.substring(0, userName.indexOf(" ")) : texto;
+				const txt = userName.includes(" ") ? userName.substring(0, userName.indexOf(" ")) : userName;
 				txtUserTitle.textContent = txt;
 
 			}
@@ -590,9 +594,11 @@ async function initializeProjects() {
 
             await selectProject(project);
 
+            renderProject();
+
         } else {
 
-            console.log("No se encontró el proyecto '" + currentProjectId + "'","error");
+            showAlert("No se encontró el proyecto '" + currentProjectId + "'","error");
 
             initializeEmptyProject();
 
@@ -609,6 +615,8 @@ async function initializeProjects() {
         if (firstProject) {
 
             await selectProject(firstProject);
+
+            renderProject();
 
         } else {
 
@@ -727,7 +735,7 @@ function resetControlsValues(state){
 
 	if (state !== "loadProject"){
 
-		if (!isAdmin) projectType = "fretboard";
+		if (cmbProjectType !== "fretboard") fretboardType = "sequence";
 
 		projectTitle = "";
 		fretCount = 10;
@@ -832,32 +840,7 @@ function resetControlsValues(state){
 
 	if (state !== "loadProject"){
 
-		resources = {
-			video: [],
-			audio: [],
-			image: [],
-			score: [],
-			pdf: [],
-			document: [],
-			html: [],
-			link: [],
-			embed: []
-		};
-
 		resetComboChords();
-
-		notes = [];
-		barreNotes = [];
-		nutNotes = Array(stringCount).fill(null);
-
-		noteOrder = 0;
-
-		aSequence = [];
-		aChords = [];
-
-		loadArrayNotas();
-
-		btnPlayStop.disabled = true;
 
 	}else{
 
@@ -887,7 +870,32 @@ function resetControlsValues(state){
 
 	setWorkspaceLayout();
 
+	loadArrayNotas();
+
+}
+
+function initializeArrays(){
+
+	resources = {
+		video: [],
+		audio: [],
+		midi: [],
+		image: [],
+		score: [],
+		pdf: [],
+		document: [],
+		html: [],
+		link: [],
+		embed: []
+	};
+
 	history = [];
+	notes = [];
+	barreNotes = [];
+	nutNotes = Array(stringCount).fill(null);
+	noteOrder = 0;
+	aSequence = [];
+	aChords = [];
 
 }
 
@@ -1054,8 +1062,10 @@ function setControlsState() {
 	btnVertical.disabled = isMultimedia;
 	btnHorizontal.disabled = isMultimedia;
 
+/*
 	chkShowTitle.disabled = isMultimedia;
 	chkScoreTitle.disabled = isMultimedia;
+*/
 
 	cmbFretboardType.disabled = isMultimedia;
 
@@ -1118,10 +1128,7 @@ function setControlsState() {
 	// WORKSPACE MULTIMEDIA
 	// --------------------------------
 
-	workspace.classList.toggle(
-		"multimedia",
-		isMultimedia
-	);
+	workspace.classList.toggle("multimedia",isMultimedia);
 
 }
 

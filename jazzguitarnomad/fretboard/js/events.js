@@ -62,6 +62,7 @@ document.addEventListener("keydown", e => {
 
 	if (videoContainer.style.display === "flex") return;
 
+/*
 	if (e.code === "Space") {
 
 		e.preventDefault();
@@ -70,6 +71,7 @@ document.addEventListener("keydown", e => {
 
 		return;
 	}
+*/
 
 	if (!e.ctrlKey && !e.metaKey) return;
 
@@ -876,6 +878,8 @@ btnShare.addEventListener("click", () => {
 btnNewProject.addEventListener("click", () => {
 
 	if (newProject()) renderProject();
+
+	
 
 });
 

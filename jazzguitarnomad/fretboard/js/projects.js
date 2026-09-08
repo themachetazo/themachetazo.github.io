@@ -5,6 +5,33 @@
 // PROYECTOS
 // ==================================================
 
+
+function newProject() {
+
+	if (projectModified && isAdmin) {
+
+		if (!confirm("¿Crear un proyecto nuevo? Se perderán los cambios no guardados.")) {
+			return false;
+		}
+
+	}
+
+	currentProjectId = generateIDKey();
+
+	initializeArrays();
+
+	projectModified = false;
+
+	resetControlsValues("newProject");
+
+	projectPanel.querySelector(".projectOpenButton.active")?.classList.remove("active");
+
+	showAlert("Nuevo proyecto creado.", "info");
+
+	return true;
+
+}
+
 async function loadProject(project) {
 
 	if (!project) return;
@@ -66,6 +93,8 @@ async function loadProject(project) {
 	notation = project.settings?.notation ?? "";
 
 
+	initializeArrays();
+
 	// --------------------------------
 	// NOTAS
 	// --------------------------------
@@ -98,8 +127,6 @@ async function loadProject(project) {
 	// NUT
 	// --------------------------------
 
-	nutNotes = Array(stringCount).fill(null);
-
 	(project.nutNotes || []).forEach(note => {
 
 		if (note.string >= 0 && note.string < stringCount) {
@@ -115,93 +142,24 @@ async function loadProject(project) {
 
 	});
 
+	noteOrder = getMaxOrder();
+
 
 	// --------------------------------
 	// RECURSOS MULTIMEDIA
 	// --------------------------------
 
-	resources = {
-		video: [],
-		audio: [],
-		image: [],
-		score: [],
-		pdf: [],
-		document: [],
-		html: [],
-		link: [],
-		embed: []
-	};
+	if (project.resources) {
 
-	if (project.resources && project.resources.length > 0) {
+		for (const type of Object.keys(resources)) {
 
-		for (const resource of project.resources) {
+			if (Array.isArray(project.resources[type])) {
 
-			const type = resource.type;
+				resources[type] = project.resources[type].map(resource => ({
 
-			// --------------------------------
-			// LINK
-			// --------------------------------
+					name: resource.name || ""
 
-			if (type === "link") {
-
-				resources.link.push({
-					projectId: currentProjectId,
-					name: resource.name || "",
-					path: resource.path || "",
-					url: resource.url || "",
-					embedCode: resource.embedCode || ""
-				});
-
-				continue;
-
-			}
-
-
-			// --------------------------------
-			// EMBED
-			// --------------------------------
-
-			if (type === "embed") {
-
-				resources.embed.push({
-					projectId: currentProjectId,
-					name: resource.name || "",
-					path: resource.path || "",
-					url: resource.url || "",
-					embedCode: resource.embedCode || ""
-				});
-
-				continue;
-
-			}
-
-
-			// --------------------------------
-			// ARCHIVOS
-			// --------------------------------
-
-			if (!multimediaDirectory) continue;
-
-			try {
-
-				const folder = await multimediaDirectory.getDirectoryHandle(type);
-
-				const fileHandle = await folder.getFileHandle(
-					resource.name
-				);
-
-				const file = await fileHandle.getFile();
-
-				resources[type].push({
-					projectId: currentProjectId,
-					name: resource.name,
-					path: resource.path,
-					file: file
-				});
-
-			} catch (error) {
-
-				console.warn("No se pudo cargar el recurso: ",resource.name,error);
+				}));
 
 			}
 
@@ -218,27 +176,551 @@ async function loadProject(project) {
 
 }
 
-function newProject() {
+function parseProjectsXml(xml) {
 
-	if (projectModified && isAdmin) {
+	xmlVersion = xml.querySelector("projects")?.getAttribute("version") || "1.0";
 
-		if (!confirm("¿Crear un proyecto nuevo? Se perderán los cambios no guardados.")) {
-			return false;
-		}
+	libraryName = xml.querySelector("projects")?.getAttribute("name") || "Sin Nombre";
+	libraryNameText.value = libraryName;
+
+	libraryDesc = xml.querySelector("projects")?.getAttribute("desc") || "";
+	libraryDescText.value = libraryDesc;
+
+	categories = [];
+
+	const categoryNodes = xml.querySelectorAll("categories > category");
+
+	categoryNodes.forEach(categoryNode => {
+
+		categories.push({
+
+			id: categoryNode.getAttribute("id"),
+			name: categoryNode.textContent.trim()
+
+		});
+
+	});
+
+	refreshCategoryList();
+
+	return [...xml.querySelectorAll("project")].map(projectNode => {
+
+		const settingsNode = projectNode.querySelector("settings");
+
+		const getSetting = (name,fallback = "") => {
+
+			const node = settingsNode?.querySelector(name);
+
+			if (!node) {
+
+				return fallback;
+
+			}
+
+			const value = node.textContent.trim();
+
+			if (typeof fallback === "boolean") {
+
+				return value === "true";
+
+			}
+
+			if (typeof fallback === "number") {
+
+				const number = Number(value);
+
+				return Number.isNaN(number) ? fallback : number;
+
+			}
+
+			return value;
+
+		};
+
+		const project = {
+
+			id: projectNode.getAttribute("id") || "",
+
+			title: projectNode.getAttribute("title") || "",
+
+			category: projectNode.getAttribute("category"),
+
+			projectType: projectNode.getAttribute("projectType"),
+
+			fretboardType: projectNode.getAttribute("fretboardType"),
+
+			settings: {
+
+				orientation: getSetting("orientation","horizontal"),
+				fretboardStyle: getSetting("fretboardStyle","maple"),
+				fretCount: parseInt(getSetting("fretCount","10")),
+				displayMode: getSetting("displayMode","scale"),
+				inlays: getSetting("inlays",true),
+				rotated: getSetting("rotated",false),
+				bar: getSetting("bar","4/4"),
+				scoreScale: getSetting("scoreScale","auto"),
+				tipoSecuencia: getSetting("tipoSecuencia","up"),
+				direccion: getSetting("direccion",false),
+				countBars: getSetting("countBars",1),
+				repetitionSequence: getSetting("repetitionSequence",1),
+				isFretboardVisible: getSetting("isFretboardVisible",true),
+				isScoreVisible: getSetting("isScoreVisible",true),
+				currentInstrument: getSetting("currentInstrument","piano"),
+				fretNumbers: getSetting("fretNumbers",1),
+				showFretNumbers: getSetting("showFretNumbers",false),
+				bpm: getSetting("bpm",90),
+				key: getSetting("key","C"),
+				scoreStaves: getSetting("scoreStaves","all"),
+				scoreLayout: getSetting("scoreLayout","vertical"),
+				swing: getSetting("swing",false),
+				metronomeOn: getSetting("metronomeOn",true),
+				notation: getSetting("notation","")
+
+			},
+
+			notes: [],
+			barres: [],
+			nutNotes: [],
+
+			// --------------------------------
+			// RECURSOS MULTIMEDIA
+			// --------------------------------
+
+			resources: {
+
+				video: [],
+				audio: [],
+				midi: [],
+				image: [],
+				score: [],
+				pdf: [],
+				document: [],
+				html: [],
+				link: [],
+				embed: []
+
+			}
+
+		};
+
+
+		// --------------------------------
+		// NOTAS
+		// --------------------------------
+
+		projectNode.querySelectorAll("notes > note").forEach(noteNode => {
+
+			project.notes.push({
+
+				string: Number(noteNode.getAttribute("string")),
+				fret: Number(noteNode.getAttribute("fret")),
+				color: noteNode.getAttribute("color") || "#000000",
+				text: noteNode.getAttribute("text") || "",
+				chord: noteNode.getAttribute("chord") || "",
+				order: noteNode.getAttribute("order") || 0
+
+			});
+
+		});
+
+
+		// --------------------------------
+		// BARRAS
+		// --------------------------------
+
+		projectNode.querySelectorAll("barres > barre").forEach(barreNode => {
+
+			project.barres.push({
+
+				fret: Number(barreNode.getAttribute("fret")),
+				startString: Number(barreNode.getAttribute("startString")),
+				color: barreNode.getAttribute("color") || "#000000",
+				text: barreNode.getAttribute("text") || "",
+				chord: barreNode.getAttribute("chord") || "",
+				order: barreNode.getAttribute("order") || 0
+
+			});
+
+		});
+
+
+		// --------------------------------
+		// NOTAS DE CEJILLA
+		// --------------------------------
+
+		projectNode.querySelectorAll("nutNotes > nutNote").forEach(nutNode => {
+
+			project.nutNotes.push({
+
+				string: Number(nutNode.getAttribute("string")),
+				color: nutNode.getAttribute("color") || "#000000",
+				text: nutNode.getAttribute("text") || "",
+				chord: nutNode.getAttribute("chord") || "",
+				order: nutNode.getAttribute("order") || 0
+
+			});
+
+		});
+
+
+		// --------------------------------
+		// RECURSOS MULTIMEDIA
+		// --------------------------------
+
+		projectNode.querySelectorAll("resources > resource").forEach(resourceNode => {
+
+			const type = resourceNode.getAttribute("type") || "";
+
+			if (!project.resources[type]) return;
+
+			project.resources[type].push({
+
+				name: resourceNode.getAttribute("name") || ""
+
+			});
+
+		});
+
+
+		return project;
+
+	});
+
+}
+
+function getCurrentProject() {
+
+	const projectTitle = titleText.value.trim();
+
+	let notacion = chkNoteNames.checked ? cmbNoteNames.value : "";
+
+	if (!projectTitle) {
+
+		alert("Escribe un título antes de guardar el proyecto.");
+		titleText.focus();
+
+		return null;
 
 	}
 
-	currentProjectId = generateIDKey();
+	return {
 
-	projectModified = false;
+		id: currentProjectId,
 
-	resetControlsValues("newProject");
+		title: projectTitle,
 
-	projectPanel.querySelector(".projectOpenButton.active")?.classList.remove("active");
+		category: cmbProjectCategory.value,
 
-	showAlert("Nuevo proyecto creado.", "info");
+		projectType: cmbProjectType.value,
 
-	return true;
+		fretboardType: cmbFretboardType.value,
+
+		settings: {
+			orientation: orientation,
+			fretboardStyle: cmbDiapason.value,
+			fretCount: numberFrets.value,
+			displayMode: displayMode,
+			inlays: chkInlays.checked,
+			rotated: rotated,
+			bar: cmbBar.value,
+			scoreScale: scoreScale,
+			tipoSecuencia: cmbTipoSecuencia.value,
+			direccion: chkDireccion.checked,
+			countBars: cmbCountIn.value,
+			repetitionSequence: cmbPlayerRepeats.value,
+			isFretboardVisible: isFretboardVisible,
+			isScoreVisible: isScoreVisible,
+			currentInstrument: cmbSamplerInstrument.value,
+			fretNumbers: numFrets.value,
+			showFretNumbers: chkShowNumber.checked,
+			bpm: sliderBpm.value,
+			key: cmbKey.value,
+			scoreStaves: cmbScoreStaves.value,
+			scoreLayout: cmbScoreLayout.value,
+			swing: chkPlayerSwing.checked,
+			metronomeOn: chkMetronomeOn.checked,
+			notation: notacion
+		},
+
+		notes: notes.map(note => ({
+			string: note.string,
+			fret: note.fret,
+			color: note.color,
+			text: note.text,
+			chord: note.chord,
+			order: note.order
+		})),
+
+		barres: barreNotes.map(barre => ({
+			fret: barre.fret,
+			startString: barre.startString,
+			color: barre.color,
+			text: barre.text,
+			chord: barre.chord,
+			order: barre.order
+		})),
+
+		nutNotes: nutNotes.map((note, string) => {
+
+			if (!note) return null;
+
+			return {
+				string,
+				color: note.color,
+				text: note.text,
+				chord: note.chord,
+				order: note.order
+			};
+
+		}).filter(note => note !== null),
+
+		resources: Object.fromEntries(
+
+			Object.entries(resources).map(([type, resourceList]) => [
+
+				type,
+
+				resourceList.map(resource => ({
+
+					name: resource.name || ""
+
+				}))
+
+			])
+
+		)
+
+	};
+
+}
+
+function projectToXml(project, indent = "\t") {
+
+	const lines = [];
+
+	lines.push(
+		`${indent}<project ` +
+		`id="${escapeXml(project.id)}" ` +
+		`title="${escapeXml(project.title)}" ` +
+		`category="${escapeXml(project.category)}" ` +
+		`projectType="${escapeXml(project.projectType)}" ` +
+		`fretboardType="${escapeXml(project.fretboardType)}">`
+	);
+
+	if (project.projectType === "fretboard") {
+
+		lines.push(`${indent}\t<settings>`);
+		lines.push(`${indent}\t\t<orientation>${escapeXml(project.settings.orientation)}</orientation>`);
+		lines.push(`${indent}\t\t<fretboardStyle>${escapeXml(project.settings.fretboardStyle)}</fretboardStyle>`);
+		lines.push(`${indent}\t\t<fretCount>${project.settings.fretCount}</fretCount>`);
+		lines.push(`${indent}\t\t<displayMode>${escapeXml(project.settings.displayMode)}</displayMode>`);
+		lines.push(`${indent}\t\t<inlays>${project.settings.inlays}</inlays>`);
+		lines.push(`${indent}\t\t<rotated>${project.settings.rotated}</rotated>`);
+		lines.push(`${indent}\t\t<bar>${escapeXml(project.settings.bar)}</bar>`);
+		lines.push(`${indent}\t\t<scoreScale>${escapeXml(project.settings.scoreScale)}</scoreScale>`);
+		lines.push(`${indent}\t\t<tipoSecuencia>${escapeXml(project.settings.tipoSecuencia)}</tipoSecuencia>`);
+		lines.push(`${indent}\t\t<direccion>${project.settings.direccion}</direccion>`);
+		lines.push(`${indent}\t\t<countBars>${project.settings.countBars}</countBars>`);
+		lines.push(`${indent}\t\t<repetitionSequence>${project.settings.repetitionSequence}</repetitionSequence>`);
+		lines.push(`${indent}\t\t<isFretboardVisible>${project.settings.isFretboardVisible}</isFretboardVisible>`);
+		lines.push(`${indent}\t\t<isScoreVisible>${project.settings.isScoreVisible}</isScoreVisible>`);
+		lines.push(`${indent}\t\t<currentInstrument>${escapeXml(project.settings.currentInstrument)}</currentInstrument>`);
+		lines.push(`${indent}\t\t<fretNumbers>${project.settings.fretNumbers}</fretNumbers>`);
+		lines.push(`${indent}\t\t<showFretNumbers>${project.settings.showFretNumbers}</showFretNumbers>`);
+		lines.push(`${indent}\t\t<bpm>${project.settings.bpm}</bpm>`);
+		lines.push(`${indent}\t\t<key>${escapeXml(project.settings.key)}</key>`);
+		lines.push(`${indent}\t\t<scoreStaves>${escapeXml(project.settings.scoreStaves)}</scoreStaves>`);
+		lines.push(`${indent}\t\t<scoreLayout>${escapeXml(project.settings.scoreLayout)}</scoreLayout>`);
+		lines.push(`${indent}\t\t<swing>${project.settings.swing}</swing>`);
+		lines.push(`${indent}\t\t<metronomeOn>${project.settings.metronomeOn}</metronomeOn>`);
+		lines.push(`${indent}\t\t<notation>${escapeXml(project.settings.notation)}</notation>`);
+		lines.push(`${indent}\t</settings>`);
+
+	} else {
+
+		lines.push(`${indent}\t<settings/>`);
+
+	}
+
+
+	// --------------------------------
+	// NOTAS
+	// --------------------------------
+
+	if (project.notes && project.notes.length > 0) {
+
+		lines.push(`${indent}\t<notes>`);
+
+		project.notes.forEach(note => {
+
+			lines.push(
+				`${indent}\t\t<note ` +
+				`string="${note.string}" ` +
+				`fret="${note.fret}" ` +
+				`color="${escapeXml(note.color)}" ` +
+				`text="${escapeXml(note.text)}" ` +
+				`chord="${escapeXml(note.chord)}" ` +
+				`order="${escapeXml(note.order)}"/>`
+			);
+
+		});
+
+		lines.push(`${indent}\t</notes>`);
+
+	} else {
+
+		lines.push(`${indent}\t<notes/>`);
+
+	}
+
+
+	// --------------------------------
+	// BARRAS
+	// --------------------------------
+
+	if (project.barres && project.barres.length > 0) {
+
+		lines.push(`${indent}\t<barres>`);
+
+		project.barres.forEach(barre => {
+
+			lines.push(
+				`${indent}\t\t<barre ` +
+				`fret="${barre.fret}" ` +
+				`startString="${barre.startString}" ` +
+				`color="${escapeXml(barre.color)}" ` +
+				`text="${escapeXml(barre.text)}" ` +
+				`chord="${escapeXml(barre.chord)}" ` +
+				`order="${escapeXml(barre.order)}"/>`
+			);
+
+		});
+
+		lines.push(`${indent}\t</barres>`);
+
+	} else {
+
+		lines.push(`${indent}\t<barres/>`);
+
+	}
+
+
+	// --------------------------------
+	// NOTAS DE CEJILLA
+	// --------------------------------
+
+	if (project.nutNotes && project.nutNotes.length > 0) {
+
+		lines.push(`${indent}\t<nutNotes>`);
+
+		project.nutNotes.forEach(note => {
+
+			lines.push(
+				`${indent}\t\t<nutNote ` +
+				`string="${note.string}" ` +
+				`color="${escapeXml(note.color)}" ` +
+				`text="${escapeXml(note.text)}" ` +
+				`chord="${escapeXml(note.chord)}" ` +
+				`order="${escapeXml(note.order)}"/>`
+			);
+
+		});
+
+		lines.push(`${indent}\t</nutNotes>`);
+
+	} else {
+
+		lines.push(`${indent}\t<nutNotes/>`);
+
+	}
+
+	// --------------------------------
+	// RECURSOS MULTIMEDIA
+	// --------------------------------
+
+	const resourceTypes = Object.keys(project.resources || {});
+
+	const hasResources = resourceTypes.some(type =>
+		Array.isArray(project.resources[type]) &&
+		project.resources[type].length > 0
+	);
+
+	if (hasResources) {
+
+		lines.push(`${indent}\t<resources>`);
+
+		resourceTypes.forEach(type => {
+
+			if (!Array.isArray(project.resources[type])) return;
+
+			project.resources[type].forEach(resource => {
+
+				lines.push(
+					`${indent}\t\t<resource ` +
+					`type="${escapeXml(type)}" ` +
+					`name="${escapeXml(resource.name || "")}" />`
+				);
+
+			});
+
+		});
+
+		lines.push(`${indent}\t</resources>`);
+
+	} else {
+
+		lines.push(`${indent}\t<resources/>`);
+
+	}
+
+
+	lines.push(`${indent}</project>`);
+
+	return lines.join("\n");
+
+}
+
+function writeXMLProjects() {
+
+	const lines = [];
+
+	xmlVersion = (parseFloat(xmlVersion) + 0.1).toFixed(1);
+
+	lines.push('<?xml version="1.0" encoding="UTF-8"?>');
+	lines.push(
+		'<projects ' +
+		`version="${escapeXml(xmlVersion)}" ` +
+		`name="${escapeXml(libraryName)}" ` +
+		`desc="${escapeXml(libraryDesc)}">`
+	);
+
+	lines.push("");
+
+	// Categorías
+	lines.push("\t<categories>");
+
+	categories.forEach(category => {
+
+		lines.push(
+			`\t\t<category id="${escapeXml(category.id)}">${escapeXml(category.name)}</category>`
+		);
+
+	});
+
+	lines.push("\t</categories>");
+	lines.push("");
+
+	// Proyectos
+	projects.forEach(project => {
+
+		lines.push(projectToXml(project));
+		lines.push("");
+
+	});
+
+	lines.push("</projects>");
+
+	return lines.join("\n");
 
 }
 
@@ -355,8 +837,6 @@ async function openXMLProjectsFile() {
 
 		renderProject();
 
-		if (menuOpen !== "projects") setMenu("projects");
-
 		return true;
 
 	} catch (error) {
@@ -377,483 +857,6 @@ async function openXMLProjectsFile() {
 		return false;
 
 	}
-
-}
-
-function parseProjectsXml(xml) {
-
-	xmlVersion = xml.querySelector("projects")?.getAttribute("version") || "1.0";
-
-	libraryName = xml.querySelector("projects")?.getAttribute("name") || "Sin Nombre";
-	libraryNameText.value = libraryName;
-
-	libraryDesc = xml.querySelector("projects")?.getAttribute("desc") || "";
-	libraryDescText.value = libraryDesc;
-
-	categories = [];
-
-	const categoryNodes = xml.querySelectorAll("categories > category");
-
-	categoryNodes.forEach(categoryNode => {
-
-		categories.push({
-
-			id: categoryNode.getAttribute("id"),
-			name: categoryNode.textContent.trim()
-
-		});
-
-	});
-
-	refreshCategoryList();
-
-	return [...xml.querySelectorAll("project")].map(projectNode => {
-
-		const settingsNode = projectNode.querySelector("settings");
-
-		const getSetting = (name,fallback = "") => {
-
-			const node = settingsNode?.querySelector(name);
-
-			return node ? node.textContent.trim() : fallback;
-
-		};
-
-		const project = {
-
-			id: projectNode.getAttribute("id") || "",
-
-			title: projectNode.getAttribute("title") || "",
-
-			category: projectNode.getAttribute("category"),
-
-			projectType: projectNode.getAttribute("projectType"),
-
-			fretboardType: projectNode.getAttribute("fretboardType"),
-
-			settings: {
-
-				orientation: getSetting("orientation","horizontal"),
-				fretboardStyle: getSetting("fretboardStyle","maple"),
-				fretCount: parseInt(getSetting("fretCount","10")),
-				displayMode: getSetting("displayMode","scale"),
-				inlays: getSetting("inlays",true),
-				rotated: getSetting("rotated",false),
-				bar: getSetting("bar","4/4"),
-				scoreScale: getSetting("scoreScale","auto"),
-				tipoSecuencia: getSetting("tipoSecuencia","up"),
-				direccion: getSetting("direccion",false),
-				countBars: getSetting("countBars",1),
-				repetitionSequence: getSetting("repetitionSequence",1),
-				isFretboardVisible: getSetting("isFretboardVisible",true),
-				isScoreVisible: getSetting("isScoreVisible",true),
-				currentInstrument: getSetting("currentInstrument","piano"),
-				fretNumbers: getSetting("fretNumbers",1),
-				showFretNumbers: getSetting("showFretNumbers",false),
-				bpm: getSetting("bpm",90),
-				key: getSetting("key","C"),
-				scoreStaves: getSetting("scoreStaves","all"),
-				scoreLayout: getSetting("scoreLayout","vertical"),
-				swing: getSetting("swing",false),
-				metronomeOn: getSetting("metronomeOn",true),
-				notation: getSetting("notation","")
-
-			},
-
-			resources: [],
-
-			notes: [],
-			barres: [],
-			nutNotes: []
-
-		};
-
-
-		// --------------------------------
-		// RECURSOS MULTIMEDIA
-		// --------------------------------
-
-		projectNode.querySelectorAll("resources > resource").forEach(resourceNode => {
-
-			project.resources.push({
-
-				type: resourceNode.getAttribute("type") || "",
-				name: resourceNode.getAttribute("name") || "",
-				path: resourceNode.getAttribute("path") || "",
-				url: resourceNode.getAttribute("url") || "",
-				embedCode: resourceNode.getAttribute("embedCode") || ""
-
-			});
-
-		});
-
-
-		// --------------------------------
-		// NOTAS
-		// --------------------------------
-
-		projectNode.querySelectorAll("notes > note").forEach(noteNode => {
-
-			project.notes.push({
-
-				string: Number(noteNode.getAttribute("string")),
-				fret: Number(noteNode.getAttribute("fret")),
-				color: noteNode.getAttribute("color") || "#000000",
-				text: noteNode.getAttribute("text") || "",
-				chord: noteNode.getAttribute("chord") || "",
-				order: noteNode.getAttribute("order") || 0
-
-			});
-
-		});
-
-
-		// --------------------------------
-		// BARRAS
-		// --------------------------------
-
-		projectNode.querySelectorAll("barres > barre").forEach(barreNode => {
-
-			project.barres.push({
-
-				fret: Number(barreNode.getAttribute("fret")),
-				startString: Number(barreNode.getAttribute("startString")),
-				color: barreNode.getAttribute("color") || "#000000",
-				text: barreNode.getAttribute("text") || "",
-				chord: barreNode.getAttribute("chord") || "",
-				order: barreNode.getAttribute("order") || 0
-
-			});
-
-		});
-
-
-		// --------------------------------
-		// NOTAS DE CEJILLA
-		// --------------------------------
-
-		projectNode.querySelectorAll("nutNotes > nutNote").forEach(nutNode => {
-
-			project.nutNotes.push({
-
-				string: Number(nutNode.getAttribute("string")),
-				color: nutNode.getAttribute("color") || "#000000",
-				text: nutNode.getAttribute("text") || "",
-				chord: nutNode.getAttribute("chord") || "",
-				order: nutNode.getAttribute("order") || 0
-
-			});
-
-		});
-
-		return project;
-
-	});
-
-}
-
-function getCurrentProject() {
-
-	const projectTitle = titleText.value.trim();
-
-	let notacion = chkNoteNames.checked ? cmbNoteNames.value : "";
-
-	if (!projectTitle) {
-		alert("Escribe un título antes de guardar el proyecto.");
-		titleText.focus();
-		return null;
-	}
-
-	return {
-
-		id: currentProjectId,
-
-		title: projectTitle,
-
-		category: cmbProjectCategory.value,
-
-		projectType: cmbProjectType.value,
-
-		fretboardType: cmbFretboardType.value,
-
-		settings: {
-			orientation: orientation,
-			fretboardStyle: cmbDiapason.value,
-			fretCount: numberFrets.value,
-			displayMode: displayMode,
-			inlays: chkInlays.checked,
-			rotated: rotated,
-			bar: cmbBar.value,
-			scoreScale: scoreScale,
-			tipoSecuencia: cmbTipoSecuencia.value,
-			direccion: chkDireccion.checked,
-			countBars: cmbCountIn.value,
-			repetitionSequence: cmbPlayerRepeats.value,
-			isFretboardVisible: isFretboardVisible,
-			isScoreVisible: isScoreVisible,
-			currentInstrument: cmbSamplerInstrument.value,
-			fretNumbers: numFrets.value,
-			showFretNumbers: chkShowNumber.checked,
-			bpm: sliderBpm.value,
-			key: cmbKey.value,
-			scoreStaves: cmbScoreStaves.value,
-			scoreLayout: cmbScoreLayout.value,
-			swing: chkPlayerSwing.checked,
-			metronomeOn: chkMetronomeOn.checked,
-			notation: notacion
-		},
-
-		resources: Object.keys(resources).flatMap(type =>
-
-			resources[type]
-
-				.filter(resource => resource.projectId === currentProjectId)
-
-				.map(resource => ({
-					type: type,
-					name: resource.name,
-					path: resource.path,
-					url: resource.url,
-					embedCode: resource.embedCode
-				}))
-
-		),
-
-		notes: notes.map(note => ({
-			string: note.string,
-			fret: note.fret,
-			color: note.color,
-			text: note.text,
-			chord: note.chord,
-			order: note.order
-		})),
-
-		barres: barreNotes.map(barre => ({
-			fret: barre.fret,
-			startString: barre.startString,
-			color: barre.color,
-			text: barre.text,
-			chord: barre.chord,
-			order: barre.order
-		})),
-
-		nutNotes: nutNotes
-			.map((note, string) => {
-
-				if (!note) {
-					return null;
-				}
-
-				return {
-					string,
-					color: note.color,
-					text: note.text,
-					chord: note.chord,
-					order: note.order
-				};
-
-			})
-			.filter(note => note !== null)
-	};
-
-}
-
-function projectsToXml() {
-
-	const lines = [];
-
-	xmlVersion = (parseFloat(xmlVersion) + 0.1).toFixed(1);
-
-	lines.push('<?xml version="1.0" encoding="UTF-8"?>');
-	lines.push('<projects version="' + xmlVersion + '" name="' + libraryName + '" desc="' + libraryDesc + '">');
-	lines.push("");
-
-	// Categorías
-	lines.push("\t<categories>");
-
-	categories.forEach(category => {
-
-		lines.push(
-			`\t\t<category id="${escapeXml(category.id)}">${escapeXml(category.name)}</category>`
-		);
-
-	});
-
-	lines.push("\t</categories>");
-	lines.push("");
-
-	// Proyectos
-	projects.forEach(project => {
-
-		lines.push(projectToXml(project));
-		lines.push("");
-
-	});
-
-	lines.push("</projects>");
-
-	return lines.join("\n");
-
-}
-
-function projectToXml(project, indent = "\t") {
-
-	const lines = [];
-
-	lines.push(
-		`${indent}<project ` +
-		`id="${project.id}" ` +
-		`title="${escapeXml(project.title)}" ` +
-		`category="${escapeXml(project.category)}" ` +
-		`projectType="${escapeXml(project.projectType)}" ` +
-		`fretboardType="${escapeXml(project.fretboardType)}">`
-	);
-
-	if (project.projectType === "fretboard"){
-
-		lines.push(`${indent}\t<settings>`);
-		lines.push(`${indent}\t\t<orientation>${escapeXml(project.settings.orientation)}</orientation>`);
-		lines.push(`${indent}\t\t<fretboardStyle>${escapeXml(project.settings.fretboardStyle)}</fretboardStyle>`);
-		lines.push(`${indent}\t\t<fretCount>${project.settings.fretCount}</fretCount>`);
-		lines.push(`${indent}\t\t<displayMode>${project.settings.displayMode}</displayMode>`);
-		lines.push(`${indent}\t\t<inlays>${project.settings.inlays}</inlays>`);
-		lines.push(`${indent}\t\t<rotated>${project.settings.rotated}</rotated>`);
-		lines.push(`${indent}\t\t<bar>${project.settings.bar}</bar>`);
-		lines.push(`${indent}\t\t<scoreScale>${project.settings.scoreScale}</scoreScale>`);
-		lines.push(`${indent}\t\t<tipoSecuencia>${project.settings.tipoSecuencia}</tipoSecuencia>`);
-		lines.push(`${indent}\t\t<direccion>${project.settings.direccion}</direccion>`);
-		lines.push(`${indent}\t\t<countBars>${project.settings.countBars}</countBars>`);
-		lines.push(`${indent}\t\t<repetitionSequence>${project.settings.repetitionSequence}</repetitionSequence>`);
-		lines.push(`${indent}\t\t<isFretboardVisible>${project.settings.isFretboardVisible}</isFretboardVisible>`);
-		lines.push(`${indent}\t\t<isScoreVisible>${project.settings.isScoreVisible}</isScoreVisible>`);
-		lines.push(`${indent}\t\t<currentInstrument>${project.settings.currentInstrument}</currentInstrument>`);
-		lines.push(`${indent}\t\t<fretNumbers>${project.settings.fretNumbers}</fretNumbers>`);
-		lines.push(`${indent}\t\t<showFretNumbers>${project.settings.showFretNumbers}</showFretNumbers>`);
-		lines.push(`${indent}\t\t<bpm>${project.settings.bpm}</bpm>`);
-		lines.push(`${indent}\t\t<key>${project.settings.key}</key>`);
-		lines.push(`${indent}\t\t<scoreStaves>${project.settings.scoreStaves}</scoreStaves>`);
-		lines.push(`${indent}\t\t<scoreLayout>${project.settings.scoreLayout}</scoreLayout>`);
-		lines.push(`${indent}\t\t<swing>${project.settings.swing}</swing>`);
-		lines.push(`${indent}\t\t<metronomeOn>${project.settings.metronomeOn}</metronomeOn>`);
-		lines.push(`${indent}\t\t<notation>${project.settings.notation}</notation>`);
-		lines.push(`${indent}\t</settings>`);
-
-		lines.push(`${indent}\t<resources/>`);
-
-	}else{
-
-		lines.push(`${indent}\t<settings/>`);
-
-
-		// --------------------------------
-		// RECURSOS MULTIMEDIA
-		// --------------------------------
-
-		lines.push(`${indent}\t<resources>`);
-
-		Object.keys(resources).forEach(type => {
-
-			resources[type].forEach(resource => {
-
-				if (resource.name && resource.name.includes("-" + project.id + ".")) {
-
-					lines.push(
-						`${indent}\t\t<resource ` +
-						`type="${escapeXml(type)}" ` +
-						`name="${escapeXml(resource.name)}" ` +
-						`path="${escapeXml(resource.path)}"/>`
-					);
-
-				}
-
-			});
-
-		});
-
-		lines.push(`${indent}\t</resources>`);
-
-	}
-
-	if (project.notes && project.notes.length > 0) {
-
-		lines.push(`${indent}\t<notes>`);
-
-		project.notes.forEach(note => {
-
-			lines.push(
-				`${indent}\t\t<note ` +
-				`string="${note.string}" ` +
-				`fret="${note.fret}" ` +
-				`color="${escapeXml(note.color)}" ` +
-				`text="${escapeXml(note.text)}" ` + 
-				`chord="${escapeXml(note.chord)}" ` + 
-				`order="${escapeXml(note.order)}"/>`
-			);
-
-		});
-
-		lines.push(`${indent}\t</notes>`);
-
-	} else {
-
-		lines.push(`${indent}\t<notes/>`);
-
-	}
-
-	if (project.barres && project.barres.length > 0) {
-
-		lines.push(`${indent}\t<barres>`);
-
-		project.barres.forEach(barre => {
-
-			lines.push(
-				`${indent}\t\t<barre ` +
-				`fret="${barre.fret}" ` +
-				`startString="${barre.startString}" ` +
-				`color="${escapeXml(barre.color)}" ` +
-				`text="${escapeXml(barre.text)}" ` + 
-				`chord="${escapeXml(barre.chord)}" ` + 
-				`order="${escapeXml(barre.order)}"/>`
-			);
-
-		});
-
-		lines.push(`${indent}\t</barres>`);
-
-	} else {
-
-		lines.push(`${indent}\t<barres/>`);
-
-	}
-
-	if (project.nutNotes && project.nutNotes.length > 0) {
-
-		lines.push(`${indent}\t<nutNotes>`);
-
-		project.nutNotes.forEach(note => {
-
-			lines.push(
-				`${indent}\t\t<nutNote ` +
-				`string="${note.string}" ` +
-				`color="${escapeXml(note.color)}" ` +
-				`text="${escapeXml(note.text)}" ` + 
-				`chord="${escapeXml(note.chord)}" ` + 
-				`order="${escapeXml(note.order)}"/>`
-			);
-
-		});
-
-		lines.push(`${indent}\t</nutNotes>`);
-
-	} else {
-
-		lines.push(`${indent}\t<nutNotes/>`);
-
-	}
-
-	lines.push(`${indent}</project>`);
-
-	return lines.join("\n");
 
 }
 
@@ -912,7 +915,7 @@ function renderLibrary() {
 		// --------------------------------
 		// PROYECTOS DE LA CATEGORÍA
 		// --------------------------------
-
+/*
 		const categoryProjects = projects
 			.filter(project => project.category === category.id)
 			.sort((a, b) =>
@@ -922,6 +925,9 @@ function renderLibrary() {
 					{sensitivity: "base"}
 				)
 			);
+*/
+
+		const categoryProjects = projects.filter(project => project.category === category.id);
 
 		categoryProjects.forEach(project => {
 
@@ -964,7 +970,7 @@ function renderLibrary() {
 					iType = "<i class='fa-solid fa-guitar'></i>";
 					break;
 				case "video":
-					iType = "<i class='fa-solid fa-video'></i>";
+					iType = "<i class='fa-solid fa-film'></i>";
 					break;
 				case "audio":
 					iType = "<i class='fa-solid fa-compact-disc'></i>";
@@ -972,14 +978,17 @@ function renderLibrary() {
 				case "image":
 					iType = "<i class='fa-solid fa-image'></i>";
 					break;
-				case "score":
-					iType = "<i class='fa-solid fa-music'></i>";
-					break;
 				case "pdf":
 					iType = "<i class='fa-solid fa-file-pdf'></i>";
 					break;
 				case "document":
 					iType = "<i class='fa-solid fa-file-lines'></i>";
+					break;
+				case "midi":
+					iType = "<i class='fa-solid fa-file-audio'></i>";
+					break;
+				case "score":
+					iType = "<i class='fa-solid fa-music'></i>";
 					break;
 				case "html":
 					iType = "<i class='fa-solid fa-file-html'></i>";
@@ -1014,16 +1023,6 @@ function renderLibrary() {
 				await selectProject(currentProject);
 
 				renderProject();
-
-				if (projectType !== "fretboard") {
-
-					setMenu("multimedia");
-
-				}else{
-
-					if (menuOpen !== "edit") setMenu("edit");
-
-				}
 
 			});
 
@@ -1079,31 +1078,6 @@ function renderLibrary() {
 
 }
 
-function getFirstProject() {
-
-	if (!projects || projects.length === 0) {
-		return null;
-	}
-
-	const firstCategory = getSortedCategories()
-		.find(category =>
-			projects.some(project => project.category === category.id)
-		);
-
-	if (!firstCategory) {
-		return null;
-	}
-
-	return projects
-		.filter(project => project.category === firstCategory.id)
-		.sort((a, b) =>
-			a.title.localeCompare(b.title, undefined, {
-				sensitivity: "base"
-			})
-		)[0] || null;
-
-}
-
 async function selectProject(project) {
 
 	if (!project) return;
@@ -1115,8 +1089,6 @@ async function selectProject(project) {
 	updateSelectedProjectButton();
 
 	await loadProject(project);
-
-	noteOrder = getMaxOrder();
 
 }
 
@@ -1148,9 +1120,9 @@ async function saveCurrentProject() {
 
 		renderLibrary();
 
-		openProjectCategory(project.category);
-
 		setLibraryInfo(xmlProjects.substring(xmlProjects.indexOf("/") + 1));
+
+		openProjectCategory(project.category);
 
 		showAlert("Proyecto guardado correctamente.", "success");
 
@@ -1162,7 +1134,7 @@ async function saveCurrentProject() {
 
 async function saveProjectsFile() {
 
-	const xmlText = projectsToXml();
+	const xmlText = writeXMLProjects();
 
 	// Chrome / Edge: guardar en el archivo elegido.
 	if (projectsFileHandle) {
@@ -1227,9 +1199,7 @@ async function deleteProject(id) {
 
 	const project = projects.find(p => p.id === id);
 
-	if (!project) {
-		return;
-	}
+	if (!project) return;
 
 	if (!confirm(`¿Eliminar el proyecto "${project.title}"?`)) {
 		return;
@@ -1471,17 +1441,33 @@ function deleteCategory() {
 
 async function renderProject(){
 
-	setPlayerValues();
+	if (projectType !== "fretboard") {
 
-	neckImageLoaded = false;
+		await renderMultimedia();
 
-	if (fretboardStyle !== "blank") await loadFretboardImage();
+	}else{
 
-	if (isFretboardVisible) resizeCanvas();
+		setPlayerValues();
 
-	if (isScoreVisible) scoreRender();
+		neckImageLoaded = false;
 
-	if (projectType !== "fretboard") await renderMultimedia();
+		if (fretboardStyle !== "blank") await loadFretboardImage();
+
+		if (isFretboardVisible) resizeCanvas();
+
+		if (isScoreVisible) scoreRender();
+
+	}
+
+	if (isAdmin && projectType !== "fretboard") {
+
+		if (menuOpen !== "projects") setMenu("projects");
+
+	}else{
+
+		if (menuOpen !== "edit") setMenu("edit");
+
+	}
 
 }
 
@@ -1544,5 +1530,30 @@ function setLibraryInfo(fileName){
 	projectPanelInfo.innerHTML = txtInfo;
 
 	if (txtInfo === "") projectPanelInfo.style.display = "none";
+
+}
+
+function getFirstProject() {
+
+	if (!projects || projects.length === 0) {
+		return null;
+	}
+
+	const firstCategory = getSortedCategories()
+		.find(category =>
+			projects.some(project => project.category === category.id)
+		);
+
+	if (!firstCategory) {
+		return null;
+	}
+
+	return projects
+		.filter(project => project.category === firstCategory.id)
+		.sort((a, b) =>
+			a.title.localeCompare(b.title, undefined, {
+				sensitivity: "base"
+			})
+		)[0] || null;
 
 }
