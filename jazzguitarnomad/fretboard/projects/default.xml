@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<projects version="6.6" name="prueba" desc="proyecto defecto">
+<projects version="6.8" name="prueba" desc="proyecto defecto">
 
 	<categories>
 		<category id="0001">Acordes</category>
@@ -219,6 +219,27 @@
 		<nutNotes/>
 		<resources>
 			<resource type="document" name="default-14dll84-Guitarras-y-Tiendas.txt" />
+		</resources>
+	</project>
+
+	<project id="f7oc5s" title="portfolio" category="uqoca7" projectType="link" fretboardType="sequence">
+		<settings/>
+		<notes/>
+		<barres/>
+		<nutNotes/>
+		<resources>
+			<resource type="link" name="https://view.genially.com/6958f29aae62ec746f090675" />
+			<resource type="embed" name="https://view.genially.com/6958f29aae62ec746f090675" />
+		</resources>
+	</project>
+
+	<project id="1cqve1k" title="you" category="uqoca7" projectType="embed" fretboardType="sequence">
+		<settings/>
+		<notes/>
+		<barres/>
+		<nutNotes/>
+		<resources>
+			<resource type="embed" name="&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/TNdTvxHb9E0?si=WDTqxkWJG50Wm5Ao&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; referrerpolicy=&quot;strict-origin-when-cross-origin&quot; allowfullscreen&gt;&lt;/iframe&gt;" />
 		</resources>
 	</project>
 
