@@ -1529,7 +1529,6 @@ btnAbrirVideo.addEventListener("click", async () => {
 
 		localVideo.srcObject = localStream;
 
-//		getMultimediaDevicesInfo(media);
 		updateVideoInfo();
 
 	}
@@ -1618,10 +1617,16 @@ btnVideoRecord.addEventListener("click", () => {
 		btnVideoRecord.classList.remove("buttonPlay");
 		btnVideoRecord.classList.add("buttonStop");
 		btnVideoMirror.disabled = true;
+		cmbCamera.disabled = true;
+		cmbResolucion.disabled = true;
+		cmbMicrophone.disabled = true;
 	}else{
 		btnVideoRecord.classList.add("buttonPlay");
 		btnVideoRecord.classList.remove("buttonStop");
 		btnVideoMirror.disabled = false;
+		cmbCamera.disabled = false;
+		cmbResolucion.disabled = false;
+		cmbMicrophone.disabled = false;
 	}
 
 	recordVideo();
@@ -1629,6 +1634,12 @@ btnVideoRecord.addEventListener("click", () => {
 });
 
 cmbCamera.addEventListener("change", () => {
+
+	changeCamera();
+
+});
+
+cmbResolucion.addEventListener("change", () => {
 
 	changeCamera();
 

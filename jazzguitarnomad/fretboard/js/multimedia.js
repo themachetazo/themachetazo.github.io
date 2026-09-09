@@ -749,6 +749,81 @@ function audioBufferToMp3(buffer) {
 }
 
 
+
+////////////////////////////////////////////////////////////
+//
+// MIDI
+//
+////////////////////////////////////////////////////////////
+
+async function playMidi(filePath) {
+
+	await Tone.start();
+
+	// Si todavía no hemos cargado el MIDI, lo cargamos
+	if (!midiData) {
+
+		midiData = await Midi.fromUrl(filePath);
+
+		// Limpiar cualquier reproducción anterior
+		Tone.Transport.stop();
+		Tone.Transport.cancel();
+
+		// Crear un sintetizador por pista
+		midiData.tracks.forEach(track => {
+
+			if (track.notes.length === 0) {
+				return;
+			}
+
+			const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+
+			midiSynths.push(synth);
+
+			track.notes.forEach(note => {
+
+				Tone.Transport.schedule(time => {
+
+					synth.triggerAttackRelease(
+						note.name,
+						note.duration,
+						time,
+						note.velocity
+					);
+
+				}, note.time);
+
+			});
+
+		});
+
+	}
+
+	Tone.Transport.start();
+
+}
+
+function stopMidi() {
+
+	Tone.Transport.stop();
+
+	Tone.Transport.cancel();
+
+	Tone.Transport.position = 0;
+
+	midiSynths.forEach(synth => {
+
+		synth.releaseAll();
+		synth.dispose();
+
+	});
+
+	midiSynths = [];
+	midiData = null;
+
+}
+
+
 ////////////////////////////////////////////////////////////
 //
 // VIDEO
@@ -873,13 +948,7 @@ async function getCameraAndMicrophone() {
 
 				}
 
-				recordingContext.drawImage(
-					localVideo,
-					0,
-					0,
-					recordingCanvas.width,
-					recordingCanvas.height
-				);
+				recordingContext.drawImage(localVideo,0,0,recordingCanvas.width,recordingCanvas.height);
 
 				recordingContext.restore();
 
@@ -899,6 +968,7 @@ async function getCameraAndMicrophone() {
 
 	} catch (error) {
 
+		showAlert("No se pudo acceder a la cámara y al micrófono","error");
 		console.error("No se pudo acceder a la cámara y al micrófono: ",error);
 
 		return null;
@@ -1039,32 +1109,144 @@ async function changeCamera() {
 
 	try {
 
+		// --------------------------------
+		// RESOLUCIÓN SOLICITADA
+		// --------------------------------
+
+		let videoWidth, videoHeight;
+
+		switch (cmbResolucion.value) {
+
+			case "480":
+				videoWidth = 640;
+				videoHeight = 480;
+				break;
+
+			case "720":
+				videoWidth = 1280;
+				videoHeight = 720;
+				break;
+
+			case "1080":
+				videoWidth = 1920;
+				videoHeight = 1080;
+				break;
+
+			case "4K":
+				videoWidth = 3840;
+				videoHeight = 2160;
+				break;
+
+			default:
+				videoWidth = 1920;
+				videoHeight = 1080;
+				break;
+
+		}
+
+		// --------------------------------
+		// CREAR STREAM
+		// --------------------------------
+
 		const stream = await navigator.mediaDevices.getUserMedia({
+
 			video: {
-				deviceId: { exact: cmbCamera.value },
-				width: { ideal: 1920 },
-				height: { ideal: 1080 },
-				frameRate: { ideal: 30 }
+				deviceId: { ideal: cmbCamera.value }
 			},
+
 			audio: false
+
 		});
 
 		const newCamera = stream.getVideoTracks()[0];
 
+		// --------------------------------
+		// INTENTAR APLICAR RESOLUCIÓN
+		// --------------------------------
+
+		try {
+
+			await newCamera.applyConstraints({
+
+				width: { ideal: videoWidth },
+				height: { ideal: videoHeight },
+				frameRate: { ideal: 30 }
+
+			});
+
+		} catch (error) {
+
+//			console.warn("No se pudo aplicar la resolución solicitada. Se mantiene la resolución disponible.",error);
+
+		}
+
+		// --------------------------------
+		// RESOLUCIÓN REAL
+		// --------------------------------
+
+		const settingsVideo = newCamera.getSettings();
+
+		const realWidth = settingsVideo.width;
+		const realHeight = settingsVideo.height;
+
+//		console.log("Resolución real:",`${realWidth}x${realHeight}`);
+
+		// --------------------------------
+		// ACTUALIZAR COMBO
+		// --------------------------------
+
+		if (realWidth >= 3840 && realHeight >= 2160) {
+
+			cmbResolucion.value = "4K";
+
+		} else if (realWidth >= 1920 && realHeight >= 1080) {
+
+			cmbResolucion.value = "1080";
+
+		} else if (realWidth >= 1280 && realHeight >= 720) {
+
+			cmbResolucion.value = "720";
+
+		} else {
+
+			cmbResolucion.value = "480";
+
+		}
+
+		// --------------------------------
+		// CANVAS
+		// --------------------------------
+
+		recordingCanvas.width = realWidth;
+		recordingCanvas.height = realHeight;
+
+		// --------------------------------
+		// CAMBIAR CÁMARA
+		// --------------------------------
+
 		const oldCamera = localStream.getVideoTracks()[0];
 
-		localStream.removeTrack(oldCamera);
-		oldCamera.stop();
+		if (oldCamera) {
+
+			localStream.removeTrack(oldCamera);
+			oldCamera.stop();
+
+		}
 
 		localStream.addTrack(newCamera);
 
 		localVideo.srcObject = localStream;
 
+		// --------------------------------
+		// ACTUALIZAR INFORMACIÓN
+		// --------------------------------
+
 		updateVideoInfo();
 
 	} catch (error) {
 
-		console.error("No se pudo cambiar la cámara: ", error);
+		showAlert("No se pudo cambiar la cámara","error");
+		console.error("No se pudo cambiar la cámara: ",error.name,error);
 
 	}
 
@@ -1108,6 +1290,7 @@ async function changeMicrophone() {
 
 	} catch (error) {
 
+		showAlert("No se pudo cambiar el micrófono", "error");
 		console.error("No se pudo cambiar el micrófono: ", error);
 
 	}
@@ -1171,7 +1354,6 @@ function startAudioMeter() {
 	updateAudioMeter();
 
 }
-
 
 
 // --------------------------------
@@ -1966,74 +2148,3 @@ async function addDroppedResource(file) {
 
 }
 
-
-////////////////////////////////////////////////////////////
-// MIDI
-////////////////////////////////////////////////////////////
-
-async function playMidi(filePath) {
-
-	await Tone.start();
-
-	// Si todavía no hemos cargado el MIDI, lo cargamos
-	if (!midiData) {
-
-		midiData = await Midi.fromUrl(filePath);
-
-		// Limpiar cualquier reproducción anterior
-		Tone.Transport.stop();
-		Tone.Transport.cancel();
-
-		// Crear un sintetizador por pista
-		midiData.tracks.forEach(track => {
-
-			if (track.notes.length === 0) {
-				return;
-			}
-
-			const synth = new Tone.PolySynth(Tone.Synth).toDestination();
-
-			midiSynths.push(synth);
-
-			track.notes.forEach(note => {
-
-				Tone.Transport.schedule(time => {
-
-					synth.triggerAttackRelease(
-						note.name,
-						note.duration,
-						time,
-						note.velocity
-					);
-
-				}, note.time);
-
-			});
-
-		});
-
-	}
-
-	Tone.Transport.start();
-
-}
-
-function stopMidi() {
-
-	Tone.Transport.stop();
-
-	Tone.Transport.cancel();
-
-	Tone.Transport.position = 0;
-
-	midiSynths.forEach(synth => {
-
-		synth.releaseAll();
-		synth.dispose();
-
-	});
-
-	midiSynths = [];
-	midiData = null;
-
-}

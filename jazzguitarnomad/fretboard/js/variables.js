@@ -562,6 +562,7 @@ const cmbAudioFormat = document.getElementById("cmbAudioFormat");
 const btnSaveAudio = document.getElementById("btnSaveAudio");
 
 const cmbCamera = document.getElementById("cmbCamera");
+const cmbResolucion = document.getElementById("cmbResolucion");
 const cmbMicrophone = document.getElementById("cmbMicrophone");
 
 const btnAbrirVideo = document.getElementById("btnAbrirVideo");
