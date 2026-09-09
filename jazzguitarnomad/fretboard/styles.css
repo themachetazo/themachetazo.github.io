@@ -933,6 +933,8 @@ html {
 
 	width: 100%;
 
+	margin: 10px auto;
+
 	text-align: center;
 
 }
@@ -950,7 +952,7 @@ html {
 
 	object-fit: contain;
 
-	background: #000;
+	background: var(--color-back);
 
 }
 
@@ -995,7 +997,7 @@ html {
 
 	border: none;
 
-	background: #fff;
+	background: var(--color-back);
 
 }
 
@@ -1044,6 +1046,57 @@ html {
 	margin: 10px 0;
 
 }
+
+#workspaceMultimedia #multimediaDropZone {
+
+	width:90%;
+
+	max-width:700px;
+
+	min-height:100px;
+
+	margin:20px auto;
+
+	border:2px dashed var(--color-tools);
+
+	border-radius:8px;
+
+	display:flex;
+
+	flex-direction:column;
+
+	align-items:center;
+
+	justify-content:center;
+
+	gap:8px;
+
+	font-size:14px;
+
+	cursor:pointer;
+
+	transition:all 0.2s ease;
+
+	box-sizing:border-box;
+
+}
+
+
+#workspaceMultimedia #multimediaDropZone i {
+
+	font-size:28px;
+
+}
+
+
+#workspaceMultimedia #multimediaDropZone.dragover {
+
+	border-color:var(--color-highlight);
+
+	transform:scale(1.01);
+
+}
+
 
 /* ===========================
    PROJECTS PANEL
@@ -3314,6 +3367,24 @@ input[type="range"] {
 	#noteFlat{
 		font-size: 11px;
 	}
+
+
+	#workspaceMultimedia iframe {
+
+		display: block;
+
+		width: 90%;
+		height: calc(100% - 20px);
+		min-height: 300px;
+
+		margin: 10px auto;
+
+		border: none;
+
+		background: var(--color-back);
+	
+	}
+
 }
 
 
