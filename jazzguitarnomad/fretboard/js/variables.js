@@ -4,16 +4,18 @@
 	URLs
 ==================================================*/
 
+let baseURL = "https://themachetazo.github.io/jazzguitarnomad/fretboard/";
+
 let dataURL = "";
 
 const isLocal = window.location.protocol === "file:" || window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 
 //Para que funcione el pintado y guardado de la imagen del mastil en drawFretdoard en local. También leerá los archivos xml
-if (isLocal) dataURL = "https://themachetazo.github.io/jazzguitarnomad/fretboard/";
+if (isLocal) dataURL = baseURL;
 
 const dataURL_Images = dataURL + "img/";
-const dataURL_Users = dataURL;
-const dataURL_Library = dataURL + "projects/";
+const dataURL_Users = "";
+const dataURL_Library = "projects/";
 const dataURL_Multimedia = dataURL_Library + "multimedia/";
 
 const dataURL_Samples = "https://themachetazo.github.io/jazzguitarnomad/samples/";

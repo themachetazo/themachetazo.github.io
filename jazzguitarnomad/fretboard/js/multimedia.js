@@ -1850,48 +1850,53 @@ function createMultimediaElement(type, fileName) {
 		case "pdf":
 
 			element = document.createElement("iframe");
-
 			element.className = "iframe-link";
 
-			element.src = resourceUrl;
+			if (isLocal){
+				element.src = resourceUrl;
+			}else{
+				element.src = "https://docs.google.com/viewer?embedded=true&url="+ baseURL + resourceUrl;
+			}
 
 			break;
 
 
 		case "document": {
-/*
-			element = document.createElement("a");
-
-			element.href = resourceUrl;
 
 			let extension = "";
 
 			if (fileName) extension = fileName.toLowerCase().split(".").pop();
 
-			let icon;
-
 			if (extension === "doc" || extension === "docx") {
 
-				icon = "<i class='fa-solid fa-file-word'></i>";
+				if (isLocal){
 
+					/*
+					const arrayBuffer = await file.arrayBuffer();
+					const result = await mammoth.convertToHtml({arrayBuffer});
+					iframeDocument.body.innerHTML = result.value;
+					*/
 
-			} else {
+					element = document.createElement("a");
+					element.href = resourceUrl;
+					element.innerHTML = "<i class='fa-solid fa-file-word'></i> " + (realName || "");
+					element.target = "_blank";
 
-				icon = "<i class='fa-solid fa-file-lines'></i>";
+				}else{
+
+					element = document.createElement("iframe");
+					element.className = "iframe-html";
+					element.src = "https://docs.google.com/viewer?embedded=true&url="+ baseURL + resourceUrl;
+
+				}
+
+			} else if (extension === "txt") {
+
+				element = document.createElement("iframe");
+				element.className = "iframe-doc";
+				element.src = resourceUrl;
 
 			}
-
-			element.innerHTML = icon + " " + (realName || "");
-
-			element.target = "_blank";
-*/
-//<iframe src="https://docs.google.com/viewer?url=https://ejemplo.com/documento.pdf&embedded=true" width="100%" height="600px" style="border:none;"></iframe>
-
-			element = document.createElement("iframe");
-
-			element.className = "iframe-html";
-
-			element.src = "https://docs.google.com/viewer?url=https://themachetazo.github.io/jazzguitarnomad/fretboard/document/1.docx&embedded=true";// + resourceUrl;
 
 			break;
 
