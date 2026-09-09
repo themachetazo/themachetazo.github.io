@@ -955,8 +955,14 @@ html {
 
 	background: var(--color-back);
 
-}
+	border:1px solid var(--color-border);
+	border-radius:10px;
 
+	box-sizing:border-box;
+
+	box-shadow:0 0 25px rgba(0,0,0,0.30);
+
+}
 
 #workspaceMultimedia img {
 
@@ -973,6 +979,12 @@ html {
 
 	object-fit: contain;
 
+	border:1px solid var(--color-border);
+	border-radius:10px;
+
+	box-sizing:border-box;
+
+	box-shadow:0 0 25px rgba(0,0,0,0.30);
 }
 
 
@@ -989,44 +1001,49 @@ html {
 
 }
 
+#workspaceMultimedia iframe{
+
+	display: block;
+
+	width: 90%;
+
+	margin: 10px auto;
+
+	border: none;
+
+	background: var(--color-back);
+
+	border:1px solid var(--color-border);
+	border-radius:10px;
+
+	box-sizing:border-box;
+
+	box-shadow:0 0 25px rgba(0,0,0,0.30);
+
+}
 
 #workspaceMultimedia .iframe-link {
 
-	display: block;
-
-	width: 90%;
-
 	height: 600px;
-
 	min-height: 300px;
 
-	margin: 10px auto;
-
-	border: none;
-
-	background: var(--color-back);
-
 }
-
 
 #workspaceMultimedia .iframe-html {
 
-	display: block;
-
-	width: 90%;
-
 	height: 800px;
-
 	min-height: 600px;
-
-	margin: 10px auto;
-
-	border: none;
-
-	background: var(--color-back);
 
 }
 
+#workspaceMultimedia .iframe-doc {
+
+	height: 800px;
+	min-height: 600px;
+	background: #fff;
+	color:#000;
+
+}
 
 #workspaceMultimedia .midi-player {
 
