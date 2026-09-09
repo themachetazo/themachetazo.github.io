@@ -738,9 +738,16 @@ function resetControlsValues(state){
 
 	}
 
+	if (state === "newProject"){
+		if (!isAdmin) {
+			projectType = "fretboard";
+			cmbProjectType.value = projectType;
+		}
+	}
+
 	if (state !== "loadProject"){
 
-		if (cmbProjectType !== "fretboard") fretboardType = "sequence";
+		if (cmbProjectType.value !== "fretboard") fretboardType = "sequence";
 
 		projectTitle = "";
 		fretCount = 10;
