@@ -916,7 +916,6 @@ html {
 	display:none;
 
 }
-
 #workspace.multimedia #workspaceMultimedia {
 
 	display: flex;
@@ -929,6 +928,7 @@ html {
 
 }
 
+
 #workspaceMultimedia > div {
 
 	width: 100%;
@@ -938,6 +938,7 @@ html {
 	text-align: center;
 
 }
+
 
 #workspaceMultimedia video {
 
@@ -956,6 +957,7 @@ html {
 
 }
 
+
 #workspaceMultimedia img {
 
 	display: block;
@@ -964,6 +966,7 @@ html {
 	max-width: 1200px;
 
 	height: auto;
+
 	max-height: calc(100% - 20px);
 
 	margin: 10px auto;
@@ -971,6 +974,7 @@ html {
 	object-fit: contain;
 
 }
+
 
 #workspaceMultimedia audio {
 
@@ -985,12 +989,15 @@ html {
 
 }
 
+
 #workspaceMultimedia .iframe-link {
 
 	display: block;
 
 	width: 90%;
-	height: calc(100% - 20px);
+
+	height: 600px;
+
 	min-height: 300px;
 
 	margin: 10px auto;
@@ -1001,11 +1008,32 @@ html {
 
 }
 
+
+#workspaceMultimedia .iframe-html {
+
+	display: block;
+
+	width: 90%;
+
+	height: 800px;
+
+	min-height: 600px;
+
+	margin: 10px auto;
+
+	border: none;
+
+	background: var(--color-back);
+
+}
+
+
 #workspaceMultimedia .midi-player {
 
 	display: flex;
 
 	align-items: center;
+
 	justify-content: center;
 
 	flex-wrap: wrap;
@@ -1023,11 +1051,13 @@ html {
 
 }
 
+
 #workspaceMultimedia .midi-player button:not(:disabled):hover {
 
 	background: var(--color-highlight);
 
 }
+
 
 #workspaceMultimedia .midi-player button:disabled {
 
@@ -1036,6 +1066,7 @@ html {
 	cursor: default;
 
 }
+
 
 #workspaceMultimedia a {
 
@@ -1047,56 +1078,56 @@ html {
 
 }
 
+
 #workspaceMultimedia #multimediaDropZone {
 
-	width:90%;
+	width: 90%;
 
-	max-width:700px;
+	max-width: 700px;
 
-	min-height:100px;
+	min-height: 100px;
 
-	margin:20px auto;
+	margin: 20px auto;
 
-	border:2px dashed var(--color-tools);
+	border: 2px dashed var(--color-tools);
 
-	border-radius:8px;
+	border-radius: 8px;
 
-	display:flex;
+	display: flex;
 
-	flex-direction:column;
+	flex-direction: column;
 
-	align-items:center;
+	align-items: center;
 
-	justify-content:center;
+	justify-content: center;
 
-	gap:8px;
+	gap: 8px;
 
-	font-size:14px;
+	font-size: 14px;
 
-	cursor:pointer;
+	cursor: pointer;
 
-	transition:all 0.2s ease;
+	transition: all 0.2s ease;
 
-	box-sizing:border-box;
+	box-sizing: border-box;
 
 }
 
 
 #workspaceMultimedia #multimediaDropZone i {
 
-	font-size:28px;
+	font-size: 28px;
 
 }
 
 
 #workspaceMultimedia #multimediaDropZone.dragover {
 
-	border-color:var(--color-highlight);
+	border-color: var(--color-highlight);
 
-	transform:scale(1.01);
+	transform: scale(1.01);
 
 }
-
 
 /* ===========================
    PROJECTS PANEL
