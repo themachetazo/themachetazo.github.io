@@ -1891,7 +1891,7 @@ function createMultimediaElement(type, fileName) {
 
 			element.className = "iframe-html";
 
-			element.src = "https://docs.google.com/viewer?url=https://themachetazo.github.io/jazzguitarnomad/fretboard/document/1.docx";// + resourceUrl;
+			element.src = "https://docs.google.com/viewer?url=https://themachetazo.github.io/jazzguitarnomad/fretboard/document/1.docx&embedded=true";// + resourceUrl;
 
 			break;
 
