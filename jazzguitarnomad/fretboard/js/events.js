@@ -784,7 +784,7 @@ titleText.addEventListener("input", () => {
 
 	projectTitle = titleText.value.trim() || "Proyecto nuevo sin título";
 
-	workspaceTitleText.textContent = projectTitle;
+	workspaceTitleText.textContent = cmbProjectCategory.value + " - " + projectTitle;
 
 	if (cmbProjectType.value === "fretboard"){
 

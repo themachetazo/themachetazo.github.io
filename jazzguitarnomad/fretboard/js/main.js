@@ -779,7 +779,8 @@ function resetControlsValues(state){
 	}
 
 	titleText.value = projectTitle;
-	workspaceTitleText.textContent = projectTitle === "" ? "Proyecto nuevo sin título" : projectTitle;
+	workspaceTitleText.textContent = cmbProjectCategory.value + " - ";
+	workspaceTitleText.textContent = projectTitle === "" ? workspaceTitleText.textContent + "Proyecto nuevo sin título" : workspaceTitleText.textContent + projectTitle;
 
 	chkShowTitle.checked = false;
 	chkScoreTitle.checked = false;
