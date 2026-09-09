@@ -1970,82 +1970,84 @@ async function renderMultimedia() {
 
 	workspaceMultimedia.innerHTML = "";
 
+	if (isAdmin){
 
-	// ZONA DRAG & DROP ----------------------
+		// ZONA DRAG & DROP ----------------------
 
-	const dropZone = document.createElement("div");
+		const dropZone = document.createElement("div");
 
-	dropZone.id = "multimediaDropZone";
+		dropZone.id = "multimediaDropZone";
 
-	dropZone.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i><span>Arrastra aquí un archivo</span>";
+		dropZone.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i><span>Arrastra aquí un archivo</span>";
 
-	workspaceMultimedia.appendChild(dropZone);
-
-
-	// DRAG & DROP ----------------------
-
-	dropZone.addEventListener("dragover", event => {
-
-		event.preventDefault();
-
-		event.stopPropagation();
-
-		event.dataTransfer.dropEffect = "copy";
-
-		dropZone.classList.add("dragover");
-
-	});
+		workspaceMultimedia.appendChild(dropZone);
 
 
-	dropZone.addEventListener("dragleave", event => {
+		// DRAG & DROP ----------------------
 
-		event.preventDefault();
+		dropZone.addEventListener("dragover", event => {
 
-		event.stopPropagation();
+			event.preventDefault();
 
-		// Solo quitarlo si realmente salimos de la zona
+			event.stopPropagation();
 
-		if (!dropZone.contains(event.relatedTarget)) {
+			event.dataTransfer.dropEffect = "copy";
+
+			dropZone.classList.add("dragover");
+
+		});
+
+
+		dropZone.addEventListener("dragleave", event => {
+
+			event.preventDefault();
+
+			event.stopPropagation();
+
+			// Solo quitarlo si realmente salimos de la zona
+
+			if (!dropZone.contains(event.relatedTarget)) {
+
+				dropZone.classList.remove("dragover");
+
+			}
+
+		});
+
+
+		dropZone.addEventListener("drop", async event => {
+
+			event.preventDefault();
+
+			event.stopPropagation();
 
 			dropZone.classList.remove("dragover");
 
-		}
 
-	});
+			const files = event.dataTransfer.files;
 
-
-	dropZone.addEventListener("drop", async event => {
-
-		event.preventDefault();
-
-		event.stopPropagation();
-
-		dropZone.classList.remove("dragover");
+			if (!files || files.length === 0) return;
 
 
-		const files = event.dataTransfer.files;
-
-		if (!files || files.length === 0) return;
+			const file = files[0];
 
 
-		const file = files[0];
+			// Seleccionar carpeta multimedia si no está seleccionada
+
+			if (!multimediaDirectory) {
+
+				const selected = await selectMultimediaFolder();
+
+				if (!selected) return;
+
+			}
 
 
-		// Seleccionar carpeta multimedia si no está seleccionada
+			await addDroppedResource(file);
 
-		if (!multimediaDirectory) {
+		});
 
-			const selected = await selectMultimediaFolder();
-
-			if (!selected) return;
-
-		}
-
-
-		await addDroppedResource(file);
-
-	});
-
+	}
 
 	const project = projects.find(project => project.id === currentProjectId);
 
