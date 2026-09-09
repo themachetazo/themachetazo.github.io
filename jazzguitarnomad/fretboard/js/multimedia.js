@@ -834,10 +834,20 @@ async function getCameraAndMicrophone() {
 
 	try {
 
+		// --------------------------------
+		// RESOLUCIÓN SOLICITADA
+		// --------------------------------
+
+		const resolution = getResolutionValues();
+
+		// --------------------------------
+		// CREAR STREAM
+		// --------------------------------
+
 		const stream = await navigator.mediaDevices.getUserMedia({
 			video: {
-				width: { ideal: 1920 },
-				height: { ideal: 1080 },
+				width: { ideal: resolution.width },
+				height: { ideal: resolution.height },
 				frameRate: { ideal: 30 }
 			},
 			audio: true
@@ -846,6 +856,15 @@ async function getCameraAndMicrophone() {
 		const camera = stream.getVideoTracks()[0];
 		const settingsVideo = camera.getSettings();
 		const microphone = stream.getAudioTracks()[0];
+
+		// --------------------------------
+		// RESOLUCIÓN REAL
+		// --------------------------------
+
+		const realWidth = settingsVideo.width;
+		const realHeight = settingsVideo.height;
+
+		updateResolutionCombo(realWidth,realHeight);
 
 		// --------------------------------
 		// CARGAR DISPOSITIVOS
@@ -900,8 +919,8 @@ async function getCameraAndMicrophone() {
 
 		recordingCanvas = document.createElement("canvas");
 
-		recordingCanvas.width = settingsVideo.width;
-		recordingCanvas.height = settingsVideo.height;
+		recordingCanvas.width = realWidth;
+		recordingCanvas.height = realHeight;
 
 		recordingContext = recordingCanvas.getContext("2d");
 
@@ -943,8 +962,8 @@ async function getCameraAndMicrophone() {
 
 				if (btnVideoMirror.classList.contains("active")) {
 
-					recordingContext.translate(recordingCanvas.width, 0);
-					recordingContext.scale(-1, 1);
+					recordingContext.translate(recordingCanvas.width,0);
+					recordingContext.scale(-1,1);
 
 				}
 
@@ -972,6 +991,231 @@ async function getCameraAndMicrophone() {
 		console.error("No se pudo acceder a la cámara y al micrófono: ",error);
 
 		return null;
+
+	}
+
+}
+
+async function changeCamera() {
+
+	try {
+
+		// --------------------------------
+		// RESOLUCIÓN SOLICITADA
+		// --------------------------------
+
+		const resolution = getResolutionValues();
+
+		// --------------------------------
+		// CREAR STREAM
+		// --------------------------------
+
+		const stream = await navigator.mediaDevices.getUserMedia({
+
+			video: {
+				deviceId: { ideal: cmbCamera.value }
+			},
+
+			audio: false
+
+		});
+
+		const newCamera = stream.getVideoTracks()[0];
+
+		// --------------------------------
+		// INTENTAR APLICAR RESOLUCIÓN
+		// --------------------------------
+
+		try {
+
+			await newCamera.applyConstraints({
+
+				width: { ideal: resolution.width },
+				height: { ideal: resolution.height },
+				frameRate: { ideal: 30 }
+
+			});
+
+		} catch (error) {
+
+//			console.warn("No se pudo aplicar la resolución solicitada. Se mantiene la resolución disponible.",error);
+
+		}
+
+		// --------------------------------
+		// RESOLUCIÓN REAL
+		// --------------------------------
+
+		const settingsVideo = newCamera.getSettings();
+
+		const realWidth = settingsVideo.width;
+		const realHeight = settingsVideo.height;
+
+//		console.log("Resolución real:",`${realWidth}x${realHeight}`);
+
+		// --------------------------------
+		// ACTUALIZAR COMBO
+		// --------------------------------
+
+		updateResolutionCombo(realWidth,realHeight);
+
+		// --------------------------------
+		// CANVAS
+		// --------------------------------
+
+		recordingCanvas.width = realWidth;
+		recordingCanvas.height = realHeight;
+
+		// --------------------------------
+		// CAMBIAR CÁMARA
+		// --------------------------------
+
+		const oldCamera = localStream.getVideoTracks()[0];
+
+		if (oldCamera) {
+
+			localStream.removeTrack(oldCamera);
+			oldCamera.stop();
+
+		}
+
+		localStream.addTrack(newCamera);
+
+		localVideo.srcObject = localStream;
+
+		// --------------------------------
+		// ACTUALIZAR INFORMACIÓN
+		// --------------------------------
+
+		updateVideoInfo();
+
+	} catch (error) {
+
+		showAlert("No se pudo cambiar la cámara","error");
+		console.error("No se pudo cambiar la cámara: ",error.name,error);
+
+	}
+
+}
+
+async function changeMicrophone() {
+
+	try {
+
+		const stream = await navigator.mediaDevices.getUserMedia({
+			audio: {
+				deviceId: { exact: cmbMicrophone.value }
+			},
+			video: false
+		});
+
+		const newMicrophone = stream.getAudioTracks()[0];
+
+		if (microphoneSource) {
+
+			microphoneSource.disconnect();
+
+		}
+
+		microphoneSource = audioContext.createMediaStreamSource(stream);
+
+		microphoneSource.connect(audioDestination);
+
+		startAudioMeter();
+
+		const oldMicrophone = localStream.getAudioTracks()[0];
+
+		localStream.removeTrack(oldMicrophone);
+		oldMicrophone.stop();
+
+		localStream.addTrack(newMicrophone);
+
+		localVideo.srcObject = localStream;
+
+		updateVideoInfo();
+
+	} catch (error) {
+
+		showAlert("No se pudo cambiar el micrófono", "error");
+		console.error("No se pudo cambiar el micrófono: ", error);
+
+	}
+
+}
+
+function updateVideoInfo() {
+
+	if (!localStream) return;
+
+	const videoTrack = localStream.getVideoTracks()[0];
+	const audioTrack = localStream.getAudioTracks()[0];
+
+	if (!videoTrack || !audioTrack) return;
+
+	const videoSettings = videoTrack.getSettings();
+	const audioSettings = audioTrack.getSettings();
+
+	videoInfo.textContent =
+		`Resolución: ${videoSettings.width} x ${videoSettings.height} - ${videoSettings.frameRate} fps | ` +
+		`Audio: ${audioSettings.sampleRate} Hz - ${audioSettings.sampleSize} bit - ${audioSettings.channelCount} canales`;
+
+}
+
+function getResolutionValues() {
+
+	switch (cmbResolucion.value) {
+
+		case "480":
+			return {
+				width: 640,
+				height: 480
+			};
+
+		case "720":
+			return {
+				width: 1280,
+				height: 720
+			};
+
+		case "1080":
+			return {
+				width: 1920,
+				height: 1080
+			};
+
+		case "4K":
+			return {
+				width: 3840,
+				height: 2160
+			};
+
+		default:
+			return {
+				width: 1920,
+				height: 1080
+			};
+
+	}
+
+}
+
+function updateResolutionCombo(width,height) {
+
+	if (width >= 3840 && height >= 2160) {
+
+		cmbResolucion.value = "4K";
+
+	} else if (width >= 1920 && height >= 1080) {
+
+		cmbResolucion.value = "1080";
+
+	} else if (width >= 1280 && height >= 720) {
+
+		cmbResolucion.value = "720";
+
+	} else {
+
+		cmbResolucion.value = "480";
 
 	}
 
@@ -1102,216 +1346,6 @@ function recordVideo(){
 		btnVideoClose.disabled = false;
 
 	}
-
-}
-
-async function changeCamera() {
-
-	try {
-
-		// --------------------------------
-		// RESOLUCIÓN SOLICITADA
-		// --------------------------------
-
-		let videoWidth, videoHeight;
-
-		switch (cmbResolucion.value) {
-
-			case "480":
-				videoWidth = 640;
-				videoHeight = 480;
-				break;
-
-			case "720":
-				videoWidth = 1280;
-				videoHeight = 720;
-				break;
-
-			case "1080":
-				videoWidth = 1920;
-				videoHeight = 1080;
-				break;
-
-			case "4K":
-				videoWidth = 3840;
-				videoHeight = 2160;
-				break;
-
-			default:
-				videoWidth = 1920;
-				videoHeight = 1080;
-				break;
-
-		}
-
-		// --------------------------------
-		// CREAR STREAM
-		// --------------------------------
-
-		const stream = await navigator.mediaDevices.getUserMedia({
-
-			video: {
-				deviceId: { ideal: cmbCamera.value }
-			},
-
-			audio: false
-
-		});
-
-		const newCamera = stream.getVideoTracks()[0];
-
-		// --------------------------------
-		// INTENTAR APLICAR RESOLUCIÓN
-		// --------------------------------
-
-		try {
-
-			await newCamera.applyConstraints({
-
-				width: { ideal: videoWidth },
-				height: { ideal: videoHeight },
-				frameRate: { ideal: 30 }
-
-			});
-
-		} catch (error) {
-
-//			console.warn("No se pudo aplicar la resolución solicitada. Se mantiene la resolución disponible.",error);
-
-		}
-
-		// --------------------------------
-		// RESOLUCIÓN REAL
-		// --------------------------------
-
-		const settingsVideo = newCamera.getSettings();
-
-		const realWidth = settingsVideo.width;
-		const realHeight = settingsVideo.height;
-
-//		console.log("Resolución real:",`${realWidth}x${realHeight}`);
-
-		// --------------------------------
-		// ACTUALIZAR COMBO
-		// --------------------------------
-
-		if (realWidth >= 3840 && realHeight >= 2160) {
-
-			cmbResolucion.value = "4K";
-
-		} else if (realWidth >= 1920 && realHeight >= 1080) {
-
-			cmbResolucion.value = "1080";
-
-		} else if (realWidth >= 1280 && realHeight >= 720) {
-
-			cmbResolucion.value = "720";
-
-		} else {
-
-			cmbResolucion.value = "480";
-
-		}
-
-		// --------------------------------
-		// CANVAS
-		// --------------------------------
-
-		recordingCanvas.width = realWidth;
-		recordingCanvas.height = realHeight;
-
-		// --------------------------------
-		// CAMBIAR CÁMARA
-		// --------------------------------
-
-		const oldCamera = localStream.getVideoTracks()[0];
-
-		if (oldCamera) {
-
-			localStream.removeTrack(oldCamera);
-			oldCamera.stop();
-
-		}
-
-		localStream.addTrack(newCamera);
-
-		localVideo.srcObject = localStream;
-
-		// --------------------------------
-		// ACTUALIZAR INFORMACIÓN
-		// --------------------------------
-
-		updateVideoInfo();
-
-	} catch (error) {
-
-		showAlert("No se pudo cambiar la cámara","error");
-		console.error("No se pudo cambiar la cámara: ",error.name,error);
-
-	}
-
-}
-
-async function changeMicrophone() {
-
-	try {
-
-		const stream = await navigator.mediaDevices.getUserMedia({
-			audio: {
-				deviceId: { exact: cmbMicrophone.value }
-			},
-			video: false
-		});
-
-		const newMicrophone = stream.getAudioTracks()[0];
-
-		if (microphoneSource) {
-
-			microphoneSource.disconnect();
-
-		}
-
-		microphoneSource = audioContext.createMediaStreamSource(stream);
-
-		microphoneSource.connect(audioDestination);
-
-		startAudioMeter();
-
-		const oldMicrophone = localStream.getAudioTracks()[0];
-
-		localStream.removeTrack(oldMicrophone);
-		oldMicrophone.stop();
-
-		localStream.addTrack(newMicrophone);
-
-		localVideo.srcObject = localStream;
-
-		updateVideoInfo();
-
-	} catch (error) {
-
-		showAlert("No se pudo cambiar el micrófono", "error");
-		console.error("No se pudo cambiar el micrófono: ", error);
-
-	}
-
-}
-
-function updateVideoInfo() {
-
-	if (!localStream) return;
-
-	const videoTrack = localStream.getVideoTracks()[0];
-	const audioTrack = localStream.getAudioTracks()[0];
-
-	if (!videoTrack || !audioTrack) return;
-
-	const videoSettings = videoTrack.getSettings();
-	const audioSettings = audioTrack.getSettings();
-
-	videoInfo.textContent =
-		`Resolución: ${videoSettings.width} x ${videoSettings.height} - ${videoSettings.frameRate} fps | ` +
-		`Audio: ${audioSettings.sampleRate} Hz - ${audioSettings.sampleSize} bit - ${audioSettings.channelCount} canales`;
 
 }
 
