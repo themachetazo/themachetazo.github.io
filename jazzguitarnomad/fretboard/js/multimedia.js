@@ -1758,9 +1758,14 @@ function createMultimediaElement(type, fileName) {
 		case "video":
 
 			element = document.createElement("video");
-
 			element.src = resourceUrl;
 			element.controls = true;
+			element.controlsList.add("nodownload");
+			element.playsInline = true;
+
+			element.addEventListener("contextmenu", event => {
+				event.preventDefault();
+			});
 
 			break;
 
@@ -1780,6 +1785,10 @@ function createMultimediaElement(type, fileName) {
 			audio.src = resourceUrl;
 			audio.controls = true;
 			audio.controlsList = "nodownload";
+
+			audio.addEventListener("contextmenu", event => {
+				event.preventDefault();
+			});
 
 			element.appendChild(audioLink);
 			element.appendChild(document.createElement("br"));
@@ -1936,13 +1945,13 @@ function createMultimediaElement(type, fileName) {
 
 
 		case "score":
-
+/*
 			element = document.createElement("div");
 
 			element.textContent = fileName || "";
 
 			break;
-
+*/
 
 		// --------------------------------
 		// LINK
