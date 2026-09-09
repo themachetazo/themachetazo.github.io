@@ -131,7 +131,7 @@ function getURLParams(){
 
 	lib = params.get("lib");
 
-	currentProjectId = params.get("project");
+	currentProjectId = params.get("id");
 
 }
 
