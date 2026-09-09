@@ -964,41 +964,70 @@ function renderLibrary() {
 
 			let iType = "<i class='fa-solid fa-guitar'></i>";
 
-			switch (project.projectType){
+			const resourceTypes = Object.keys(project.resources)
+				.filter(type =>
+					Array.isArray(project.resources[type]) &&
+					project.resources[type].length > 0
+				)
+/*
+				.map(type => type === "pdf" ? "document" : type)
+				.filter((type, index, array) => array.indexOf(type) === index);
+*/
 
-				case "fretboard":
-					iType = "<i class='fa-solid fa-guitar'></i>";
-					break;
-				case "video":
-					iType = "<i class='fa-solid fa-film'></i>";
-					break;
-				case "audio":
-					iType = "<i class='fa-solid fa-compact-disc'></i>";
-					break;
-				case "image":
-					iType = "<i class='fa-solid fa-image'></i>";
-					break;
-				case "pdf":
-					iType = "<i class='fa-solid fa-file-pdf'></i>";
-					break;
-				case "document":
-					iType = "<i class='fa-solid fa-file-lines'></i>";
-					break;
-				case "midi":
-					iType = "<i class='fa-solid fa-file-audio'></i>";
-					break;
-				case "score":
-					iType = "<i class='fa-solid fa-music'></i>";
-					break;
-				case "html":
-					iType = "<i class='fa-solid fa-file-html'></i>";
-					break;
-				case "link":
-					iType = "<i class='fa-solid fa-link'></i>";
-					break;
-				case "iframe":
-					iType = "<i class='fa-solid fa-code'></i>";
-					break;
+			if (resourceTypes.length > 1) {
+
+				iType = "<i class='fa-solid fa-photo-film'></i>";
+
+			} else {
+
+				switch (project.projectType){
+
+					case "fretboard":
+						iType = "<i class='fa-solid fa-guitar'></i>";
+						break;
+
+					case "video":
+						iType = "<i class='fa-solid fa-film'></i>";
+						break;
+
+					case "audio":
+						iType = "<i class='fa-solid fa-compact-disc'></i>";
+						break;
+
+					case "image":
+						iType = "<i class='fa-solid fa-image'></i>";
+						break;
+
+					case "pdf":
+						iType = "<i class='fa-solid fa-file-pdf'></i>";
+						break;
+
+					case "document":
+						iType = "<i class='fa-solid fa-file-lines'></i>";
+						break;
+
+					case "midi":
+						iType = "<i class='fa-solid fa-file-audio'></i>";
+						break;
+
+					case "score":
+						iType = "<i class='fa-solid fa-music'></i>";
+						break;
+
+					case "html":
+						iType = "<i class='fa-solid fa-file-code'></i>";
+						break;
+
+					case "link":
+						iType = "<i class='fa-solid fa-link'></i>";
+						break;
+
+					case "iframe":
+						iType = "<i class='fa-solid fa-code'></i>";
+						break;
+
+				}
+
 			}
 
 			titleSpan.innerHTML = iType + project.title;
