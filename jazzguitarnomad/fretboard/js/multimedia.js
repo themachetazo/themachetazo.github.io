@@ -1859,20 +1859,14 @@ function createMultimediaElement(type, fileName) {
 
 
 		case "document": {
-
+/*
 			element = document.createElement("a");
 
 			element.href = resourceUrl;
 
-
 			let extension = "";
 
-			if (fileName) {
-
-				extension = fileName.toLowerCase().split(".").pop();
-
-			}
-
+			if (fileName) extension = fileName.toLowerCase().split(".").pop();
 
 			let icon;
 
@@ -1880,16 +1874,24 @@ function createMultimediaElement(type, fileName) {
 
 				icon = "<i class='fa-solid fa-file-word'></i>";
 
+
 			} else {
 
 				icon = "<i class='fa-solid fa-file-lines'></i>";
 
 			}
 
-
 			element.innerHTML = icon + " " + (realName || "");
 
 			element.target = "_blank";
+*/
+//<iframe src="https://docs.google.com/viewer?url=https://ejemplo.com/documento.pdf&embedded=true" width="100%" height="600px" style="border:none;"></iframe>
+
+			element = document.createElement("iframe");
+
+			element.className = "iframe-html";
+
+			element.src = "https://docs.google.com/viewer?url=https://themachetazo.github.io/jazzguitarnomad/fretboard/document/1.docx";// + resourceUrl;
 
 			break;
 
