@@ -1488,13 +1488,17 @@ async function renderProject(){
 
 	}
 
-	if (isAdmin && projectType !== "fretboard") {
+	if (isAdmin) {
 
 		if (menuOpen !== "projects") setMenu("projects");
 
 	}else{
 
-		if (menuOpen !== "edit") setMenu("edit");
+		if (projectType !== "fretboard"){
+			if (menuOpen !== "edit") setMenu("edit");
+		}else{
+			if (menuOpen !== "metronome") setMenu("metronome");
+		}
 
 	}
 
