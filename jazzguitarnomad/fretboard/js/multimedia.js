@@ -1900,7 +1900,7 @@ function createMultimediaElement(type, fileName) {
 
 			element = document.createElement("iframe");
 
-			element.className = "iframe-link";
+			element.className = "iframe-html";
 
 			element.src = resourceUrl;
 
