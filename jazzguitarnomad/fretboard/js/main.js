@@ -216,7 +216,7 @@ function configureUserControls(){
 
 		if (appMode === "Guest"){
 
-			setMenu("fretboard");
+			setMenu("metronome");
 
 			btnEdicion.style.display = "none";
 			btnEdicionPopup.style.display = "none";
