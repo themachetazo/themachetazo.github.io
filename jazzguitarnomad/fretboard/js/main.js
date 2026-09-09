@@ -42,58 +42,47 @@ async function initializeApp() {
 
 		// PLAYER ----------------------
 
-		if (isUserActive && projectType === "fretboard"){
+		setLoadingProgress(40, "Cargando instrumentos...");
 
-			setLoadingProgress(40, "Cargando instrumentos...");
+		instruments = {
+			piano: createSampler("piano"),
+			cguitar: createSampler("cguitar")
+		};
 
-			instruments = {
-				piano: createSampler("piano"),
-				cguitar: createSampler("cguitar")
-			};
+		setLoadingProgress(50, "Configurando metrónomo...");
 
-			setLoadingProgress(50, "Configurando metrónomo...");
+		metronome = new Metronome();
 
-			metronome = new Metronome();
+		setLoadingProgress(60, "Configurando reproductor...");
 
-			setLoadingProgress(60, "Configurando reproductor...");
+		instrument = instruments[currentInstrument];
 
-			instrument = instruments[currentInstrument];
+		player = new MusicPlayer(instrument,metronome);
 
-			player = new MusicPlayer(instrument,metronome);
+		setPlayerValues();
 
-			setPlayerValues();
-
-		}
 
 		// MÁSTIL ----------------------
 
-		if (projectType === "fretboard") {
+		setLoadingProgress(70, "Renderizando mástil...");
 
-			setLoadingProgress(70, "Renderizando mástil...");
+		resizeCanvas();
 
-			resizeCanvas();
-
-		}
 
 		// SCORE ----------------------
 
-		if (projectType === "fretboard") {
+		setLoadingProgress(80, "Renderizando partitura...");
 
-			setLoadingProgress(80, "Renderizando partitura...");
+		if (isScoreVisible) scoreRender();
 
-			if (isScoreVisible) scoreRender();
-
-		}
 
 		// MULTIMEDIA ----------------------
 
-		if (projectType !== "fretboard"){
+		setLoadingProgress(90, "Renderizando multimedia...");
 
-			setLoadingProgress(90, "Renderizando multimedia...");
+		if (projectType !== "fretboard") await renderMultimedia();
 
-			if (projectType !== "fretboard") await renderMultimedia();
 
-		}
 
 		// FIN ----------------------
 
@@ -216,7 +205,11 @@ function configureUserControls(){
 
 		if (appMode === "Guest"){
 
-			setMenu("metronome");
+			if (projectType !== "fretboard"){
+				setMenu("edit");
+			}else{
+				setMenu("metronome");
+			}
 
 			btnEdicion.style.display = "none";
 			btnEdicionPopup.style.display = "none";
@@ -242,7 +235,11 @@ function configureUserControls(){
 
 			}else{
 
-				setMenu("fretboard");
+				if (projectType !== "fretboard"){
+					setMenu("fretboard");
+				}else{
+					setMenu("metronome");
+				}
 
 				if (!isUserActive){
 					btnUser.querySelector("i").className = "fa-solid fa-user-lock";
@@ -287,6 +284,8 @@ function configureUserControls(){
 			btnPlayStop.disabled = true;
 
 			btnUser.querySelector("i").className = "fa-solid fa-user-lock";
+
+			setMenu("metronome");
 
 		}
 
