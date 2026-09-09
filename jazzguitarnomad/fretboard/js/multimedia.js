@@ -1735,20 +1735,6 @@ function createMultimediaElement(type, fileName) {
 
 			element.innerHTML = resourceUrl;
 
-/*
-			const iframe = element.querySelector("iframe");
-
-			if (iframe) {
-
-				iframe.removeAttribute("width");
-
-				iframe.removeAttribute("height");
-
-				iframe.allowFullscreen = true;
-
-			}
-*/
-
 			break;
 
 		}
@@ -1775,10 +1761,7 @@ async function renderMultimedia() {
 
 	dropZone.id = "multimediaDropZone";
 
-	dropZone.innerHTML = `
-		<i class="fa-solid fa-cloud-arrow-up"></i>
-		<span>Arrastra aquí un archivo</span>
-	`;
+	dropZone.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i><span>Arrastra aquí un archivo</span>";
 
 	workspaceMultimedia.appendChild(dropZone);
 

@@ -730,6 +730,11 @@ function setPlayerValues(){
 
 async function playMusic(){
 
+	if (isFretboardVisible && chkFretboardZoom.checked && orientation === "horizontal") {	
+		zoomCanvas();
+		fitCanvasWidth = !fitCanvasWidth;
+	}
+
 	sequenceIndex = 0;
 
 	resetPlaybackTimeline();

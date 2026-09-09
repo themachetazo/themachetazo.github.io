@@ -338,10 +338,7 @@ function drawHorizontal() {
 	// Cuerdas
 	//------------------------------------------------
 
-	const stringBleed = Math.max(
-		3,
-		stringSpace * 0.10
-	);
+	const stringBleed = Math.max(3,stringSpace * 0.10);
 
 	for (let s = 0; s < stringCount; s++) {
 
@@ -544,12 +541,7 @@ function drawVertical() {
 
 			// Cuerpo metálico con degradado
 
-			const gradient = ctx.createLinearGradient(
-				0,
-				y - fretWidth,
-				0,
-				y + fretWidth
-			);
+			const gradient = ctx.createLinearGradient(0,y - fretWidth,0,y + fretWidth);
 
 			gradient.addColorStop(0, "#555555");
 			gradient.addColorStop(0.18, "#8c8c8c");
@@ -659,12 +651,7 @@ function drawVertical() {
 
 			// Cuerpo metálico
 
-			const gradient = ctx.createLinearGradient(
-				x - stringWidth,
-				0,
-				x + stringWidth,
-				0
-			);
+			const gradient = ctx.createLinearGradient(x - stringWidth,0,x + stringWidth,0);
 
 			gradient.addColorStop(0, "#444444");
 			gradient.addColorStop(0.20, "#8c8c8c");
@@ -717,10 +704,7 @@ function drawVertical() {
 
 	if (!displayMode) {
 
-		const fretWidth = Math.max(
-			2,
-			stringSpace * 0.10
-		);
+		const fretWidth = Math.max(2,stringSpace * 0.10);
 
 		const nutY = rotation === 0 ? boardtop : boardbottom;
 
@@ -1074,11 +1058,6 @@ function roundedRectPath(x, y, width, height, radius) {
 
 }
 
-
-// ============================================================
-// ELEMENTOS VISUALES
-// ============================================================
-
 function drawInlays(left, top, stringSpace) {
 
 	if (!chkInlays.checked) return;
@@ -1296,7 +1275,6 @@ function drawStringNumbers() {
 //==================================================
 // DRAW NOTES
 //==================================================
-
 
 function drawNotesAlpha(opacity = 1) {
 

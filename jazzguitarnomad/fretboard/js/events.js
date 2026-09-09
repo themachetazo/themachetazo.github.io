@@ -308,6 +308,11 @@ document.addEventListener("playerBeat", (e) => {
 
 		case "end":
 
+			if (isFretboardVisible && chkFretboardZoom.checked && orientation === "horizontal") {	
+				zoomCanvas();
+				fitCanvasWidth = !fitCanvasWidth;
+			}
+
 			if (isFretboardVisible) {
 				drawFretboard();
 				drawNotes();
@@ -946,6 +951,12 @@ btnRotate.addEventListener("click", () => {
 	if (isFretboardVisible) resizeCanvas();
 
 	if (isScoreVisible) scoreRender();
+
+});
+
+chkFretboardZoom.addEventListener("change", () => {
+
+	fitCanvasWidth = !fitCanvasWidth;
 
 });
 
@@ -1636,4 +1647,3 @@ btnUploadFile.addEventListener("click", () => {
 	selectMultimediaFiles();
 
 });
-

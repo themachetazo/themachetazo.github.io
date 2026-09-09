@@ -201,13 +201,16 @@ let neckRadius;
 let fretboardBackground = null;
 let fretboardPlaybackBackground = null;
 
-let sequenceIndex = 0;
+let fitCanvasWidth = false;
+
 
 /*==================================================
 	NOTAS
 ==================================================*/
 
 let noteOrder = 0;
+
+let sequenceIndex = 0;
 
 let hoverCell = null;
 let hoverNut = null;
@@ -426,6 +429,7 @@ const btnErase = document.getElementById("btnErase");
 const btnUndo = document.getElementById("btnUndo");
 const btnDisplay = document.getElementById("btnDisplay");
 const btnRotate = document.getElementById("btnRotate");
+const chkFretboardZoom = document.getElementById("chkFretboardZoom");
 
 /*==================================================
 	REFERENCIAS DOM: PROYECTOS
