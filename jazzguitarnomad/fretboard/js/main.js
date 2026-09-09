@@ -2243,6 +2243,8 @@ function zoomCanvas() {
 
 	drawNotes();
 
+	scrollToFretboardNut();
+
 	//------------------------------------------------
 	// AJUSTAR AL ANCHO
 	//------------------------------------------------
