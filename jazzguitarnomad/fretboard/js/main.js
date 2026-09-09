@@ -258,26 +258,27 @@ function configureUserControls(){
 
 			setControlsEnabled(false);
 
+			topFretboardDownload.style.display = "none";
+			topScoreDownload.style.display = "none";
+
 			btnProyectos.style.display = "none";
 			btnProyectosPopup.style.display = "none";
 			btnEdicion.style.display = "none";
 			btnEdicionPopup.style.display = "none";
+			btnMultimedia.style.display = "none";
+			btnMultimediaPopup.style.display = "none";
+
+			btnMenuSelector.disabled = false;
+			btnShowProjectPanel.disabled = false;
+			btnToggleLibrary.disabled = false;
 			btnFretboard.disabled = false;
 			btnFretboardPopup.disabled = false;
 			btnScore.disabled = false;
 			btnScorePopup.disabled = false;
 			btnPlayer.disabled = false;
 			btnPlayerPopup.disabled = false;
-			btnMultimedia.style.display = "none";
-			btnMultimediaPopup.style.display = "none";
-
-			btnMenuSelector.disabled = false;
-
-			btnShowProjectPanel.disabled = false;
-			btnToggleLibrary.disabled = false;
-
-			topFretboardDownload.style.display = "none";
-			topScoreDownload.style.display = "none";
+			btnMetronome.disabled = false;
+			btnMetronomePopup.disabled = false;
 
 			btnPlayStop.disabled = true;
 
