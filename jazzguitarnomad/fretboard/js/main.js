@@ -268,8 +268,6 @@ function configureUserControls(){
 			btnScorePopup.disabled = false;
 			btnPlayer.disabled = false;
 			btnPlayerPopup.disabled = false;
-			btnMetronome.style.display = "none";
-			btnMetronomePopup.style.display = "none";
 			btnMultimedia.style.display = "none";
 			btnMultimediaPopup.style.display = "none";
 
