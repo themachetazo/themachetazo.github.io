@@ -8,10 +8,11 @@ let dataURL = "";
 
 const isLocal = window.location.protocol === "file:" || window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 
-if (isLocal) dataURL = "https://themachetazo.github.io/jazzguitarnomad/fretboard/"; //Para que funcione el pintado y guardado de la imagen del mastil en drawFretdoard en local
+//Para que funcione el pintado y guardado de la imagen del mastil en drawFretdoard en local. También leerá los archivos xml
+if (isLocal) dataURL = "https://themachetazo.github.io/jazzguitarnomad/fretboard/";
 
 const dataURL_Images = dataURL + "img/";
-const dataURL_Users = "";
+const dataURL_Users = dataURL;
 const dataURL_Library = "projects/";
 const dataURL_Multimedia = dataURL_Library + "multimedia/";
 
@@ -292,7 +293,7 @@ let resources = {
 	document: [],
 	html: [],
 	link: [],
-	iFrame: []
+	iframe: []
 
 };
 

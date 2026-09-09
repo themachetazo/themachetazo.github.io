@@ -1246,13 +1246,13 @@ async function selectMultimediaFiles() {
 	// TIPOS SIN ARCHIVO
 	// --------------------------------
 
-	if (projectType === "link" || projectType === "iFrame") {
+	if (projectType === "link" || projectType === "iframe") {
 
 		let content;
 
 		if (projectType === "link") content = prompt("Introduzca la URL:");
 
-		if (projectType === "iFrame") content = prompt("Pegue aquí el código de inserción:");
+		if (projectType === "iframe") content = prompt("Pegue aquí el código de inserción:");
 
 		if (!content) return;
 
@@ -1510,7 +1510,7 @@ function createMultimediaElement(type, fileName) {
 
 	const realName = fileName.substring(fileName.indexOf("-", fileName.indexOf("-") + 1) + 1);
 
-	if (type === "link" || type === "iFrame"){
+	if (type === "link" || type === "iframe"){
 		resourceUrl = fileName;
 	}else{
 		resourceUrl = dataURL_Multimedia + type + "/" + fileName;
@@ -1542,6 +1542,7 @@ function createMultimediaElement(type, fileName) {
 
 			audio.src = resourceUrl;
 			audio.controls = true;
+			audio.controlsList = "nodownload";
 
 			element.appendChild(audioLink);
 			element.appendChild(document.createElement("br"));
@@ -1717,10 +1718,10 @@ function createMultimediaElement(type, fileName) {
 
 
 		// --------------------------------
-		// iFrame
+		// iframe
 		// --------------------------------
 
-		case "iFrame": {
+		case "iframe": {
 
 			if (!resourceUrl) {
 
@@ -1767,19 +1768,218 @@ async function renderMultimedia() {
 
 	workspaceMultimedia.innerHTML = "";
 
+
+	// ZONA DRAG & DROP ----------------------
+
+	const dropZone = document.createElement("div");
+
+	dropZone.id = "multimediaDropZone";
+
+	dropZone.innerHTML = `
+		<i class="fa-solid fa-cloud-arrow-up"></i>
+		<span>Arrastra aquí un archivo</span>
+	`;
+
+	workspaceMultimedia.appendChild(dropZone);
+
+
+	// DRAG & DROP ----------------------
+
+	dropZone.addEventListener("dragover", event => {
+
+		event.preventDefault();
+
+		event.stopPropagation();
+
+		event.dataTransfer.dropEffect = "copy";
+
+		dropZone.classList.add("dragover");
+
+	});
+
+
+	dropZone.addEventListener("dragleave", event => {
+
+		event.preventDefault();
+
+		event.stopPropagation();
+
+		// Solo quitarlo si realmente salimos de la zona
+
+		if (!dropZone.contains(event.relatedTarget)) {
+
+			dropZone.classList.remove("dragover");
+
+		}
+
+	});
+
+
+	dropZone.addEventListener("drop", async event => {
+
+		event.preventDefault();
+
+		event.stopPropagation();
+
+		dropZone.classList.remove("dragover");
+
+
+		const files = event.dataTransfer.files;
+
+		if (!files || files.length === 0) return;
+
+
+		const file = files[0];
+
+
+		// Seleccionar carpeta multimedia si no está seleccionada
+
+		if (!multimediaDirectory) {
+
+			const selected = await selectMultimediaFolder();
+
+			if (!selected) return;
+
+		}
+
+
+		await addDroppedResource(file);
+
+	});
+
+
 	const project = projects.find(project => project.id === currentProjectId);
 
 	if (!project || !project.resources) return;
+
+	// RECURSOS ----------------------
 
 	for (const type of Object.keys(project.resources)) {
 
 		for (const resource of project.resources[type]) {
 
-			createMultimediaElement(type,resource.name);
+			createMultimediaElement(type, resource.name);
 
 		}
 
 	}
+
+}
+
+async function addDroppedResource(file) {
+
+	const extension = file.name.toLowerCase().split(".").pop();
+
+	let type;
+
+	switch (extension) {
+
+		case "mp4":
+		case "webm":
+		case "mov":
+		case "avi":
+		case "mkv":
+
+			type = "video";
+
+			break;
+
+		case "mp3":
+		case "wav":
+		case "ogg":
+		case "flac":
+		case "aac":
+		case "m4a":
+
+			type = "audio";
+
+			break;
+
+		case "mid":
+		case "midi":
+
+			type = "midi";
+
+			break;
+
+		case "jpg":
+		case "jpeg":
+		case "png":
+		case "gif":
+		case "webp":
+		case "svg":
+
+			type = "image";
+
+			break;
+
+		case "pdf":
+
+			type = "pdf";
+
+			break;
+
+		case "html":
+		case "htm":
+
+			type = "html";
+
+			break;
+
+		case "doc":
+		case "docx":
+		case "txt":
+		case "odt":
+
+			type = "document";
+
+			break;
+
+
+		default:
+
+			showAlert(`Tipo de archivo no soportado: .${extension}`,"error");
+
+			return;
+
+	}
+
+
+	// Obtener la carpeta correspondiente al tipo
+
+	const folder = await multimediaDirectory.getDirectoryHandle(
+		type,
+		{ create: true }
+	);
+
+
+	// Crear el archivo
+
+	const fileHandle = await folder.getFileHandle(
+		file.name,
+		{ create: true }
+	);
+
+
+	// Escribir el archivo
+
+	const writable = await fileHandle.createWritable();
+
+	await writable.write(file);
+
+	await writable.close();
+
+
+	resources[type].push({
+
+		name: file.name
+
+	});
+
+
+	// Mostrarlo
+
+	createMultimediaElement(type,file.name);
 
 }
 

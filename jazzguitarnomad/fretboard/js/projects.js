@@ -297,7 +297,7 @@ function parseProjectsXml(xml) {
 				document: [],
 				html: [],
 				link: [],
-				iFrame: []
+				iframe: []
 
 			}
 
@@ -996,7 +996,7 @@ function renderLibrary() {
 				case "link":
 					iType = "<i class='fa-solid fa-link'></i>";
 					break;
-				case "iFrame":
+				case "iframe":
 					iType = "<i class='fa-solid fa-code'></i>";
 					break;
 			}

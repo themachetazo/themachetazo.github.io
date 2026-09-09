@@ -888,7 +888,7 @@ function initializeArrays(){
 		document: [],
 		html: [],
 		link: [],
-		iFrame: []
+		iframe: []
 	};
 
 	history = [];
@@ -961,8 +961,6 @@ function setControlsState() {
 	// --------------------------------
 	// TIPO DE FRETBOARD
 	// --------------------------------
-
-	cmbTipoSecuencia.disabled = isFretboard;
 
 	chkMetronomeOn.disabled = isFretboard;
 
