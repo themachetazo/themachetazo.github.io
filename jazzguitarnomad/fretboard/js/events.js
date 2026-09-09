@@ -1203,10 +1203,7 @@ cmbProjectType.addEventListener("change", () => {
 
 	projectType = cmbProjectType.value;
 
-	if (
-		(oldType === "fretboard" && projectType !== "fretboard") ||
-		(oldType !== "fretboard" && projectType === "fretboard")
-	) {
+	if ((oldType === "fretboard" && projectType !== "fretboard") || (oldType !== "fretboard" && projectType === "fretboard")) {
 
 		if (projectType !== "fretboard") isScoreVisible = false;
 

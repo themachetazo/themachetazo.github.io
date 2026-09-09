@@ -1390,9 +1390,11 @@ function startAudioMeter() {
 }
 
 
-// --------------------------------
-// AÑADIR ARCHIVOS
-// --------------------------------
+
+
+////////////////////////////////////////////////////////////
+// MULTIMEDIA
+////////////////////////////////////////////////////////////
 
 async function selectMultimediaFolder() {
 
@@ -1451,10 +1453,6 @@ async function selectMultimediaFolder() {
 	}
 
 }
-
-// --------------------------------
-// SUBIR ARCHIVOS
-// --------------------------------
 
 async function selectMultimediaFiles() {
 
@@ -1642,14 +1640,15 @@ async function saveFileToMultimedia(file, type) {
 		// GUARDAR REFERENCIA
 		// --------------------------------
 
-		resources[projectType].push({
+		resources[type].push({
 
 			name: fileName,
 
 		});
 
-		createMultimediaElement(projectType,fileName);
+		createMultimediaElement(type,fileName);
 
+		showAlert("Archivo guardado.", "success");
 
 	} catch (error) {
 
@@ -1660,13 +1659,13 @@ async function saveFileToMultimedia(file, type) {
 
 }
 
-function isValidFile(file, projectType) {
+function isValidFile(file, type) {
 
 	const extension = file.name.toLowerCase().split(".").pop();
 
 	const mime = file.type.toLowerCase();
 
-	switch (projectType) {
+	switch (type) {
 
 		case "video":
 
@@ -1716,6 +1715,28 @@ function isValidFile(file, projectType) {
 			return false;
 
 	}
+
+}
+
+async function addDroppedResource(file) {
+
+	// --------------------------------
+	// COMPROBAR ARCHIVO
+	// --------------------------------
+
+	if (!isValidFile(file,projectType)) {
+
+		showAlert("El archivo no corresponde al formato del proyecto.","info");
+
+		return;
+
+	}
+
+	// --------------------------------
+	// GUARDAR ARCHIVO
+	// --------------------------------
+
+	await saveFileToMultimedia(file,projectType);
 
 }
 
@@ -2073,121 +2094,3 @@ async function renderMultimedia() {
 	}
 
 }
-
-async function addDroppedResource(file) {
-
-	const extension = file.name.toLowerCase().split(".").pop();
-
-	let type;
-
-	switch (extension) {
-
-		case "mp4":
-		case "webm":
-		case "mov":
-		case "avi":
-		case "mkv":
-
-			type = "video";
-
-			break;
-
-		case "mp3":
-		case "wav":
-		case "ogg":
-		case "flac":
-		case "aac":
-		case "m4a":
-
-			type = "audio";
-
-			break;
-
-		case "mid":
-		case "midi":
-
-			type = "midi";
-
-			break;
-
-		case "jpg":
-		case "jpeg":
-		case "png":
-		case "gif":
-		case "webp":
-		case "svg":
-
-			type = "image";
-
-			break;
-
-		case "pdf":
-
-			type = "pdf";
-
-			break;
-
-		case "html":
-		case "htm":
-
-			type = "html";
-
-			break;
-
-		case "doc":
-		case "docx":
-		case "txt":
-		case "odt":
-
-			type = "document";
-
-			break;
-
-
-		default:
-
-			showAlert(`Tipo de archivo no soportado: .${extension}`,"error");
-
-			return;
-
-	}
-
-
-	// Obtener la carpeta correspondiente al tipo
-
-	const folder = await multimediaDirectory.getDirectoryHandle(
-		type,
-		{ create: true }
-	);
-
-
-	// Crear el archivo
-
-	const fileHandle = await folder.getFileHandle(
-		file.name,
-		{ create: true }
-	);
-
-
-	// Escribir el archivo
-
-	const writable = await fileHandle.createWritable();
-
-	await writable.write(file);
-
-	await writable.close();
-
-
-	resources[type].push({
-
-		name: file.name
-
-	});
-
-
-	// Mostrarlo
-
-	createMultimediaElement(type,file.name);
-
-}
-
