@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<projects version="7.0" name="prueba" desc="proyecto defecto">
+<projects version="7.3" name="prueba" desc="proyecto defecto">
 
 	<categories>
 		<category id="0001">Acordes</category>
@@ -252,14 +252,35 @@
 		</resources>
 	</project>
 
-	<project id="r6xon1" title="docus" category="3090" projectType="document" fretboardType="sequence">
+	<project id="r6xon1" title="docus" category="3090" projectType="pdf" fretboardType="sequence">
 		<settings/>
 		<notes/>
 		<barres/>
 		<nutNotes/>
 		<resources>
-			<resource type="document" name="1.docx" />
-			<resource type="document" name="1.txt" />
+			<resource type="pdf" name="default-r6xon1-1.pdf" />
+		</resources>
+	</project>
+
+	<project id="kvy983" title="DOCXS" category="3090" projectType="document" fretboardType="sequence">
+		<settings/>
+		<notes/>
+		<barres/>
+		<nutNotes/>
+		<resources>
+			<resource type="document" name="default-kvy983-1.txt" />
+			<resource type="document" name="default-kvy983-1.docx" />
+		</resources>
+	</project>
+
+	<project id="dil1gl" title="66666666666" category="3090" projectType="pdf" fretboardType="sequence">
+		<settings/>
+		<notes/>
+		<barres/>
+		<nutNotes/>
+		<resources>
+			<resource type="pdf" name="default-dil1gl-1---copia.pdf" />
+			<resource type="document" name="default-dil1gl-1---copia.docx" />
 		</resources>
 	</project>
 
