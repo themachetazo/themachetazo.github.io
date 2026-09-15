@@ -832,41 +832,50 @@ function stopMidi() {
 
 async function getCameraAndMicrophone() {
 
+	let stream = null;
+
 	try {
-
-		// --------------------------------
-		// RESOLUCIÓN SOLICITADA
-		// --------------------------------
-
-		const resolution = getResolutionValues();
 
 		// --------------------------------
 		// CREAR STREAM
 		// --------------------------------
 
-		const stream = await navigator.mediaDevices.getUserMedia({
-			video: {
-				width: { ideal: resolution.width },
-				height: { ideal: resolution.height },
-				frameRate: { ideal: 30 }
-			},
+		stream = await navigator.mediaDevices.getUserMedia({
+
+			video: isMobile
+				? true
+				: {
+					width: { ideal: 1920 },
+					height: { ideal: 1080 }
+				},
+
 			audio: true
+
 		});
 
 		const camera = stream.getVideoTracks()[0];
-		const settingsVideo = camera.getSettings();
 		const microphone = stream.getAudioTracks()[0];
 
 		// --------------------------------
-		// RESOLUCIÓN REAL
+		// CONSTRUIR COMBO DE RESOLUCIONES
 		// --------------------------------
+
+		await buildResolutionCombo(camera);
+
+		// --------------------------------
+		// CONFIGURACIÓN REAL
+		// --------------------------------
+
+		const settingsVideo = camera.getSettings();
 
 		const realWidth = settingsVideo.width;
 		const realHeight = settingsVideo.height;
+		const realFrameRate = Math.round(settingsVideo.frameRate || 0);
 
-		updateResolutionCombo(realWidth,realHeight);
+		cmbResolucion.dataset.previousValue =
+			`${realWidth}x${realHeight}@${realFrameRate}`;
 
-		cmbResolucion.dataset.previousValue = cmbResolucion.value;
+		cmbResolucion.disabled = isMobile;
 
 		// --------------------------------
 		// CARGAR DISPOSITIVOS
@@ -934,7 +943,19 @@ async function getCameraAndMicrophone() {
 		// AUDIO
 		// --------------------------------
 
+		if (audioContext) {
+
+			await audioContext.close();
+
+		}
+
 		audioContext = new AudioContext();
+
+		if (audioMeterAnimation) {
+
+			cancelAnimationFrame(audioMeterAnimation);
+
+		}
 
 		audioAnalyser = null;
 		audioMeterAnimation = null;
@@ -951,13 +972,21 @@ async function getCameraAndMicrophone() {
 		// STREAM DE GRABACIÓN
 		// --------------------------------
 
-		const videoTrack = recordingCanvas.captureStream(30).getVideoTracks()[0];
+		const captureFrameRate =
+			isMobile
+				? 30
+				: Math.min(60,realFrameRate || 30);
+
+		const videoTrack =
+			recordingCanvas.captureStream(captureFrameRate).getVideoTracks()[0];
 
 		recordingStream = new MediaStream();
 
 		recordingStream.addTrack(videoTrack);
 
-		recordingStream.addTrack(audioDestination.stream.getAudioTracks()[0]);
+		recordingStream.addTrack(
+			audioDestination.stream.getAudioTracks()[0]
+		);
 
 		// --------------------------------
 		// DIBUJAR CÁMARA
@@ -965,7 +994,9 @@ async function getCameraAndMicrophone() {
 
 		function drawRecordingVideo() {
 
-			if (camera.readyState === "live") {
+			if (
+				localVideo.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
+			) {
 
 				recordingContext.save();
 
@@ -976,7 +1007,13 @@ async function getCameraAndMicrophone() {
 
 				}
 
-				recordingContext.drawImage(localVideo,0,0,recordingCanvas.width,recordingCanvas.height);
+				recordingContext.drawImage(
+					localVideo,
+					0,
+					0,
+					recordingCanvas.width,
+					recordingCanvas.height
+				);
 
 				recordingContext.restore();
 
@@ -996,10 +1033,463 @@ async function getCameraAndMicrophone() {
 
 	} catch (error) {
 
+		if (stream) {
+
+			stream.getTracks().forEach(track => {
+				track.stop();
+			});
+
+		}
+
 		showAlert("No se pudo acceder a la cámara y al micrófono","error");
-		console.error("No se pudo acceder a la cámara y al micrófono: ",error);
+		console.error("No se pudo acceder a la cámara y al micrófono:",error);
 
 		return null;
+
+	}
+
+}
+
+async function buildResolutionCombo(track) {
+
+	cmbResolucion.innerHTML = "";
+
+	if (!track) return;
+
+	const capabilities = track.getCapabilities();
+	const settings = track.getSettings();
+
+	// --------------------------------
+	// MÓVIL
+	// --------------------------------
+
+	if (isMobile) {
+
+		const width = settings.width;
+		const height = settings.height;
+		const fps = Math.round(settings.frameRate || 0);
+
+		const option = document.createElement("option");
+
+		option.value =
+			`${width}x${height}@${fps}`;
+
+		option.textContent =
+			`${getResolutionName(width,height)}${width} × ${height} - ${fps} fps`;
+
+		cmbResolucion.appendChild(option);
+
+		cmbResolucion.dataset.previousValue = option.value;
+
+		return;
+
+	}
+
+	// --------------------------------
+	// PC
+	// --------------------------------
+
+	if (!capabilities.width || !capabilities.height || !capabilities.frameRate) {
+		return;
+	}
+
+	const originalSettings = track.getSettings();
+
+	const maxWidth = capabilities.width.max;
+	const maxHeight = capabilities.height.max;
+	const maxFrameRate = capabilities.frameRate.max;
+
+	const resolutions = [
+
+		{ width: maxWidth, height: maxHeight },
+
+		{
+			width: Math.round(maxWidth * 2 / 3),
+			height: Math.round(maxHeight * 2 / 3)
+		},
+
+		{
+			width: Math.round(maxWidth / 2),
+			height: Math.round(maxHeight / 2)
+		},
+
+		{
+			width: Math.round(maxWidth / 3),
+			height: Math.round(maxHeight / 3)
+		},
+
+		{
+			width: originalSettings.width,
+			height: originalSettings.height
+		}
+
+	];
+
+	const uniqueResolutions = [];
+
+	resolutions.forEach(resolution => {
+
+		if (
+			resolution.width < capabilities.width.min ||
+			resolution.height < capabilities.height.min
+		) {
+			return;
+		}
+
+		const exists = uniqueResolutions.some(item =>
+			item.width === resolution.width &&
+			item.height === resolution.height
+		);
+
+		if (!exists) {
+			uniqueResolutions.push(resolution);
+		}
+
+	});
+
+	const modes = [];
+
+	// --------------------------------
+	// CURSOR DE ESPERA
+	// --------------------------------
+
+	document.body.style.cursor = "wait";
+
+	try {
+
+		try {
+
+			// --------------------------------
+			// PROBAR RESOLUCIONES
+			// --------------------------------
+
+			for (const resolution of uniqueResolutions) {
+
+				try {
+
+					await track.applyConstraints({
+
+						width: {
+							exact: resolution.width
+						},
+
+						height: {
+							exact: resolution.height
+						},
+
+						frameRate: {
+							ideal: maxFrameRate
+						}
+
+					});
+
+					const current = track.getSettings();
+
+					if (
+						current.width === resolution.width &&
+						current.height === resolution.height &&
+						current.frameRate
+					) {
+
+						modes.push({
+
+							width: current.width,
+							height: current.height,
+							fps: Math.round(current.frameRate)
+
+						});
+
+					}
+
+				} catch (error) {
+
+					// Resolución no disponible.
+
+				}
+
+			}
+
+			// --------------------------------
+			// ORDENAR
+			// --------------------------------
+
+			modes.sort((a,b) => {
+
+				if (a.width !== b.width) {
+					return b.width - a.width;
+				}
+
+				if (a.height !== b.height) {
+					return b.height - a.height;
+				}
+
+				return b.fps - a.fps;
+
+			});
+
+			// --------------------------------
+			// CREAR COMBO
+			// --------------------------------
+
+			modes.forEach(mode => {
+
+				const option = document.createElement("option");
+
+				option.value =
+					`${mode.width}x${mode.height}@${mode.fps}`;
+
+				option.textContent =
+					`${getResolutionName(mode.width,mode.height)}${mode.width} × ${mode.height} - ${mode.fps} fps`;
+
+				cmbResolucion.appendChild(option);
+
+			});
+
+		} finally {
+
+			// --------------------------------
+			// RESTAURAR CONFIGURACIÓN ORIGINAL
+			// --------------------------------
+
+			try {
+
+				await track.applyConstraints({
+
+					width: {
+						exact: originalSettings.width
+					},
+
+					height: {
+						exact: originalSettings.height
+					},
+
+					frameRate: {
+						exact: originalSettings.frameRate
+					}
+
+				});
+
+			} catch (error) {
+
+				// Mantener configuración actual.
+
+			}
+
+		}
+
+		// --------------------------------
+		// SELECCIONAR CONFIGURACIÓN REAL
+		// --------------------------------
+
+		const current = track.getSettings();
+
+		const currentValue =
+			`${current.width}x${current.height}@${Math.round(current.frameRate || 0)}`;
+
+		const currentOption = Array.from(cmbResolucion.options).find(option =>
+			option.value === currentValue
+		);
+
+		if (currentOption) {
+
+			cmbResolucion.value = currentValue;
+
+		} else if (cmbResolucion.options.length > 0) {
+
+			cmbResolucion.selectedIndex = 0;
+
+		}
+
+		cmbResolucion.dataset.previousValue = cmbResolucion.value;
+
+	} finally {
+
+		document.body.style.cursor = "";
+
+	}
+
+}
+
+function getResolutionValues() {
+
+	const value = cmbResolucion.value;
+
+	if (!value) {
+		return null;
+	}
+
+	const match = value.match(/^(\d+)x(\d+)@(\d+)$/);
+
+	if (!match) {
+		return null;
+	}
+
+	return {
+		width: parseInt(match[1],10),
+		height: parseInt(match[2],10),
+		frameRate: parseInt(match[3],10)
+	};
+
+}
+
+function getResolutionName(width, height) {
+
+	if (width >= 3840 && height >= 2160) {
+		return "4K UHD";
+	}
+
+	if (width >= 2560 && height >= 1440) {
+		return "QHD";
+	}
+
+	if (width >= 1920 && height >= 1080) {
+		return "Full HD";
+	}
+
+	if (width >= 1280 && height >= 720) {
+		return "HD";
+	}
+
+	if (width >= 1024 && height >= 576) {
+		return "SD+";
+	}
+
+	if (width >= 854 && height >= 480) {
+		return "SD";
+	}
+
+	if (width >= 640 && height >= 480) {
+		return "VGA";
+	}
+
+	return "";
+
+}
+
+async function changeResolution() {
+
+	if (isMobile) {
+		return false;
+	}
+
+	if (!localStream) {
+		return false;
+	}
+
+	const videoTrack = localStream.getVideoTracks()[0];
+
+	if (!videoTrack) {
+		return false;
+	}
+
+	const resolution = getResolutionValues();
+
+	if (!resolution) {
+		return false;
+	}
+
+	const previousSettings = videoTrack.getSettings();
+
+	try {
+
+		await videoTrack.applyConstraints({
+
+			width: {
+				exact: resolution.width
+			},
+
+			height: {
+				exact: resolution.height
+			},
+
+			frameRate: {
+				exact: resolution.frameRate
+			}
+
+		});
+
+		const settings = videoTrack.getSettings();
+
+		if (
+			settings.width !== resolution.width ||
+			settings.height !== resolution.height ||
+			Math.round(settings.frameRate) !== resolution.frameRate
+		) {
+
+			throw new Error("La cámara no ha aplicado el modo solicitado.");
+
+		}
+
+		if (recordingCanvas) {
+
+			recordingCanvas.width = settings.width;
+			recordingCanvas.height = settings.height;
+
+		}
+
+		cmbResolucion.dataset.previousValue = cmbResolucion.value;
+
+		updateVideoInfo();
+
+		return true;
+
+	} catch (error) {
+
+		try {
+
+			await videoTrack.applyConstraints({
+
+				width: {
+					exact: previousSettings.width
+				},
+
+				height: {
+					exact: previousSettings.height
+				},
+
+				frameRate: {
+					exact: previousSettings.frameRate
+				}
+
+			});
+
+		} catch (restoreError) {
+
+			console.error("No se pudo restaurar la configuración anterior de la cámara:",restoreError);
+
+		}
+
+		switch (error.name) {
+
+			case "OverconstrainedError":
+
+				showAlert("La cámara no puede utilizar la resolución y los FPS seleccionados.","error");
+
+				break;
+
+			case "NotReadableError":
+
+				showAlert("No se puede modificar la configuración de la cámara. Puede estar siendo utilizada por otra aplicación.","error");
+
+				break;
+
+			case "NotAllowedError":
+
+				showAlert("El navegador no permite modificar la configuración de la cámara.","error");
+
+				break;
+
+			default:
+
+				showAlert("No se pudo cambiar la resolución de la cámara.","error");
+
+				break;
+
+		}
+
+		console.error("No se pudo cambiar la resolución:",error.name,error);
+
+		return false;
 
 	}
 
@@ -1011,9 +1501,14 @@ async function changeCamera() {
 
 	try {
 
-		const resolution = getResolutionValues();
+		if (!localStream) {
+			return false;
+		}
 
-		// CREAR STREAM CON LA CÁMARA SELECCIONADA
+		// --------------------------------
+		// ABRIR CÁMARA SELECCIONADA
+		// --------------------------------
+
 		stream = await navigator.mediaDevices.getUserMedia({
 
 			video: {
@@ -1026,33 +1521,47 @@ async function changeCamera() {
 
 		const newCamera = stream.getVideoTracks()[0];
 
-		// INTENTAR APLICAR RESOLUCIÓN
-		try {
+		// --------------------------------
+		// CONSTRUIR COMBO
+		// --------------------------------
 
-			await newCamera.applyConstraints({
+		await buildResolutionCombo(newCamera);
 
-				width: { ideal: resolution.width },
-				height: { ideal: resolution.height },
-				frameRate: { ideal: 30 }
+		cmbResolucion.disabled = isMobile;
 
-			});
+		// --------------------------------
+		// CONFIGURACIÓN REAL
+		// --------------------------------
 
-		} catch (error) {
-
-			showAlert("No se pudo aplicar la resolución solicitada. Se mantiene la resolución disponible.","error");
-
-		}
-
-		// RESOLUCIÓN REAL
 		const settingsVideo = newCamera.getSettings();
 
 		const realWidth = settingsVideo.width;
 		const realHeight = settingsVideo.height;
+		const realFrameRate = Math.round(settingsVideo.frameRate || 0);
 
-		// ACTUALIZAR COMBO DE RESOLUCIÓN
-		updateResolutionCombo(realWidth,realHeight);
+		const currentValue =
+			`${realWidth}x${realHeight}@${realFrameRate}`;
 
+		// --------------------------------
+		// SELECCIONAR MODO ACTUAL
+		// --------------------------------
+
+		const currentOption = Array.from(cmbResolucion.options).find(option =>
+			option.value === currentValue
+		);
+
+		if (currentOption) {
+
+			cmbResolucion.value = currentValue;
+
+		}
+
+		cmbResolucion.dataset.previousValue = cmbResolucion.value;
+
+		// --------------------------------
 		// ACTUALIZAR CANVAS
+		// --------------------------------
+
 		if (recordingCanvas) {
 
 			recordingCanvas.width = realWidth;
@@ -1060,7 +1569,10 @@ async function changeCamera() {
 
 		}
 
+		// --------------------------------
 		// CAMBIAR CÁMARA
+		// --------------------------------
+
 		const oldCamera = localStream.getVideoTracks()[0];
 
 		if (oldCamera) {
@@ -1074,7 +1586,10 @@ async function changeCamera() {
 
 		localVideo.srcObject = localStream;
 
+		// --------------------------------
 		// ACTUALIZAR INFORMACIÓN
+		// --------------------------------
+
 		updateVideoInfo();
 
 		return true;
@@ -1143,6 +1658,14 @@ async function changeMicrophone() {
 
 	try {
 
+		if (!localStream) {
+			return false;
+		}
+
+		// --------------------------------
+		// ABRIR MICRÓFONO SELECCIONADO
+		// --------------------------------
+
 		stream = await navigator.mediaDevices.getUserMedia({
 
 			audio: {
@@ -1155,11 +1678,19 @@ async function changeMicrophone() {
 
 		const newMicrophone = stream.getAudioTracks()[0];
 
+		// --------------------------------
+		// COMPROBAR SISTEMA DE AUDIO
+		// --------------------------------
+
 		if (!audioContext || !audioDestination) {
 
 			throw new Error("El sistema de audio no está preparado.");
 
 		}
+
+		// --------------------------------
+		// CAMBIAR FUENTE DE AUDIO
+		// --------------------------------
 
 		if (microphoneSource) {
 
@@ -1173,6 +1704,10 @@ async function changeMicrophone() {
 
 		startAudioMeter();
 
+		// --------------------------------
+		// CAMBIAR MICRÓFONO DEL STREAM LOCAL
+		// --------------------------------
+
 		const oldMicrophone = localStream.getAudioTracks()[0];
 
 		if (oldMicrophone) {
@@ -1185,6 +1720,10 @@ async function changeMicrophone() {
 		localStream.addTrack(newMicrophone);
 
 		localVideo.srcObject = localStream;
+
+		// --------------------------------
+		// ACTUALIZAR INFORMACIÓN
+		// --------------------------------
 
 		updateVideoInfo();
 
@@ -1266,66 +1805,6 @@ function updateVideoInfo() {
 
 }
 
-function getResolutionValues() {
-
-	switch (cmbResolucion.value) {
-
-		case "480":
-			return {
-				width: 640,
-				height: 480
-			};
-
-		case "720":
-			return {
-				width: 1280,
-				height: 720
-			};
-
-		case "1080":
-			return {
-				width: 1920,
-				height: 1080
-			};
-
-		case "4K":
-			return {
-				width: 3840,
-				height: 2160
-			};
-
-		default:
-			return {
-				width: 1920,
-				height: 1080
-			};
-
-	}
-
-}
-
-function updateResolutionCombo(width,height) {
-
-	if (width >= 3840 && height >= 2160) {
-
-		cmbResolucion.value = "4K";
-
-	} else if (width >= 1920 && height >= 1080) {
-
-		cmbResolucion.value = "1080";
-
-	} else if (width >= 1280 && height >= 720) {
-
-		cmbResolucion.value = "720";
-
-	} else {
-
-		cmbResolucion.value = "480";
-
-	}
-
-}
-
 function getMultimediaDevicesInfo(media){
 
 	const camera = media.camera;
@@ -1393,18 +1872,24 @@ function recordVideo(){
 		recordedChunks = [];
 
 		if (!recordingStream) {
+
 			alert("No se ha podido preparar la grabación.");
 			return;
+
 		}
 
 		if (!MediaRecorder.isTypeSupported("video/webm")) {
+
 			alert("El navegador no soporta grabación WebM.");
-			return;		
+			return;
+
 		}
 
 		mediaRecorder = new MediaRecorder(recordingStream, {
+
 			mimeType: "video/webm",
 			videoBitsPerSecond: 5000000
+
 		});
 
 		mediaRecorder.ondataavailable = event => {
@@ -1419,6 +1904,8 @@ function recordVideo(){
 
 		mediaRecorder.onstop = () => {
 
+			stopRecordingTimer();
+
 			const blob = new Blob(recordedChunks, {
 				type: "video/webm"
 			});
@@ -1428,7 +1915,7 @@ function recordVideo(){
 			const a = document.createElement("a");
 
 			a.href = url;
-			a.download = videoTitle.value.trim() + ".webm";
+			a.download = (videoTitle.value.trim() || "Sin Título") + ".webm";
 
 			a.click();
 
@@ -1438,7 +1925,9 @@ function recordVideo(){
 
 		mediaRecorder.start();
 
-		btnVideoRecord.innerHTML = "<i class='fa-solid fa-circle'></i><span>Pausar</span>";
+		startRecordingTimer();
+
+		btnVideoRecord.innerHTML = "<i class='fa-solid fa-circle'></i><span>Parar</span>";
 
 		btnVideoClose.disabled = true;
 
@@ -1479,8 +1968,6 @@ function startAudioMeter() {
 
 	} catch (error) {
 
-		// La fuente todavía no estaba conectada al analizador
-
 	}
 
 	microphoneSource.connect(audioAnalyser);
@@ -1516,6 +2003,37 @@ function startAudioMeter() {
 	}
 
 	updateAudioMeter();
+
+}
+
+function startRecordingTimer() {
+
+	recordingTime = 0;
+
+	recordingTimeElement.innerHTML = "<i class='fa-solid fa-circle'></i> 00:00";
+
+	recordingTimeElement.style.display = "block";
+
+	recordingTimer = setInterval(() => {
+
+		recordingTime++;
+
+		const minutes = Math.floor(recordingTime / 60);
+		const seconds = recordingTime % 60;
+
+		recordingTimeElement.innerHTML = `<i class="fa-solid fa-circle"></i> ${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`;
+
+	},1000);
+
+}
+
+function stopRecordingTimer() {
+
+	clearInterval(recordingTimer);
+
+	recordingTimer = null;
+
+	recordingTimeElement.style.display = "none";
 
 }
 

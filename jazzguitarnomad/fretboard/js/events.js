@@ -1614,17 +1614,10 @@ btnVideoRecord.addEventListener("click", () => {
 	if (btnVideoRecord.textContent.includes("Grabar")){
 		btnVideoRecord.classList.remove("buttonPlay");
 		btnVideoRecord.classList.add("buttonStop");
-		btnVideoMirror.disabled = true;
-		cmbCamera.disabled = true;
-		cmbResolucion.disabled = true;
-		cmbMicrophone.disabled = true;
+
 	}else{
 		btnVideoRecord.classList.add("buttonPlay");
 		btnVideoRecord.classList.remove("buttonStop");
-		btnVideoMirror.disabled = false;
-		cmbCamera.disabled = false;
-		cmbResolucion.disabled = false;
-		cmbMicrophone.disabled = false;
 	}
 
 	recordVideo();
@@ -1632,6 +1625,9 @@ btnVideoRecord.addEventListener("click", () => {
 });
 
 cmbCamera.addEventListener("change", async () => {
+
+	document.body.style.cursor = "wait";
+	btnVideoRecord.disabled = true;
 
 	const previousValue = cmbCamera.dataset.previousValue || cmbCamera.value;
 
@@ -1645,13 +1641,19 @@ cmbCamera.addEventListener("change", async () => {
 
 	}
 
+	document.body.style.cursor = "";
+	btnVideoRecord.disabled = false;
+
 });
 
 cmbResolucion.addEventListener("change", async () => {
 
+	document.body.style.cursor = "wait";
+	btnVideoRecord.disabled = true;
+
 	const previousValue = cmbResolucion.dataset.previousValue || cmbResolucion.value;
 
-	if (await changeCamera()) {
+	if (await changeResolution()) {
 
 		cmbResolucion.dataset.previousValue = cmbResolucion.value;
 
@@ -1661,9 +1663,15 @@ cmbResolucion.addEventListener("change", async () => {
 
 	}
 
+	document.body.style.cursor = "";
+	btnVideoRecord.disabled = false;
+
 });
 
 cmbMicrophone.addEventListener("change", async () => {
+
+	document.body.style.cursor = "wait";
+	btnVideoRecord.disabled = true;
 
 	const previousValue = cmbMicrophone.dataset.previousValue || cmbMicrophone.value;
 
@@ -1676,6 +1684,9 @@ cmbMicrophone.addEventListener("change", async () => {
 		cmbMicrophone.value = previousValue;
 
 	}
+
+	document.body.style.cursor = "";
+	btnVideoRecord.disabled = false;
 
 });
 

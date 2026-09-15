@@ -288,6 +288,9 @@ let audioMeterAnimation = null;
 
 let multimediaDirectory = null;
 
+let recordingTime = 0;
+let recordingTimer = null;
+
 let resources = {
 
 	video: [],
@@ -361,6 +364,7 @@ const menuSelectorText = document.getElementById("menuSelectorText");
 const menuSelectorIcon = document.getElementById("menuSelectorIcon");
 
 const videoInfo = document.getElementById("videoInfo");
+const recordingTimeElement = document.getElementById("recordingTime");
 const audioMeterLevel = document.getElementById("audioMeterLevel");
 
 /*==================================================
