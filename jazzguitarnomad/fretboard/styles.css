@@ -1093,7 +1093,6 @@ html {
 	background: var(--color-back);
 
 	border:1px solid var(--color-border);
-	border-radius:10px;
 
 	box-sizing:border-box;
 
@@ -1117,7 +1116,6 @@ html {
 	object-fit: contain;
 
 	border:1px solid var(--color-border);
-	border-radius:10px;
 
 	box-sizing:border-box;
 
@@ -1151,7 +1149,6 @@ html {
 	background: var(--color-back);
 
 	border:1px solid var(--color-border);
-	border-radius:10px;
 
 	box-sizing:border-box;
 
