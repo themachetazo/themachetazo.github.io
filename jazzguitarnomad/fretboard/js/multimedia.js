@@ -1335,31 +1335,31 @@ function getResolutionValues() {
 function getResolutionName(width, height) {
 
 	if (width >= 3840 && height >= 2160) {
-		return "4K UHD";
+		return "4K UHD ";
 	}
 
 	if (width >= 2560 && height >= 1440) {
-		return "QHD";
+		return "QHD ";
 	}
 
 	if (width >= 1920 && height >= 1080) {
-		return "Full HD";
+		return "Full HD ";
 	}
 
 	if (width >= 1280 && height >= 720) {
-		return "HD";
+		return "HD ";
 	}
 
 	if (width >= 1024 && height >= 576) {
-		return "SD+";
+		return "SD+ ";
 	}
 
 	if (width >= 854 && height >= 480) {
-		return "SD";
+		return "SD ";
 	}
 
 	if (width >= 640 && height >= 480) {
-		return "VGA";
+		return "VGA ";
 	}
 
 	return "";
