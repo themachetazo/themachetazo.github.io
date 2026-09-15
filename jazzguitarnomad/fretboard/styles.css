@@ -1548,7 +1548,7 @@ html {
 
 .projectOpenButton:not(:disabled):hover {
 
-	background: var(--color-highlight);
+	background: var(--color-selected);
 
 	color: var(--color-text);
 
