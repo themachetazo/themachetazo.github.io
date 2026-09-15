@@ -866,6 +866,8 @@ async function getCameraAndMicrophone() {
 
 		updateResolutionCombo(realWidth,realHeight);
 
+		cmbResolucion.dataset.previousValue = cmbResolucion.value;
+
 		// --------------------------------
 		// CARGAR DISPOSITIVOS
 		// --------------------------------
@@ -890,6 +892,8 @@ async function getCameraAndMicrophone() {
 
 					option.selected = true;
 
+					cmbCamera.dataset.previousValue = device.deviceId;
+
 				}
 
 			}
@@ -906,6 +910,8 @@ async function getCameraAndMicrophone() {
 				if (device.deviceId === microphone.getSettings().deviceId) {
 
 					option.selected = true;
+
+					cmbMicrophone.dataset.previousValue = device.deviceId;
 
 				}
 
@@ -929,6 +935,9 @@ async function getCameraAndMicrophone() {
 		// --------------------------------
 
 		audioContext = new AudioContext();
+
+		audioAnalyser = null;
+		audioMeterAnimation = null;
 
 		audioDestination = audioContext.createMediaStreamDestination();
 
@@ -998,22 +1007,17 @@ async function getCameraAndMicrophone() {
 
 async function changeCamera() {
 
-	try {
+	let stream = null;
 
-		// --------------------------------
-		// RESOLUCIÓN SOLICITADA
-		// --------------------------------
+	try {
 
 		const resolution = getResolutionValues();
 
-		// --------------------------------
-		// CREAR STREAM
-		// --------------------------------
-
-		const stream = await navigator.mediaDevices.getUserMedia({
+		// CREAR STREAM CON LA CÁMARA SELECCIONADA
+		stream = await navigator.mediaDevices.getUserMedia({
 
 			video: {
-				deviceId: { ideal: cmbCamera.value }
+				deviceId: { exact: cmbCamera.value }
 			},
 
 			audio: false
@@ -1022,10 +1026,7 @@ async function changeCamera() {
 
 		const newCamera = stream.getVideoTracks()[0];
 
-		// --------------------------------
 		// INTENTAR APLICAR RESOLUCIÓN
-		// --------------------------------
-
 		try {
 
 			await newCamera.applyConstraints({
@@ -1042,34 +1043,24 @@ async function changeCamera() {
 
 		}
 
-		// --------------------------------
 		// RESOLUCIÓN REAL
-		// --------------------------------
-
 		const settingsVideo = newCamera.getSettings();
 
 		const realWidth = settingsVideo.width;
 		const realHeight = settingsVideo.height;
 
-//		console.log("Resolución real:",`${realWidth}x${realHeight}`);
-
-		// --------------------------------
-		// ACTUALIZAR COMBO
-		// --------------------------------
-
+		// ACTUALIZAR COMBO DE RESOLUCIÓN
 		updateResolutionCombo(realWidth,realHeight);
 
-		// --------------------------------
-		// CANVAS
-		// --------------------------------
+		// ACTUALIZAR CANVAS
+		if (recordingCanvas) {
 
-		recordingCanvas.width = realWidth;
-		recordingCanvas.height = realHeight;
+			recordingCanvas.width = realWidth;
+			recordingCanvas.height = realHeight;
 
-		// --------------------------------
+		}
+
 		// CAMBIAR CÁMARA
-		// --------------------------------
-
 		const oldCamera = localStream.getVideoTracks()[0];
 
 		if (oldCamera) {
@@ -1083,16 +1074,64 @@ async function changeCamera() {
 
 		localVideo.srcObject = localStream;
 
-		// --------------------------------
 		// ACTUALIZAR INFORMACIÓN
-		// --------------------------------
-
 		updateVideoInfo();
+
+		return true;
 
 	} catch (error) {
 
-		showAlert("No se pudo cambiar la cámara.","error");
-		console.error("No se pudo cambiar la cámara: ",error.name,error);
+		if (stream) {
+
+			stream.getTracks().forEach(track => {
+				track.stop();
+			});
+
+		}
+
+		switch (error.name) {
+
+			case "NotAllowedError":
+
+				showAlert("El navegador no permite acceder a esta cámara. Comprueba los permisos de cámara del navegador.","error");
+
+				break;
+
+			case "NotFoundError":
+
+				showAlert("No se ha encontrado la cámara seleccionada.","error");
+
+				break;
+
+			case "OverconstrainedError":
+
+				showAlert("La cámara seleccionada no está disponible con la configuración solicitada.","error");
+
+				break;
+
+			case "NotReadableError":
+
+				showAlert("No se puede acceder a la cámara seleccionada. Puede estar siendo utilizada por otra aplicación.","error");
+
+				break;
+
+			case "SecurityError":
+
+				showAlert("El navegador ha bloqueado el acceso a la cámara por motivos de seguridad.","error");
+
+				break;
+
+			default:
+
+				showAlert("No se pudo cambiar la cámara.","error");
+
+				break;
+
+		}
+
+		console.error("No se pudo cambiar la cámara:",error.name,error);
+
+		return false;
 
 	}
 
@@ -1100,16 +1139,27 @@ async function changeCamera() {
 
 async function changeMicrophone() {
 
+	let stream = null;
+
 	try {
 
-		const stream = await navigator.mediaDevices.getUserMedia({
+		stream = await navigator.mediaDevices.getUserMedia({
+
 			audio: {
 				deviceId: { exact: cmbMicrophone.value }
 			},
+
 			video: false
+
 		});
 
 		const newMicrophone = stream.getAudioTracks()[0];
+
+		if (!audioContext || !audioDestination) {
+
+			throw new Error("El sistema de audio no está preparado.");
+
+		}
 
 		if (microphoneSource) {
 
@@ -1125,8 +1175,12 @@ async function changeMicrophone() {
 
 		const oldMicrophone = localStream.getAudioTracks()[0];
 
-		localStream.removeTrack(oldMicrophone);
-		oldMicrophone.stop();
+		if (oldMicrophone) {
+
+			localStream.removeTrack(oldMicrophone);
+			oldMicrophone.stop();
+
+		}
 
 		localStream.addTrack(newMicrophone);
 
@@ -1134,10 +1188,61 @@ async function changeMicrophone() {
 
 		updateVideoInfo();
 
+		return true;
+
 	} catch (error) {
 
-		showAlert("No se pudo cambiar el micrófono", "error");
-		console.error("No se pudo cambiar el micrófono: ", error);
+		if (stream) {
+
+			stream.getTracks().forEach(track => {
+				track.stop();
+			});
+
+		}
+
+		switch (error.name) {
+
+			case "NotAllowedError":
+
+				showAlert("El navegador no permite acceder a este micrófono. Comprueba los permisos de micrófono del navegador.","error");
+
+				break;
+
+			case "NotFoundError":
+
+				showAlert("No se ha encontrado el micrófono seleccionado.","error");
+
+				break;
+
+			case "OverconstrainedError":
+
+				showAlert("El micrófono seleccionado no puede utilizarse con la configuración solicitada.","error");
+
+				break;
+
+			case "NotReadableError":
+
+				showAlert("No se puede acceder al micrófono seleccionado. Puede estar siendo utilizado por otra aplicación.","error");
+
+				break;
+
+			case "SecurityError":
+
+				showAlert("El navegador ha bloqueado el acceso al micrófono por motivos de seguridad.","error");
+
+				break;
+
+			default:
+
+				showAlert("No se pudo cambiar el micrófono.","error");
+
+				break;
+
+		}
+
+		console.error("No se pudo cambiar el micrófono:",error.name,error);
+
+		return false;
 
 	}
 
@@ -1351,17 +1456,42 @@ function recordVideo(){
 
 function startAudioMeter() {
 
-	if (!microphoneSource) return;
+	if (!microphoneSource || !audioContext) return;
 
-	audioAnalyser = audioContext.createAnalyser();
+	if (audioAnalyser && audioAnalyser.context !== audioContext) {
 
-	audioAnalyser.fftSize = 256;
+		audioAnalyser = null;
+		audioMeterAnimation = null;
+
+	}
+
+	if (!audioAnalyser) {
+
+		audioAnalyser = audioContext.createAnalyser();
+
+		audioAnalyser.fftSize = 256;
+
+	}
+
+	try {
+
+		microphoneSource.disconnect(audioAnalyser);
+
+	} catch (error) {
+
+		// La fuente todavía no estaba conectada al analizador
+
+	}
 
 	microphoneSource.connect(audioAnalyser);
+
+	if (audioMeterAnimation) return;
 
 	const data = new Uint8Array(audioAnalyser.fftSize);
 
 	function updateAudioMeter() {
+
+		if (!audioAnalyser) return;
 
 		audioAnalyser.getByteTimeDomainData(data);
 
@@ -1381,7 +1511,7 @@ function startAudioMeter() {
 
 		audioMeterLevel.style.width = level + "%";
 
-		requestAnimationFrame(updateAudioMeter);
+		audioMeterAnimation = requestAnimationFrame(updateAudioMeter);
 
 	}
 

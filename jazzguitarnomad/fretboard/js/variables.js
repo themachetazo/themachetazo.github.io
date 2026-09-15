@@ -284,6 +284,7 @@ let mediaRecorder;
 let recordedChunks = [];
 
 let audioAnalyser = null;
+let audioMeterAnimation = null;
 
 let multimediaDirectory = null;
 

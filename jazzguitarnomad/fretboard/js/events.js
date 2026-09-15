@@ -1631,21 +1631,51 @@ btnVideoRecord.addEventListener("click", () => {
 
 });
 
-cmbCamera.addEventListener("change", () => {
+cmbCamera.addEventListener("change", async () => {
 
-	changeCamera();
+	const previousValue = cmbCamera.dataset.previousValue || cmbCamera.value;
+
+	if (await changeCamera()) {
+
+		cmbCamera.dataset.previousValue = cmbCamera.value;
+
+	} else {
+
+		cmbCamera.value = previousValue;
+
+	}
 
 });
 
-cmbResolucion.addEventListener("change", () => {
+cmbResolucion.addEventListener("change", async () => {
 
-	changeCamera();
+	const previousValue = cmbResolucion.dataset.previousValue || cmbResolucion.value;
+
+	if (await changeCamera()) {
+
+		cmbResolucion.dataset.previousValue = cmbResolucion.value;
+
+	} else {
+
+		cmbResolucion.value = previousValue;
+
+	}
 
 });
 
-cmbMicrophone.addEventListener("change", () => {
+cmbMicrophone.addEventListener("change", async () => {
 
-	changeMicrophone();
+	const previousValue = cmbMicrophone.dataset.previousValue || cmbMicrophone.value;
+
+	if (await changeMicrophone()) {
+
+		cmbMicrophone.dataset.previousValue = cmbMicrophone.value;
+
+	} else {
+
+		cmbMicrophone.value = previousValue;
+
+	}
 
 });
 
