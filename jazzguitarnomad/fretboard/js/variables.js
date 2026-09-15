@@ -459,7 +459,6 @@ const otherProjectList = document.getElementById("otherProjectList");
 const cmbProjectCategory = document.getElementById("cmbProjectCategory");
 const btnNewCategory = document.getElementById("btnNewCategory");
 const btnDelCategory = document.getElementById("btnDelCategory");
-const btnToggleLibrary = document.getElementById("btnToggleLibrary");
 const projectPanelInfo = document.getElementById("projectPanelInfo");
 const projectPanelHeaderTitle = document.getElementById("projectPanelHeaderTitle");
 const libraryNameText = document.getElementById("libraryNameText");

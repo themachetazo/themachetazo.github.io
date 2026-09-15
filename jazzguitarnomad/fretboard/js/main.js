@@ -272,7 +272,6 @@ function configureUserControls(){
 
 			btnMenuSelector.disabled = false;
 			btnShowProjectPanel.disabled = false;
-			btnToggleLibrary.disabled = false;
 			btnFretboard.disabled = false;
 			btnFretboardPopup.disabled = false;
 			btnScore.disabled = false;
@@ -1311,10 +1310,12 @@ function showProjectPanel(){
 
 	if (workspaceProjectsPanel.classList.contains("panelHidden")) {
 
+		btnShowProjectPanel.innerHTML = "<i class='fa-solid fa-angles-left'></i>";
 		openLibraryPanel();
 
 	}else{
 
+		btnShowProjectPanel.innerHTML = "<i class='fa-solid fa-angles-right'></i>";
 		closeLibraryPanel();
 	}
 }

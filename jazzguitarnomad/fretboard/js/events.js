@@ -776,10 +776,6 @@ btnShowProjectPanel.addEventListener("click", () => {
 	showProjectPanel();
 });
 
-btnToggleLibrary.addEventListener("click", () => {
-	showProjectPanel();
-});
-
 titleText.addEventListener("input", () => {
 
 	projectTitle = titleText.value.trim() || "Proyecto nuevo sin título";
