@@ -1360,9 +1360,11 @@ html {
 
 	border-radius:4px;
 
-	background:var(--color-back);
+	background:var(--color-dark-background);
 
 	color:var(--color-main-text);
+
+	border:1px solid var(--color-back);
 
 	cursor:pointer;
 
