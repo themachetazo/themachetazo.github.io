@@ -116,7 +116,7 @@
 		</header><!-- Fin topBar -->
 
 
-		<!-- PANEL CONTROLES-->
+		<!-- PANEL CONTROLES -->
 
 		<div id="topControlsContainer">
 
@@ -126,7 +126,9 @@
 					<div class="toolbarTop-Controls" id="topUser">
 						<span>USUARIOS</span>
 						<div class="toolRow">
-							<button type="button" id="btnNewUser" title="Nuevo usuario"><i class="fa-solid fa-user-plus"></i><span>Nuevo</span></button>
+							<button type="button" id="btnNewUser" title="Nuevo usuario">
+								<i class="fa-solid fa-user-plus"></i><span>Nuevo</span>
+							</button>
 						</div>
 					</div>
 
@@ -669,56 +671,28 @@
 						</div>
 					</div>
 
-
 				</div> <!-- Fin toolbarTop -->
 			</div> <!-- Fin topControls -->
 
 		</div> <!-- Fin topControlsContainer -->
 
 
-		<!-- CONTROLES WORKSPACE -->
+		<!-- ZONA CENTRAL -->
 
-		<aside id="workspaceHeader">
-
-			<div class="workspaceControls" id="workspaceControls">
-				<button type="button" id="btnPlayStop" class="buttonPlay" title="Reproducir" disabled><i class="fa-solid fa-play"></i><span>Play</span></button>
-				<button type="button" id="btnShowProjectPanel" title="Ver librería"><i class="fa-solid fa-folder-open"></i><span>Proyectos</span></button>
-				<button type="button" id="btnFretboardVisible" title="Ver mástil"><i class="fa-solid fa-guitar"></i><span>Fretboard</span></button>
-				<button type="button" id="btnScoreVisible" title="Ver partitura"><i class="fa-solid fa-music"></i><span>Partitura</span></button>
-				<button type="button" id="btnVertical" class="active" title="Cambiar orientación"><i class="fa-solid fa-arrows-up-down"></i><span>Vertical</span></button>
-				<button type="button" id="btnHorizontal" title="Cambiar orientación"><i class="fa-solid fa-arrows-left-right"></i><span>Horizontal</span></button>
-			</div>
-			<div class="workspaceControls" id="workspaceMetronome">
-				<div id="metronome_timeline">
-					<div class="metronome_pulse metronome_beat metronome_bar" data-index="0"></div>
-					<div class="metronome_pulse metronome_beat metronome_bar" data-index="1"></div>
-					<div class="metronome_pulse metronome_beat metronome_bar" data-index="2"></div>
-					<div class="metronome_pulse metronome_beat metronome_bar" data-index="3"></div>
-				</div>
-			</div>
-			<div class="workspaceControls" id="workspaceTimeInfo">
-				<div id="player_repeatInfo">Loop: <b>1</b> Compás: <b>1</b></div>
-				<div id="metronome_Info">Metrónomo: <b>1 / 1</b></div>
-			</div>
-			<div class="workspaceControls">
-				<div id="workspaceTitleText"></div>
-			</div>
-
-		</aside> <!-- Fin Controles Workspace -->
-
-
-
-		<!-- PROJECTOS, MULTIMEDIA, CANVAS Y PARTITURA-->
 		<main id="workspace" class="horizontal">
 
+			<!-- BOTÓN LIBRERÍA -->
+
+			<button type="button" id="btnShowProjectPanel" title="Ver librería"><i class="fa-solid fa-angles-left"></i></button>
+
 			<!-- PANEL MENU IZQUIERDO -->
-			<div id="workspaceProjectsPanel" class="panelHidden">
+
+			<aside id="workspaceProjectsPanel" class="panelHidden">
 
 				<!-- Lista preparada para los proyectos -->
 				<div id="projectPanel">
 					<div class="projectPanelHeader">
 						<span id="projectPanelHeaderTitle">Sin Nombre</span>
-						<button type="button" id="btnToggleLibrary" title="Ocultar librería de proyectos"><i class="fa-solid fa-xmark"></i></button>
 					</div>
 
 					<div id="projectPanelInfo"><i><a href="#">Archivo XML</a></i><br>Descripción</div>
@@ -739,35 +713,86 @@
 	-->
 
 				</div>
-			</div> <!-- Fin Panel izquierdo -->
 
-			<div id="workspaceMultimedia">
-				<!--<div id="multimediaDropZone"><i class="fa-solid fa-cloud-arrow-up"></i><span>Arrastra aquí un archivo</span></div>-->
-			</div>
+			</aside> <!-- Fin workspaceProjectsPanel -->
 
-			<div id="workspaceFretboard">
-				<canvas id="workspaceCanvas"></canvas>
-			</div>
 
-			<div id="workspaceScore">
-				<div id="vextab-score" class="vextab-auto" editor="false" editor-width="0" editor-height="0" style="color:white;">
+			<!-- ZONA DERECHA -->
+
+			<div id="workspaceContent">
+
+				<!-- CONTROLES WORKSPACE -->
+
+				<div id="workspaceHeader">
+
+					<div class="workspaceControls" id="workspaceControls">
+						<button type="button" id="btnPlayStop" class="buttonPlay" title="Reproducir" disabled><i class="fa-solid fa-play"></i><span>Play</span></button>
+						<button type="button" id="btnFretboardVisible" title="Ver mástil"><i class="fa-solid fa-guitar"></i><span>Fretboard</span></button>
+						<button type="button" id="btnScoreVisible" title="Ver partitura"><i class="fa-solid fa-music"></i><span>Partitura</span></button>
+						<button type="button" id="btnVertical" class="active" title="Cambiar orientación"><i class="fa-solid fa-arrows-up-down"></i><span>Vertical</span></button>
+						<button type="button" id="btnHorizontal" title="Cambiar orientación"><i class="fa-solid fa-arrows-left-right"></i><span>Horizontal</span></button>
+					</div>
+					<div class="workspaceControls" id="workspaceMetronome">
+						<div id="metronome_timeline">
+							<div class="metronome_pulse metronome_beat metronome_bar" data-index="0"></div>
+							<div class="metronome_pulse metronome_beat metronome_bar" data-index="1"></div>
+							<div class="metronome_pulse metronome_beat metronome_bar" data-index="2"></div>
+							<div class="metronome_pulse metronome_beat metronome_bar" data-index="3"></div>
+						</div>
+					</div>
+					<div class="workspaceControls" id="workspaceTimeInfo">
+						<div id="player_repeatInfo">Loop: <b>1</b> Compás: <b>1</b></div>
+						<div id="metronome_Info">Metrónomo: <b>1 / 1</b></div>
+					</div>
+					<div class="workspaceControls">
+						<div id="workspaceTitleText"></div>
+					</div>
+
+				</div> <!-- Fin Controles Workspace -->
+
+
+				<!-- CONTENIDO WORKSPACE -->
+
+				<div id="workspaceContentArea">
+
+					<div id="workspaceMultimedia">
+						<!--<div id="multimediaDropZone"><i class="fa-solid fa-cloud-arrow-up"></i><span>Arrastra aquí un archivo</span></div>-->
+					</div>
+
+					<div id="workspaceFretboard">
+						<canvas id="workspaceCanvas"></canvas>
+					</div>
+
+					<div id="workspaceScore">
+
+						<div id="vextab-score" class="vextab-auto" editor="false" editor-width="0" editor-height="0" style="color:white;">
+
 <!--
-					options scale=0.7 stave-distance=20
-					tab-stems=true tab-stem-direction=up
-					tabstave notation=true tablature=true key=C time=4/4 clef=treble
-					options space=70
+							options scale=0.7 stave-distance=20
+							tab-stems=true tab-stem-direction=up
+							tabstave notation=true tablature=true key=C time=4/4 clef=treble
+							options space=70
 -->
-				</div>
+
+						</div>
+
+					</div>
+
+				</div> <!-- Fin workspaceContentArea -->
+
+			</div> <!-- Fin workspaceContent -->
+
+
+			<!-- CANVAS CURSOR -->
+
+			<div id="cursorTool">
+				<i class="fa-solid fa-pencil"></i>
 			</div>
 
-		</main> <!-- Fin Canvas y partitura -->
-
-
-		<!-- CANVAS CURSOR -->
-
-		<div id="cursorTool"><i class="fa-solid fa-pencil"></i></div>
+		</main> <!-- Fin workspace -->
 
 	</div><!-- Fin appLayout -->
+
 
 	<!-- FOOTER -->
 

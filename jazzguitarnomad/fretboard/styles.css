@@ -651,13 +651,11 @@ html {
 	grid-template-rows:
 		auto
 		auto
-		auto
 		minmax(0,1fr);
 
 	grid-template-areas:
 		"topBar"
 		"topControls"
-		"workspaceHeader"
 		"workspace";
 
 }
@@ -675,15 +673,118 @@ html {
 
 	display:grid;
 
-	overflow:hidden;
+	grid-template-columns:
+		300px
+		minmax(0,1fr);
+
+	grid-template-rows:
+		minmax(0,1fr);
+
+	grid-template-areas:
+		"projects content";
 
 	min-width:0;
+	min-height:0;
 
-	min-height:500px;
+	overflow:hidden;
+
+	transition:
+		grid-template-columns .35s cubic-bezier(.4,0,.2,1);
 
 }
 
-#workspace.horizontal{
+
+#workspace:has(#workspaceProjectsPanel.panelHidden){
+
+	grid-template-columns:
+		0
+		minmax(0,1fr);
+
+}
+
+
+/* ===========================
+   WORKSPACE CONTENT
+=========================== */
+
+#workspaceContent{
+
+	grid-area:content;
+
+	display:grid;
+
+	grid-template-columns:
+		minmax(0,1fr);
+
+	grid-template-rows:
+		auto
+		minmax(0,1fr);
+
+	grid-template-areas:
+		"header"
+		"contentArea";
+
+	min-width:0;
+	min-height:0;
+
+	overflow:hidden;
+
+}
+
+
+/* ===========================
+   WORKSPACE HEADER
+=========================== */
+
+#workspaceHeader{
+
+	grid-area:header;
+
+	display:flex;
+
+	flex-direction:column;
+
+	align-items:stretch;
+
+	gap:12px;
+
+	padding:8px 10px;
+
+	border-top:1px solid var(--color-border);
+	border-bottom:1px solid var(--color-back);
+	border-right:1px solid var(--color-back);
+
+	background:var(--color-tools);
+
+}
+
+
+/* ===========================
+   WORKSPACE CONTENT AREA
+=========================== */
+
+#workspaceContentArea{
+
+	grid-area:contentArea;
+
+	position:relative;
+
+	display:grid;
+
+	min-width:0;
+
+	min-height:0;
+
+	overflow:hidden;
+
+}
+
+
+/* ===========================
+   WORKSPACE LAYOUTS
+=========================== */
+
+#workspace.horizontal #workspaceContentArea{
 
 	grid-template-columns:1fr;
 
@@ -697,9 +798,12 @@ html {
 
 }
 
-#workspace.vertical{
 
-	grid-template-columns:minmax(200px, 40%) 1fr;
+#workspace.vertical #workspaceContentArea{
+
+	grid-template-columns:
+		minmax(200px,40%)
+		1fr;
 
 	grid-template-rows:
 		1fr;
@@ -709,7 +813,8 @@ html {
 
 }
 
-#workspace.contentOnly{
+
+#workspace.contentOnly #workspaceContentArea{
 
 	grid-template-columns:1fr;
 
@@ -721,7 +826,8 @@ html {
 
 }
 
-#workspace.scoreOnly{
+
+#workspace.scoreOnly #workspaceContentArea{
 
 	grid-template-columns:1fr;
 
@@ -732,6 +838,58 @@ html {
 		"score";
 
 }
+
+
+/* ===========================
+   WORKSPACE CONTROLS
+=========================== */
+
+.workspaceControls{
+
+	display:flex;
+
+	justify-content:center;
+
+	align-items:center;
+
+	gap:10px;
+
+	width:100%;
+
+	flex-wrap:wrap;
+
+}
+
+#workspaceTitleText{
+
+	display:flex;
+
+	align-items:center;
+
+	justify-content:center;
+
+	width:100%;
+
+	padding:0px;
+
+	box-sizing:border-box;
+
+	color:var(--color-main-text);
+
+	font-weight:700;
+
+	text-align:center;
+
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+
+}
+
+
+/* ===========================
+   WORKSPACE FRETBOARD
+=========================== */
 
 #workspaceFretboard{
 
@@ -759,7 +917,6 @@ html {
 	border-top:1px solid var(--color-border);
 	border-bottom:1px solid var(--color-back);
 	border-right:1px solid var(--color-back);
-	border-left:1px solid var(--color-border);
 
 }
 
@@ -781,6 +938,11 @@ html {
 	border-radius:2px;
 
 }
+
+
+/* ===========================
+   WORKSPACE SCORE
+=========================== */
 
 #workspaceScore{
 
@@ -807,7 +969,7 @@ html {
 	border-top:1px solid var(--color-border);
 	border-bottom:1px solid var(--color-back);
 	border-right:1px solid var(--color-back);
-	border-left:1px solid var(--color-border);
+
 }
 
 .vextab-auto{
@@ -850,68 +1012,10 @@ html {
 
 }
 
-#workspaceHeader{
 
-	grid-area:workspaceHeader;
-
-	display:flex;
-
-	flex-direction:column;
-
-	align-items:stretch;
-
-	gap:12px;
-
-	padding:8px 10px;
-
-	border-top:1px solid var(--color-border);
-	border-bottom:1px solid var(--color-back);
-	border-right:1px solid var(--color-back);
-
-	background:var(--color-tools);
-
-}
-
-.workspaceControls{
-
-	display:flex;
-
-	justify-content:center;
-
-	align-items:center;
-
-	gap:10px;
-
-	width:100%;
-
-	flex-wrap:wrap;
-
-}
-
-#workspaceTitleText{
-
-	display:flex;
-
-	align-items:center;
-	justify-content:center;
-
-	width:100%;
-
-	padding:0px;
-
-	box-sizing:border-box;
-
-	color:var(--color-main-text);
-
-	font-weight:700;
-
-	text-align:center;
-
-	white-space:nowrap;
-	overflow:hidden;
-	text-overflow:ellipsis;
-
-}
+/* ===========================
+   WORKSPACE MULTIMEDIA
+=========================== */
 
 #workspaceMultimedia{
 
@@ -928,7 +1032,7 @@ html {
 
 }
 
-#workspace.multimedia{
+#workspace.multimedia #workspaceContentArea{
 
 	grid-template-columns:1fr;
 
@@ -945,18 +1049,18 @@ html {
 	display:none;
 
 }
-#workspace.multimedia #workspaceMultimedia {
 
-	display: flex;
+#workspace.multimedia #workspaceMultimedia{
 
-	flex-direction: column;
+	display:flex;
 
-	align-items: center;
+	flex-direction:column;
 
-	width: 100%;
+	align-items:center;
+
+	width:100%;
 
 }
-
 
 #workspaceMultimedia > div {
 
@@ -1097,13 +1201,11 @@ html {
 
 }
 
-
 #workspaceMultimedia .midi-player button:not(:disabled):hover {
 
 	background: var(--color-highlight);
 
 }
-
 
 #workspaceMultimedia .midi-player button:disabled {
 
@@ -1112,7 +1214,6 @@ html {
 	cursor: default;
 
 }
-
 
 #workspaceMultimedia a {
 
@@ -1123,7 +1224,6 @@ html {
 	margin: 10px 0;
 
 }
-
 
 #workspaceMultimedia #multimediaDropZone {
 
@@ -1159,13 +1259,11 @@ html {
 
 }
 
-
 #workspaceMultimedia #multimediaDropZone i {
 
 	font-size: 28px;
 
 }
-
 
 #workspaceMultimedia #multimediaDropZone.dragover {
 
@@ -1175,16 +1273,161 @@ html {
 
 }
 
+
 /* ===========================
-   PROJECTS PANEL
+   PANEL IZQUIERDO
 =========================== */
 
-#projectPanel {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
+#workspaceProjectsPanel{
 
-	margin-top: 0;
+	grid-area:projects;
+
+	width:300px;
+	min-width:300px;
+
+	height:100%;
+
+	box-sizing:border-box;
+
+	padding:8px 8px;
+
+	display:flex;
+
+	flex-direction:column;
+
+	gap:6px;
+
+	overflow-x:hidden;
+	overflow-y:auto;
+
+	background:var(--color-back);
+
+	border-top:1px solid var(--color-border);
+	border-right:1px solid var(--color-border);
+
+	opacity:1;
+
+	transform:translateX(0);
+
+	transition:
+		transform .35s cubic-bezier(.4,0,.2,1),
+		opacity .20s ease,
+		padding .35s ease;
+
+}
+
+#workspaceProjectsPanel.panelHidden{
+
+	padding-left:0;
+	padding-right:0;
+
+	border-right:0;
+
+	overflow:hidden;
+
+	opacity:0;
+
+	transform:translateX(-100%);
+
+	pointer-events:none;
+
+}
+
+/* ===========================
+   BOTÓN LIBRERÍA
+=========================== */
+
+#btnShowProjectPanel{
+
+	position:absolute;
+
+	top:8px;
+	left:10px;
+
+	z-index:110;
+
+	display:flex;
+
+	align-items:center;
+	justify-content:center;
+
+	width:32px;
+	height:32px;
+
+	padding:0;
+
+	border:none;
+
+	border-radius:4px;
+
+	background:var(--color-back);
+
+	color:var(--color-main-text);
+
+	cursor:pointer;
+
+	opacity:0;
+
+	pointer-events:none;
+
+	transition:
+		left .35s cubic-bezier(.4,0,.2,1),
+		opacity .20s ease,
+		background .15s ease,
+		color .15s ease;
+
+}
+
+#btnShowProjectPanel:hover{
+
+	color:var(--color-highlight);
+
+}
+
+
+/* ===========================
+   PANEL OCULTO
+=========================== */
+
+#workspace:has(#workspaceProjectsPanel.panelHidden) #btnShowProjectPanel{
+
+	left:8px;
+
+	opacity:1;
+
+	pointer-events:auto;
+
+}
+
+
+/* ===========================
+   PANEL VISIBLE
+=========================== */
+
+#workspace:not(:has(#workspaceProjectsPanel.panelHidden)) #btnShowProjectPanel{
+
+	left:292px;
+
+	opacity:1;
+
+	pointer-events:auto;
+
+}
+
+/* ===========================
+   PROJECT PANEL
+=========================== */
+
+#projectPanel{
+
+	display:flex;
+
+	flex-direction:column;
+
+	gap:6px;
+
+	margin-top:0;
+
 }
 
 .projectPanelHeader {
@@ -1193,6 +1436,46 @@ html {
 	justify-content: space-between;
 
 	padding: 0;
+}
+
+.projectPanelHeader button{
+
+	margin-left:auto;
+
+	display:flex;
+
+	align-items:center;
+
+	justify-content:center;
+
+	width:28px;
+	height:28px;
+
+	padding:0;
+
+	border:1px solid var(--color-border) !important;
+
+	border-radius:4px;
+
+	background:var(--color-dark-background);
+
+	color:inherit;
+
+	cursor:pointer;
+
+	transition:
+		background .15s,
+		color .15s;
+
+}
+
+
+.projectPanelHeader button i{
+
+	font-size:inherit;
+
+	pointer-events:none;
+
 }
 
 #projectPanelHeaderTitle{
@@ -1740,7 +2023,6 @@ html {
 .menuButton:hover{
 
     color:var(--color-text);
-    background:var(--color-tools);
 
 }
 
@@ -1774,6 +2056,7 @@ html {
 .menuButton.active{
 
     font-weight:700;
+    background:var(--color-tools);
 
 }
 
@@ -2223,103 +2506,6 @@ html {
 	flex-wrap:wrap;
 
 	width:100%;
-
-}
-
-/* ===========================
-   PANEL IZQUIERDO
-=========================== */
-
-#workspaceProjectsPanel {
-
-	position:absolute;
-
-	top:0;
-	left:0;
-
-	width:300px;
-	height:100%;
-
-	z-index:100;
-
-	padding:8px 8px;
-
-	display:flex;
-	flex-direction:column;
-	gap:6px;
-
-	overflow-x:hidden;
-	overflow-y:auto;
-
-	background:var(--color-back);
-
-	border-top:1px solid var(--color-border);
-	border-right:1px solid var(--color-tools);
-
-	box-shadow:4px 0 10px rgba(0,0,0,.45);
-
-	opacity:1;
-
-	transform:translateX(0);
-
-	transition:
-		transform .35s cubic-bezier(.4,0,.2,1),
-		opacity .25s ease,
-		padding .35s ease;
-
-}
-
-#workspaceProjectsPanel.panelHidden {
-
-	padding-left:0;
-	padding-right:0;
-
-	border-right:0;
-
-	overflow:hidden;
-
-	opacity:0;
-
-	transform:translateX(-100%);
-
-	pointer-events:none;
-
-}
-
-.projectPanelHeader button{
-
-	margin-left:auto;
-
-	display:flex;
-
-	align-items:center;
-	justify-content:center;
-
-	width:28px;
-	height:28px;
-
-	padding:0;
-
-	border:1px solid var(--color-border) !important;
-	border-radius:4px;
-
-	background:var(--color-dark-background);
-
-	color:inherit;
-
-	cursor:pointer;
-
-	transition:
-		background .15s,
-		color .15s;
-
-}
-
-.projectPanelHeader button i{
-
-	font-size:inherit;
-
-	pointer-events:none;
 
 }
 
