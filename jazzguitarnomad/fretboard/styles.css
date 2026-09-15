@@ -188,6 +188,35 @@ a:visited {
 
 }
 
+#recordingTime {
+
+	position: absolute;
+
+	top: 10px;
+	left: 50%;
+
+	transform: translateX(-50%);
+
+	padding: 4px 10px;
+
+	background: rgba(0,0,0,0.65);
+
+	color: white;
+
+	border-radius: 4px;
+
+	z-index: 10;
+
+	display: none;
+
+}
+
+#recordingTime i{
+	color:var(--color-red);
+	font-size: 10px;
+}
+
+
 #audioMeter {
 
 	position:absolute;
