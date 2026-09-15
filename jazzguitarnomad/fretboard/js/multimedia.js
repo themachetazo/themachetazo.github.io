@@ -1038,7 +1038,7 @@ async function changeCamera() {
 
 		} catch (error) {
 
-//			console.warn("No se pudo aplicar la resolución solicitada. Se mantiene la resolución disponible.",error);
+			showAlert("No se pudo aplicar la resolución solicitada. Se mantiene la resolución disponible.","error");
 
 		}
 
@@ -1091,7 +1091,7 @@ async function changeCamera() {
 
 	} catch (error) {
 
-		showAlert("No se pudo cambiar la cámara","error");
+		showAlert("No se pudo cambiar la cámara.","error");
 		console.error("No se pudo cambiar la cámara: ",error.name,error);
 
 	}

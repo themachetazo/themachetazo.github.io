@@ -203,6 +203,8 @@ function configureUserControls(){
 		btnUser.classList.remove("admin");
 		btnUser.classList.add("user");
 
+		cmbResolucion.style.display = "none";
+
 		if (appMode === "Guest"){
 
 			if (projectType !== "fretboard"){
