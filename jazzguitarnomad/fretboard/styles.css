@@ -1631,7 +1631,7 @@ html {
 
 .projectCategoryButton:hover {
 
-	background: var(--color-light-background);
+	background: var(--color-selected);
 	color: var(--color-text);
 
 }
