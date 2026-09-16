@@ -12,7 +12,7 @@
 	--color-fretboard-background:#262626;
 	--color-light-background:#353333;
 	--color-tools:#413F3F;
-	--color-border:rgba(255,255,255,0.12);
+	--color-border:#404040;
 	--color-red:#c62828;
 	--color-text:#ffffff;
 	--color-back:#000000;
@@ -750,7 +750,7 @@ html {
 
 	padding:8px 10px;
 
-	border-top:1px solid var(--color-tools);
+	border-top:1px solid var(--color-border);
 	border-bottom:1px solid var(--color-back);
 	border-right:1px solid var(--color-back);
 
@@ -1303,7 +1303,7 @@ html {
 
 	background:var(--color-back);
 
-	border-top:1px solid var(--color-tools);
+	border-top:1px solid var(--color-border);
 	border-right:1px solid var(--color-tools);
 
 	opacity:1;
@@ -1361,7 +1361,7 @@ html {
 
 	color:var(--color-main-text);
 
-	border:1px solid var(--color-tools);
+	border:1px solid var(--color-border);
 
 	cursor:pointer;
 
@@ -2413,7 +2413,6 @@ html {
 
 	background:var(--color-tools);
 
-	border-top:1px solid var(--color-border);
 	border-bottom:1px solid var(--color-back);
 	border-right:1px solid var(--color-back);
 
