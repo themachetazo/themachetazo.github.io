@@ -137,7 +137,7 @@ let projectModified = false;
 
 let categories = [];
 
-let xmlProjects = dataURL_Library + "default.xml";
+let xmlProjects = dataURL_Library + "welcome.xml";
 
 let xmlVersion = "1.0";
 let xmlType = "Server";
