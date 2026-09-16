@@ -142,7 +142,7 @@ let xmlProjects = dataURL_Library + "default.xml";
 let xmlVersion = "1.0";
 let xmlType = "Server";
 
-let xmlLibraryType = "";
+let xmlLibraryUser = "";
 let xmlCreated = "";
 
 let libraryName = "Sin Nombre";

@@ -2447,9 +2447,11 @@ async function addUser(name, email) {
 
 		const alta = String(date.getDate()).padStart(2, "0") + "/" + String(date.getMonth() + 1).padStart(2, "0") + "/" + date.getFullYear();
 
+		const IDUser = generateIDKey();
+
 		const userData = {
 
-			IDUser: generateIDKey(),
+			IDUser: IDUser,
 			name: name,
 			email: encrypted,
 			permits: "",
@@ -2463,7 +2465,7 @@ async function addUser(name, email) {
 
 		saveUsersXml();
 
-		const created = createLibrary(name);
+		const created = createLibrary(name,IDUser);
 
 		showAlert(created
 			? "Usuario '" + name + "', con email '" + email + "' y librería creados."
@@ -2473,6 +2475,7 @@ async function addUser(name, email) {
 	} catch (error) {
 
 		showAlert("No se pudo crear el usuario","error");
+		console.log("No se pudo crear el usuario",error);
 
 	}
 

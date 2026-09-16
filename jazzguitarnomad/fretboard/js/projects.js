@@ -179,7 +179,7 @@ async function loadProject(project) {
 function parseProjectsXml(xml) {
 
 	xmlVersion = xml.querySelector("projects")?.getAttribute("version") || "1.0";
-	xmlLibraryType = xml.querySelector("projects")?.getAttribute("type") || "";
+	xmlLibraryUser = xml.querySelector("projects")?.getAttribute("user") || "";
 	xmlCreated = xml.querySelector("projects")?.getAttribute("created") || "";
 
 	libraryName = xml.querySelector("projects")?.getAttribute("name") || "Sin Nombre";
@@ -695,7 +695,7 @@ function writeXMLProjects() {
 	lines.push(
 		'<projects ' +
 		`version="${escapeXml(xmlVersion)}" ` +
-		`type="${escapeXml(xmlLibraryType)}" ` +
+		`user="${escapeXml(xmlLibraryUser)}" ` +
 		`created="${escapeXml(xmlCreated)}" ` +
 		`modified="${escapeXml(date)}" ` +
 		`name="${escapeXml(libraryName)}" ` +
@@ -1187,7 +1187,7 @@ async function saveProjectsFile() {
 
 		} catch (error) {
 
-			console.warn("No se pudo escribir el XML elegido. Se descargará una copia.",error);
+			showAlert("No se pudo escribir el XML elegido. Se descargará una copia.","error");
 
 		}
 
@@ -1207,7 +1207,8 @@ async function saveProjectsFile() {
 
 	} catch (error) {
 
-		console.error("No se pudo descargar el archivo XML.",error);
+		showAlert("No se pudo descargar el archivo XML.","error");
+		console.log("No se pudo descargar el archivo XML: ",error);
 
 		return false;
 
@@ -1512,7 +1513,7 @@ async function renderProject(){
 
 }
 
-function createLibrary(fileName) {
+function createLibrary(fileName,usuario = "") {
 
 	const today = new Date();
 	const date = String(today.getDate()).padStart(2, "0") + "/" + String(today.getMonth() + 1).padStart(2, "0") + "/" + today.getFullYear();
@@ -1524,7 +1525,7 @@ function createLibrary(fileName) {
 	lines.push(
 		`<projects ` +
 		`version="1.0" ` +
-		`type="" ` +
+		`user="${escapeXml(usuario)}" ` +
 		`created="${escapeXml(date)}" ` +
 		`modified="" ` +
 		`name="${escapeXml(fileName)}" ` +
@@ -1546,7 +1547,7 @@ function createLibrary(fileName) {
 
 	link.href = url;
 
-	link.download = fileName + ".xml";
+	link.download = (usuario === "" ? fileName : usuario) + ".xml";
 
 	document.body.appendChild(link);
 

@@ -842,7 +842,7 @@ btnCreate.addEventListener("click", () => {
 
 	if (nombre !== null) {
 
-		if (createLibrary(nombre)) {
+		if (createLibrary(nombre,"")) {
 
 			showAlert("Librería '" + libraryNameText.value + "' creada.", "success");
 
