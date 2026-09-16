@@ -1104,11 +1104,9 @@ html {
 
 	display: block;
 
-	width: 90%;
-	max-width: 1200px;
-
+	width: auto;
+	max-width: 90%;
 	height: auto;
-
 	max-height: calc(100% - 20px);
 
 	margin: 10px auto;
