@@ -730,8 +730,9 @@ function resetControlsValues(state){
 
 	if (state === "init"){
 
-		orientation = isMobile ? "vertical" : "horizontal";
-		isScoreVisible = isMobile ? false : true;
+		orientation = window.innerWidth <= 480 ? "vertical" : "horizontal";
+		isScoreVisible = window.innerWidth <= 480 ? false : true;
+
 		projectType = "fretboard";
 		fretboardType = "sequence";
 
@@ -1310,12 +1311,10 @@ function showProjectPanel(){
 
 	if (workspaceProjectsPanel.classList.contains("panelHidden")) {
 
-		btnShowProjectPanel.innerHTML = "<i class='fa-solid fa-angles-left'></i>";
 		openLibraryPanel();
 
 	}else{
 
-		btnShowProjectPanel.innerHTML = "<i class='fa-solid fa-angles-right'></i>";
 		closeLibraryPanel();
 	}
 }
@@ -1327,6 +1326,9 @@ function openLibraryPanel(){
 	btnShowProjectPanel.classList.add("active");
 
 	btnShowProjectPanel.title = "Ocultar librería";
+
+	btnShowProjectPanel.innerHTML = "<i class='fa-solid fa-angles-left'></i>";
+
 }
 
 function closeLibraryPanel(){
@@ -1336,6 +1338,8 @@ function closeLibraryPanel(){
 	btnShowProjectPanel.classList.remove("active");
 
 	btnShowProjectPanel.title = "Ver librería";
+
+	btnShowProjectPanel.innerHTML = "<i class='fa-solid fa-angles-right'></i>";
 
 }
 

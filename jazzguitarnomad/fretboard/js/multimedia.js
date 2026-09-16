@@ -860,7 +860,15 @@ async function getCameraAndMicrophone() {
 		// CONSTRUIR COMBO DE RESOLUCIONES
 		// --------------------------------
 
-		await buildResolutionCombo(camera);
+		const modes = await buildResolutionCombo(camera);
+
+		camerasInfo.push({
+
+			deviceId: camera.getSettings().deviceId,
+			label: camera.label,
+			modes: modes
+
+		});
 
 		// --------------------------------
 		// CONFIGURACIÓN REAL
@@ -1081,7 +1089,11 @@ async function buildResolutionCombo(track) {
 
 		cmbResolucion.dataset.previousValue = option.value;
 
-		return;
+		return [{
+			width: width,
+			height: height,
+			fps: fps
+		}];
 
 	}
 
@@ -1308,6 +1320,8 @@ async function buildResolutionCombo(track) {
 
 	}
 
+	return modes;
+
 }
 
 function getResolutionValues() {
@@ -1334,33 +1348,13 @@ function getResolutionValues() {
 
 function getResolutionName(width, height) {
 
-	if (width >= 3840 && height >= 2160) {
-		return "4K UHD ";
-	}
-
-	if (width >= 2560 && height >= 1440) {
-		return "QHD ";
-	}
-
-	if (width >= 1920 && height >= 1080) {
-		return "Full HD ";
-	}
-
-	if (width >= 1280 && height >= 720) {
-		return "HD ";
-	}
-
-	if (width >= 1024 && height >= 576) {
-		return "SD+ ";
-	}
-
-	if (width >= 854 && height >= 480) {
-		return "SD ";
-	}
-
-	if (width >= 640 && height >= 480) {
-		return "VGA ";
-	}
+	if (width >= 3840 && height >= 2160) return "4K UHD ";
+	if (width >= 2560 && height >= 1440) return "QHD ";
+	if (width >= 1920 && height >= 1080) return "Full HD ";
+	if (width >= 1280 && height >= 720) return "HD ";
+	if (width >= 1024 && height >= 576) return "SD+ ";
+	if (width >= 854 && height >= 480) return "SD ";
+	if (width >= 640 && height >= 480) return "VGA ";
 
 	return "";
 
@@ -1505,14 +1499,24 @@ async function changeCamera() {
 			return false;
 		}
 
+		const deviceId = cmbCamera.value;
+
 		// --------------------------------
-		// ABRIR CÁMARA SELECCIONADA
+		// BUSCAR INFORMACIÓN GUARDADA
+		// --------------------------------
+
+		let cameraInfo = camerasInfo.find(camera =>
+			camera.deviceId === deviceId
+		);
+
+		// --------------------------------
+		// ABRIR CÁMARA
 		// --------------------------------
 
 		stream = await navigator.mediaDevices.getUserMedia({
 
 			video: {
-				deviceId: { exact: cmbCamera.value }
+				deviceId: { exact: deviceId }
 			},
 
 			audio: false
@@ -1522,10 +1526,46 @@ async function changeCamera() {
 		const newCamera = stream.getVideoTracks()[0];
 
 		// --------------------------------
-		// CONSTRUIR COMBO
+		// COMPROBAR CÁMARA SOLO LA PRIMERA VEZ
 		// --------------------------------
 
-		await buildResolutionCombo(newCamera);
+		if (!cameraInfo) {
+
+			const modes = await buildResolutionCombo(newCamera);
+
+			cameraInfo = {
+
+				deviceId: deviceId,
+				label: cmbCamera.options[cmbCamera.selectedIndex]?.textContent || "Cámara",
+				modes: modes
+
+			};
+
+			camerasInfo.push(cameraInfo);
+
+		} else {
+
+			// --------------------------------
+			// CARGAR MODOS GUARDADOS
+			// --------------------------------
+
+			cmbResolucion.innerHTML = "";
+
+			cameraInfo.modes.forEach(mode => {
+
+				const option = document.createElement("option");
+
+				option.value =
+					`${mode.width}x${mode.height}@${mode.fps}`;
+
+				option.textContent =
+					`${getResolutionName(mode.width,mode.height)}${mode.width} × ${mode.height} - ${mode.fps} fps`;
+
+				cmbResolucion.appendChild(option);
+
+			});
+
+		}
 
 		cmbResolucion.disabled = isMobile;
 
@@ -1553,6 +1593,10 @@ async function changeCamera() {
 		if (currentOption) {
 
 			cmbResolucion.value = currentValue;
+
+		} else if (cmbResolucion.options.length > 0) {
+
+			cmbResolucion.selectedIndex = 0;
 
 		}
 
@@ -1854,93 +1898,116 @@ function getMultimediaDevicesInfo(media){
 
 }
 
-function recordVideo(){
+function recordVideo(){ 
+ 
+	if (!localStream) { 
+ 
+		alert("Primero debes iniciar la cámara."); 
+		return; 
+ 
+	} 
+ 
+	// -------------------------------- 
+	// INICIAR GRABACIÓN 
+	// -------------------------------- 
+ 
+	if (!mediaRecorder || mediaRecorder.state === "inactive") { 
+ 
+		recordedChunks = []; 
+ 
+		if (!recordingStream) { 
+ 
+			showAlert("No se ha podido preparar la grabación.","error"); 
+			return; 
+ 
+		} 
+ 
+		// -------------------------------- 
+		// DETECTAR FORMATO COMPATIBLE 
+		// -------------------------------- 
+ 
+		const mimeTypes = [
+			"video/webm;codecs=vp9,opus",
+			"video/webm;codecs=vp8,opus",
+			"video/webm"
+		];
 
-	if (!localStream) {
+		const mimeType = mimeTypes.find(type =>
+			MediaRecorder.isTypeSupported(type)
+		);
 
-		alert("Primero debes iniciar la cámara.");
-		return;
-
-	}
-
-	// --------------------------------
-	// INICIAR GRABACIÓN
-	// --------------------------------
-
-	if (!mediaRecorder || mediaRecorder.state === "inactive") {
-
-		recordedChunks = [];
-
-		if (!recordingStream) {
-
-			alert("No se ha podido preparar la grabación.");
-			return;
-
-		}
-
-		if (!MediaRecorder.isTypeSupported("video/webm")) {
-
-			alert("El navegador no soporta grabación WebM.");
-			return;
-
-		}
-
-		mediaRecorder = new MediaRecorder(recordingStream, {
-
-			mimeType: "video/webm",
-			videoBitsPerSecond: 5000000
-
-		});
-
-		mediaRecorder.ondataavailable = event => {
-
-			if (event.data.size > 0) {
-
-				recordedChunks.push(event.data);
-
-			}
-
-		};
-
-		mediaRecorder.onstop = () => {
-
-			stopRecordingTimer();
-
-			const blob = new Blob(recordedChunks, {
-				type: "video/webm"
-			});
-
-			const url = URL.createObjectURL(blob);
-
-			const a = document.createElement("a");
-
-			a.href = url;
-			a.download = (videoTitle.value.trim() || "Sin Título") + ".webm";
-
-			a.click();
-
-			URL.revokeObjectURL(url);
-
-		};
-
-		mediaRecorder.start();
-
-		startRecordingTimer();
-
-		btnVideoRecord.innerHTML = "<i class='fa-solid fa-circle'></i><span>Parar</span>";
-
-		btnVideoClose.disabled = true;
-
-	} else {
-
-		mediaRecorder.stop();
-
-		btnVideoRecord.innerHTML = "<i class='fa-solid fa-circle'></i><span>Grabar</span>";
-
-		btnVideoClose.disabled = false;
-
-	}
-
+		if (!mimeType) { 
+ 
+			showAlert("El navegador no soporta un formato de grabación compatible.","error"); 
+			return; 
+ 
+		} 
+ 
+		// -------------------------------- 
+		// CREAR MEDIA RECORDER 
+		// -------------------------------- 
+ 
+		mediaRecorder = new MediaRecorder(recordingStream, { 
+ 
+			mimeType: mimeType, 
+			videoBitsPerSecond: 5000000 
+ 
+		}); 
+ 
+		mediaRecorder.ondataavailable = event => { 
+ 
+			if (event.data.size > 0) { 
+ 
+				recordedChunks.push(event.data); 
+ 
+			} 
+ 
+		}; 
+ 
+		mediaRecorder.onstop = () => { 
+ 
+			stopRecordingTimer(); 
+ 
+			const blob = new Blob(recordedChunks, { 
+				type: mimeType 
+			}); 
+ 
+			const url = URL.createObjectURL(blob); 
+ 
+			const a = document.createElement("a"); 
+ 
+			a.href = url; 
+ 
+			a.download = (videoTitle.value.trim() || "untitled") + ".webm"; 
+ 
+			a.click(); 
+ 
+			URL.revokeObjectURL(url); 
+ 
+		}; 
+ 
+		mediaRecorder.start(); 
+ 
+		startRecordingTimer(); 
+ 
+		btnVideoRecord.innerHTML = "<i class='fa-solid fa-circle'></i><span>Parar</span>"; 
+		btnVideoRecord.classList.remove("buttonPlay"); 
+		btnVideoRecord.classList.add("buttonStop"); 
+ 
+		btnVideoClose.disabled = true; 
+ 
+	} else { 
+ 
+		mediaRecorder.stop(); 
+ 
+		btnVideoRecord.innerHTML = "<i class='fa-solid fa-circle'></i><span>Grabar</span>"; 
+		btnVideoRecord.classList.add("buttonPlay"); 
+		btnVideoRecord.classList.remove("buttonStop"); 
+ 
+		btnVideoClose.disabled = false; 
+ 
+	} 
+ 
 }
 
 function startAudioMeter() {

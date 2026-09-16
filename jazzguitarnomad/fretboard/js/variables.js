@@ -95,11 +95,11 @@ const themes = {
 		"--color-dark-background": "#DDDDDD",
 		"--color-fretboard-background": "#FFFFFF",
 		"--color-light-background": "#F2F2F2",
-		"--color-tools": "#E6E6E6",
+		"--color-tools": "#DDDDDD",
 		"--color-border": "rgba(0,0,0,0.18)",
 		"--color-red": "#C62828",
 		"--color-text": "#1A1A1A",
-		"--color-back": "#FFFFFF",
+		"--color-back": "#E9E9E9",
 		"--color-medium": "#777777",
 		"--color-disabled": "#A5A5A5",
 		"--color-logo": "#000000",
@@ -290,6 +290,8 @@ let multimediaDirectory = null;
 
 let recordingTime = 0;
 let recordingTimer = null;
+
+let camerasInfo = [];
 
 let resources = {
 
