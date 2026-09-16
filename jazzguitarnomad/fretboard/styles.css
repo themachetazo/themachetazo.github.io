@@ -750,7 +750,7 @@ html {
 
 	padding:8px 10px;
 
-	border-top:1px solid var(--color-border);
+	border-top:1px solid var(--color-tools);
 	border-bottom:1px solid var(--color-back);
 	border-right:1px solid var(--color-back);
 
@@ -1303,8 +1303,8 @@ html {
 
 	background:var(--color-back);
 
-	border-top:1px solid var(--color-border);
-	border-right:1px solid var(--color-border);
+	border-top:1px solid var(--color-tools);
+	border-right:1px solid var(--color-tools);
 
 	opacity:1;
 
@@ -1334,10 +1334,6 @@ html {
 
 }
 
-/* ===========================
-   BOTÓN LIBRERÍA
-=========================== */
-
 #btnShowProjectPanel{
 
 	position:absolute;
@@ -1365,7 +1361,7 @@ html {
 
 	color:var(--color-main-text);
 
-	border:1px solid var(--color-back);
+	border:1px solid var(--color-tools);
 
 	cursor:pointer;
 
@@ -1496,6 +1492,8 @@ html {
 	line-height:1.4;
 
 	overflow-wrap:break-word;
+
+	font-size:11px;
 }
 
 #projectPanelInfo a{
@@ -3466,16 +3464,17 @@ input[type="range"] {
 	}
 
 
-	/* ==========================
+	/* ===========================
 	   Workspace
-	   ========================== */
+	=========================== */
 
-	#workspaceHeader, 
-	#videoContainer {
+	#workspaceHeader,
+	#videoContainer{
 
-		font-size: 10px;
+		font-size:10px;
 
 	}
+
 
 	#workspaceScore{
 
@@ -3488,35 +3487,38 @@ input[type="range"] {
 
 	}
 
+
 	#workspaceScore .vextab-auto{
 
 		width:100%;
-
 		height:100%;
 
 		margin:0;
 
 		border:0;
-
 		border-radius:0;
-
 		box-shadow:none;
 
 	}
 
-	/* ==========================
-	   Panel izquierdo
-	   ========================== */
+
+	#workspaceMultimedia iframe {
+
+		display: block;
+
+		width: 90%;
+		height: calc(100% - 20px);
+		min-height: 300px;
+
+		margin: 10px auto;
+
+		border: none;
+
+		background: var(--color-back);
+	
+	}
 
 	#workspaceProjectsPanel{
-
-		top:0;
-		left:0;
-
-		width:220px;
-		height:100%;
-
-		padding:8px 6px;
 
 		font-size:10px;
 
@@ -3636,25 +3638,61 @@ input[type="range"] {
 		font-size: 11px;
 	}
 
+}
 
-	#workspaceMultimedia iframe {
 
-		display: block;
+/* ===========================
+   MOVIL LAYOUT
+=========================== */
 
-		width: 90%;
-		height: calc(100% - 20px);
-		min-height: 300px;
+@media (max-width:480px) and (orientation:portrait){
 
-		margin: 10px auto;
+	#workspace{
 
-		border: none;
+		grid-template-columns:
+			1fr;
 
-		background: var(--color-back);
-	
+		grid-template-rows:
+			minmax(0,1fr);
+
+		grid-template-areas:
+			"content";
+
+	}
+
+
+	#workspaceProjectsPanel{
+
+		position:absolute;
+
+		top:0;
+		left:0;
+
+		width:100%;
+		min-width:0;
+
+		height:100%;
+
+		z-index:100;
+
+	}
+
+
+	#workspace:has(#workspaceProjectsPanel.panelHidden){
+
+		grid-template-columns:
+			1fr;
+
+	}
+
+	#workspace:not(:has(#workspaceProjectsPanel.panelHidden)) #btnShowProjectPanel{
+
+		left:auto;
+		right:8px;
+
 	}
 
 }
-
 
 /* =================================
    FOOTER - MÓVIL
