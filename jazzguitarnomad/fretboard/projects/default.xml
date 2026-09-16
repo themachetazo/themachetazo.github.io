@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<projects version="7.3" name="prueba" desc="proyecto defecto">
+<projects version="7.5" type="" created="12/08/2026" modified="16/09/2026" name="Librería defectuosa" desc="proyecto defecto que se engloba en la cuestion algebraica del teormea de pitagoras para algo">
 
 	<categories>
 		<category id="0001">Acordes</category>
@@ -282,6 +282,50 @@
 			<resource type="pdf" name="default-dil1gl-1---copia.pdf" />
 			<resource type="document" name="default-dil1gl-1---copia.docx" />
 		</resources>
+	</project>
+
+	<project id="1gd6syc" title="opopopopopo" category="8490" projectType="fretboard" fretboardType="sequence">
+		<settings>
+			<orientation>horizontal</orientation>
+			<fretboardStyle>rosewood</fretboardStyle>
+			<fretCount>1</fretCount>
+			<displayMode>true</displayMode>
+			<inlays>true</inlays>
+			<rotated>true</rotated>
+			<bar>4/4</bar>
+			<scoreScale>auto</scoreScale>
+			<tipoSecuencia>up</tipoSecuencia>
+			<direccion>false</direccion>
+			<countBars>0</countBars>
+			<repetitionSequence>2</repetitionSequence>
+			<isFretboardVisible>true</isFretboardVisible>
+			<isScoreVisible>false</isScoreVisible>
+			<currentInstrument>piano</currentInstrument>
+			<fretNumbers>24</fretNumbers>
+			<showFretNumbers>true</showFretNumbers>
+			<bpm>90</bpm>
+			<key>C</key>
+			<scoreStaves>all</scoreStaves>
+			<scoreLayout>vertical</scoreLayout>
+			<swing>false</swing>
+			<metronomeOn>true</metronomeOn>
+			<notation></notation>
+		</settings>
+		<notes>
+			<note string="5" fret="2" color="#ff0000" text="" chord="" order="1"/>
+			<note string="4" fret="1" color="#ff0000" text="" chord="" order="2"/>
+			<note string="4" fret="4" color="#ff0000" text="" chord="" order="3"/>
+			<note string="3" fret="3" color="#ff0000" text="" chord="" order="4"/>
+			<note string="3" fret="4" color="#ff0000" text="" chord="" order="5"/>
+			<note string="2" fret="3" color="#ff0000" text="" chord="" order="6"/>
+			<note string="1" fret="2" color="#ff0000" text="" chord="" order="7"/>
+			<note string="1" fret="4" color="#ff0000" text="" chord="" order="8"/>
+			<note string="0" fret="1" color="#ff0000" text="" chord="" order="9"/>
+			<note string="0" fret="4" color="#ff0000" text="" chord="" order="10"/>
+		</notes>
+		<barres/>
+		<nutNotes/>
+		<resources/>
 	</project>
 
 </projects>
