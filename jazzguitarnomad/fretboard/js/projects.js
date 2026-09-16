@@ -179,6 +179,8 @@ async function loadProject(project) {
 function parseProjectsXml(xml) {
 
 	xmlVersion = xml.querySelector("projects")?.getAttribute("version") || "1.0";
+	xmlLibraryType = xml.querySelector("projects")?.getAttribute("type") || "";
+	xmlCreated = xml.querySelector("projects")?.getAttribute("created") || "";
 
 	libraryName = xml.querySelector("projects")?.getAttribute("name") || "Sin Nombre";
 	libraryNameText.value = libraryName;
@@ -682,6 +684,9 @@ function projectToXml(project, indent = "\t") {
 
 function writeXMLProjects() {
 
+	const today = new Date();
+	const date = String(today.getDate()).padStart(2, "0") + "/" + String(today.getMonth() + 1).padStart(2, "0") + "/" + today.getFullYear();
+
 	const lines = [];
 
 	xmlVersion = (parseFloat(xmlVersion) + 0.1).toFixed(1);
@@ -690,6 +695,9 @@ function writeXMLProjects() {
 	lines.push(
 		'<projects ' +
 		`version="${escapeXml(xmlVersion)}" ` +
+		`type="${escapeXml(xmlLibraryType)}" ` +
+		`created="${escapeXml(xmlCreated)}" ` +
+		`modified="${escapeXml(date)}" ` +
 		`name="${escapeXml(libraryName)}" ` +
 		`desc="${escapeXml(libraryDesc)}">`
 	);
@@ -1506,6 +1514,9 @@ async function renderProject(){
 
 function createLibrary(fileName) {
 
+	const today = new Date();
+	const date = String(today.getDate()).padStart(2, "0") + "/" + String(today.getMonth() + 1).padStart(2, "0") + "/" + today.getFullYear();
+
 	const lines = [];
 
 	lines.push('<?xml version="1.0" encoding="UTF-8"?>');
@@ -1513,7 +1524,10 @@ function createLibrary(fileName) {
 	lines.push(
 		`<projects ` +
 		`version="1.0" ` +
-		`name="${fileName}" ` +
+		`type="" ` +
+		`created="${escapeXml(date)}" ` +
+		`modified="" ` +
+		`name="${escapeXml(fileName)}" ` +
 		`desc="">`
 	);
 

@@ -842,10 +842,11 @@ btnCreate.addEventListener("click", () => {
 
 	if (nombre !== null) {
 
-		const created = createLibrary(nombre);
+		if (createLibrary(nombre)) {
 
-		if (created) showAlert("Librería '" + libraryNameText.value + "' creada.", "success");
+			showAlert("Librería '" + libraryNameText.value + "' creada.", "success");
 
+		}
 	}
 
 });
