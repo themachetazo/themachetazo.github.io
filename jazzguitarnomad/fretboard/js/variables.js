@@ -10,12 +10,12 @@ let dataURL = "https://drive.google.com/drive/folders/1Y6Z8R5SOdRTN1V3Hx59WaDc9P
 
 const isLocal = window.location.protocol === "file:" || window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 
-//Para que funcione el pintado y guardado de la imagen del mastil en drawFretdoard en local. También leerá los archivos xml
+//Para que funcione el pintado y guardado de la imagen renderizada del mastil en drawFretdoard en local, los achivos de imagenes del mastil tienen que estar en un servidor
 if (isLocal) dataURL = baseURL;
 
-const dataURL_Images = dataURL + "img/";
+const dataURL_Images = baseURL + "img/";
 const dataURL_Users = dataURL;
-const dataURL_Library = "projects/";
+const dataURL_Library = dataURL + "projects/";
 const dataURL_Multimedia = dataURL_Library + "multimedia/";
 
 const dataURL_Samples = "https://themachetazo.github.io/jazzguitarnomad/samples/";
